@@ -70,3 +70,14 @@ footer{border-top-color:#195b91;color:#a9cce8}
 #owner-email{width:100%;max-width:430px;padding:13px 14px;border:1px solid #3e9bdf;border-radius:10px;background:#07182e;color:#fff;font:inherit}
 #owner-email:focus-visible{outline:3px solid #79e8ff;outline-offset:2px}
 #owner-feedback{color:#9be6ff;min-height:24px}
+
+/* Player registration */
+.register-panel[hidden],#registered-panel[hidden]{display:none}
+#register-form{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+#register-form label{font-weight:750;margin-top:6px}
+#register-form input{width:100%;max-width:450px;padding:13px 14px;border:1px solid #398dd3;border-radius:10px;background:#07182e;color:#fff;font:inherit}
+#register-form input:focus-visible{outline:3px solid #70e6ff;outline-offset:2px}
+#register-form button{margin-top:12px;cursor:pointer;border:0;font:inherit;font-weight:800}
+#register-form button:disabled{opacity:.6;cursor:wait}
+#register-feedback{min-height:24px;color:#9be6ff}
+.auth-link{color:#6de2ff;text-decoration:underline}
