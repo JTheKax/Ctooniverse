@@ -10,3 +10,12 @@
 @media(max-width:1100px){.site-header{flex-wrap:wrap}.site-header nav{order:3;width:100%;justify-content:center}.header-tag{margin-left:auto}}
 @media(max-width:600px){.site-header nav{justify-content:center;gap:5px;padding:6px;border-radius:14px}.site-header .nav-link{font-size:12px;padding:9px 11px;min-height:38px}.header-tag{display:none}}
 @media(prefers-reduced-motion:reduce){.site-header .nav-link{transition:none}.site-header .nav-link:hover{transform:none}}
+
+/* Atmospheric arcade-grid background — CSS only, no extra assets */
+body{position:relative;isolation:isolate;background:#070c20;min-height:100vh}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(ellipse 65% 48% at 52% -10%,#244c9e80,transparent 78%),radial-gradient(ellipse 48% 60% at 100% 45%,#57238a44,transparent 80%),radial-gradient(ellipse 55% 42% at 0% 85%,#007b8b36,transparent 82%),linear-gradient(160deg,#080d25 0%,#0b1230 55%,#060a1b 100%)}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.32;background-image:linear-gradient(#4b90f52b 1px,transparent 1px),linear-gradient(90deg,#4b90f52b 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(to bottom,transparent 3%,#000 42%,#000 100%);-webkit-mask-image:linear-gradient(to bottom,transparent 3%,#000 42%,#000 100%)}
+.hero{position:relative}
+.hero::before{content:"";position:absolute;inset:5% 0 0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 65% 48%,#3c69df20,transparent 56%);filter:blur(22px)}
+.collection-card{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);background:linear-gradient(155deg,#1b2854e8,#0c142fe8);box-shadow:0 12px 32px #02071844,inset 0 1px #ffffff0c}
+@media(prefers-reduced-motion:reduce){body::before,body::after{animation:none}}
