@@ -76,3 +76,34 @@ h2,h3{font-weight:950}
 .orbit{border:3px dashed #ffeb92a6}
 footer{border-top:2px solid #ffffff66;color:#ece8ff}
 @media(max-width:600px){.site-header nav{border-width:2px;box-shadow:3px 4px 0 #090a2a}.site-header .nav-link{padding:8px 10px}.collection-card{box-shadow:4px 5px 0 #0d103c}}
+
+/* CTooniverse video-game hub theme: pixel UI, midnight sky, glowing game panels */
+:root{--bg:#090e23;--panel:#131d3b;--line:#4b68a2;--text:#f8fbff;--muted:#bdcbed;--cyan:#5df2ed;--purple:#b59bff}
+body{background:#080e25;color:#f5faff}
+body::before{background:radial-gradient(ellipse 65% 40% at 50% -5%,#2447a0aa,transparent 80%),radial-gradient(ellipse 45% 60% at 90% 70%,#4c279177,transparent 80%),linear-gradient(150deg,#09122f,#151c4d 48%,#0b1534)}
+body::after{opacity:.24;background-image:linear-gradient(#6c8ee833 1px,transparent 1px),linear-gradient(90deg,#6c8ee833 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(to bottom,transparent,#000 30%,#000);-webkit-mask-image:linear-gradient(to bottom,transparent,#000 30%,#000)}
+.site-header nav{background:linear-gradient(180deg,#1e315a,#101a38);border:2px solid #6588bd;border-radius:12px;box-shadow:0 6px 0 #050a1b,0 12px 26px #03071399,inset 0 2px #a9d4ff36}
+.site-header .nav-link{border:1px solid #6e88b355;border-radius:8px;background:#25355b;color:#d9e8ff;box-shadow:inset 0 2px #ffffff12,0 3px 0 #0a122b;text-transform:uppercase;font-size:12px;letter-spacing:.7px;font-weight:900}
+.site-header .nav-link:hover{background:#365a8c;border-color:#78eaf4;box-shadow:0 0 15px #53d7ed66,0 3px 0 #0a122b;transform:translateY(-2px) rotate(0)}
+.site-header .nav-link.active,.site-header .nav-link[aria-current="page"]{background:linear-gradient(#77f3ee,#3abbd4);color:#081a35;border:1px solid #bafff7;box-shadow:0 3px 0 #176c87,0 0 17px #40e5e466}
+.brand{letter-spacing:-1px;text-shadow:2px 3px 0 #060b1d}
+.brand-mark{background:linear-gradient(145deg,#66f5e9,#519be8);border:2px solid #b8ffff;border-radius:9px;box-shadow:3px 4px 0 #061129;color:#092044;transform:none}
+.brand-accent{color:#64f4ed}
+.header-tag,.coming-tag{background:#1b2b51;border:1px solid #69cbd8;color:#89fff0;box-shadow:0 3px 0 #061129;border-radius:7px}
+.eyebrow{color:#83f9ed}
+h1{text-shadow:3px 4px 0 #071027}
+h1 span{background:linear-gradient(90deg,#6ff8e7,#8fb4ff,#c9a1ff);background-clip:text;color:transparent}
+.button{border:1px solid #9ac9ed;border-radius:9px;box-shadow:0 4px 0 #07102b}
+.button.primary{background:linear-gradient(#6af6e7,#40b9d4);color:#082038;box-shadow:0 4px 0 #166e8c}
+.button.secondary{background:#293e74;color:#f7fbff}
+.collection-card,.collection-card:nth-child(n){background:linear-gradient(150deg,#233768ef,#121e42f5);border:2px solid #5f82b5;border-radius:13px;box-shadow:0 6px 0 #070d24,inset 0 2px #ffffff12}
+.collection-card:hover{transform:translateY(-4px) rotate(0);border-color:#72f1e7}
+.collection-card p{color:#c2d0ef}.collection-card .card-state{color:#7dece5}
+.card-icon{background:#304b81!important;color:#82f7ee!important;border:1px solid #7bbee8;border-radius:8px;box-shadow:0 3px 0 #09142d}
+.section-intro,.lead,.updates p:not(.eyebrow){color:#bfceec}
+.updates{border-top:2px solid #4669a0}
+.update-pill{background:#1b3154;border:1px solid #5cbaae;color:#a9fff0;box-shadow:0 3px 0 #08122b;border-radius:8px}
+.planet{background:radial-gradient(circle at 30% 25%,#92f7f0,#4d8bdf 52%,#433b9e);border:3px solid #9ef8ef;box-shadow:0 0 60px #4b95e988,inset -20px -25px 45px #1c2a71}
+.orbit{border:2px dashed #7ebaf677}
+footer{border-top:1px solid #42618c;color:#b8c7e9}
+@media(max-width:600px){.site-header nav{border-width:1px}.site-header .nav-link{padding:8px 9px;font-size:11px}}
