@@ -13,3 +13,31 @@
 .site-header .nav-link{gap:8px}
 .nav-icon{display:inline-flex;align-items:center;justify-content:center;width:19px;min-width:19px;height:19px;font-size:17px;line-height:1;font-family:system-ui,"Segoe UI Symbol",sans-serif}
 @media(max-width:650px){.site-header .nav-link{gap:5px}.nav-icon{width:16px;min-width:16px;font-size:15px}}
+
+/* Electric-blue CTooniverse palette */
+:root{--bg:#061126;--panel:#0b2040;--border:#137de5;--text:#f4fbff;--muted:#b9d4ed;--purple:#168dff}
+body{background:radial-gradient(ellipse at 85% 78%,#064d8d66 0,transparent 48%),linear-gradient(155deg,#051024,#0a2348 65%,#06152e);color:#f4fbff}
+.brand-accent{color:#55d9ff}
+.brand-mark{background:linear-gradient(135deg,#d5f9ff,#3db7ff);color:#07315e;box-shadow:0 3px 0 #06559c}
+.site-header nav{background:#081a35ed;border-color:#1769ae}
+.site-header .nav-link{color:#c2e1f6}
+.site-header .nav-link:hover{background:#123c69;border-color:#31a9f6}
+.site-header .nav-link.active,.site-header .nav-link[aria-current="page"]{background:linear-gradient(135deg,#2bc9ff,#0878f1);border-color:#72e3ff;box-shadow:0 3px 12px #0788f088,inset 0 1px #ffffff60;color:#ffffff}
+.welcome-panel,.announcement-panel,.home-tile{border-color:#147ce1;background:linear-gradient(145deg,#0d284f,#09182f)}
+.eyebrow{color:#63d9ff}
+h1 span{color:#4bc9ff}
+.welcome-copy>p:not(.eyebrow){color:#c5def2}
+.button.primary{background:linear-gradient(125deg,#24c7ff,#096fe3);color:#fff}
+.button.secondary{background:#12365d;border-color:#268ad4}
+.welcome-planet{background:radial-gradient(circle at 30% 28%,#6de7ff,#1467c8 55%,#08265d);box-shadow:0 0 55px #158be555}
+.planet-ring{border-color:#149cff;box-shadow:0 0 15px #26c5ff66}
+.announcement-panel li{border-top-color:#1b5c9c;color:#e0f2ff}
+.announcement-panel li:before{background:#26bdff}
+.tile-symbol{color:#45caff}
+.home-tile small{color:#b8d8f0}
+.home-tile:hover{border-color:#5ddcff}
+.section h1{color:#6ddcff}
+.lead{color:#bdd9f0}
+.coming-tag{color:#8ce7ff;border-color:#187cbe}
+footer{border-top-color:#195b91;color:#a9cce8}
+@media(prefers-reduced-motion:reduce){.site-header .nav-link{transition:none}}
