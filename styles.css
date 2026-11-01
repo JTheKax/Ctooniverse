@@ -53,3 +53,9 @@ footer{border-top-color:#195b91;color:#a9cce8}
 .site-header .nav-link:focus-visible{outline:3px solid #ffe680;outline-offset:3px}
 @media(max-width:650px){.site-header nav{gap:5px;padding:6px;border-radius:13px}.site-header .nav-link{min-height:41px;padding:8px 10px;font-size:12px;gap:5px}.site-header .nav-link .nav-icon{width:17px;min-width:17px;font-size:15px}}
 @media(prefers-reduced-motion:reduce){.site-header .nav-link{transition:none}.site-header .nav-link:hover{transform:none}}
+
+/* Stronger, bolder navigation labels */
+.site-header .nav-link{font-weight:900;font-size:15px;letter-spacing:.45px;text-shadow:0 1px 1px #03132788;padding-inline:19px}
+.site-header .nav-link.active,.site-header .nav-link[aria-current="page"]{text-shadow:none}
+.site-header .nav-link .nav-icon{font-weight:900;font-size:20px}
+@media(max-width:650px){.site-header .nav-link{font-size:13px;letter-spacing:.1px;padding-inline:11px}.site-header .nav-link .nav-icon{font-size:17px}}
