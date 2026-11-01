@@ -8,3 +8,8 @@
 .site-header .nav-link:focus-visible{outline:3px solid #ffda78;outline-offset:3px}
 @media(max-width:650px){.site-header nav{gap:4px;padding:5px;border-radius:14px}.site-header .nav-link{min-height:40px;padding:9px 12px;font-size:12px;border-radius:9px}}
 @media(prefers-reduced-motion:reduce){.site-header .nav-link{transition:none}.site-header .nav-link:hover{transform:none}}
+
+/* Icon-and-label navigation */
+.site-header .nav-link{gap:8px}
+.nav-icon{display:inline-flex;align-items:center;justify-content:center;width:19px;min-width:19px;height:19px;font-size:17px;line-height:1;font-family:system-ui,"Segoe UI Symbol",sans-serif}
+@media(max-width:650px){.site-header .nav-link{gap:5px}.nav-icon{width:16px;min-width:16px;font-size:15px}}
