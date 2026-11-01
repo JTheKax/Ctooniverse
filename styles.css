@@ -40,3 +40,39 @@ h1 span{background:linear-gradient(90deg,#ffdd68,#ff91bd,#75eaff);background-cli
 .planet{background:radial-gradient(circle at 30% 25%,#ffe57e,#fa8eab 50%,#7950bd);box-shadow:0 0 85px #ff7da266,inset -25px -25px 40px #6d388e}
 .orbit{border:2px dashed #ffe1a266}
 @media(prefers-reduced-motion:reduce){.collection-card{transition:none}.collection-card:hover{transform:none}}
+
+/* Bold retro-cartoon portal direction: graphic shapes, punchy panels, high contrast */
+body{color:#fffdf7;background:#241954}
+body::before{background:radial-gradient(circle at 14% 15%,#ffdd3f 0 6%,transparent 6.3%),radial-gradient(circle at 86% 16%,#ff6c95 0 9%,transparent 9.3%),radial-gradient(circle at 88% 82%,#5fe5d9 0 8%,transparent 8.3%),radial-gradient(circle at 7% 80%,#9e81ff 0 11%,transparent 11.3%),linear-gradient(145deg,#4434a5 0%,#251e72 49%,#126b9a 100%)}
+body::after{opacity:.3;background-image:radial-gradient(#fff 2px,transparent 2.5px);background-size:22px 22px;mask-image:none;-webkit-mask-image:none}
+.site-header{max-width:1320px}
+.site-header nav{background:#181447f2;border:3px solid #fff7e8;border-radius:22px;box-shadow:6px 7px 0 #090a2a}
+.site-header .nav-link{border:2px solid transparent;border-radius:14px;color:#f4edff;font-weight:950;letter-spacing:.1px}
+.site-header .nav-link:hover{background:#6b4ee3;color:white;border-color:#fff;box-shadow:3px 4px 0 #100c36;transform:translateY(-3px) rotate(-2deg)}
+.site-header .nav-link.active,.site-header .nav-link[aria-current="page"]{background:#ffdf49;color:#211642;border:2px solid #fff;box-shadow:3px 4px 0 #d36d3f}
+.brand{font-weight:1000;letter-spacing:-1.5px;text-shadow:3px 3px 0 #0d0c32}
+.brand-mark{border:3px solid white;border-radius:13px;background:#ffda42;box-shadow:4px 4px 0 #11113c;color:#28205d;transform:rotate(-7deg)}
+.brand-accent{color:#ffde50}
+.header-tag,.coming-tag{color:#24164b;background:#ffdd58;border:2px solid #fff7cf;box-shadow:3px 3px 0 #16103f;font-weight:950}
+.eyebrow{color:#ffe971;font-weight:950}
+h1{font-weight:1000;text-shadow:4px 5px 0 #11103b}
+h1 span{background:linear-gradient(90deg,#ffe36d,#ff9eac,#7df8e7);background-clip:text;color:transparent}
+h2,h3{font-weight:950}
+.button{border:2px solid #fff6e8;border-radius:15px;box-shadow:4px 5px 0 #100c37}
+.button.primary{background:#ffdd52;color:#26164a;box-shadow:4px 5px 0 #9c456c}
+.button.secondary{background:#4f3eb2;color:white}
+.collection-card{border:3px solid #fff4de;border-radius:24px;box-shadow:7px 8px 0 #0d103c;background:#5342adf2}
+.collection-card:nth-child(2){background:#b3469aee}
+.collection-card:nth-child(3){background:#df6858ee}
+.collection-card:nth-child(4){background:#1d8f91ee}
+.collection-card:nth-child(5){background:#7d5ca8ee}
+.collection-card p{color:#fff0f5}
+.collection-card .card-state{color:#fff2b1}
+.card-icon{background:#ffdf55!important;color:#28174e!important;border:3px solid white;box-shadow:4px 4px 0 #231748}
+.section-intro,.lead,.updates p:not(.eyebrow){color:#e5e2ff}
+.updates{border-top:3px dashed #ffffff6b}
+.update-pill{background:#1c266e;border:2px solid #a4f8ed;color:#eafff7;box-shadow:4px 4px 0 #10103a}
+.planet{border:5px solid #fff5c5;background:radial-gradient(circle at 32% 25%,#ffed7e,#ff8ba3 54%,#7b4bd2);box-shadow:9px 12px 0 #10103b,0 0 70px #ffcf6d55}
+.orbit{border:3px dashed #ffeb92a6}
+footer{border-top:2px solid #ffffff66;color:#ece8ff}
+@media(max-width:600px){.site-header nav{border-width:2px;box-shadow:3px 4px 0 #090a2a}.site-header .nav-link{padding:8px 10px}.collection-card{box-shadow:4px 5px 0 #0d103c}}
