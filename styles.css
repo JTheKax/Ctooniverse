@@ -41,3 +41,15 @@ h1 span{color:#4bc9ff}
 .coming-tag{color:#8ce7ff;border-color:#187cbe}
 footer{border-top-color:#195b91;color:#a9cce8}
 @media(prefers-reduced-motion:reduce){.site-header .nav-link{transition:none}}
+
+/* Electric-blue arcade control tabs */
+.site-header nav{gap:9px;padding:9px;background:linear-gradient(180deg,#09284b,#071a35);border:1px solid #258fd4;border-radius:18px;box-shadow:0 8px 24px #020b1d88,inset 0 1px #7fdfff22}
+.site-header .nav-link{position:relative;isolation:isolate;overflow:hidden;min-height:48px;gap:9px;padding:11px 17px;background:linear-gradient(180deg,#174777,#0c2b50);border:1px solid #2d83bd;border-radius:11px;color:#e1f6ff;box-shadow:inset 0 1px #ffffff24,0 3px 0 #04152c;font-size:13px;font-weight:800;letter-spacing:.15px;transition:transform .16s,box-shadow .16s,border-color .16s,background .16s}
+.site-header .nav-link::before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,#8defff88,transparent);pointer-events:none}
+.site-header .nav-link:hover{transform:translateY(-3px);background:linear-gradient(180deg,#2168a6,#104579);border-color:#7cdbff;box-shadow:0 5px 0 #04152c,0 0 17px #159dff55;color:#fff}
+.site-header .nav-link.active,.site-header .nav-link[aria-current="page"]{background:linear-gradient(135deg,#42d9ff,#0780ec);border-color:#a5f2ff;color:#062644;box-shadow:0 3px 0 #075c9b,0 0 22px #12bfff88,inset 0 1px #ffffff9c}
+.site-header .nav-link.active .nav-icon{color:#07365d}
+.site-header .nav-link .nav-icon{font-size:18px;width:21px;min-width:21px;height:21px;filter:drop-shadow(0 0 4px #49caff55)}
+.site-header .nav-link:focus-visible{outline:3px solid #ffe680;outline-offset:3px}
+@media(max-width:650px){.site-header nav{gap:5px;padding:6px;border-radius:13px}.site-header .nav-link{min-height:41px;padding:8px 10px;font-size:12px;gap:5px}.site-header .nav-link .nav-icon{width:17px;min-width:17px;font-size:15px}}
+@media(prefers-reduced-motion:reduce){.site-header .nav-link{transition:none}.site-header .nav-link:hover{transform:none}}
