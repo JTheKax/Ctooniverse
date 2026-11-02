@@ -606,3 +606,20 @@ body.shop-cartoon-page .shop-department{background:rgba(42,18,82,.82)}
 .site-header .community-dropdown.is-open>.community-dropdown-panel{display:grid!important}
 .site-header .community-dropdown-trigger{position:relative;min-height:46px;overflow:visible!important}
 @media(max-width:700px){.site-header .community-dropdown .community-dropdown-panel{left:auto!important;right:0!important}}
+
+/* Floating opt-in music player */
+.ctoon-music-player{position:fixed;bottom:18px;right:18px;z-index:20000;font:inherit;color:#25132d;max-width:calc(100vw - 28px)}
+.ctoon-music-player button{cursor:pointer;font:inherit;font-weight:900}
+.ctoon-music-player .music-toggle{border:3px solid #25132d;border-radius:16px;background:#ffcf54;color:#24112c;padding:11px 17px;box-shadow:4px 5px 0 #25132d}
+.ctoon-music-player .music-controls{width:min(320px,calc(100vw - 28px));margin-top:9px;background:#fff0c5;border:3px solid #25132d;border-radius:16px;padding:16px;box-shadow:5px 6px 0 #25132d}
+.ctoon-music-player .music-controls[hidden]{display:none!important}
+.ctoon-music-player .music-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:1000}
+.ctoon-music-player .music-close{background:transparent;border:0;font-size:24px;color:#25132d}
+.ctoon-music-player .music-track{margin:10px 0;font-weight:750}
+.ctoon-music-player .music-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ctoon-music-player .music-play,.ctoon-music-player .music-mute{border:2px solid #25132d;background:#f8d263;border-radius:9px;padding:7px 10px;color:#25132d}
+.ctoon-music-player button:disabled{opacity:.5;cursor:not-allowed}
+.ctoon-music-player .music-volume-label{font-size:12px;font-weight:800;display:grid;gap:3px}
+.ctoon-music-player .music-volume{width:100px;accent-color:#7633b5}
+.ctoon-music-player .music-hint{font-size:12px;line-height:1.4;margin-bottom:0}
+@media(max-width:650px){.ctoon-music-player{right:12px;bottom:12px}}
