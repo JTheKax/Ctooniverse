@@ -12,7 +12,8 @@ async function updateHeader(){
   profile.classList.remove('is-guest');coins.textContent='Loading coins…';
   const {data,error:walletError}=await db.from('coin_wallets').select('balance').eq('user_id',user.id).maybeSingle();
   if(id!==seq)return;
-  if(!walletError&&data){const next=Number(data.balance);if(previousBalance!==null&&next!==previousBalance){profile.classList.remove('coin-updated');void profile.offsetWidth;profile.classList.add('coin-updated');}previousBalance=next;}else if(walletError){previousBalance=null;}\n  coins.textContent=walletError?'Coins unavailable':(data?.balance??0).toLocaleString()+' Coins';
+  if(!walletError&&data){const next=Number(data.balance);if(previousBalance!==null&&next!==previousBalance){profile.classList.remove('coin-updated');void profile.offsetWidth;profile.classList.add('coin-updated');}previousBalance=next;}else if(walletError){previousBalance=null;}
+  coins.textContent=walletError?'Coins unavailable':(data?.balance??0).toLocaleString()+' Coins';
  }catch(_){if(id===seq){name.textContent='Guest';coins.textContent='Unavailable';}}
 }
 db.auth.onAuthStateChange(()=>setTimeout(updateHeader,50));
