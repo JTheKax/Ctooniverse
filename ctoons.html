@@ -1,4 +1,43 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#080d24"><title>Ctoons | CTooniverse</title><link rel="stylesheet" href="styles.css"><script src="script.js" defer></script></head>
-<body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="index.html" aria-label="CTooniverse home"><span class="brand-mark" aria-hidden="true">C</span><span>C<span class="brand-accent">Toon</span>iverse</span></a><nav aria-label="Main navigation"><a href="index.html" class="nav-link"><span class="nav-icon" aria-hidden="true">⌂</span><span>Home</span></a><a href="ctoons.html" class="nav-link active"><span class="nav-icon" aria-hidden="true">▣</span><span>Ctoons</span></a><a href="shop.html" class="nav-link"><span class="nav-icon" aria-hidden="true">🛒</span><span>Shop</span></a><a href="games.html" class="nav-link"><span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span></a><a href="watch.html" class="nav-link"><span class="nav-icon" aria-hidden="true">▶</span><span>Watch</span></a><a href="community.html" class="nav-link"><span class="nav-icon" aria-hidden="true">♧</span><span>Community</span></a><a href="account.html" class="nav-link"><span class="nav-icon" aria-hidden="true">●</span><span>Account</span></a><a href="owner.html" class="nav-link owner-nav"><span class="nav-icon" aria-hidden="true">♛</span><span>Owner</span></a></nav><span class="header-tag">NEW UNIVERSE</span></header><main id="main"><section class="section page-placeholder"><p class="eyebrow">CTooniverse</p><h1>Ctoons</h1><p class="lead">This section is coming soon. We're building CTooniverse one feature at a time.</p><span class="coming-tag">COMING SOON</span><div class="hero-actions"><a class="button secondary" href="index.html">Back to Home</a></div></section></main><footer><span>© <span id="year">2026</span> CTooniverse</span><span>Built from scratch. Built to collect.</span></footer></body></html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080d24"><meta name="description" content="Browse CTooniverse Ctoon collection categories and upcoming sets.">
+<title>Ctoon Sets | CTooniverse</title><link rel="stylesheet" href="styles.css"><script src="script.js" defer></script>
+<style>
+.catalog-intro{max-width:850px;margin:0 auto 2rem;text-align:center}
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:1rem;margin:1.5rem auto;max-width:1100px}
+.catalog-card{border:1px solid #5267a0;border-radius:16px;background:linear-gradient(145deg,#14244d,#0b1430);padding:1.5rem;min-height:175px;display:flex;flex-direction:column;align-items:flex-start;gap:.8rem;color:#fff;text-decoration:none;text-align:left;cursor:pointer;font:inherit}
+.catalog-card:hover,.catalog-card:focus-visible{outline:2px solid #8bcaff;outline-offset:2px;transform:translateY(-2px)}
+.catalog-card[aria-pressed="true"]{border-color:#8bcaff;box-shadow:0 0 0 2px #8bcaff}
+.catalog-card strong{font-size:1.35rem}.catalog-card small{color:#c7d6f4}.catalog-card .coming-tag{font-size:.7rem}
+.catalog-detail{max-width:1100px;margin:1.5rem auto;padding:1.5rem;border:1px solid #5267a0;border-radius:16px;background:#101b3a}
+.catalog-detail h2{margin-top:0}.catalog-detail p{color:#c7d6f4}
+.catalog-search{width:100%;max-width:400px;padding:.8rem;border-radius:9px;border:1px solid #7286b8;background:#080d24;color:#fff}
+.series-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.8rem;list-style:none;padding:0}
+.series-list li{padding:1rem;border:1px solid #45598b;border-radius:10px;background:#16264d;display:flex;flex-direction:column;gap:.6rem}
+.series-list span{color:#c7d6f4;font-size:.8rem}
+</style></head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><a class="brand" href="index.html" aria-label="CTooniverse home"><span class="brand-mark" aria-hidden="true">C</span><span>C<span class="brand-accent">Toon</span>iverse</span></a><nav aria-label="Main navigation"><a href="index.html" class="nav-link">Home</a><a href="ctoons.html" class="nav-link active" aria-current="page">Ctoons</a><a href="shop.html" class="nav-link">Shop</a><a href="games.html" class="nav-link">Games</a><a href="watch.html" class="nav-link">Watch</a><a href="community.html" class="nav-link">Community</a><a href="account.html" class="nav-link">Account</a><a href="owner.html" class="nav-link owner-nav">Owner</a></nav></header>
+<main id="main" class="section">
+<section class="catalog-intro"><p class="eyebrow">COLLECT YOUR UNIVERSE</p><h1>Ctoon Sets</h1><p>Explore upcoming collections. All sets remain locked until Ctoons are published. No Ctoons are currently available to collect.</p></section>
+<div class="catalog-grid" id="catalog-grid" aria-label="Ctoon categories"></div>
+<section class="catalog-detail" id="catalog-detail" aria-live="polite"><h2 id="category-title">Cartoons</h2><p>These sets are planned and are not yet available.</p><label for="series-search">Find a series</label><div><input class="catalog-search" id="series-search" type="search" placeholder="Search this category" autocomplete="off"></div><ul class="series-list" id="series-list"></ul><p id="empty-search" hidden>No matching series found.</p></section>
+</main><footer><span>© <span id="year">2026</span> CTooniverse</span><span>Built to collect.</span></footer>
+<script>
+"use strict";
+const categories={
+"Cartoons":["Dexter's Laboratory","Ed, Edd n Eddy","Johnny Bravo","Foster's Home for Imaginary Friends","The Powerpuff Girls","Samurai Jack","Xiaolin Showdown","Camp Lazlo","SpongeBob SquarePants","The Fairly OddParents","Jimmy Neutron","Danny Phantom","Class of 3000","Courage the Cowardly Dog","Codename: Kids Next Door","Family Guy","South Park","Adventure Time","The Simpsons","Mucha Lucha","Ben 10","Tom & Jerry","Jackie Chan Adventures","Teen Titans"],
+"Anime":["Dragon Ball Z","Naruto","One Piece","Attack on Titan","The Seven Deadly Sins","Digimon","Pokémon","Inuyasha","Yu-Gi-Oh!","Yu Yu Hakusho","Zatch Bell!","Duel Masters","Hamtaro","Lupin the Third","Fullmetal Alchemist","Case Closed","Yu-Gi-Oh! GX"],
+"Movies":[],
+"Video Games":["Kingdom Hearts","Super Mario","The Legend of Zelda","Animal Crossing","Resident Evil","Luigi's Mansion","WWE 2K","Final Fantasy","Fallout","Dead Rising"],
+"Misc":[]
+};
+const grid=document.getElementById("catalog-grid"),list=document.getElementById("series-list"),search=document.getElementById("series-search"),title=document.getElementById("category-title"),empty=document.getElementById("empty-search");
+let selected="Cartoons";
+for(const name of Object.keys(categories)){const button=document.createElement("button");button.type="button";button.className="catalog-card";button.setAttribute("aria-pressed",String(name===selected));const heading=document.createElement("strong");heading.textContent=name;const count=document.createElement("small");count.textContent=categories[name].length+" planned series";const status=document.createElement("span");status.className="coming-tag";status.textContent="COMING SOON";button.append(heading,count,status);button.addEventListener("click",()=>{selected=name;search.value="";render();document.getElementById("catalog-detail").scrollIntoView({behavior:"smooth",block:"start"});});grid.append(button);}
+function render(){title.textContent=selected;for(const button of grid.children)button.setAttribute("aria-pressed",String(button.querySelector("strong").textContent===selected));list.replaceChildren();const items=categories[selected].filter(s=>s.toLowerCase().includes(search.value.trim().toLowerCase()));for(const name of items){const li=document.createElement("li");const label=document.createElement("strong");label.textContent=name;const status=document.createElement("span");status.textContent="Coming Soon · Locked";li.append(label,status);list.append(li);}empty.hidden=items.length>0;if(!categories[selected].length){empty.hidden=false;empty.textContent="Series for this category will be announced soon.";}else empty.textContent="No matching series found.";}
+search.addEventListener("input",render);render();
+</script></body></html>
