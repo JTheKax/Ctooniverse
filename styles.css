@@ -742,3 +742,12 @@ body.games-arcade-page::after{display:none!important}
 body.games-arcade-page main{position:relative;z-index:1;background:transparent!important}
 body.games-arcade-page .page-placeholder{background:rgba(12,10,44,.78)!important;border-color:rgba(115,153,255,.75)!important;backdrop-filter:blur(6px)}
 @media(max-width:700px){body.games-arcade-page{background-attachment:scroll!important;background-position:center top!important}}
+
+/* Watch: hand-drawn blue-purple movie palace background */
+body.watch-theater-page{
+ background:#130a37 url("watch-theater-handdrawn.png") center center / cover fixed no-repeat!important;
+}
+body.watch-theater-page::before,body.watch-theater-page::after{display:none!important}
+body.watch-theater-page main{position:relative;z-index:1;background:transparent!important}
+body.watch-theater-page .page-placeholder{background:rgba(13,10,42,.8)!important;border-color:rgba(133,116,255,.78)!important;backdrop-filter:blur(6px)}
+@media(max-width:700px){body.watch-theater-page{background-attachment:scroll!important;background-position:center top!important}}
