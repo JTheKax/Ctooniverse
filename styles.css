@@ -340,3 +340,22 @@ footer{background:#08070bde;padding-inline:18px;border-radius:12px;color:#f1dfb7
 .header-player.is-guest .header-player-icon{background:#393443;color:#c7c0d1}
 @media(max-width:900px){.site-header .header-player{margin-left:auto}}
 @media(max-width:650px){.site-header .header-player{min-width:0;max-width:185px;padding:7px 10px}.header-player-icon{width:29px;height:29px}.header-player-info{max-width:128px}#header-player-name{font-size:12px}#header-player-coins{font-size:11px}}
+
+/* High-contrast player badge: clearly separated from the illustrated background. */
+.site-header .header-player{
+  background:#080b18!important;
+  border:2px solid #ffe09a!important;
+  border-radius:16px;
+  padding:10px 15px;
+  box-shadow:0 0 0 3px #07070ddd,0 7px 22px #000e,0 0 19px #ffcc4c66,inset 0 1px #fff1bb55!important;
+  backdrop-filter:none!important;
+}
+.site-header .header-player-icon{
+  background:linear-gradient(145deg,#fff9c9 0%,#ffd54e 45%,#bd7715 100%)!important;
+  color:#17120b!important;
+  box-shadow:0 0 0 2px #60410b,0 0 12px #ffdc71aa!important;
+}
+.site-header #header-player-name{color:#ffffff!important;font-size:14px;font-weight:900;text-shadow:0 1px 3px #000}
+.site-header #header-player-coins{color:#ffe071!important;font-size:13px;font-weight:900;text-shadow:0 1px 3px #000}
+.site-header .header-player.is-guest{border-color:#c3c7d6!important;box-shadow:0 0 0 3px #07070ddd,0 7px 22px #000e!important}
+@media(max-width:650px){.site-header .header-player{padding:8px 11px}.site-header #header-player-name{font-size:12px}.site-header #header-player-coins{font-size:11px}}
