@@ -12,16 +12,16 @@ if (year) year.textContent = String(new Date().getFullYear());
     let generation = 0;
     async function updateOwnerNavigation() {
       const current = ++generation;
-      links.forEach(link => link.classList.remove('owner-visible'));
+      links.forEach(link => { link.classList.remove('owner-visible'); link.style.setProperty('display', 'none', 'important'); });
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error || !user) return;
       const { data, error: membershipError } = await supabase.from('site_owners').select('user_id').eq('user_id', user.id).maybeSingle();
       if (current !== generation || membershipError || !data) return;
-      links.forEach(link => link.classList.add('owner-visible'));
+      links.forEach(link => { link.classList.add('owner-visible'); link.style.setProperty('display', 'inline-flex', 'important'); });
     }
     supabase.auth.onAuthStateChange(() => { setTimeout(updateOwnerNavigation, 0); });
     await updateOwnerNavigation();
   } catch (_) {
-    links.forEach(link => link.classList.remove('owner-visible'));
+    links.forEach(link => { link.classList.remove('owner-visible'); link.style.setProperty('display', 'none', 'important'); });
   }
 })();
