@@ -14,6 +14,20 @@ mute.addEventListener('click',()=>{audio.muted=!audio.muted;sync();});
 volume.addEventListener('input',()=>{audio.volume=Number(volume.value)/100;if(audio.volume>0)audio.muted=false;sync();});
 audio.addEventListener('play',sync);audio.addEventListener('pause',sync);
 audio.addEventListener('error',()=>{hint.textContent='This audio file could not be loaded.';play.disabled=true;});
-fetch('https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/site_music_tracks?select=title,storage_path&enabled=eq.true&order=sort_order.asc,created_at.asc',{headers:{apikey:'sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS'},cache:'no-store'}).then(r=>r.ok?r.json():[]).then(data=>{tracks=Array.isArray(data)?data.filter(t=>t&&typeof t.title==='string'&&/^tracks\/[a-zA-Z0-9_-]+\.(mp3|ogg|wav)$/.test(t.storage_path)):[];if(!tracks.length)return;let index=0;const select=()=>{const t=tracks[index];label.textContent=t.title;audio.src='https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/'+t.storage_path;play.disabled=false;mute.disabled=false;volume.disabled=false;hint.textContent='Press Play to listen.'};select();audio.addEventListener('ended',()=>{index=(index+1)%tracks.length;select();audio.play().catch(()=>{});});}).catch(()=>{});
+async function loadMusic(){
+ hint.textContent='Loading music library…';
+ try{
+  const response=await fetch('https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/site_music_tracks?select=title,storage_path&enabled=eq.true&order=sort_order.asc,created_at.asc',{headers:{apikey:'sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS',Authorization:'Bearer sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS'},cache:'no-store'});
+  if(!response.ok)throw new Error('Music service returned '+response.status);
+  const data=await response.json();
+  tracks=Array.isArray(data)?data.filter(t=>t&&typeof t.title==='string'&&/^tracks\\/[a-zA-Z0-9_-]+\\.(mp3|ogg|wav)$/i.test(t.storage_path)):[];
+  if(!tracks.length){hint.textContent='No published tracks found. Please try refreshing.';return}
+  let index=0;
+  const select=()=>{const t=tracks[index];label.textContent=t.title;audio.src='https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/'+t.storage_path;play.disabled=false;mute.disabled=false;volume.disabled=false;hint.textContent='Press Play to listen.'};
+  select();
+  audio.addEventListener('ended',()=>{index=(index+1)%tracks.length;select();audio.play().catch(()=>{hint.textContent='Press Play for the next song.'})});
+ }catch(error){hint.textContent='Unable to load music: '+error.message;label.textContent='Music temporarily unavailable'}
+}
+loadMusic();
 
 })();
