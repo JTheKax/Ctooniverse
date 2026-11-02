@@ -36,3 +36,14 @@ if (year) year.textContent = String(new Date().getFullYear());
     await verify();
   } catch (_) { setVisible(false); }
 })();
+
+/* Decorative Saturn layers; no impact on authentication or page controls. */
+(() => {
+  if (!document.querySelector('.saturn-scene')) {
+    const scene = document.createElement('div');
+    scene.className = 'saturn-scene';
+    scene.setAttribute('aria-hidden', 'true');
+    scene.innerHTML = '<div class="saturn-rings"></div><div class="saturn-planet"></div><div class="saturn-rings saturn-rings-front"></div>';
+    document.body.prepend(scene);
+  }
+})();
