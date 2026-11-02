@@ -706,3 +706,29 @@ body .page-placeholder{background:rgba(17,12,45,.84)!important;border:1px solid 
 body.shop-cartoon-page .shop-intro,body.shop-cartoon-page .shop-departments,body.shop-cartoon-page .shop-bottom{background:rgba(19,10,48,.88)!important}
 @media(max-width:700px){body,body.home-universe-page,body.games-arcade-page,body.ctoons-library-page,body.shop-cartoon-page,body.watch-theater-page{background-attachment:scroll!important}body::before{background-size:36px 36px!important}}
 @media(prefers-reduced-motion:reduce){body::before{animation:none!important}}
+
+/* Unified electric-blue and violet arcade theme across all pages */
+:root{--arcade-blue:#387bff;--arcade-purple:#8954ff;--arcade-deep:#0c0a2e}
+html:has(body){background:#080b27!important}
+body,body.home-universe-page,body.games-arcade-page,body.ctoons-library-page,body.shop-cartoon-page,body.watch-theater-page,
+body.community-neon-page,body.account-neon-page,body.owner-neon-page{
+ --arcade-pink:111,77,255!important;--arcade-cyan:42,134,255!important;--arcade-violet:119,60,240!important;
+ background:#080b27!important;
+ background-image:radial-gradient(ellipse at 12% 15%,rgba(59,116,255,.27),transparent 42%),radial-gradient(ellipse at 88% 20%,rgba(134,66,255,.25),transparent 42%),radial-gradient(ellipse at 52% 94%,rgba(60,86,233,.23),transparent 48%),linear-gradient(145deg,#070b29 0%,#170d3d 52%,#090e30 100%)!important;
+}
+body::before,body.home-universe-page::before,body.games-arcade-page::before,body.ctoons-library-page::before,body.shop-cartoon-page::before,body.watch-theater-page::before{
+ background-image:linear-gradient(rgba(77,127,255,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(132,83,255,.10) 1px,transparent 1px)!important;
+}
+body .page-placeholder{border-color:rgba(117,113,255,.58)!important;box-shadow:0 0 24px rgba(74,104,255,.18)!important}
+body.shop-cartoon-page .shop-intro,body.shop-cartoon-page .shop-departments,body.shop-cartoon-page .shop-bottom{border-color:#8774ff!important}
+body.shop-cartoon-page .shop-department{border-color:#5b8cff!important;background:rgba(39,29,102,.84)!important}
+.ctoon-music-player .music-toggle{background:linear-gradient(120deg,#327fff,#8651ff 55%,#4868f8)!important;box-shadow:0 0 0 3px #170c39,0 0 23px #655aff88,4px 5px 0 #170c39!important}
+.ctoon-music-player .music-controls{border-color:#7774ff!important;background:linear-gradient(155deg,#19265e 0%,#170e39 55%,#12194d 100%)!important;box-shadow:0 0 0 4px #100a2c,0 0 28px #5e68ff77,7px 10px 0 #08071b!important}
+.ctoon-music-player .music-controls::before{background:linear-gradient(90deg,#3a89ff,#8e5dff,#5a73ff)!important}
+.ctoon-music-player .music-disc{border-color:#7288ff!important;box-shadow:0 0 16px #526cff66!important}
+.ctoon-music-player .music-disc span{background:#8e74ff!important;color:#fff!important}
+.ctoon-music-player .music-actions>.music-play{background:linear-gradient(120deg,#2e80ff,#8652ff)!important;border-color:#8c9fff!important}
+.ctoon-music-player .music-volume{accent-color:#8173ff!important}
+.ctoon-music-player .music-live-dot{background:#5c9cff!important;box-shadow:0 0 10px #5c9cff!important}
+.ctoon-music-player .music-equalizer i{background:#759aff!important}
+.ctoon-music-player .music-repeat[aria-pressed="true"]{background:#42348b!important;color:#e4d9ff!important;border-color:#a78bff!important;box-shadow:0 0 11px #7565ff55!important}
