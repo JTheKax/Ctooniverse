@@ -545,3 +545,9 @@ body.games-arcade-page::before,body.games-arcade-page::after{display:none!import
 body.games-arcade-page main{background:transparent!important}
 body.games-arcade-page .page-placeholder{background:rgba(21,12,49,.86)!important;backdrop-filter:blur(4px)}
 @media(max-width:700px){body.games-arcade-page{background-attachment:scroll!important}}
+
+/* Homepage only: hand-drawn illustrated universe. */
+body.home-universe-page{background:#0b1250 url("home-universe-background.png") center center / cover fixed no-repeat!important}
+body.home-universe-page::before,body.home-universe-page::after{display:none!important}
+body.home-universe-page main{background:transparent!important}
+@media(max-width:700px){body.home-universe-page{background-attachment:scroll!important}}
