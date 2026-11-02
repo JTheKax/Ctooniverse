@@ -598,3 +598,11 @@ body.shop-cartoon-page .shop-department{background:rgba(42,18,82,.82)}
 .site-header .community-dropdown-panel a{display:block;padding:10px 12px;border:2px solid transparent;border-radius:6px;color:#171020;font-weight:900}
 .site-header .community-dropdown-panel a:hover,.site-header .community-dropdown-panel a:focus-visible{background:#f8cd57;border-color:#171020;outline:none}
 @media(max-width:650px){.site-header .community-dropdown-panel{left:auto;right:0}}
+
+/* Community dropdown visibility and stacking repair */
+.site-header .community-dropdown{position:relative!important;overflow:visible!important;flex:0 0 auto;align-items:center}
+.site-header .community-dropdown.is-open{z-index:10030!important}
+.site-header .community-dropdown .community-dropdown-panel{display:none!important;position:absolute!important;top:calc(100% + 8px)!important;left:0!important;right:auto!important;min-width:190px;max-width:min(90vw,300px);overflow:visible!important;z-index:10031!important}
+.site-header .community-dropdown.is-open>.community-dropdown-panel{display:grid!important}
+.site-header .community-dropdown-trigger{position:relative;min-height:46px;overflow:visible!important}
+@media(max-width:700px){.site-header .community-dropdown .community-dropdown-panel{left:auto!important;right:0!important}}
