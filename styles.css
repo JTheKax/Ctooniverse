@@ -506,3 +506,15 @@ body>main,body>footer{position:relative;z-index:1!important}
  .site-header #header-player-name{font-size:14px!important}
 }
 @media(prefers-reduced-motion:reduce){.site-header .header-player{transition:none!important}.site-header .header-player:hover{transform:none!important}}
+
+/* Owner-only dropdown shares the Account menu's elevated navigation layer. */
+.site-header .owner-menu{position:relative;align-items:center;z-index:10002}
+.site-header .owner-menu.owner-visible{display:inline-flex!important}
+.site-header .owner-menu-trigger{font:inherit;cursor:pointer;white-space:nowrap}
+.site-header .owner-menu-trigger[aria-expanded="true"]{background:#f8cc54!important;color:#1a1121!important}
+.site-header .owner-menu-panel{display:none;position:absolute;top:calc(100% + 9px);right:0;min-width:200px;padding:8px;background:#fff0c5;border:3px solid #100d21;border-radius:8px 13px 7px 12px;box-shadow:5px 6px 0 #100d21;z-index:10011}
+.site-header .owner-menu-trigger[aria-expanded="true"]+.owner-menu-panel{display:grid;gap:5px}
+.site-header .owner-menu-panel>a{display:block;padding:10px 12px;border:2px solid transparent;border-radius:6px;color:#171020;text-decoration:none;text-align:left;font:inherit;font-weight:900}
+.site-header .owner-menu-panel>a:hover,.site-header .owner-menu-panel>a:focus-visible{background:#f8cd57;border-color:#171020;outline:none}
+.site-header .owner-menu:has(.owner-menu-trigger[aria-expanded="true"]){z-index:10010}
+@media(max-width:700px){.site-header .owner-menu-panel{right:auto;left:0}}
