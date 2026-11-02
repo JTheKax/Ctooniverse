@@ -551,3 +551,10 @@ body.home-universe-page{background:#0b1250 url("home-universe-background.png") c
 body.home-universe-page::before,body.home-universe-page::after{display:none!important}
 body.home-universe-page main{background:transparent!important}
 @media(max-width:700px){body.home-universe-page{background-attachment:scroll!important}}
+
+/* Shop only: hand-drawn collectibles store background. */
+body.shop-cartoon-page{background:#211047 url("shop-cartoon-background.png") center center / cover fixed no-repeat!important}
+body.shop-cartoon-page::before,body.shop-cartoon-page::after{display:none!important}
+body.shop-cartoon-page main{background:transparent!important}
+body.shop-cartoon-page .page-placeholder{background:rgba(21,12,49,.84)!important;backdrop-filter:blur(4px)}
+@media(max-width:700px){body.shop-cartoon-page{background-attachment:scroll!important}}
