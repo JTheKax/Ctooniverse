@@ -1,13 +1,14 @@
 "use strict";
 (()=>{if(document.getElementById('ctoon-music-player'))return;
 const root=document.createElement('aside');root.id='ctoon-music-player';root.className='ctoon-music-player';root.setAttribute('aria-label','Website music player');
-root.innerHTML='<button class="music-toggle" type="button" aria-expanded="false" aria-controls="music-controls">♫ Music</button><div id="music-controls" class="music-controls" hidden><div class="music-heading">♫ CTooniverse Radio <button type="button" class="music-close" aria-label="Close music player">×</button></div><p class="music-track">No music uploaded yet</p><audio preload="none"></audio><div class="music-actions"><button type="button" class="music-play" disabled>▶ Play</button><button type="button" class="music-mute" aria-label="Mute music" disabled>♫</button><label class="music-volume-label">Volume <input class="music-volume" type="range" min="0" max="100" value="50" disabled aria-label="Music volume"></label></div><p class="music-hint">Music will be available when a track is added.</p></div>';
+root.innerHTML='<button class="music-toggle" type="button" aria-expanded="false" aria-controls="music-controls">♫ Music</button><div id="music-controls" class="music-controls" hidden><div class="music-heading">♫ CTooniverse Radio <button type="button" class="music-close" aria-label="Close music player">×</button></div><p class="music-track">No music uploaded yet</p><label class="music-choice-label" for="music-song-choice">Choose a song</label><select id="music-song-choice" class="music-song-choice" disabled><option value="">Loading songs…</option></select><audio preload="none"></audio><div class="music-actions"><button type="button" class="music-play" disabled>▶ Play</button><button type="button" class="music-mute" aria-label="Mute music" disabled>♫</button><label class="music-volume-label">Volume <input class="music-volume" type="range" min="0" max="100" value="50" disabled aria-label="Music volume"></label></div><p class="music-hint">Music will be available when a track is added.</p></div>';
 document.body.append(root);
-const toggle=root.querySelector('.music-toggle'),panel=root.querySelector('.music-controls'),close=root.querySelector('.music-close'),audio=root.querySelector('audio'),play=root.querySelector('.music-play'),mute=root.querySelector('.music-mute'),volume=root.querySelector('.music-volume'),label=root.querySelector('.music-track'),hint=root.querySelector('.music-hint');
+const toggle=root.querySelector('.music-toggle'),panel=root.querySelector('.music-controls'),close=root.querySelector('.music-close'),audio=root.querySelector('audio'),play=root.querySelector('.music-play'),mute=root.querySelector('.music-mute'),volume=root.querySelector('.music-volume'),label=root.querySelector('.music-track'),choice=root.querySelector('.music-song-choice'),hint=root.querySelector('.music-hint');
 const setOpen=open=>{panel.hidden=!open;toggle.setAttribute('aria-expanded',String(open));};
 toggle.addEventListener('click',()=>setOpen(panel.hidden));close.addEventListener('click',()=>setOpen(false));
 audio.volume=.5;
-let tracks=[];
+let tracks=[];let index=0;let selectTrack=()=>{};
+choice.addEventListener('change',async()=>{const wasPlaying=!audio.paused;index=Number(choice.value);if(!Number.isInteger(index)||index<0||index>=tracks.length)return;selectTrack();if(wasPlaying){try{await audio.play()}catch(_){hint.textContent='Press Play to start the selected song.'}}});
 const sync=()=>{play.textContent=audio.paused?'▶ Play':'❚❚ Pause';mute.textContent=audio.muted?'🔇':'♫';};
 play.addEventListener('click',async()=>{if(!audio.src)return;try{if(audio.paused)await audio.play();else audio.pause();}catch(_){hint.textContent='Playback was blocked. Press Play again.'}sync();});
 mute.addEventListener('click',()=>{audio.muted=!audio.muted;sync();});
@@ -22,10 +23,10 @@ async function loadMusic(){
   const data=await response.json();
   tracks=Array.isArray(data)?data.filter(t=>t&&typeof t.title==='string'&&t.storage_path.startsWith('tracks/')&&['mp3','ogg','wav'].includes(t.storage_path.split('.').pop().toLowerCase())):[];
   if(!tracks.length){hint.textContent='No published tracks found. Please try refreshing.';return}
-  let index=0;
-  const select=()=>{const t=tracks[index];label.textContent=t.title;audio.src='https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/'+t.storage_path;play.disabled=false;mute.disabled=false;volume.disabled=false;hint.textContent='Press Play to listen.'};
-  select();
-  audio.addEventListener('ended',()=>{index=(index+1)%tracks.length;select();audio.play().catch(()=>{hint.textContent='Press Play for the next song.'})});
+  choice.replaceChildren();tracks.forEach((track,i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=track.title;choice.append(option)});choice.disabled=false;
+  selectTrack=()=>{const t=tracks[index];label.textContent=t.title;choice.value=String(index);audio.src='https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/'+t.storage_path;play.disabled=false;mute.disabled=false;volume.disabled=false;hint.textContent='Press Play to listen.'};
+  selectTrack();
+  audio.addEventListener('ended',()=>{index=(index+1)%tracks.length;selectTrack();audio.play().catch(()=>{hint.textContent='Press Play for the next song.'})});
  }catch(error){hint.textContent='Unable to load music: '+error.message;label.textContent='Music temporarily unavailable'}
 }
 loadMusic();
