@@ -224,3 +224,13 @@ body::after{
 }
 @media(max-width:650px){body::after{width:110vw;right:-56vw;top:30vh;opacity:.48}}
 @media(prefers-reduced-motion:reduce){body::after{animation:none!important}}
+
+/* Centered Saturn scene with softly moving cloud bands and elegant rings. */
+body::after{display:none!important}
+.saturn-scene{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.saturn-rings{position:absolute;left:50%;top:51%;width:min(110vw,1350px);aspect-ratio:2.55;border-radius:50%;transform:translate(-50%,-50%) rotate(-19deg);background:repeating-radial-gradient(ellipse at center,transparent 0 25%,#f1c77812 26%,#c99c4b7d 27%,#f8e0a9b0 28%,#61441e55 29%,transparent 30%,transparent 33%,#e4bd7277 34%,transparent 35%,#e6c88d99 37%,transparent 39%,#ac793b88 42%,transparent 44%,transparent 47%);filter:drop-shadow(0 0 13px #d3a04c55);opacity:.86}
+.saturn-planet{position:absolute;left:50%;top:51%;width:min(62vw,740px);aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 30% 22%,#fff1ca99,transparent 31%),radial-gradient(circle at 30% 30%,transparent 24%,#34210d77 68%,#060506f2 96%),repeating-linear-gradient(174deg,#c49a61 0 19px,#f2d4a0 26px 43px,#b88950 51px 64px,#e0b679 75px 96px,#876139 105px 123px);background-size:100% 100%,100% 100%,220% 100%;box-shadow:inset 35px 20px 80px #fff0bd44,inset -90px -35px 100px #000c,0 0 50px #c8944b55;animation:saturn-rotation 48s linear infinite}
+.saturn-rings-front{clip-path:inset(50% 0 0 0);opacity:.95}
+@keyframes saturn-rotation{to{background-position:center,center,220% 0}}
+@media(max-width:650px){.saturn-planet{width:95vw;top:48%;opacity:.65}.saturn-rings{width:160vw;top:48%;opacity:.55}}
+@media(prefers-reduced-motion:reduce){.saturn-planet{animation:none!important}}
