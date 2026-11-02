@@ -432,3 +432,15 @@ body .shooting-star:nth-of-type(2){top:29%;right:38%;animation-delay:9s;animatio
 .username-form .button:disabled{opacity:.6;cursor:wait}
 .username-form p{margin:0;color:#24132b;font-weight:700}
 .username-form[hidden]{display:none!important}
+
+/* Accessible hand-inked Account dropdown */
+.site-header nav{overflow:visible!important}
+.site-header .account-dropdown{position:relative;display:inline-flex;align-items:center;z-index:30}
+.site-header .account-dropdown-trigger{font:inherit;cursor:pointer;white-space:nowrap}
+.site-header .account-dropdown-trigger[aria-expanded="true"]{background:#f8cc54!important;color:#1a1121!important}
+.site-header .account-dropdown-panel{display:none;position:absolute;top:calc(100% + 9px);right:0;min-width:185px;padding:8px;background:#fff0c5;border:3px solid #100d21;border-radius:8px 13px 7px 12px;box-shadow:5px 6px 0 #100d21;z-index:100}
+.site-header .account-dropdown-trigger[aria-expanded="true"]+.account-dropdown-panel{display:grid;gap:5px}
+.site-header .account-dropdown-panel>a,.site-header .account-dropdown-panel>button{display:block;width:100%;padding:10px 12px;border:2px solid transparent;border-radius:6px;background:transparent;color:#171020;text-decoration:none;text-align:left;font:inherit;font-weight:900;cursor:pointer}
+.site-header .account-dropdown-panel>a:hover,.site-header .account-dropdown-panel>button:hover,.site-header .account-dropdown-panel>a:focus-visible,.site-header .account-dropdown-panel>button:focus-visible{background:#f8cd57;border-color:#171020;outline:none}
+.site-header .account-dropdown-panel [hidden]{display:none!important}
+@media(max-width:700px){.site-header .account-dropdown-panel{right:auto;left:0}}
