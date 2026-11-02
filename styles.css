@@ -732,3 +732,13 @@ body.shop-cartoon-page .shop-department{border-color:#5b8cff!important;backgroun
 .ctoon-music-player .music-live-dot{background:#5c9cff!important;box-shadow:0 0 10px #5c9cff!important}
 .ctoon-music-player .music-equalizer i{background:#759aff!important}
 .ctoon-music-player .music-repeat[aria-pressed="true"]{background:#42348b!important;color:#e4d9ff!important;border-color:#a78bff!important;box-shadow:0 0 11px #7565ff55!important}
+
+/* Games / Arcade: hand-drawn blue-purple arcade illustration */
+body.games-arcade-page{
+ background:#160b42 url("games-arcade-handdrawn.png") center center / cover fixed no-repeat!important;
+}
+body.games-arcade-page::before{display:none!important}
+body.games-arcade-page::after{display:none!important}
+body.games-arcade-page main{position:relative;z-index:1;background:transparent!important}
+body.games-arcade-page .page-placeholder{background:rgba(12,10,44,.78)!important;border-color:rgba(115,153,255,.75)!important;backdrop-filter:blur(6px)}
+@media(max-width:700px){body.games-arcade-page{background-attachment:scroll!important;background-position:center top!important}}
