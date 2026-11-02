@@ -240,3 +240,34 @@ html{min-height:100%;background:#08051b}
 body{background:#08051b url("saturn-background.png") center center / cover fixed no-repeat!important}
 body::before,body::after,.saturn-scene{display:none!important}
 @media(max-width:700px){body{background-position:center center!important;background-attachment:scroll!important}}
+
+/* Twinkling stars over the approved illustration, without blocking controls. */
+body{isolation:isolate}
+body::before{
+  content:"";display:block!important;position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:.62;transform:none;filter:none;will-change:opacity;
+  background:
+    radial-gradient(circle at 13% 22%,#fff8d7 0 2px,transparent 4px),
+    radial-gradient(circle at 82% 17%,#fff 0 1.5px,transparent 4px),
+    radial-gradient(circle at 92% 64%,#ffe9aa 0 2px,transparent 5px),
+    radial-gradient(circle at 24% 72%,#fff 0 1.5px,transparent 4px),
+    radial-gradient(circle at 69% 82%,#fff4ca 0 2px,transparent 5px),
+    radial-gradient(circle at 49% 12%,#fff 0 1px,transparent 4px),
+    radial-gradient(circle at 7% 53%,#fff3c2 0 1px,transparent 3px);
+  background-size:100% 100%;
+  animation:ctoon-star-twinkle 5.5s ease-in-out infinite alternate!important;
+}
+@keyframes ctoon-star-twinkle{0%{opacity:.2}45%{opacity:.7}100%{opacity:.38}}
+.site-header,main,footer{position:relative;z-index:1}
+.site-header{isolation:isolate}
+.welcome-panel,.announcement-panel,.home-tile,.owner-panel{
+  background:linear-gradient(145deg,#17110cf2,#09080bed)!important;
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+}
+.section{background:linear-gradient(145deg,#100d13ee,#08070cdd);border:1px solid #9d762c;border-radius:18px;margin-top:25px;margin-bottom:35px}
+.welcome-copy,.announcement-panel,.home-tile,.section,.owner-panel{color:#fff9e9;text-shadow:0 1px 2px #000d}
+.welcome-copy>p:not(.eyebrow),.announcement-panel li,.lead,.home-tile small,.owner-panel p{color:#f0e5cf!important}
+.home-sections>h2,.announcement-panel h2,.section h1{color:#ffe0a0;text-shadow:0 2px 5px #000,0 0 12px #000a}
+footer{background:#08070bde;padding-inline:18px;border-radius:12px;color:#f1dfb7}
+@media(prefers-reduced-motion:reduce){body::before{animation:none!important;opacity:.45}}
