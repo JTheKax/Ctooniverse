@@ -115,3 +115,12 @@ footer{border-top-color:#604b28;color:#bcae90}
 #owner-email,#register-form input{background:#100e0a;border-color:#9b762e;color:#fff7e8}
 #owner-email:focus-visible,#register-form input:focus-visible{outline-color:#f0c86b}
 #owner-feedback,#register-feedback,.auth-link{color:#f2cc76}
+
+/* Subtle animated black-and-gold atmosphere; CSS-only and pointer-safe. */
+body{position:relative;isolation:isolate;background:#080706}
+body::before,body::after{content:"";position:fixed;inset:-35%;z-index:-1;pointer-events:none;will-change:transform}
+body::before{background:radial-gradient(ellipse at 24% 32%,#b8832929 0,transparent 34%),radial-gradient(ellipse at 77% 66%,#e5b65d1c 0,transparent 38%),radial-gradient(ellipse at 53% 9%,#7b53151c 0,transparent 36%);animation:gold-ambient-drift 24s ease-in-out infinite alternate}
+body::after{opacity:.38;background:repeating-linear-gradient(115deg,transparent 0,transparent 94px,#b28a2a12 95px,transparent 97px),linear-gradient(155deg,#050505dd,#21180b55 58%,#080808dd);animation:gold-shimmer-drift 35s linear infinite}
+@keyframes gold-ambient-drift{0%{transform:translate3d(-3%,1%,0) scale(1)}50%{transform:translate3d(3%,-2%,0) scale(1.05)}100%{transform:translate3d(-1%,3%,0) scale(1.02)}}
+@keyframes gold-shimmer-drift{from{transform:translate3d(-3%,0,0)}to{transform:translate3d(3%,0,0)}}
+@media(prefers-reduced-motion:reduce){body::before,body::after{animation:none!important;will-change:auto}}
