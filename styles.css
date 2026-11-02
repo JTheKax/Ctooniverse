@@ -452,3 +452,11 @@ body>main,body>footer{position:relative;z-index:1!important}
 .site-header .account-dropdown{z-index:10002!important}
 .site-header .account-dropdown:has(.account-dropdown-trigger[aria-expanded="true"]){z-index:10010!important}
 .site-header .account-dropdown-panel{z-index:10011!important;overflow:visible!important}
+
+/* Verified Owner crown: small hand-inked emblem next to the player name. */
+.site-header .header-player-info{display:block;min-width:0;line-height:1.4}
+.site-header #header-player-name{display:inline;vertical-align:middle;max-width:155px}
+.site-header .profile-owner-mark{display:inline-grid;place-items:center;vertical-align:middle;margin-left:5px;width:24px;height:24px;background:#f5c44b;color:#241227;border:2px solid #1a1022;border-radius:6px 8px 5px 7px;box-shadow:2px 2px 0 #1a1022;font-size:17px;line-height:1}
+.site-header .profile-owner-mark[hidden]{display:none!important}
+.site-header #header-player-coins{display:block}
+@media(max-width:650px){.site-header .profile-owner-mark{width:21px;height:21px;font-size:15px}}
