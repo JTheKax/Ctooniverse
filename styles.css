@@ -587,3 +587,14 @@ body.shop-cartoon-page .shop-main{position:relative;background:transparent!impor
 body.shop-cartoon-page .shop-intro,body.shop-cartoon-page .shop-departments,body.shop-cartoon-page .shop-bottom{min-height:0!important;background:rgba(19,9,45,.76)!important}
 body.shop-cartoon-page .shop-department{background:rgba(42,18,82,.82)}
 @media(max-width:650px){body.shop-cartoon-page::before{background-position:center top!important}body.shop-cartoon-page .shop-main{width:calc(100% - 24px);padding-top:12px}}
+
+/* Community dropdown navigation */
+.site-header .community-dropdown{position:relative;display:inline-flex;z-index:10002}
+.site-header .community-dropdown:has(.community-dropdown-trigger[aria-expanded="true"]){z-index:10010}
+.site-header .community-dropdown-trigger{cursor:pointer;font:inherit}
+.site-header .community-dropdown-trigger[aria-expanded="true"]{background:#f8cc54!important;color:#1a1121!important}
+.site-header .community-dropdown-panel{display:none;position:absolute;top:calc(100% + 9px);left:0;min-width:180px;padding:8px;background:#fff0c5;border:3px solid #100d21;border-radius:10px;box-shadow:5px 6px 0 #100d21;z-index:10011}
+.site-header .community-dropdown-trigger[aria-expanded="true"]+.community-dropdown-panel{display:grid;gap:5px}
+.site-header .community-dropdown-panel a{display:block;padding:10px 12px;border:2px solid transparent;border-radius:6px;color:#171020;font-weight:900}
+.site-header .community-dropdown-panel a:hover,.site-header .community-dropdown-panel a:focus-visible{background:#f8cd57;border-color:#171020;outline:none}
+@media(max-width:650px){.site-header .community-dropdown-panel{left:auto;right:0}}
