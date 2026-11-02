@@ -85,3 +85,33 @@ footer{border-top-color:#195b91;color:#a9cce8}
 /* Owner navigation is fail-closed until Supabase confirms membership. */
 .owner-nav { display: none !important; }
 .owner-nav.owner-visible { display: inline-flex !important; }
+
+/* Black and gold Ctooniverse appearance */
+:root{--bg:#090909;--panel:#19150c;--border:#a77b23;--text:#fff8e7;--muted:#c9bb9c;--purple:#d5a53b}
+body{background:radial-gradient(ellipse at 80% 75%,#77531133 0,transparent 52%),linear-gradient(155deg,#050505,#17130b 60%,#090909);color:var(--text)}
+.brand-accent,.eyebrow,h1 span,.section h1,.tile-symbol{color:#f1c761}
+.brand-mark{background:linear-gradient(135deg,#fff1bd,#b98522);color:#211705;box-shadow:0 3px 0 #6c4a13}
+.site-header nav{background:linear-gradient(180deg,#231b0d,#0e0d0a);border-color:#9b7228;box-shadow:0 8px 24px #0009,inset 0 1px #f5d98722}
+.site-header .nav-link{background:linear-gradient(180deg,#342711,#1b170e);border-color:#7c5c24;color:#f6e5ba;text-shadow:none;box-shadow:inset 0 1px #fff2bd20,0 3px 0 #080705}
+.site-header .nav-link::before{background:linear-gradient(90deg,transparent,#f6d37888,transparent)}
+.site-header .nav-link:hover{background:linear-gradient(180deg,#5d4419,#30230e);border-color:#f2ca67;box-shadow:0 5px 0 #080705,0 0 17px #c7973655;color:#fff8e6}
+.site-header .nav-link.active,.site-header .nav-link[aria-current="page"]{background:linear-gradient(135deg,#f5d57c,#b78322);border-color:#ffe4a1;color:#1c1406;box-shadow:0 3px 0 #6d4912,0 0 22px #c99b4e66,inset 0 1px #ffffff88}
+.site-header .nav-link.active .nav-icon{color:#261904}
+.site-header .nav-link .nav-icon{filter:drop-shadow(0 0 4px #e5ba5b44)}
+.welcome-panel,.announcement-panel,.home-tile{border-color:#95702a;background:linear-gradient(145deg,#211b10,#100f0b)}
+.welcome-copy>p:not(.eyebrow),.announcement-panel li{color:#e1d5b9}
+.button.primary{background:linear-gradient(125deg,#f0c96b,#ad7a1d);color:#1a1205}
+.button.secondary{background:#302511;border-color:#9f772b}
+.welcome-planet{background:radial-gradient(circle at 30% 28%,#f7da8c,#a5731c 55%,#33230c);box-shadow:0 0 55px #c7963455}
+.planet-ring{border-color:#d3a03c;box-shadow:0 0 15px #f3c86455}
+.announcement-panel li{border-top-color:#604b28}
+.announcement-panel li:before{background:#d8a747}
+.home-tile small,.lead{color:#cbbd9f}
+.home-tile:hover{border-color:#f1c86c}
+.coming-tag{color:#f4d389;border-color:#99702a}
+footer{border-top-color:#604b28;color:#bcae90}
+.owner-panel{background:linear-gradient(145deg,#221b10,#100e0a);border-color:#98702a}
+.owner-panel p{color:#dfd1b4}
+#owner-email,#register-form input{background:#100e0a;border-color:#9b762e;color:#fff7e8}
+#owner-email:focus-visible,#register-form input:focus-visible{outline-color:#f0c86b}
+#owner-feedback,#register-feedback,.auth-link{color:#f2cc76}
