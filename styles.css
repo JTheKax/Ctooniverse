@@ -558,3 +558,10 @@ body.shop-cartoon-page::before,body.shop-cartoon-page::after{display:none!import
 body.shop-cartoon-page main{background:transparent!important}
 body.shop-cartoon-page .page-placeholder{background:rgba(21,12,49,.84)!important;backdrop-filter:blur(4px)}
 @media(max-width:700px){body.shop-cartoon-page{background-attachment:scroll!important}}
+
+/* Watch page only: hand-drawn movie theater background. */
+body.watch-theater-page{background:#28104c url("watch-theater-background.png") center center / cover fixed no-repeat!important}
+body.watch-theater-page::before,body.watch-theater-page::after{display:none!important}
+body.watch-theater-page main{background:transparent!important}
+body.watch-theater-page .page-placeholder{background:rgba(20,10,45,.84)!important;backdrop-filter:blur(4px)}
+@media(max-width:700px){body.watch-theater-page{background-attachment:scroll!important}}
