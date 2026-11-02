@@ -669,3 +669,40 @@ body.shop-cartoon-page .shop-department{background:rgba(42,18,82,.82)}
 @keyframes ctoon-eq{from{height:3px}to{height:16px}}
 @media(prefers-reduced-motion:reduce){.ctoon-music-player .music-disc,.ctoon-music-player .music-equalizer i{animation:none!important}}
 @media(max-width:650px){.ctoon-music-player .music-controls{max-height:70vh}}
+
+/* Ctooniverse site-wide neon arcade backgrounds — CSS only, no external images */
+html:has(body){background:#09071e!important}
+body,body.home-universe-page,body.games-arcade-page,body.ctoons-library-page,body.shop-cartoon-page,body.watch-theater-page{
+ --arcade-pink:255,63,187;--arcade-cyan:57,220,255;--arcade-violet:132,70,255;
+ background:#09071e!important;
+ background-image:
+ radial-gradient(ellipse at 12% 12%,rgba(var(--arcade-pink),.21),transparent 40%),
+ radial-gradient(ellipse at 88% 20%,rgba(var(--arcade-cyan),.18),transparent 38%),
+ radial-gradient(ellipse at 55% 94%,rgba(var(--arcade-violet),.24),transparent 48%),
+ linear-gradient(145deg,#0b0827 0%,#150c38 50%,#080d29 100%)!important;
+ background-attachment:fixed!important;
+ color-scheme:dark;
+}
+body.home-universe-page{--arcade-pink:255,69,193;--arcade-cyan:58,221,255;--arcade-violet:102,70,255}
+body.games-arcade-page{--arcade-pink:255,56,148;--arcade-cyan:44,240,229;--arcade-violet:149,66,255}
+body.ctoons-library-page{--arcade-pink:255,88,202;--arcade-cyan:118,160,255;--arcade-violet:173,83,255}
+body.shop-cartoon-page{--arcade-pink:255,75,162;--arcade-cyan:255,184,78;--arcade-violet:160,66,247}
+body.watch-theater-page{--arcade-pink:235,70,255;--arcade-cyan:70,198,255;--arcade-violet:111,62,226}
+body.community-neon-page{--arcade-pink:86,128,255;--arcade-cyan:57,235,238;--arcade-violet:150,76,255}
+body.account-neon-page{--arcade-pink:255,88,195;--arcade-cyan:83,227,255;--arcade-violet:117,86,248}
+body.owner-neon-page{--arcade-pink:255,174,65;--arcade-cyan:87,209,255;--arcade-violet:169,80,255}
+body::before,body.home-universe-page::before,body.games-arcade-page::before,body.ctoons-library-page::before,body.shop-cartoon-page::before,body.watch-theater-page::before{
+ content:""!important;display:block!important;position:fixed!important;inset:0!important;z-index:0!important;pointer-events:none!important;
+ background-image:linear-gradient(rgba(100,115,240,.075) 1px,transparent 1px),linear-gradient(90deg,rgba(100,115,240,.075) 1px,transparent 1px)!important;
+ background-size:52px 52px!important;
+ background-position:center center!important;
+ opacity:.65!important;
+ animation:none!important;
+}
+body::after,body.home-universe-page::after,body.games-arcade-page::after,body.ctoons-library-page::after,body.shop-cartoon-page::after,body.watch-theater-page::after{display:none!important}
+body>header,body>main,body>footer,body>.ctoon-music-player,body>.site-header{position:relative;z-index:1}
+body.home-universe-page main,body.games-arcade-page main,body.ctoons-library-page main,body.shop-cartoon-page main,body.watch-theater-page main{background:transparent!important}
+body .page-placeholder{background:rgba(17,12,45,.84)!important;border:1px solid rgba(145,109,255,.5)!important;box-shadow:0 0 25px rgba(119,73,255,.16)!important;backdrop-filter:blur(7px)}
+body.shop-cartoon-page .shop-intro,body.shop-cartoon-page .shop-departments,body.shop-cartoon-page .shop-bottom{background:rgba(19,10,48,.88)!important}
+@media(max-width:700px){body,body.home-universe-page,body.games-arcade-page,body.ctoons-library-page,body.shop-cartoon-page,body.watch-theater-page{background-attachment:scroll!important}body::before{background-size:36px 36px!important}}
+@media(prefers-reduced-motion:reduce){body::before{animation:none!important}}
