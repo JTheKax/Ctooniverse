@@ -180,3 +180,24 @@ body::after{inset:45% -30% -55%;opacity:.5;background:linear-gradient(to bottom,
 .button.secondary{background:linear-gradient(155deg,#493419,#1c160d);border-color:#c99a44;color:#fce6b1}
 .home-tile:hover{border-color:#ffe3a0;box-shadow:0 0 0 3px #100c05,0 0 32px #ffd07488,inset 0 1px #fff4c277}
 @media(prefers-reduced-motion:reduce){.site-header .nav-link::before{transition:none!important}}
+
+/* Universe background: gold nebulae, starfield and planetary horizon.
+   Keep the existing premium arcade navigation and content panels. */
+body{background:radial-gradient(ellipse at 18% 24%,#9d6a202e 0,transparent 36%),radial-gradient(ellipse at 84% 30%,#a9772530 0,transparent 32%),linear-gradient(180deg,#030305 0%,#0b0908 56%,#1a1007 100%);background-attachment:fixed}
+body::before{inset:0;opacity:.85;transform:none;background:
+radial-gradient(1.5px 1.5px at 12% 17%,#fff0b8 98%,transparent),
+radial-gradient(2px 2px at 72% 12%,#ffe2a0 98%,transparent),
+radial-gradient(1px 1px at 34% 39%,#fff 98%,transparent),
+radial-gradient(1.5px 1.5px at 89% 48%,#f9cb66 98%,transparent),
+radial-gradient(1px 1px at 53% 8%,#fff6d8 98%,transparent),
+radial-gradient(2px 2px at 7% 61%,#f3c36a 98%,transparent),
+radial-gradient(1px 1px at 62% 66%,#fff 98%,transparent),
+radial-gradient(1.5px 1.5px at 44% 76%,#ffe0a2 98%,transparent),
+radial-gradient(ellipse at 78% 23%,#b67b2340,transparent 30%),
+radial-gradient(ellipse at 17% 43%,#8b5b1c35,transparent 35%);
+background-size:410px 360px,510px 420px,360px 300px,550px 480px,470px 410px,390px 340px,530px 470px,430px 380px,100% 100%,100% 100%;
+animation:universe-stars 35s ease-in-out infinite alternate}
+body::after{inset:auto -25% -56vh;top:auto;height:85vh;opacity:.85;mask-image:none;transform:none;background:radial-gradient(ellipse at 50% 1%,#ffe7a8 0%,#d99e3988 1.5%,#6d431633 4%,transparent 8%),radial-gradient(ellipse at 50% 1%,#51300c 0%,#1b130b 38%,#060506 67%,transparent 70%);border-radius:50% 50% 0 0 / 35% 35% 0 0;box-shadow:0 -5px 32px #e5a63e44;animation:universe-horizon 16s ease-in-out infinite alternate}
+@keyframes universe-stars{from{opacity:.55;filter:brightness(.8)}to{opacity:1;filter:brightness(1.35)}}
+@keyframes universe-horizon{from{opacity:.65;filter:brightness(.85)}to{opacity:.95;filter:brightness(1.15)}}
+@media(prefers-reduced-motion:reduce){body::before,body::after{animation:none!important}}
