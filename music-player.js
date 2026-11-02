@@ -20,7 +20,7 @@ async function loadMusic(){
   const response=await fetch('https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/site_music_tracks?select=title,storage_path&enabled=eq.true&order=sort_order.asc,created_at.asc',{headers:{apikey:'sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS',Authorization:'Bearer sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS'},cache:'no-store'});
   if(!response.ok)throw new Error('Music service returned '+response.status);
   const data=await response.json();
-  tracks=Array.isArray(data)?data.filter(t=>t&&typeof t.title==='string'&&/^tracks\\/[a-zA-Z0-9_-]+\\.(mp3|ogg|wav)$/i.test(t.storage_path)):[];
+  tracks=Array.isArray(data)?data.filter(t=>t&&typeof t.title==='string'&&t.storage_path.startsWith('tracks/')&&['mp3','ogg','wav'].includes(t.storage_path.split('.').pop().toLowerCase())):[];
   if(!tracks.length){hint.textContent='No published tracks found. Please try refreshing.';return}
   let index=0;
   const select=()=>{const t=tracks[index];label.textContent=t.title;audio.src='https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/'+t.storage_path;play.disabled=false;mute.disabled=false;volume.disabled=false;hint.textContent='Press Play to listen.'};
