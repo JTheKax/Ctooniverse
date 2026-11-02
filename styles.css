@@ -772,3 +772,12 @@ body.ctoons-library-page::before,body.ctoons-library-page::after{display:none!im
 body.ctoons-library-page main{position:relative;z-index:1;background:transparent!important}
 body.ctoons-library-page .page-placeholder{background:rgba(13,10,43,.81)!important;border-color:rgba(132,137,255,.8)!important;backdrop-filter:blur(6px)}
 @media(max-width:700px){body.ctoons-library-page{background-attachment:scroll!important;background-position:center top!important}}
+
+/* Home: hand-drawn, logo-free neon arcade lobby */
+body.home-universe-page{
+ background:#120936 url("home-arcade-handdrawn.png") center center / cover fixed no-repeat!important;
+}
+body.home-universe-page::before,body.home-universe-page::after{display:none!important}
+body.home-universe-page main{position:relative;z-index:1;background:transparent!important}
+body.home-universe-page .page-placeholder{background:rgba(12,10,42,.79)!important;border-color:rgba(120,137,255,.78)!important;backdrop-filter:blur(6px)}
+@media(max-width:700px){body.home-universe-page{background-attachment:scroll!important;background-position:center top!important}}
