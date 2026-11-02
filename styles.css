@@ -623,3 +623,8 @@ body.shop-cartoon-page .shop-department{background:rgba(42,18,82,.82)}
 .ctoon-music-player .music-volume{width:100px;accent-color:#7633b5}
 .ctoon-music-player .music-hint{font-size:12px;line-height:1.4;margin-bottom:0}
 @media(max-width:650px){.ctoon-music-player{right:12px;bottom:12px}}
+
+/* Music player track selector */
+.ctoon-music-player .music-choice-label{display:block;margin:8px 0 5px;font-size:13px;font-weight:900;color:#25132d}
+.ctoon-music-player .music-song-choice{display:block;width:100%;max-width:100%;box-sizing:border-box;padding:9px 10px;margin-bottom:12px;border:2px solid #25132d;border-radius:9px;background:#fffdf3;color:#25132d;font:inherit;font-weight:750}
+.ctoon-music-player .music-song-choice:disabled{opacity:.65}
