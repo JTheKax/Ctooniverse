@@ -444,3 +444,11 @@ body .shooting-star:nth-of-type(2){top:29%;right:38%;animation-delay:9s;animatio
 .site-header .account-dropdown-panel>a:hover,.site-header .account-dropdown-panel>button:hover,.site-header .account-dropdown-panel>a:focus-visible,.site-header .account-dropdown-panel>button:focus-visible{background:#f8cd57;border-color:#171020;outline:none}
 .site-header .account-dropdown-panel [hidden]{display:none!important}
 @media(max-width:700px){.site-header .account-dropdown-panel{right:auto;left:0}}
+
+/* Keep Account flyout above homepage panels and every other page section. */
+body>.site-header{position:relative!important;z-index:10000!important;isolation:auto!important;overflow:visible!important}
+body>main,body>footer{position:relative;z-index:1!important}
+.site-header nav{position:relative;z-index:10001!important;overflow:visible!important;isolation:auto!important}
+.site-header .account-dropdown{z-index:10002!important}
+.site-header .account-dropdown:has(.account-dropdown-trigger[aria-expanded="true"]){z-index:10010!important}
+.site-header .account-dropdown-panel{z-index:10011!important;overflow:visible!important}
