@@ -163,3 +163,20 @@ body::after{inset:45% -30% -55%;opacity:.5;background:linear-gradient(to bottom,
 .site-header .nav-link .nav-icon{filter:drop-shadow(0 1px 1px #0007)}
 @media(max-width:650px){.site-header nav{padding:9px 8px 12px;gap:6px;border-radius:14px}.site-header .nav-link{min-height:44px;padding:8px 11px 10px;border-bottom-width:4px;border-radius:9px}.site-header .nav-link::after{right:5px;bottom:4px;width:4px;height:4px}}
 @media(prefers-reduced-motion:reduce){.site-header .nav-link{transition:none!important}}
+
+/* Premium arcade finish: brushed brass, jewel-like highlights and restrained marquee glow. */
+.site-header nav{background:linear-gradient(165deg,#6a4b1d 0%,#2b200f 11%,#0b0a08 48%,#30210c 94%,#8b6425 100%);border-color:#d7aa51;box-shadow:inset 0 2px #fff1bc80,inset 0 -5px #000a,0 8px 0 #080603,0 15px 34px #000c,0 0 30px #e3b35044}
+.site-header nav::before{height:3px;background:linear-gradient(90deg,transparent,#fff2b9 30%,#9e7128 52%,#fff2b9 72%,transparent)}
+.site-header .nav-link{overflow:hidden;background:linear-gradient(155deg,#745526 0%,#3c2b12 22%,#16120a 62%,#463114 100%);border-color:#c39a4e;color:#fff0ca;box-shadow:inset 0 2px #fff4d055,inset 1px 0 #ffe09c33,0 4px 9px #000b}
+.site-header .nav-link::before{height:100%;top:0;left:-95%;right:auto;width:60%;background:linear-gradient(105deg,transparent 10%,#fff6d700 30%,#fff6d72e 50%,transparent 75%);transform:skewX(-20deg);transition:left .55s ease;pointer-events:none}
+.site-header .nav-link:hover::before{left:140%}
+.site-header .nav-link:hover{border-color:#ffe3a1;background:linear-gradient(155deg,#99702e,#4b3414 48%,#281a0c);box-shadow:inset 0 2px #fff2c177,0 0 22px #f8cb6b88,0 6px 10px #000b}
+.site-header .nav-link.active,.site-header .nav-link[aria-current="page"]{background:linear-gradient(145deg,#fff2c2 0%,#e8bd62 35%,#ba862b 72%,#f6d785 100%);border-color:#fff0bb;color:#241705;box-shadow:inset 0 2px #fffbea,0 0 22px #ffcf71a8,0 3px 7px #000b}
+.brand{background:linear-gradient(180deg,#fff5c8 0%,#e9bd57 45%,#a16b18 75%,#ffe29a 100%);background-clip:text;-webkit-background-clip:text;color:transparent;filter:drop-shadow(0 2px 1px #000);text-shadow:none}
+.brand-accent{color:inherit}
+.welcome-panel,.announcement-panel,.home-tile,.owner-panel{border-color:#d1a24b;box-shadow:0 0 0 3px #100c05,0 0 25px #dba63a30,inset 0 1px #fff0bf50}
+.welcome-panel,.announcement-panel,.home-tile{background:linear-gradient(150deg,#2d2211 0%,#12100b 46%,#080808 100%)}
+.button.primary{background:linear-gradient(155deg,#fff0b0,#d4a13d 58%,#9d6c1e);border-color:#ffe2a0;color:#211503;box-shadow:inset 0 1px #fff6d6,0 4px 14px #d49b3555}
+.button.secondary{background:linear-gradient(155deg,#493419,#1c160d);border-color:#c99a44;color:#fce6b1}
+.home-tile:hover{border-color:#ffe3a0;box-shadow:0 0 0 3px #100c05,0 0 32px #ffd07488,inset 0 1px #fff4c277}
+@media(prefers-reduced-motion:reduce){.site-header .nav-link::before{transition:none!important}}
