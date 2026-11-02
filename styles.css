@@ -565,3 +565,15 @@ body.watch-theater-page::before,body.watch-theater-page::after{display:none!impo
 body.watch-theater-page main{background:transparent!important}
 body.watch-theater-page .page-placeholder{background:rgba(20,10,45,.84)!important;backdrop-filter:blur(4px)}
 @media(max-width:700px){body.watch-theater-page{background-attachment:scroll!important}}
+
+/* Shop department preview: readable over illustrated background. */
+body.shop-cartoon-page .shop-main{width:min(1160px,calc(100% - 32px));margin:0 auto;padding:24px 0 64px}
+body.shop-cartoon-page .shop-intro,body.shop-cartoon-page .shop-departments,body.shop-cartoon-page .shop-bottom{background:rgba(19,9,45,.88)!important;border:2px solid #e2a4ff;border-radius:22px;padding:clamp(20px,4vw,38px);margin:16px 0;color:#fff;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+body.shop-cartoon-page .shop-intro{text-align:center}
+body.shop-cartoon-page .shop-department-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:20px}
+body.shop-cartoon-page .shop-department{background:rgba(64,27,110,.9);border:2px solid #c88aff;border-radius:18px;padding:24px;min-width:0}
+body.shop-cartoon-page .shop-department h3{margin:8px 0}
+body.shop-cartoon-page .shop-department p{line-height:1.55}
+body.shop-cartoon-page .shop-department-icon{font-size:2rem}
+body.shop-cartoon-page .shop-bottom{text-align:center}
+@media(max-width:650px){body.shop-cartoon-page .shop-department-grid{grid-template-columns:1fr}}
