@@ -577,3 +577,13 @@ body.shop-cartoon-page .shop-department p{line-height:1.55}
 body.shop-cartoon-page .shop-department-icon{font-size:2rem}
 body.shop-cartoon-page .shop-bottom{text-align:center}
 @media(max-width:650px){body.shop-cartoon-page .shop-department-grid{grid-template-columns:1fr}}
+
+/* Shop background repair: keep the artwork visible and anchored behind content. */
+html:has(body.shop-cartoon-page){background:#211047}
+body.shop-cartoon-page{background:#211047!important;position:relative;isolation:isolate;min-height:100vh}
+body.shop-cartoon-page::before{content:""!important;display:block!important;position:fixed;inset:0;z-index:-1;pointer-events:none;background:#211047 url("shop-cartoon-background.png") center center / cover no-repeat!important}
+body.shop-cartoon-page::after{display:none!important}
+body.shop-cartoon-page .shop-main{position:relative;background:transparent!important}
+body.shop-cartoon-page .shop-intro,body.shop-cartoon-page .shop-departments,body.shop-cartoon-page .shop-bottom{min-height:0!important;background:rgba(19,9,45,.76)!important}
+body.shop-cartoon-page .shop-department{background:rgba(42,18,82,.82)}
+@media(max-width:650px){body.shop-cartoon-page::before{background-position:center top!important}body.shop-cartoon-page .shop-main{width:calc(100% - 24px);padding-top:12px}}
