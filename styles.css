@@ -518,3 +518,14 @@ body>main,body>footer{position:relative;z-index:1!important}
 .site-header .owner-menu-panel>a:hover,.site-header .owner-menu-panel>a:focus-visible{background:#f8cd57;border-color:#171020;outline:none}
 .site-header .owner-menu:has(.owner-menu-trigger[aria-expanded="true"]){z-index:10010}
 @media(max-width:700px){.site-header .owner-menu-panel{right:auto;left:0}}
+
+/* Owner menu visibility and overlay repair */
+.site-header nav{overflow:visible!important;z-index:10001!important}
+.site-header .owner-menu{position:relative!important;overflow:visible!important}
+.site-header .owner-menu.owner-visible{display:inline-flex!important}
+.site-header .owner-menu.is-open{z-index:10030!important}
+.site-header .owner-menu .owner-menu-panel{display:none!important;position:absolute!important;top:calc(100% + 8px)!important;right:0!important;left:auto;min-width:210px;max-width:min(90vw,300px);overflow:visible!important;z-index:10031!important}
+.site-header .owner-menu.is-open>.owner-menu-panel{display:grid!important}
+.site-header .owner-menu-trigger{position:relative;overflow:visible!important}
+#coin-management{scroll-margin-top:22px}
+@media(max-width:700px){.site-header .owner-menu .owner-menu-panel{right:auto!important;left:0!important}}
