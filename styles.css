@@ -763,3 +763,12 @@ body.shop-cartoon-page .shop-intro,body.shop-cartoon-page .shop-departments,body
 }
 body.shop-cartoon-page .shop-department{background:rgba(37,24,99,.87)!important;border-color:#887aff!important}
 @media(max-width:700px){body.shop-cartoon-page{background-attachment:scroll!important;background-position:center top!important}}
+
+/* Ctoons: hand-drawn neon blue-purple collectible gallery */
+body.ctoons-library-page{
+ background:#120936 url("ctoons-handdrawn-background.png") center center / cover fixed no-repeat!important;
+}
+body.ctoons-library-page::before,body.ctoons-library-page::after{display:none!important}
+body.ctoons-library-page main{position:relative;z-index:1;background:transparent!important}
+body.ctoons-library-page .page-placeholder{background:rgba(13,10,43,.81)!important;border-color:rgba(132,137,255,.8)!important;backdrop-filter:blur(6px)}
+@media(max-width:700px){body.ctoons-library-page{background-attachment:scroll!important;background-position:center top!important}}
