@@ -308,3 +308,13 @@ footer{background:#08070bde;padding-inline:18px;border-radius:12px;color:#f1dfb7
 @media(max-width:1100px){.site-header .brand-logo{width:clamp(200px,34vw,320px)}}
 @media(max-width:650px){.site-header .brand-logo{width:clamp(185px,58vw,285px)}.site-header{gap:12px}}
 @media(prefers-reduced-motion:reduce){.site-header .brand-logo{transition:none!important}.site-header .brand:hover .brand-logo{transform:none}}
+
+/* Official Discord invitation, matching the arcade palette. */
+.button.discord-button{background:linear-gradient(135deg,#655fe9,#4146ac);border:1px solid #a5a1ff;color:#fff;box-shadow:inset 0 1px #ffffff50,0 5px 16px #17164e66;text-shadow:0 1px 2px #1114;transition:transform .18s,box-shadow .18s}
+.button.discord-button:hover{transform:translateY(-2px);box-shadow:inset 0 1px #ffffff70,0 7px 20px #5d58e677}
+.button.discord-button:focus-visible{outline:3px solid #ffe08a;outline-offset:3px}
+.discord-panel{margin:28px 0;padding:clamp(22px,4vw,38px);border:1px solid #ae8746;border-radius:20px;background:linear-gradient(125deg,#201827f5,#0b0a12f2);box-shadow:inset 0 1px #ffe2ac44,0 12px 32px #0007}
+.discord-panel h2{font-size:clamp(23px,3vw,32px);margin:7px 0;color:#ffe1a1}
+.discord-panel p:not(.eyebrow){max-width:650px;color:#f0e5cf}
+.discord-panel .button{margin-top:14px}
+@media(prefers-reduced-motion:reduce){.button.discord-button{transition:none}.button.discord-button:hover{transform:none}}
