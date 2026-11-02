@@ -234,3 +234,9 @@ body::after{display:none!important}
 @keyframes saturn-rotation{to{background-position:center,center,220% 0}}
 @media(max-width:650px){.saturn-planet{width:95vw;top:48%;opacity:.65}.saturn-rings{width:160vw;top:48%;opacity:.55}}
 @media(prefers-reduced-motion:reduce){.saturn-planet{animation:none!important}}
+
+/* Approved hand-drawn Saturn artwork, used across the site. */
+html{min-height:100%;background:#08051b}
+body{background:#08051b url("saturn-background.png") center center / cover fixed no-repeat!important}
+body::before,body::after,.saturn-scene{display:none!important}
+@media(max-width:700px){body{background-position:center center!important;background-attachment:scroll!important}}
