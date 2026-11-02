@@ -47,3 +47,9 @@ if (year) year.textContent = String(new Date().getFullYear());
     document.body.prepend(scene);
   }
 })();
+
+/* Sparse, decorative shooting stars (no network or user data). */
+(() => {
+ if (document.querySelector('.shooting-star')) return;
+ for(let i=0;i<2;i++){const star=document.createElement('span');star.className='shooting-star';star.setAttribute('aria-hidden','true');document.body.prepend(star);}
+})();
