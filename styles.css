@@ -201,3 +201,26 @@ body::after{inset:auto -25% -56vh;top:auto;height:85vh;opacity:.85;mask-image:no
 @keyframes universe-stars{from{opacity:.55;filter:brightness(.8)}to{opacity:1;filter:brightness(1.35)}}
 @keyframes universe-horizon{from{opacity:.65;filter:brightness(.85)}to{opacity:.95;filter:brightness(1.15)}}
 @media(prefers-reduced-motion:reduce){body::before,body::after{animation:none!important}}
+
+/* Giant rotating golden planet behind the site content. */
+body::after{
+  position:fixed;inset:auto;top:22vh;right:-18vw;
+  width:min(78vw,1050px);height:auto;aspect-ratio:1;
+  border-radius:50%;pointer-events:none;z-index:-1;
+  opacity:.78;mask-image:none;transform:none;
+  background:
+    radial-gradient(circle at 27% 22%,#fff0bc99 0%,transparent 21%),
+    radial-gradient(circle at 32% 30%,transparent 34%,#080707cc 73%,#030303 100%),
+    repeating-linear-gradient(167deg,#a56d26 0 18px,#e6b65b 24px 42px,#4c3015 50px 66px,#c18b3e 72px 92px,#71501e 102px 118px);
+  background-size:100% 100%,100% 100%,230% 100%;
+  background-position:center,center,0 0;
+  border:1px solid #e1ac5155;
+  box-shadow:inset 35px 12px 75px #ffe09a55,inset -115px -40px 130px #000e,0 0 55px #d5a34b55,0 0 150px #a46a2422;
+  animation:planet-surface-spin 42s linear infinite;
+}
+@keyframes planet-surface-spin{
+  from{background-position:center,center,0 0}
+  to{background-position:center,center,230% 0}
+}
+@media(max-width:650px){body::after{width:110vw;right:-56vw;top:30vh;opacity:.48}}
+@media(prefers-reduced-motion:reduce){body::after{animation:none!important}}
