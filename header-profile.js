@@ -18,5 +18,6 @@ async function updateHeader(){
 }
 db.auth.onAuthStateChange(()=>setTimeout(updateHeader,50));
 window.addEventListener('pageshow',updateHeader);
+window.addEventListener('ctoon-profile-updated',updateHeader);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateHeader();});
 updateHeader();
