@@ -405,3 +405,21 @@ footer{border:3px solid #120e20}
 @media(max-width:1000px){.home-top{grid-template-columns:1fr}}
 @media(max-width:700px){.site-header{grid-template-columns:1fr;gap:10px}.site-header .brand{grid-column:1;grid-row:1}.site-header .header-player{grid-column:1;grid-row:2;justify-self:center;max-width:90%}.site-header nav{grid-column:1;grid-row:3;padding:10px 6px}.site-header .nav-link{font-size:12px;padding:8px 9px}.site-header .brand-logo{width:min(86vw,380px)}.welcome-panel{padding:25px!important}.home-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.announcement-panel{padding:20px!important}}
 @media(prefers-reduced-motion:reduce){.site-header .nav-link,.home-tile{transition:none}}
+
+/* Hand-animated comic universe. Motion is decorative and respects reduced motion. */
+@keyframes ctoon-logo-float{0%,100%{transform:translateY(0) rotate(-.6deg)}50%{transform:translateY(-7px) rotate(.5deg)}}
+@keyframes ctoon-logo-pop{0%,100%{transform:scale(1) rotate(0)}35%{transform:scale(1.045) rotate(-2deg)}70%{transform:scale(1.025) rotate(1deg)}}
+.site-header .brand-logo{animation:ctoon-logo-float 6.5s ease-in-out infinite;transform-origin:center}
+.site-header .brand:hover .brand-logo{animation:ctoon-logo-pop .5s ease-out 1!important}
+@keyframes ctoon-tab-wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg) translateY(-3px)}65%{transform:rotate(2deg) translateY(-2px)}}
+.site-header .nav-link:hover{animation:ctoon-tab-wiggle .38s ease-in-out 1}
+@keyframes ctoon-coin-shine{0%,100%{filter:brightness(1);transform:rotate(0)}45%{filter:brightness(1.45);transform:rotate(13deg)}}
+.site-header .header-player-icon{animation:ctoon-coin-shine 9s ease-in-out infinite}
+@keyframes ctoon-coin-pop{0%,100%{transform:scale(1)}50%{transform:scale(1.16)}}
+.site-header .header-player.coin-updated .header-player-icon{animation:ctoon-coin-pop .6s ease-out 1}
+@keyframes ctoon-saturn-drift{0%,100%{transform:translate3d(-1%,0,0) rotate(-1deg)}50%{transform:translate3d(1%,8px,0) rotate(1deg)}}
+.saturn-scene{animation:ctoon-saturn-drift 24s ease-in-out infinite;transform-origin:center}
+@keyframes ctoon-shooting-star{0%,86%{opacity:0;transform:translate3d(0,0,0) rotate(-30deg)}87%{opacity:1}90%{opacity:0;transform:translate3d(-230px,120px,0) rotate(-30deg)}100%{opacity:0;transform:translate3d(-230px,120px,0) rotate(-30deg)}}
+body .shooting-star{position:fixed;top:12%;right:12%;width:110px;height:3px;border-radius:50%;pointer-events:none;z-index:0;opacity:0;transform-origin:center;background:linear-gradient(90deg,transparent,#fff6cb 65%,white);box-shadow:0 0 8px #fff5c0;animation:ctoon-shooting-star 18s linear infinite}
+body .shooting-star:nth-of-type(2){top:29%;right:38%;animation-delay:9s;animation-duration:23s;width:75px}
+@media(prefers-reduced-motion:reduce){.site-header .brand-logo,.site-header .brand:hover .brand-logo,.site-header .nav-link:hover,.site-header .header-player-icon,.site-header .header-player.coin-updated .header-player-icon,.saturn-scene,body .shooting-star{animation:none!important;transform:none!important}body .shooting-star{display:none!important}}
