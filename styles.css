@@ -318,3 +318,15 @@ footer{background:#08070bde;padding-inline:18px;border-radius:12px;color:#f1dfb7
 .discord-panel p:not(.eyebrow){max-width:650px;color:#f0e5cf}
 .discord-panel .button{margin-top:14px}
 @media(prefers-reduced-motion:reduce){.button.discord-button{transition:none}.button.discord-button:hover{transform:none}}
+
+/* Cartoon Coin wallet and Owner controls. */
+.coin-panel{margin:24px 0;padding:24px;border:1px solid #c39749;border-radius:18px;background:linear-gradient(135deg,#23190ef0,#0d0a12f2);box-shadow:inset 0 1px #ffe5a344}
+.coin-panel h2,.coin-panel h3{color:#ffe09a;margin-top:0}
+.coin-panel #coin-balance{font-size:clamp(21px,3vw,30px);font-weight:850;color:#ffd15e}
+.coin-panel #coin-history{padding-left:20px;color:#f4e4c5}
+.coin-panel #coin-history li{margin:9px 0}
+.coin-panel form{display:grid;gap:10px;max-width:560px}
+.coin-panel input{width:100%;padding:12px;border-radius:9px;border:1px solid #b28c50;background:#121018;color:#fff;font:inherit}
+.coin-panel label{font-weight:750;color:#f3dfb5}
+.coin-panel button{justify-self:start;cursor:pointer}
+.coin-panel button:disabled{opacity:.6;cursor:wait}
