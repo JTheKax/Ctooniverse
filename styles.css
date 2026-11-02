@@ -132,3 +132,20 @@ body::after{inset:45% -30% -55%;opacity:.5;background:linear-gradient(to bottom,
 @keyframes arcade-beams{from{transform:rotate(-5deg) scale(1.08);opacity:.42}to{transform:rotate(6deg) scale(1.15);opacity:.78}}
 @keyframes arcade-grid{from{background-position:0 0,0 0;transform:perspective(450px) rotateX(64deg) scale(1.8)}to{background-position:0 52px,76px 0;transform:perspective(450px) rotateX(64deg) scale(1.8)}}
 @media(prefers-reduced-motion:reduce){body::before,body::after{animation:none!important;will-change:auto}}
+
+/* Golden arcade cabinet treatment: illuminated marquee, raised controls and light chase. */
+.brand{font-weight:950;text-transform:uppercase;letter-spacing:.5px;color:#ffe8a0;text-shadow:0 2px #5b3506,0 0 12px #f0b63766,0 0 27px #e9a82b33}
+.site-header{position:relative}
+.site-header::after{content:"";height:4px;flex-basis:100%;border-radius:50px;background:repeating-linear-gradient(90deg,#ffdd79 0 15px,#70440e 15px 25px,#e6aa34 25px 36px,#30200c 36px 45px);box-shadow:0 0 12px #ffbf48aa;animation:arcade-marquee 3s linear infinite}
+@keyframes arcade-marquee{to{background-position:90px 0}}
+.site-header nav{border:2px solid #e4ac3e;box-shadow:0 0 0 3px #211606,0 0 24px #c68d2966,inset 0 0 18px #e5a82c1c}
+.site-header .nav-link{border:1px solid #b9862d;border-bottom:4px solid #67420f;border-radius:12px;box-shadow:inset 0 2px #ffe8a033,0 2px 8px #000b}
+.site-header .nav-link:hover{box-shadow:0 0 17px #ffcc6599,inset 0 1px #fff4ba77}
+.site-header .nav-link.active,.site-header .nav-link[aria-current="page"]{border-bottom-color:#855915;box-shadow:0 0 20px #ffd05caa,inset 0 2px #fff3c7aa}
+.welcome-panel,.announcement-panel,.home-tile,.owner-panel{border:2px solid #b9872c;box-shadow:0 0 0 3px #100c05,0 0 20px #d69c2b22,inset 0 1px #ffdb7630}
+.welcome-panel::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:repeating-linear-gradient(to bottom,transparent 0 5px,#00000016 6px 7px);opacity:.32}
+.home-tile{position:relative;border-bottom-width:5px;transition:transform .18s,box-shadow .18s,border-color .18s}
+.home-tile:hover{transform:translateY(-5px);box-shadow:0 0 0 3px #100c05,0 0 28px #ffcc6677,inset 0 1px #ffe49d55}
+.button{border:1px solid #e1ac44;border-bottom:4px solid #754c13;box-shadow:0 0 12px #e8ac3b33;transition:transform .16s,box-shadow .16s}
+.button:hover{transform:translateY(-2px);box-shadow:0 0 22px #ffd36d77}
+@media(prefers-reduced-motion:reduce){.site-header::after{animation:none!important}.home-tile,.button{transition:none!important}}
