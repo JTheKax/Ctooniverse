@@ -2,26 +2,37 @@
 const year = document.getElementById("year");
 if (year) year.textContent = String(new Date().getFullYear());
 
-/* Owner navigation is hidden by default and revealed only after verified membership. */
+/* Fail closed. Recheck the same site_owners membership used by owner-auth.js. */
 (async () => {
-  const links = document.querySelectorAll('.owner-nav');
+  const links = [...document.querySelectorAll('.owner-nav')];
   if (!links.length) return;
+  const setVisible = visible => {
+    links.forEach(link => {
+      link.classList.toggle('owner-visible', visible);
+      link.style.setProperty('display', visible ? 'inline-flex' : 'none', 'important');
+    });
+  };
+  setVisible(false);
   try {
     const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2.58.0');
-    const supabase = createClient('https://hsxdyxdazsdmpucyhqly.supabase.co', 'sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
-    let generation = 0;
-    async function updateOwnerNavigation() {
-      const current = ++generation;
-      links.forEach(link => { link.classList.remove('owner-visible'); link.style.setProperty('display', 'none', 'important'); });
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error || !user) return;
-      const { data, error: membershipError } = await supabase.from('site_owners').select('user_id').eq('user_id', user.id).maybeSingle();
-      if (current !== generation || membershipError || !data) return;
-      links.forEach(link => { link.classList.add('owner-visible'); link.style.setProperty('display', 'inline-flex', 'important'); });
+    const db = createClient('https://hsxdyxdazsdmpucyhqly.supabase.co', 'sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
+    let checkId = 0;
+    async function verify() {
+      const id = ++checkId;
+      try {
+        const { data: { user }, error } = await db.auth.getUser();
+        if (id !== checkId) return;
+        if (error || !user) { setVisible(false); return; }
+        const { data, error: membershipError } = await db.from('site_owners').select('user_id').eq('user_id', user.id).maybeSingle();
+        if (id !== checkId) return;
+        setVisible(!membershipError && !!data);
+      } catch (_) {
+        if (id === checkId) setVisible(false);
+      }
     }
-    supabase.auth.onAuthStateChange(() => { setTimeout(updateOwnerNavigation, 0); });
-    await updateOwnerNavigation();
-  } catch (_) {
-    links.forEach(link => { link.classList.remove('owner-visible'); link.style.setProperty('display', 'none', 'important'); });
-  }
+    db.auth.onAuthStateChange(() => { setTimeout(verify, 100); });
+    window.addEventListener('pageshow', verify);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) verify(); });
+    await verify();
+  } catch (_) { setVisible(false); }
 })();
