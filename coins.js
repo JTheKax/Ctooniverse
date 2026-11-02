@@ -16,12 +16,44 @@ async function refreshOwnerCoins(){
  const {data,error}=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();
  panel.hidden=!!error||!data;
 }
+let selectedCoinPlayer=null;
+const preview=el('coin-player-preview');
+const targetInput=el('coin-target');
+function resetCoinSelection(){selectedCoinPlayer=null;if(preview)preview.textContent='Look up a player before changing coins.';}
+targetInput?.addEventListener('input',resetCoinSelection);
+async function findCoinPlayer(){
+ const email=targetInput?.value.trim()||'';
+ if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){if(preview)preview.textContent='Enter the player’s full account email.';return null;}
+ if(preview)preview.textContent='Searching for player…';
+ try{
+  const {data,error}=await db.rpc('owner_find_coin_player',{player_email:email});
+  if(error){if(preview)preview.textContent='Lookup failed: '+error.message;return null;}
+  if(!data?.length){if(preview)preview.textContent='No account found for that email.';return null;}
+  const player=data[0];selectedCoinPlayer={id:player.user_id,email:player.email};
+  if(preview)preview.textContent='Found: '+player.display_name+' ('+player.email+') — Current balance: '+fmt(player.coin_balance)+' coins.';
+  return selectedCoinPlayer;
+ }catch(_){if(preview)preview.textContent='Player lookup unavailable. Please retry.';return null;}
+}
+el('coin-find-player')?.addEventListener('click',findCoinPlayer);
 el('coin-adjust-form')?.addEventListener('submit',async e=>{
- e.preventDefault();const msg=el('coin-adjust-feedback'),button=el('coin-adjust-submit');
- const id=el('coin-target').value.trim(),amount=Number(el('coin-amount').value),reason=el('coin-reason').value.trim();
- if(!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id)||!Number.isSafeInteger(amount)||amount===0||Math.abs(amount)>1000000||reason.length<3){msg.textContent='Enter a valid account UUID, nonzero whole coin amount (up to 1,000,000), and a reason.';return;}
- button.disabled=true;msg.textContent='Updating balance…';
- try{const {data,error}=await db.rpc('adjust_cartoon_coins',{target_user:id,amount,note:reason});msg.textContent=error?'Update failed: '+error.message:'Success. New balance: '+fmt(data)+' Cartoon Coins';if(!error){el('coin-adjust-form').reset();await refreshCoins();}}catch(_){msg.textContent='Unable to update coins right now.';}finally{button.disabled=false;}
+ e.preventDefault();
+ const msg=el('coin-adjust-feedback'),button=el('coin-adjust-submit');
+ const amount=Number(el('coin-amount').value),reason=el('coin-reason').value.trim();
+ if(!Number.isSafeInteger(amount)||amount===0||Math.abs(amount)>1000000||reason.length<3||reason.length>200){msg.textContent='Enter a nonzero whole coin amount (up to 1,000,000) and a reason of 3–200 characters.';return;}
+ button.disabled=true;msg.textContent='Verifying player…';
+ try{
+  const player=selectedCoinPlayer?.email.toLowerCase()===targetInput.value.trim().toLowerCase()?selectedCoinPlayer:await findCoinPlayer();
+  if(!player){msg.textContent='Find a valid player first. No coins changed.';return;}
+  const action=amount>0?'ADD '+fmt(amount):'REMOVE '+fmt(-amount);
+  if(!window.confirm(action+' Cartoon Coins for '+player.email+'?')){msg.textContent='Cancelled. No coins changed.';return;}
+  msg.textContent='Updating balance…';
+  const {data,error}=await db.rpc('adjust_cartoon_coins',{target_user:player.id,amount,note:reason});
+  if(error){msg.textContent='Update failed: '+error.message;return;}
+  msg.textContent='Success. New balance: '+fmt(data)+' Cartoon Coins.';
+  el('coin-amount').value='';el('coin-reason').value='';
+  await findCoinPlayer();await refreshCoins();window.dispatchEvent(new Event('ctoon-profile-updated'));
+ }catch(_){msg.textContent='Unable to update coins right now.';}
+ finally{button.disabled=false;}
 });
 db.auth.onAuthStateChange(()=>setTimeout(()=>{refreshCoins();refreshOwnerCoins();},50));
 refreshCoins();refreshOwnerCoins();
