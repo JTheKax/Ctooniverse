@@ -751,3 +751,15 @@ body.watch-theater-page::before,body.watch-theater-page::after{display:none!impo
 body.watch-theater-page main{position:relative;z-index:1;background:transparent!important}
 body.watch-theater-page .page-placeholder{background:rgba(13,10,42,.8)!important;border-color:rgba(133,116,255,.78)!important;backdrop-filter:blur(6px)}
 @media(max-width:700px){body.watch-theater-page{background-attachment:scroll!important;background-position:center top!important}}
+
+/* Shop: blue-purple hand-drawn neon marketplace illustration */
+body.shop-cartoon-page{
+ background:#120936 url("shop-handdrawn-background.png") center center / cover fixed no-repeat!important;
+}
+body.shop-cartoon-page::before,body.shop-cartoon-page::after{display:none!important}
+body.shop-cartoon-page main{position:relative;z-index:1;background:transparent!important}
+body.shop-cartoon-page .shop-intro,body.shop-cartoon-page .shop-departments,body.shop-cartoon-page .shop-bottom{
+ background:rgba(16,10,45,.82)!important;border-color:rgba(129,138,255,.8)!important;backdrop-filter:blur(6px);
+}
+body.shop-cartoon-page .shop-department{background:rgba(37,24,99,.87)!important;border-color:#887aff!important}
+@media(max-width:700px){body.shop-cartoon-page{background-attachment:scroll!important;background-position:center top!important}}
