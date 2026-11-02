@@ -81,3 +81,7 @@ footer{border-top-color:#195b91;color:#a9cce8}
 #register-form button:disabled{opacity:.6;cursor:wait}
 #register-feedback{min-height:24px;color:#9be6ff}
 .auth-link{color:#6de2ff;text-decoration:underline}
+
+/* Owner navigation is fail-closed until Supabase confirms membership. */
+.owner-nav { display: none !important; }
+.owner-nav.owner-visible { display: inline-flex !important; }
