@@ -17,7 +17,7 @@ el('ctoon-maker-import').addEventListener('change',async e=>{if(!authorized)retu
 db.auth.onAuthStateChange(()=>setTimeout(init,0));init();
 
 const existingWebsiteCtoons=[
-{title:'Traverse Town Jewelry',set:'Kingdom Hearts',series:'Kingdom Hearts',image:'kingdom-hearts-traverse-town.png',rarity:'Common',description:'Hand-drawn Traverse Town Jewelry floating island. Coming Soon.'}
+{title:'Traverse Town',set:'Kingdom Hearts',series:'Kingdom Hearts',image:'kingdom-hearts-traverse-town.png',rarity:'Common',description:'Hand-drawn Traverse Town floating island. Coming Soon.'}
 ];
 function renderExisting(){
  const holder=el('ctoon-maker-existing');holder.replaceChildren();
