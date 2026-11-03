@@ -1296,3 +1296,7 @@ html body > .ctoon-music-player::after{
  .site-header .header-player.is-owner #header-player-name{font-size:12px!important}
  .site-header .header-player.is-owner #header-player-coins{font-size:10px!important;padding:3px 4px!important}
 }
+
+/* Avoid guest-to-owner card flash during page reload. */
+.site-header .header-player:not(.profile-ready){visibility:hidden!important}
+.site-header .header-player.profile-ready{visibility:visible!important}
