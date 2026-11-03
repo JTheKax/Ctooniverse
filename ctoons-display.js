@@ -2,13 +2,33 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const grid=document.querySelector('.ctoons-featured-display .ctoons-featured-grid');
 let seq=0;
+function renderCounts(catalog){
+ const list=document.getElementById('ctoon-counts-list'),status=document.getElementById('ctoon-counts-status');if(!list)return;
+ const groups=new Map();let saleTotal=0;
+ for(const item of catalog){
+  const parent=(item.parent_series||'Other').trim()||'Other',series=(item.series||'Uncategorized').trim()||'Uncategorized';
+  if(!groups.has(parent))groups.set(parent,new Map());
+  const subs=groups.get(parent),count=subs.get(series)||{total:0,sale:0};count.total++;if(item.is_for_sale){count.sale++;saleTotal++}subs.set(series,count);
+ }
+ list.replaceChildren();
+ for(const [parent,subs] of [...groups].sort((a,b)=>a[0].localeCompare(b[0]))){
+  const box=document.createElement('div');box.className='ctoon-count-group';
+  const total=[...subs.values()].reduce((n,x)=>n+x.total,0),sale=[...subs.values()].reduce((n,x)=>n+x.sale,0);
+  const heading=document.createElement('h3');heading.textContent=parent+' — '+total+' created ('+sale+' for sale)';box.append(heading);
+  for(const [name,count] of [...subs].sort((a,b)=>a[0].localeCompare(b[0]))){
+   const line=document.createElement('p');line.textContent=name+': '+count.total+' created · '+count.sale+' for sale';box.append(line);
+  }list.append(box);
+ }
+ status.textContent=catalog.length+' CToons created across '+groups.size+' main series · '+saleTotal+' for sale.';
+}
 async function refresh(){
  const n=++seq;if(!grid)return;
  try{
-  const {data:catalog,error}=await db.from('ctoon_catalog').select('id,name,rarity,price_coins,image_path,series,is_for_sale').order('name');
+  const {data:catalog,error}=await db.from('ctoon_catalog').select('id,name,rarity,price_coins,image_path,series,parent_series,is_for_sale').order('name');
   if(error)throw error;
   if(n!==seq)return;
   if(!catalog?.length)return; // Retain the original featured card if catalog is empty.
+  renderCounts(catalog);
   const {data:{user}}=await db.auth.getUser();
   const {data:ownerRow,error:ownerError}=user?await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle():{data:null,error:null};
   const isOwner=!!ownerRow&&!ownerError;
@@ -37,14 +57,14 @@ async function refresh(){
    const edit=()=>{
     if(!isOwner)return;
     const dialog=document.createElement('dialog');dialog.className='ctoon-editor-dialog';
-    const form=document.createElement('form');form.innerHTML='<h2>Edit CToon</h2><label>Name<input name="name" required maxlength="80"></label><label>Image path or HTTPS URL<input name="image_path" required maxlength="1000"></label><label>Rarity<select name="rarity"><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select></label><label>Price (Cartoon Coins)<input name="price_coins" type="number" min="0" max="1000000" step="1" required></label><label class="ctoon-sale-toggle"><input name="is_for_sale" type="checkbox"> List for sale in Shop</label><p role="status" class="ctoon-edit-feedback"></p><div class="hero-actions"><button type="button" class="button secondary" data-cancel>Cancel</button><button type="submit" class="button primary">Save Changes</button></div>';
-    form.elements.name.value=item.name;form.elements.image_path.value=item.image_path||'';form.elements.rarity.value=item.rarity||'Common';form.elements.price_coins.value=item.price_coins??0;form.elements.is_for_sale.checked=!!item.is_for_sale;
+    const form=document.createElement('form');form.innerHTML='<h2>Edit CToon</h2><label>Name<input name="name" required maxlength="80"></label><label>Image path or HTTPS URL<input name="image_path" required maxlength="1000"></label><label>Rarity<select name="rarity"><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select></label><label>Price (Cartoon Coins)<input name="price_coins" type="number" min="0" max="1000000" step="1" required></label><label>Main series<input name="parent_series" required maxlength="80"></label><label>Subseries<input name="series" required maxlength="80"></label><label class="ctoon-sale-toggle"><input name="is_for_sale" type="checkbox"> List for sale in Shop</label><p role="status" class="ctoon-edit-feedback"></p><div class="hero-actions"><button type="button" class="button secondary" data-cancel>Cancel</button><button type="submit" class="button primary">Save Changes</button></div>';
+    form.elements.name.value=item.name;form.elements.image_path.value=item.image_path||'';form.elements.rarity.value=item.rarity||'Common';form.elements.price_coins.value=item.price_coins??0;form.elements.parent_series.value=item.parent_series||'Other';form.elements.series.value=item.series||'';form.elements.is_for_sale.checked=!!item.is_for_sale;
     const feedback=form.querySelector('.ctoon-edit-feedback');form.querySelector('[data-cancel]').onclick=()=>dialog.close();
     form.addEventListener('submit',async event=>{
      event.preventDefault();const name=form.elements.name.value.trim(),image_path=form.elements.image_path.value.trim(),rarity=form.elements.rarity.value,price_coins=Number(form.elements.price_coins.value);
      if(!name||!(/^(https:\/\/|public\/images\/)/.test(image_path))||!Number.isInteger(price_coins)||price_coins<0){feedback.textContent='Enter a valid name, HTTPS image URL or public/images/ path, and whole-number price.';return}
      const save=form.querySelector('[type=submit]');save.disabled=true;feedback.textContent='Saving…';
-     const is_for_sale=form.elements.is_for_sale.checked;const {data,error}=await db.from('ctoon_catalog').update({name,image_path,rarity,price_coins,is_for_sale}).eq('id',item.id).select('id').single();
+     const parent_series=form.elements.parent_series.value.trim(),series=form.elements.series.value.trim();if(!parent_series||!series){feedback.textContent='Main series and subseries are required.';return}const is_for_sale=form.elements.is_for_sale.checked;const {data,error}=await db.from('ctoon_catalog').update({name,image_path,rarity,price_coins,is_for_sale,parent_series,series}).eq('id',item.id).select('id').single();
      save.disabled=false;if(error||!data){feedback.textContent='Could not save: '+(error?.message||'No permission');return}
      dialog.close();refresh();
     });
