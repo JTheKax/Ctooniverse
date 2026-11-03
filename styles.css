@@ -1095,3 +1095,46 @@ html body > .ctoon-music-player::after{
   .site-header .header-player-icon{flex-basis:34px!important;width:34px!important;height:34px!important}
   .owner-collectible-card{width:min(80vw,240px);max-width:240px}
 }
+
+/* Owner-only header card: use uploaded illustrated owner frame instead of old gold badge. */
+.site-header .header-player.is-owner{
+  box-sizing:border-box!important;
+  position:relative!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;
+  width:160px!important;min-width:160px!important;max-width:160px!important;
+  height:202px!important;min-height:202px!important;
+  padding:62px 15px 62px!important;gap:4px!important;
+  background:transparent url("public/images/ctoon-owner-card.png") center/100% 100% no-repeat!important;
+  border:0!important;border-radius:0!important;
+  box-shadow:none!important;transform:none!important;
+  filter:drop-shadow(3px 5px 5px #130b2a88);
+}
+.site-header .header-player.is-owner:hover{transform:translateY(-2px)!important;box-shadow:none!important}
+.site-header .header-player.is-owner::before,.site-header .header-player.is-owner::after{content:none!important;display:none!important}
+.site-header .header-player.is-owner .header-player-icon{display:none!important}
+.site-header .header-player.is-owner .header-player-info{
+  display:flex!important;flex-direction:column!important;align-items:center!important;
+  justify-content:center!important;min-width:0!important;width:100%!important;
+  max-width:100%!important;gap:4px!important;text-align:center!important;
+}
+.site-header .header-player.is-owner #header-player-name{
+  display:block!important;max-width:100%!important;overflow-wrap:anywhere!important;
+  font-size:13px!important;line-height:1.15!important;color:#fff!important;
+  text-shadow:1px 2px 2px #1a0b36!important;
+}
+.site-header .header-player.is-owner #header-player-coins{
+  display:block!important;max-width:100%!important;margin:0!important;padding:2px 4px!important;
+  font-size:10px!important;line-height:1.2!important;color:#ffe87c!important;
+  background:#24114bdf!important;border:1px solid #5fd5ff!important;border-radius:6px!important;
+  overflow-wrap:anywhere!important;text-align:center!important;
+}
+.site-header .header-player.is-owner .profile-owner-mark{display:none!important}
+@media(max-width:650px){
+ .site-header .header-player.is-owner{
+  grid-column:1!important;grid-row:2!important;justify-self:center!important;
+  width:132px!important;min-width:132px!important;max-width:132px!important;
+  height:167px!important;min-height:167px!important;padding:50px 12px!important;
+ }
+ .site-header .header-player.is-owner #header-player-name{font-size:11px!important}
+ .site-header .header-player.is-owner #header-player-coins{font-size:9px!important}
+}
