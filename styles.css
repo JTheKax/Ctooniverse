@@ -1138,3 +1138,48 @@ html body > .ctoon-music-player::after{
  .site-header .header-player.is-owner #header-player-name{font-size:11px!important}
  .site-header .header-player.is-owner #header-player-coins{font-size:9px!important}
 }
+
+/* Owner header artwork display correction: center live details in open portrait window */
+.site-header .header-player.is-owner{
+  width:160px!important;min-width:160px!important;max-width:160px!important;
+  height:202px!important;min-height:202px!important;
+  padding:0!important;gap:0!important;
+  background-size:contain!important;background-position:center center!important;
+  flex-direction:initial!important;align-items:initial!important;justify-content:initial!important;
+  overflow:visible!important;aspect-ratio:1100/1380!important;
+}
+.site-header .header-player.is-owner .header-player-info{
+  position:absolute!important;z-index:2!important;
+  top:32%!important;left:13%!important;right:13%!important;
+  width:74%!important;max-width:74%!important;min-width:0!important;
+  height:30%!important;min-height:0!important;
+  margin:0!important;padding:4px 2px!important;box-sizing:border-box!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;gap:6px!important;
+  text-align:center!important;overflow:hidden!important;
+}
+.site-header .header-player.is-owner #header-player-name{
+  display:block!important;width:100%!important;max-width:100%!important;
+  font-size:clamp(10px,1.1vw,13px)!important;line-height:1.15!important;
+  color:#fff!important;text-shadow:1px 2px 2px #170a35!important;
+  white-space:normal!important;overflow-wrap:anywhere!important;
+}
+.site-header .header-player.is-owner #header-player-coins{
+  display:block!important;width:auto!important;max-width:100%!important;
+  font-size:10px!important;line-height:1.15!important;
+  padding:4px 5px!important;white-space:normal!important;
+  color:#ffe87c!important;background:#24114be8!important;
+  border:1px solid #70dfff!important;border-radius:7px!important;
+}
+@media(max-width:650px){
+  .site-header .header-player.is-owner{
+    width:132px!important;min-width:132px!important;max-width:132px!important;
+    height:167px!important;min-height:167px!important;padding:0!important;
+  }
+  .site-header .header-player.is-owner .header-player-info{
+    top:32%!important;left:13%!important;right:13%!important;
+    width:74%!important;max-width:74%!important;height:30%!important;gap:3px!important;
+  }
+  .site-header .header-player.is-owner #header-player-name{font-size:10px!important}
+  .site-header .header-player.is-owner #header-player-coins{font-size:9px!important;padding:2px 3px!important}
+}
