@@ -43,6 +43,11 @@ async function loadCases(){
   const cover=document.createElement('span');cover.className='emu-case-cover';
   const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=game.console.toUpperCase();
   const art=document.createElement('span');art.className='emu-case-art';art.textContent='🎮';
+  const image=document.createElement('img');image.className='emu-case-image';image.alt=game.title+' cover art';image.loading='lazy';
+  const slug=game.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  image.src='images/emulator-covers/'+slug+'.png';
+  image.addEventListener('load',()=>{art.replaceWith(image)});
+  image.addEventListener('error',()=>{});
   const coverTitle=document.createElement('span');coverTitle.className='emu-case-cover-title';coverTitle.textContent=game.title;
   const title=document.createElement('span');title.className='emu-case-name';title.textContent=game.title;
   cover.append(spine,art,coverTitle);caseEl.append(cover,title);
