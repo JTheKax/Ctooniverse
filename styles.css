@@ -1566,3 +1566,8 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 .ctoon-shop-owned{font-size:9px!important;padding:2px 4px!important}
 .collection-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important}
 @media(max-width:420px){.ctoon-shop-card,.collection-grid .ctoon-shop-card,.ctoons-featured-grid .ctoon-shop-card{width:150px!important;min-width:150px!important;max-width:150px!important}}
+
+
+/* Shrink the actual CToon artwork inside its existing uniform card frame. */
+.ctoon-shop-art{display:flex!important;align-items:center!important;justify-content:center!important}
+.ctoon-shop-art img{position:relative!important;z-index:1!important;display:block!important;width:76%!important;height:76%!important;max-width:76%!important;max-height:76%!important;object-fit:contain!important;object-position:center!important;flex:none!important;margin:auto!important}
