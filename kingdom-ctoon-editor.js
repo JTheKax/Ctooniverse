@@ -23,8 +23,24 @@ if(grid){
    if(error||!data){feedback.textContent='Save failed: '+(error?.message||'Permission denied');return}
    dialog.close();location.reload();
   });
+  // Lightweight collectible detail view; does not alter ownership or checkout.
+  const preview=document.createElement('dialog');preview.className='ctoon-editor-dialog ctoon-preview-dialog';
+  const previewContent=document.createElement('div');previewContent.className='ctoon-preview-content';
+  const closePreview=document.createElement('button');closePreview.type='button';closePreview.className='button secondary';closePreview.textContent='Close';closePreview.addEventListener('click',()=>preview.close());
+  preview.append(previewContent,closePreview);document.body.append(preview);
+  function openPreview(item){
+   previewContent.replaceChildren();
+   const heading=document.createElement('h2');heading.textContent=item.name;
+   const picture=document.createElement('img');picture.src=item.image_path;picture.alt=item.name+' artwork';picture.className='ctoon-preview-image';
+   const series=document.createElement('p');series.textContent='Set: Kingdom Hearts';
+   const rarity=document.createElement('p');rarity.textContent='Rarity: '+(item.rarity||'Common');
+   const price=document.createElement('p');price.textContent='Price: '+Number(item.price_coins).toLocaleString()+' Cartoon Coins';
+   const availability=document.createElement('p');availability.textContent=item.is_for_sale?'Available in the Shop':'Coming Soon — not available to collect yet';
+   previewContent.append(heading,picture,series,rarity,price,availability);
+   preview.showModal();
+  }
   for(const item of catalog){
-   const card=document.createElement('article');card.className='ctoon-shop-card';card.dataset.ctoonId=item.id;
+   const card=document.createElement('article');card.className='ctoon-shop-card ctoon-inspectable';card.dataset.ctoonId=item.id;card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','View details for '+item.name);card.addEventListener('click',event=>{if(event.target.closest('a,button'))return;openPreview(item)});card.addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target===card){event.preventDefault();openPreview(item)}});
    const art=document.createElement('div');art.className='ctoon-shop-art';
    const badge=document.createElement('span');badge.className='ctoon-shop-owned';badge.textContent=item.is_for_sale?'Available':'Coming Soon';
    const img=document.createElement('img');img.src=item.image_path;img.alt=item.name+' CToon artwork';img.loading='lazy';art.append(badge,img);
