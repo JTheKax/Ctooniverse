@@ -1,8 +1,9 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
-const prizes=['25 COINS','TRY AGAIN','50 COINS','MYSTERY','100 COINS','BONUS SPIN','10 COINS','RARE CTOON'];
+const prizes=['500 COINS','CTOON PACK','RANDOM CTOON','250 COINS','MYSTERY PRIZE','SPIN TICKET','100 COINS','BONUS PRIZE'];
+const icons=['🪙','🎁','❔','🪙','🌟','🎟️','🪙','🎁'];
 const wheel=document.getElementById('prize-wheel-disc'),labels=document.getElementById('prize-wheel-labels'),button=document.getElementById('prize-wheel-spin'),result=document.getElementById('prize-wheel-result'),counter=document.getElementById('prize-wheel-counter');
-prizes.forEach((prize,i)=>{const span=document.createElement('span');span.className='prize-wheel-label';const angle=i*45+22.5;span.style.transform='translate(-50%,-50%) rotate('+angle+'deg) translateY(-112px) rotate('+(-angle)+'deg)';span.textContent=prize;labels.append(span)});
+prizes.forEach((prize,i)=>{const span=document.createElement('span');span.className='prize-wheel-label';const angle=i*45+22.5;span.style.left=(50+33*Math.sin(angle*Math.PI/180))+'%';span.style.top=(50-33*Math.cos(angle*Math.PI/180))+'%';span.textContent=icons[i]+' '+prize;labels.append(span)});
 let rotation=0,busy=false,remaining=0;
 async function check(){
  if(busy)return;button.disabled=true;counter.textContent='Checking daily spins…';
