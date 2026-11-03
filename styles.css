@@ -1248,3 +1248,51 @@ html body > .ctoon-music-player::after{
   left:12%!important;top:26%!important;width:76%!important;height:43%!important;
  }
 }
+
+/* Readability pass: solid high-contrast information plate in owner card. */
+.site-header .header-player.is-owner{
+ width:190px!important;min-width:190px!important;max-width:190px!important;
+ height:239px!important;min-height:239px!important;
+}
+.site-header .header-player.is-owner::after{
+ left:13%!important;top:27%!important;width:74%!important;height:43%!important;
+ border:2px solid #8beaff!important;border-radius:12px!important;
+ background:linear-gradient(155deg,#17102ff5,#271448f5)!important;
+ box-shadow:inset 0 0 0 2px #6943a3,0 0 9px #5ae5ff99!important;
+}
+.site-header .header-player.is-owner .header-player-icon{
+ top:32%!important;width:46px!important;height:46px!important;font-size:25px!important;
+ background:#39206c!important;color:#ffe47c!important;
+ border:2px solid #ffe47c!important;
+}
+.site-header .header-player.is-owner .header-player-info{
+ top:53%!important;left:17%!important;right:17%!important;
+ width:66%!important;max-width:66%!important;height:auto!important;
+ gap:5px!important;overflow:visible!important;
+}
+.site-header .header-player.is-owner #header-player-name{
+ font-size:15px!important;font-weight:1000!important;line-height:1.2!important;
+ color:#fff!important;text-shadow:0 2px 3px #000!important;
+ -webkit-line-clamp:2;
+}
+.site-header .header-player.is-owner #header-player-coins{
+ font-size:12px!important;font-weight:900!important;line-height:1.2!important;
+ padding:4px 6px!important;color:#fff2a2!important;
+ background:#0b0a21!important;border:2px solid #76e5ff!important;
+ border-radius:8px!important;white-space:normal!important;
+}
+@media(max-width:650px){
+ .site-header .header-player.is-owner{
+  width:160px!important;min-width:160px!important;max-width:160px!important;
+  height:202px!important;min-height:202px!important;
+ }
+ .site-header .header-player.is-owner .header-player-icon{
+  top:32%!important;width:38px!important;height:38px!important;font-size:22px!important;
+ }
+ .site-header .header-player.is-owner .header-player-info{
+  top:53%!important;left:16%!important;right:16%!important;
+  width:68%!important;max-width:68%!important;gap:3px!important;
+ }
+ .site-header .header-player.is-owner #header-player-name{font-size:12px!important}
+ .site-header .header-player.is-owner #header-player-coins{font-size:10px!important;padding:3px 4px!important}
+}
