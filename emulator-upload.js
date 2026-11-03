@@ -24,7 +24,7 @@
  button.addEventListener('click',async()=>{
   const title=document.getElementById('emu-title').value.trim();
   const rom=document.getElementById('emu-owner-file').files[0];
-  const consoleId=document.getElementById('emu-console').value;
+  const consoleId=document.getElementById('emu-upload-console').value;
   const allowed={nes:['nes'],snes:['sfc','smc'],gb:['gb'],gba:['gba'],gbc:['gbc'],n64:['n64','z64','v64'],segaMD:['md','gen','bin']};
   const extension=rom?.name.split('.').pop().toLowerCase();
   if(!title){status.textContent='Enter a game title first.';return}
