@@ -40,7 +40,7 @@ async function loadCases(){
   const consoles=[['Game Boy','gb'],['Game Boy Advance','gba'],['Game Boy Color','gbc'],['Nintendo 64','n64'],['Nintendo Entertainment System','nes'],['Sega Genesis / Mega Drive','segaMD'],['Super Nintendo','snes']];
   const grid=document.createElement('div');grid.className='emu-case-grid';
   for(const [name,code] of consoles){
-    const item=document.createElement('div');item.className='emu-case emu-case-placeholder';
+    const item=document.createElement('div');item.className='emu-case emu-case-placeholder emu-system-'+code;
     const cover=document.createElement('span');cover.className='emu-case-cover';
     const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=code.toUpperCase();
     const art=document.createElement('span');art.className='emu-case-art';art.textContent='🎮';
@@ -52,7 +52,7 @@ async function loadCases(){
  }
  const grid=document.createElement('div');grid.className='emu-case-grid';
  for(const game of data){
-  const caseEl=document.createElement('button');caseEl.type='button';caseEl.dataset.gameId=game.id;caseEl.className='emu-case';caseEl.disabled=started;
+  const caseEl=document.createElement('button');caseEl.type='button';caseEl.dataset.gameId=game.id;caseEl.className='emu-case emu-system-'+game.console;caseEl.disabled=started;
   const cover=document.createElement('span');cover.className='emu-case-cover';
   const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=game.console.toUpperCase();
   const art=document.createElement('span');art.className='emu-case-art';art.textContent='🎮';
