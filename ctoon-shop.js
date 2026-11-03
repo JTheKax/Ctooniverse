@@ -6,22 +6,25 @@ function setup(){
  if(!button||!status)return;
  let pending=false,refreshId=0;
  const message=(text)=>{status.textContent=text;};
+ const setOwned=(quantity)=>{if(!owned)return;owned.textContent=quantity>0?'Owned ×'+quantity:'Unowned';owned.classList.toggle('is-owned',quantity>0);owned.setAttribute('aria-label',quantity>0?'Owned: '+quantity+' copies':'Unowned');};
+ const setUnknown=()=>{if(owned){owned.textContent='Sign in';owned.classList.remove('is-owned');}};
  async function refresh(){
   if(pending)return;
   const id=++refreshId;
   try{
    const {data:{user},error:authError}=await db.auth.getUser();
    if(id!==refreshId||pending)return;
-   if(authError||!user){button.textContent='Sign in to Buy';message('Sign in to buy Traverse Town for 100 Cartoon Coins.');if(owned)owned.textContent='Unowned';return}
+   if(authError||!user){button.textContent='Sign in to Buy';message('Sign in to buy Traverse Town for 100 Cartoon Coins.');setUnknown();return}
    button.textContent='Buy';
    const [wallet,collection]=await Promise.all([
     db.from('coin_wallets').select('balance').eq('user_id',user.id).maybeSingle(),
     db.from('player_ctoons').select('quantity').eq('user_id',user.id).eq('ctoon_id',ctoonId).maybeSingle()
    ]);
    if(id!==refreshId||pending)return;
+   if(collection.error){setUnknown();message('Unable to check CToon ownership: '+collection.error.message);return}
    if(wallet.error){message('Unable to check your coins: '+wallet.error.message);return}
    const balance=Number(wallet.data?.balance??0),quantity=Number(collection.data?.quantity??0);
-   if(owned)owned.textContent=quantity?'Owned ×'+quantity:'Unowned';
+   setOwned(quantity);
    message('Balance: '+balance.toLocaleString()+' coins. Price: 100 coins.'+(balance<100?' You need more coins to purchase.':''));
   }catch(e){message('Could not load shop account: '+(e?.message||'connection error'))}
  }
@@ -34,6 +37,8 @@ function setup(){
    const {data,error}=await db.rpc('purchase_ctoon',{p_ctoon_id:ctoonId});
    if(error)throw error;
    button.textContent='Buy Again';
+   const {data:latest,error:ownedError}=await db.from('player_ctoons').select('quantity').eq('user_id',user.id).eq('ctoon_id',ctoonId).maybeSingle();
+   if(!ownedError)setOwned(Number(latest?.quantity??0));
    message('Purchase successful! 100 coins deducted. Remaining balance: '+Number(data.balance).toLocaleString()+'.');
    window.dispatchEvent(new Event('ctoon-profile-updated'));
   }catch(e){
