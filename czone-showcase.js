@@ -11,7 +11,7 @@ function card(item,slot,quantity){
  const title=document.createElement('div');title.className='ctoon-shop-name';title.textContent=item.name;
  const meta=document.createElement('p');meta.className='collection-series';meta.textContent=item.series||'CTooniverse';
  const btn=document.createElement('button');btn.type='button';btn.className='czone-action';btn.textContent=slot?'× Remove':'Display';btn.disabled=loading;
- if(slot){box.dataset.ctoonId=item.id;box.title=item.name+' — placed on your CZone background';box.setAttribute('aria-label',item.name+' displayed on background');const placement=slots.find(x=>x.ctoon_id===item.id);if(placement){box.style.left=Number(placement.position_x??50)+'%';box.style.top=Number(placement.position_y??80)+'%';art.style.transform='rotate('+Number(placement.rotation||0)+'deg) scale('+Number(placement.scale||1)+')';art.style.transformOrigin='center bottom';}installDrag(box,item.id);box.addEventListener('click',event=>{if(box.dataset.justDragged==='1'){box.dataset.justDragged='0';return}if(event.target.closest('button'))return;openEditor(item.id);});box.tabIndex=0;box.addEventListener('keydown',event=>{if(event.key==='Enter'){openEditor(item.id)}})}
+ if(slot){box.dataset.ctoonId=item.id;box.title=item.name+' — placed on your CZone background';box.setAttribute('aria-label',item.name+' displayed on background');const placement=slots.find(x=>x.ctoon_id===item.id);if(placement){box.style.left=Number(placement.position_x===50&&placement.position_y===80?12+((placement.slot-1)%7)*12:placement.position_x??50)+'%';box.style.top=Number(placement.position_x===50&&placement.position_y===80?78-Math.floor((placement.slot-1)/7)*17:placement.position_y??80)+'%';art.style.transform='rotate('+Number(placement.rotation||0)+'deg) scale('+Number(placement.scale||1)+')';art.style.transformOrigin='center bottom';}installDrag(box,item.id);box.addEventListener('click',event=>{if(box.dataset.justDragged==='1'){box.dataset.justDragged='0';return}if(event.target.closest('button'))return;openEditor(item.id);});box.tabIndex=0;box.addEventListener('keydown',event=>{if(event.key==='Enter'){openEditor(item.id)}})}
  btn.addEventListener('click',()=>change(item.id,slot));detail.append(title,meta,btn);if(slot){const edit=document.createElement('button');edit.type='button';edit.className='czone-action';edit.textContent='Edit Size / Rotate';edit.addEventListener('click',()=>openEditor(item.id));detail.append(edit)}box.append(art,detail);return box;
 }
 
@@ -51,7 +51,7 @@ function installDrag(box,id){
   if(e.button!==0||e.target.closest('button,input'))return;
   const slot=slots.find(x=>x.ctoon_id===id);if(!slot)return;
   const bounds=display.getBoundingClientRect();
-  drag={pointer:e.pointerId,startX:e.clientX,startY:e.clientY,x:Number(slot.position_x??50),y:Number(slot.position_y??80),bounds,moved:false};
+  drag={pointer:e.pointerId,startX:e.clientX,startY:e.clientY,x:Number.parseFloat(box.style.left),y:Number.parseFloat(box.style.top),bounds,moved:false};
   box.setPointerCapture(e.pointerId);
  });
  box.addEventListener('pointermove',e=>{
@@ -99,7 +99,7 @@ async function change(id,slot){
   let result;
   if(slot){result=await db.from('czone_displays').delete().eq('user_id',userId).eq('slot',slot)}
   else{const taken=new Set(slots.map(x=>x.slot));let free=1;while(taken.has(free))free++;
-   result=await db.from('czone_displays').insert({user_id:userId,ctoon_id:id,slot:free});
+   result=await db.from('czone_displays').insert({user_id:userId,ctoon_id:id,slot:free,position_x:12+((free-1)%7)*12,position_y:Math.max(10,78-Math.floor((free-1)/7)*17)});
   }
   if(result.error)throw result.error;
   const {data,error}=await db.from('czone_displays').select('ctoon_id,slot,scale,rotation,position_x,position_y').eq('user_id',userId);
