@@ -6,7 +6,7 @@ profile.classList.add('profile-loading');
 let verifiedOwnerUserId=null;
 const ownerMark=document.createElement('span');ownerMark.className='profile-owner-mark';ownerMark.textContent='♛';ownerMark.title='Verified Ctooniverse Owner';ownerMark.setAttribute('aria-label','Verified Ctooniverse Owner');ownerMark.hidden=true;name.insertAdjacentElement('afterend',ownerMark);
 function hideOwner(){ownerMark.hidden=true;profile.classList.remove('is-owner');verifiedOwnerUserId=null;}
-function revealProfile(){profile.classList.remove('profile-loading');}
+function revealProfile(){profile.classList.remove('profile-loading');profile.classList.add('profile-ready');}
 async function updateHeader(){
  const id=++seq;
  try{
