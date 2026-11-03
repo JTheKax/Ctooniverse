@@ -1400,3 +1400,25 @@ html body > .ctoon-music-player::after{
  .site-header .header-player:not(.is-owner):not(.is-guest) #header-player-name{font-size:clamp(10px,4.7vw,17px)!important}
  .site-header .header-player:not(.is-owner):not(.is-guest) #header-player-coins{font-size:clamp(9px,4vw,15px)!important}
 }
+
+/* Hand-drawn Community arcade lounge — shared by Community, Forums, Guild and Support. */
+body.community-neon-page{
+ background-color:#150b32!important;
+ background-image:linear-gradient(180deg,rgba(13,7,35,.62),rgba(15,8,38,.68)),url("public/images/community-background.png")!important;
+ background-position:center center!important;background-size:cover!important;
+ background-repeat:no-repeat!important;background-attachment:fixed!important;
+}
+body.community-neon-page main{position:relative;z-index:1}
+body.community-neon-page main .section,
+body.community-neon-page main .page-placeholder,
+body.community-neon-page main .discord-panel{
+ background-color:rgba(18,10,45,.88)!important;
+ color:#f9f5ff!important;
+ border-color:#8a62e9!important;
+ box-shadow:0 8px 28px rgba(6,2,22,.45)!important;
+}
+body.community-neon-page main p,
+body.community-neon-page main .lead{color:#f0e8ff!important}
+@media(max-width:760px){
+ body.community-neon-page{background-attachment:scroll!important;background-position:center top!important}
+}
