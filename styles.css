@@ -1649,3 +1649,11 @@ body.czone-page.czone-traverse-town .czone-preview>#czone-status{
  display:table;margin-left:auto;margin-right:auto;padding:6px 14px;border-radius:9px;
  background:rgba(4,7,25,.76);color:#fff;text-shadow:0 1px 3px #000;
 }
+
+/* Preserve the full Traverse Town scene inside the My Display frame. */
+body.czone-page.czone-traverse-town .czone-preview{
+ background-size:contain!important;
+ background-position:center center!important;
+ background-repeat:no-repeat!important;
+ background-color:#080d24!important;
+}
