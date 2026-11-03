@@ -1492,3 +1492,14 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 .ctoon-shop-name{white-space:normal;overflow-wrap:anywhere;min-height:36px;display:flex;align-items:center;justify-content:center;gap:4px}
 .ctoon-shop-status{min-height:27px}
 @media(max-width:420px){.ctoon-shop-card{width:190px!important;min-width:190px;max-width:190px!important}}
+
+
+/* Standard CToon shop display: exactly 182 × 282 CSS pixels. */
+.ctoon-shop-card{box-sizing:border-box!important;width:182px!important;min-width:182px!important;max-width:182px!important;height:282px!important;min-height:282px!important;max-height:282px!important;padding:6px!important;display:flex;flex-direction:column;overflow:hidden}
+.ctoon-shop-art{box-sizing:border-box!important;flex:0 0 158px!important;width:100%!important;height:158px!important;aspect-ratio:auto!important;min-height:0!important;overflow:hidden}
+.ctoon-shop-art img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important}
+.ctoon-shop-details{box-sizing:border-box!important;flex:1 1 auto!important;min-height:0!important;padding:5px 3px 3px!important;display:flex;flex-direction:column;justify-content:space-between;gap:2px}
+.ctoon-shop-name{font-size:12px!important;line-height:1.15!important;min-height:28px!important}
+.ctoon-shop-purchase{margin-top:0!important}
+.ctoon-shop-status{font-size:9px!important;line-height:1.2!important;min-height:23px!important;margin:2px 0 0!important}
+@media(max-width:420px){.ctoon-shop-card{width:182px!important;min-width:182px!important;max-width:182px!important}}
