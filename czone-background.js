@@ -15,9 +15,10 @@
   preview.style.setProperty('background-image',traverse?
    'linear-gradient(180deg,rgba(4,8,27,.12),rgba(4,8,27,.28)),url("'+image+'")':
    'linear-gradient(145deg,rgba(16,28,81,.87),rgba(39,15,87,.89))','important');
-  preview.style.setProperty('background-size','cover','important');
+  preview.style.setProperty('background-size',traverse?'contain':'cover','important');
   preview.style.setProperty('background-position','center center','important');
   preview.style.setProperty('background-repeat','no-repeat','important');
+  preview.style.setProperty('background-color','#080d24','important');
   status.textContent=traverse?'Traverse Town is showing in My Display.':'Neon Arcade is showing in My Display.';
  }
  function choose(choice){
