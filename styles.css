@@ -1541,3 +1541,10 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 .ctoons-dropdown-panel a:hover,.ctoons-dropdown-panel a:focus-visible,.ctoons-dropdown-panel a[aria-current="page"]{background:#356bc4;color:#fff;outline-offset:2px}
 .ctoons-dropdown:hover .ctoons-dropdown-panel,.ctoons-dropdown:focus-within .ctoons-dropdown-panel,.ctoons-dropdown.is-open .ctoons-dropdown-panel{display:block}
 @media(max-width:700px){.ctoons-dropdown-panel{left:0;right:auto;min-width:170px}}
+
+
+/* CZone landing page */
+.czone-section{max-width:950px;margin:0 auto;text-align:center}
+.czone-preview{max-width:640px;margin:2rem auto;padding:2rem 1.25rem;border:2px solid #65e1ff;border-radius:20px;background:radial-gradient(ellipse at top,#244db6cc,#17134c 60%,#2d1254);box-shadow:0 0 22px #3abfff66,inset 0 0 25px #884dff33}
+.czone-preview-icon{font-size:3.5rem;color:#9beaff;text-shadow:0 0 20px #48cfff}
+.czone-preview h2{margin:.4rem 0}.czone-preview .hero-actions{justify-content:center}
