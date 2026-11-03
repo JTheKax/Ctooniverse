@@ -815,3 +815,7 @@ body > .ctoon-music-player,body .ctoon-music-player{
  .ctoon-music-player .music-volume-label{grid-column:1/-1}
 }
 @media(prefers-reduced-motion:reduce){.ctoon-music-player *{animation:none!important;transition:none!important}}
+
+/* Keep expanded console above its floating radio trigger. */
+body > .ctoon-music-player{display:flex!important;flex-direction:column-reverse!important;align-items:flex-end!important}
+.ctoon-music-player .music-controls{align-self:stretch!important}
