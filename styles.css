@@ -1624,3 +1624,11 @@ body.czone-page .czone-preview{
 .czone-background-choice p{width:100%;margin:0;font-size:.85rem;color:#bfefff}
 body.czone-page.czone-traverse-town{background-image:linear-gradient(rgba(4,8,27,.45),rgba(4,8,27,.65)),url("images/czone/traverse-town.png")!important;background-size:cover!important;background-position:center center!important;background-attachment:fixed!important}
 body.czone-page.czone-traverse-town #main::before,body.czone-page.czone-traverse-town #main::after{display:none!important}
+
+
+/* Full-page My CZone display: retain compact uniform CToon cards. */
+body.czone-page .czone-section{box-sizing:border-box;width:100%;max-width:none!important;margin:0 auto;padding:clamp(14px,2vw,36px)!important}
+body.czone-page .czone-preview{box-sizing:border-box;width:100%!important;max-width:none!important;margin:1.5rem auto!important;min-height:clamp(520px,75vh,1100px);padding:clamp(16px,2.5vw,44px)!important}
+body.czone-page .czone-display{width:100%;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));align-content:start;justify-items:center;gap:clamp(12px,2vw,26px);min-height:clamp(400px,65vh,960px)}
+body.czone-page .czone-picker,body.czone-page .czone-background-choice{max-width:none!important;width:100%;box-sizing:border-box}
+@media(max-width:480px){body.czone-page .czone-preview{min-height:70vh;padding:12px!important}body.czone-page .czone-display{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;min-height:55vh}}
