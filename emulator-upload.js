@@ -27,7 +27,10 @@
   const consoleId=document.getElementById('emu-console').value;
   const allowed={nes:['nes'],snes:['sfc','smc'],gb:['gb'],gba:['gba'],gbc:['gbc'],n64:['n64','z64','v64'],segaMD:['md','gen','bin']};
   const extension=rom?.name.split('.').pop().toLowerCase();
-  if(!title||title.length>100||!rom||!allowed[consoleId]?.includes(extension)){status.textContent='Enter a title and a compatible game file.';return}
+  if(!title){status.textContent='Enter a game title first.';return}
+  if(title.length>100){status.textContent='Game title must be 100 characters or fewer.';return}
+  if(!rom){status.textContent='Choose a game file from your computer.';return}
+  if(!allowed[consoleId]?.includes(extension)){status.textContent='File .'+(extension||'unknown')+' is not supported for the selected console. Choose the matching console or a supported ROM file.';return}
   if(rom.size>50*1024*1024){status.textContent='Maximum file size is 50 MB.';return}
   button.disabled=true;status.textContent='Uploading game…';
   const path=crypto.randomUUID()+'.'+extension;
