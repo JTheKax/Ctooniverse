@@ -1723,3 +1723,7 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 .ctoon-editor-dialog{background:#101a4b;color:white;border:2px solid #6de8ff;border-radius:14px;box-shadow:0 0 25px #25ccff99;width:min(92vw,440px);padding:24px}
 .ctoon-editor-dialog::backdrop{background:#05051cbb}
 .ctoon-editor-dialog form{display:grid;gap:12px}.ctoon-editor-dialog label{display:grid;gap:4px;font-weight:700}.ctoon-editor-dialog input,.ctoon-editor-dialog select{width:100%;box-sizing:border-box;padding:9px;border-radius:6px;border:1px solid #78caff;background:#fff;color:#15214b}
+
+/* Small collectible inspection enhancement, preserving existing card layout. */
+.ctoon-inspectable{cursor:pointer}.ctoon-inspectable:focus-visible{outline:3px solid #8eefff;outline-offset:4px}
+.ctoon-preview-dialog{max-height:85vh;overflow:auto;text-align:center}.ctoon-preview-image{display:block;max-width:min(100%,280px);max-height:360px;object-fit:contain;margin:12px auto}.ctoon-preview-content p{margin:8px 0}
