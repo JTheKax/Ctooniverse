@@ -953,3 +953,19 @@ html body > .ctoon-music-player::after{
  html body > .ctoon-music-player .music-controls{padding:14px 10px!important;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)!important}
  html body > .ctoon-music-player::after{font-size:10px;letter-spacing:0}
 }
+
+
+/* Home jukebox upcoming-music showcase */
+.jukebox-upcoming{max-width:1180px;margin:24px auto 44px;padding:clamp(18px,3vw,32px);border:2px solid #73c8ff;border-radius:24px;background:linear-gradient(145deg,rgba(21,20,75,.95),rgba(48,22,101,.93));box-shadow:0 0 25px #6b58ff55,inset 0 0 0 4px #33246d;color:#f7f4ff}
+.jukebox-upcoming-header{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.jukebox-upcoming-header>div{flex:1;min-width:180px}
+.jukebox-upcoming-header h2{margin:3px 0 6px;color:#fff;text-shadow:0 0 12px #668dff}
+.jukebox-upcoming-header p{margin:0;color:#d6d6ff}
+.jukebox-upcoming-icon{display:grid;place-items:center;width:72px;height:72px;flex:none;border:3px solid #83ddff;border-radius:22px 22px 12px 12px;background:linear-gradient(160deg,#6441d2,#203c9d);color:#fff;font-size:42px;box-shadow:0 0 16px #5aaaff88}
+.jukebox-upcoming-badge{padding:8px 12px;border:1px solid #8bd9ff;border-radius:999px;color:#9deaff;background:#132758;font-size:12px;font-weight:900;letter-spacing:.08em}
+.jukebox-upcoming-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}
+.jukebox-upcoming-slot{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;padding:18px 12px;border:1px solid #7872e7;border-radius:15px;background:linear-gradient(150deg,#1d2b67,#35205e);text-align:center;box-shadow:inset 0 0 15px #7b50db33}
+.jukebox-upcoming-slot>span{font-size:30px;color:#8ce6ff;text-shadow:0 0 12px #59bfff}
+.jukebox-upcoming-slot strong{color:#fff}
+.jukebox-upcoming-slot small{color:#c6bfff}
+@media(max-width:650px){.jukebox-upcoming{margin:18px 12px 30px}.jukebox-upcoming-icon{width:55px;height:55px;font-size:30px}.jukebox-upcoming-slots{grid-template-columns:1fr}.jukebox-upcoming-slot{padding:12px}}
