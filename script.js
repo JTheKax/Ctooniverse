@@ -82,7 +82,7 @@ if (year) year.textContent = String(new Date().getFullYear());
  button.setAttribute('aria-haspopup','true');button.setAttribute('aria-expanded','false');
  button.innerHTML='<span class="nav-icon" aria-hidden="true">▣</span><span>CToons</span><span aria-hidden="true">▾</span>';
  const panel=document.createElement('div');panel.className='ctoons-dropdown-panel';
- for(const [label,url] of [['CToons','ctoons.html'],['My Collection','my-collection.html'],['CZone','czone.html']]){
+ for(const [label,url] of [['CToons','ctoons.html'],['My Collection','my-collection.html'],['CZone','czone.html'],['Trades','trades.html']]){
   const a=document.createElement('a');a.href=url;a.textContent=label;
   if(location.pathname.endsWith('/'+url))a.setAttribute('aria-current','page');
   panel.append(a);
