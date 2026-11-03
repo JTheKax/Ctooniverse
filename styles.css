@@ -1678,3 +1678,16 @@ body.czone-page .czone-placed-details{display:flex;flex-direction:column;align-i
 body.czone-page .czone-placed-details .ctoon-shop-name{font-size:12px;line-height:1.2;color:white}
 body.czone-page .czone-placed-details .collection-series{display:none}
 body.czone-page .czone-placed-details .czone-action{font-size:10px;padding:3px 7px}
+
+
+/* Smaller collectible artwork within My Display; picker cards stay unchanged. */
+body.czone-page .czone-display .czone-placed-ctoon{
+ width:clamp(65px,7vw,105px)!important;
+ min-height:clamp(90px,11vw,145px)!important;
+}
+body.czone-page .czone-display .czone-placed-art{
+ height:clamp(75px,9vw,125px)!important;
+}
+body.czone-page .czone-display{gap:clamp(8px,1.4vw,18px)!important}
+body.czone-page .czone-display .czone-placed-details .ctoon-shop-name{font-size:10px!important}
+body.czone-page .czone-display .czone-placed-details .czone-action{font-size:9px!important;padding:2px 5px!important}
