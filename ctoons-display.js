@@ -37,14 +37,14 @@ async function refresh(){
    const edit=()=>{
     if(!isOwner)return;
     const dialog=document.createElement('dialog');dialog.className='ctoon-editor-dialog';
-    const form=document.createElement('form');form.innerHTML='<h2>Edit CToon</h2><label>Name<input name="name" required maxlength="80"></label><label>Image path or HTTPS URL<input name="image_path" required maxlength="1000"></label><label>Rarity<select name="rarity"><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select></label><label>Price (Cartoon Coins)<input name="price_coins" type="number" min="0" max="1000000" step="1" required></label><p role="status" class="ctoon-edit-feedback"></p><div class="hero-actions"><button type="button" class="button secondary" data-cancel>Cancel</button><button type="submit" class="button primary">Save Changes</button></div>';
-    form.elements.name.value=item.name;form.elements.image_path.value=item.image_path||'';form.elements.rarity.value=item.rarity||'Common';form.elements.price_coins.value=item.price_coins??0;
+    const form=document.createElement('form');form.innerHTML='<h2>Edit CToon</h2><label>Name<input name="name" required maxlength="80"></label><label>Image path or HTTPS URL<input name="image_path" required maxlength="1000"></label><label>Rarity<select name="rarity"><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select></label><label>Price (Cartoon Coins)<input name="price_coins" type="number" min="0" max="1000000" step="1" required></label><label class="ctoon-sale-toggle"><input name="is_for_sale" type="checkbox"> List for sale in Shop</label><p role="status" class="ctoon-edit-feedback"></p><div class="hero-actions"><button type="button" class="button secondary" data-cancel>Cancel</button><button type="submit" class="button primary">Save Changes</button></div>';
+    form.elements.name.value=item.name;form.elements.image_path.value=item.image_path||'';form.elements.rarity.value=item.rarity||'Common';form.elements.price_coins.value=item.price_coins??0;form.elements.is_for_sale.checked=!!item.is_for_sale;
     const feedback=form.querySelector('.ctoon-edit-feedback');form.querySelector('[data-cancel]').onclick=()=>dialog.close();
     form.addEventListener('submit',async event=>{
      event.preventDefault();const name=form.elements.name.value.trim(),image_path=form.elements.image_path.value.trim(),rarity=form.elements.rarity.value,price_coins=Number(form.elements.price_coins.value);
      if(!name||!(/^(https:\/\/|public\/images\/)/.test(image_path))||!Number.isInteger(price_coins)||price_coins<0){feedback.textContent='Enter a valid name, HTTPS image URL or public/images/ path, and whole-number price.';return}
      const save=form.querySelector('[type=submit]');save.disabled=true;feedback.textContent='Saving…';
-     const {data,error}=await db.from('ctoon_catalog').update({name,image_path,rarity,price_coins}).eq('id',item.id).select('id').single();
+     const is_for_sale=form.elements.is_for_sale.checked;const {data,error}=await db.from('ctoon_catalog').update({name,image_path,rarity,price_coins,is_for_sale}).eq('id',item.id).select('id').single();
      save.disabled=false;if(error||!data){feedback.textContent='Could not save: '+(error?.message||'No permission');return}
      dialog.close();refresh();
     });
