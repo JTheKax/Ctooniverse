@@ -1548,3 +1548,21 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 .czone-preview{max-width:640px;margin:2rem auto;padding:2rem 1.25rem;border:2px solid #65e1ff;border-radius:20px;background:radial-gradient(ellipse at top,#244db6cc,#17134c 60%,#2d1254);box-shadow:0 0 22px #3abfff66,inset 0 0 25px #884dff33}
 .czone-preview-icon{font-size:3.5rem;color:#9beaff;text-shadow:0 0 20px #48cfff}
 .czone-preview h2{margin:.4rem 0}.czone-preview .hero-actions{justify-content:center}
+
+
+/* Compact, consistent CToon displays across Shop, CToons and My Collection. */
+.ctoon-shop-card,.collection-grid .ctoon-shop-card,.ctoons-featured-grid .ctoon-shop-card{
+ box-sizing:border-box!important;width:150px!important;min-width:150px!important;max-width:150px!important;
+ height:232px!important;min-height:232px!important;max-height:232px!important;
+ padding:5px!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;
+}
+.ctoon-shop-art{box-sizing:border-box!important;flex:0 0 128px!important;width:100%!important;height:128px!important;min-height:128px!important;aspect-ratio:auto!important;overflow:hidden!important}
+.ctoon-shop-art img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:center!important}
+.ctoon-shop-details{box-sizing:border-box!important;flex:1 1 auto!important;min-height:0!important;padding:4px 2px 2px!important;gap:1px!important}
+.ctoon-shop-name{font-size:11px!important;line-height:1.12!important;min-height:25px!important}
+.ctoon-shop-price strong{font-size:13px!important}
+.ctoon-shop-buy{padding:4px 8px!important;font-size:11px!important}
+.ctoon-shop-status{font-size:8px!important;line-height:1.15!important;min-height:20px!important}
+.ctoon-shop-owned{font-size:9px!important;padding:2px 4px!important}
+.collection-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))!important}
+@media(max-width:420px){.ctoon-shop-card,.collection-grid .ctoon-shop-card,.ctoons-featured-grid .ctoon-shop-card{width:150px!important;min-width:150px!important;max-width:150px!important}}
