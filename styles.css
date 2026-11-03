@@ -1657,3 +1657,7 @@ body.czone-page.czone-traverse-town .czone-preview{
  background-repeat:no-repeat!important;
  background-color:#080d24!important;
 }
+
+/* Hand-drawn CZone title artwork */
+body.czone-page .czone-page-title{display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;min-height:100px}
+body.czone-page .czone-logo{display:block;width:min(100%,780px);height:auto;max-height:280px;object-fit:contain;filter:drop-shadow(0 8px 18px rgba(10,5,40,.55))}
