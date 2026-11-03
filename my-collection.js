@@ -22,8 +22,34 @@ function render(item,quantity){
  const count=document.createElement('p');count.className='collection-quantity';count.textContent='Copies owned: '+quantity;
  details.append(name,series,count);card.append(art,details);return card;
 }
+const tools=document.getElementById('collection-tools'),search=document.getElementById('collection-search'),seriesFilter=document.getElementById('collection-series-filter'),rarityFilter=document.getElementById('collection-rarity-filter'),sort=document.getElementById('collection-sort');
+let rows=[];
+const rarityOrder=['Common','Uncommon','Rare','Epic','Legendary'];
+const preview=document.createElement('dialog');preview.className='ctoon-editor-dialog ctoon-preview-dialog';document.body.append(preview);
+function inspect(item,quantity){
+ preview.replaceChildren();
+ const heading=document.createElement('h2');heading.textContent=item.name;
+ const img=document.createElement('img');img.className='ctoon-preview-image';img.src=item.image_path||'ctooniverse-logo.png';img.alt=item.name+' artwork';
+ const detail=document.createElement('p');detail.textContent=(item.series||'CTooniverse')+' · '+(item.rarity||'Common')+' · Owned ×'+quantity;
+ const close=document.createElement('button');close.className='button secondary';close.textContent='Close';close.onclick=()=>preview.close();
+ preview.append(heading,img,detail,close);preview.showModal();
+}
+function showRows(){
+ const query=search.value.trim().toLocaleLowerCase(),series=seriesFilter.value,rarity=rarityFilter.value;
+ const visible=rows.filter(({item})=>(!query||item.name.toLocaleLowerCase().includes(query))&&(!series||item.series===series)&&(!rarity||item.rarity===rarity));
+ visible.sort((a,b)=>sort.value==='quantity'?b.quantity-a.quantity||a.item.name.localeCompare(b.item.name):sort.value==='rarity'?(rarityOrder.indexOf(a.item.rarity)-rarityOrder.indexOf(b.item.rarity))||a.item.name.localeCompare(b.item.name):sort.value==='name-desc'?b.item.name.localeCompare(a.item.name):a.item.name.localeCompare(b.item.name));
+ grid.replaceChildren();
+ for(const {item,quantity} of visible){
+  const card=render(item,quantity);card.classList.add('ctoon-inspectable');card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','View '+item.name+' details');
+  card.addEventListener('click',()=>inspect(item,quantity));card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inspect(item,quantity)}});
+  grid.append(card);
+ }
+ say('Showing '+visible.length+' of '+rows.length+' owned CToons.');
+ if(!visible.length)empty('No CToons match your filters.');
+}
+for(const control of [search,seriesFilter,rarityFilter,sort])control.addEventListener('input',showRows);
 async function load(){
- const current=++sequence;grid.replaceChildren();summary.hidden=true;say('Loading your collection…');
+ const current=++sequence;grid.replaceChildren();summary.hidden=true;tools.hidden=true;rows=[];say('Loading your collection…');
  try{
   const {data:{user},error:authError}=await db.auth.getUser();
   if(current!==sequence)return;
@@ -37,13 +63,14 @@ async function load(){
   if(catalogError)throw catalogError;
   if(current!==sequence)return;
   const byId=new Map((catalog||[]).map(item=>[item.id,item]));
-  let copies=0,shown=0;
-  for(const row of owned){
-   const item=byId.get(row.ctoon_id);if(!item)continue;
-   const count=Number(row.quantity)||0;copies+=count;shown++;grid.append(render(item,count));
+  rows=owned.map(row=>({item:byId.get(row.ctoon_id),quantity:Number(row.quantity)||0})).filter(row=>row.item&&row.quantity>0);
+  const copies=rows.reduce((n,row)=>n+row.quantity,0);
+  unique.textContent=rows.length.toLocaleString();total.textContent=copies.toLocaleString();summary.hidden=false;
+  for(const [control,values] of [[seriesFilter,[...new Set(rows.map(x=>x.item.series).filter(Boolean))]],[rarityFilter,[...new Set(rows.map(x=>x.item.rarity).filter(Boolean))]]]){
+   control.replaceChildren(new Option(control===seriesFilter?'All series':'All rarities',''));
+   for(const value of values.sort((a,b)=>a.localeCompare(b)))control.add(new Option(value,value));
   }
-  unique.textContent=shown.toLocaleString();total.textContent=copies.toLocaleString();summary.hidden=false;
-  say(shown?'Showing '+shown+' owned CToon'+(shown===1?'':'s')+'.':'No available CToon details found.');
+  tools.hidden=false;showRows();
  }catch(e){say('Unable to load collection: '+(e?.message||'Unknown error'));empty('Please refresh to try again.')}
 }
 db.auth.onAuthStateChange(()=>setTimeout(load,0));
