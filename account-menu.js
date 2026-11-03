@@ -16,6 +16,12 @@ for(const menu of menus){
  });
 }
 document.addEventListener('click',e=>{for(const menu of menus)if(!menu.contains(e.target))menu.querySelector('.account-dropdown-trigger').setAttribute('aria-expanded','false');});
-db.auth.onAuthStateChange(()=>setTimeout(refresh,0));
-window.addEventListener('pageshow',refresh);
+let currentUserId;
+db.auth.onAuthStateChange((event,session)=>{
+ if(event!=='SIGNED_IN'&&event!=='SIGNED_OUT')return;
+ const next=session?.user?.id||null;
+ if(currentUserId===next)return;
+ currentUserId=next;
+ setTimeout(refresh,0);
+});
 refresh();
