@@ -1439,3 +1439,8 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 .ctoon-shop-status{font-size:9px;line-height:1.2;margin:3px 0 0;color:#dceeff}
 
 .ctoon-shop-owned.is-owned{background:#157d27;border-color:#a5ff9e;color:#fff}
+
+
+/* Ownership badges: gray when unowned, green when owned. */
+.ctoon-shop-owned{background:#626b78!important;color:#fff!important;border:1px solid #b0b6c0!important;box-shadow:0 1px 3px #0006}
+.ctoon-shop-owned.is-owned{background:#198a35!important;color:#fff!important;border:1px solid #83ef9d!important;box-shadow:0 1px 4px #064b1b99}
