@@ -1503,3 +1503,22 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 .ctoon-shop-purchase{margin-top:0!important}
 .ctoon-shop-status{font-size:9px!important;line-height:1.2!important;min-height:23px!important;margin:2px 0 0!important}
 @media(max-width:420px){.ctoon-shop-card{width:182px!important;min-width:182px!important;max-width:182px!important}}
+
+
+/* My Collection — same standard 182 × 282 CToon cards as the shop. */
+.collection-section{max-width:1100px;margin-inline:auto}
+.collection-heading{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem}
+.collection-heading h1{margin:.2rem 0}
+.collection-summary{display:flex;gap:1rem;flex-wrap:wrap;margin:1.5rem 0}
+.collection-summary[hidden]{display:none}
+.collection-summary>div{min-width:155px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:1rem 1.5rem;border:2px solid #5fe4ff;border-radius:12px;background:linear-gradient(135deg,#0e3c88,#341668);box-shadow:0 0 12px #36bbff55}
+.collection-summary strong{font-size:2rem;color:#fff}.collection-summary span{color:#d9edff;font-size:.85rem}
+.collection-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(182px,1fr));gap:1rem;justify-items:center}
+.collection-grid .ctoon-shop-card{margin:0!important}
+.collection-card .ctoon-shop-details{justify-content:space-around!important}
+.collection-series,.collection-quantity{font-size:10px!important;line-height:1.2!important;margin:2px 0!important;color:#ecf5ff!important}
+.collection-quantity{font-weight:800}
+.collection-empty{grid-column:1/-1;text-align:center;padding:2rem;border:2px dashed #7e88d9;border-radius:14px;background:#130d37bb;width:100%;box-sizing:border-box}
+.collection-empty p{margin:0 0 1rem}
+.ctoons-collection-entry{margin:1.25rem auto 1.75rem;text-align:center;padding:1.25rem;max-width:520px;background:#18104cbb;border:2px solid #6adfff;border-radius:14px;box-shadow:0 0 18px #4c8fff44}
+.ctoons-collection-entry p{margin:.65rem 0 0}
