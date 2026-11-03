@@ -4,13 +4,14 @@ const display=document.getElementById('czone-display'),picker=document.getElemen
 let userId=null,items=[],slots=[],loading=false,seq=0;
 const note=s=>{status.textContent=s};
 function card(item,slot,quantity){
- const box=document.createElement('article');box.className='ctoon-shop-card czone-card';
- const art=document.createElement('div');art.className='ctoon-shop-art';
+ const box=document.createElement('article');box.className=slot?'czone-placed-ctoon':'ctoon-shop-card czone-card';
+ const art=document.createElement('div');art.className=slot?'czone-placed-art':'ctoon-shop-art';
  const img=document.createElement('img');img.loading='lazy';img.src=item.image_path||'ctooniverse-logo.png';img.alt=item.name;img.onerror=()=>{img.onerror=null;img.src='ctooniverse-logo.png'};art.append(img);
- const detail=document.createElement('div');detail.className='ctoon-shop-details';
+ const detail=document.createElement('div');detail.className=slot?'czone-placed-details':'ctoon-shop-details';
  const title=document.createElement('div');title.className='ctoon-shop-name';title.textContent=item.name;
  const meta=document.createElement('p');meta.className='collection-series';meta.textContent=item.series||'CTooniverse';
- const btn=document.createElement('button');btn.type='button';btn.className='czone-action';btn.textContent=slot?'Remove':'Display';btn.disabled=loading;
+ const btn=document.createElement('button');btn.type='button';btn.className='czone-action';btn.textContent=slot?'× Remove':'Display';btn.disabled=loading;
+ if(slot){box.title=item.name+' — placed on your CZone background';box.setAttribute('aria-label',item.name+' displayed on background');}
  btn.addEventListener('click',()=>change(item.id,slot));detail.append(title,meta,btn);box.append(art,detail);return box;
 }
 function render(){
