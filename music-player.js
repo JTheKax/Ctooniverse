@@ -31,6 +31,8 @@ async function loadMusic(){
   if(!tracks.length){hint.textContent='No published tracks found. Please try refreshing.';return}
   choice.replaceChildren();tracks.forEach((track,i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=track.title;choice.append(option)});choice.disabled=false;skip.disabled=false;repeat.disabled=false;
   selectTrack=()=>{const t=tracks[index];label.textContent=t.title;choice.value=String(index);audio.src='https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/'+t.storage_path;play.disabled=false;mute.disabled=false;volume.disabled=false;hint.textContent='Press Play to listen.'};
+  // Choose a random published song for the initial autoplay attempt.
+  index=Math.floor(Math.random()*tracks.length);
   selectTrack();
   void tryAutoplay();
   audio.addEventListener('ended',()=>{if(repeatOne){audio.currentTime=0;audio.play().catch(()=>{hint.textContent='Press Play to repeat this song.'});return}index=(index+1)%tracks.length;selectTrack();audio.play().catch(()=>{hint.textContent='Press Play for the next song.'})});
