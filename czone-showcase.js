@@ -21,7 +21,7 @@ function render(){
  for(const item of items){if(!selected.has(item.id))picker.append(card(item,null))}
  if(!display.children.length){const p=document.createElement('p');p.className='czone-empty';p.textContent='No CToons displayed yet. Choose one from your collection below.';display.append(p)}
  if(!picker.children.length){const p=document.createElement('p');p.className='czone-empty';p.textContent=items.length?'All your owned CToons are on display.':'You have no CToons yet. Visit the Shop to start collecting.';picker.append(p)}
- note(slots.length+' of 12 display spaces filled');
+ note(slots.length+' CToon'+(slots.length===1?'':'s')+' on display');
 }
 async function change(id,slot){
  if(loading||!userId)return;
@@ -29,8 +29,7 @@ async function change(id,slot){
  try{
   let result;
   if(slot){result=await db.from('czone_displays').delete().eq('user_id',userId).eq('slot',slot)}
-  else{const taken=new Set(slots.map(x=>x.slot));let free=0;for(let n=1;n<=12;n++){if(!taken.has(n)){free=n;break}}
-   if(!free){throw new Error('Your display is full. Remove a CToon first.')}
+  else{const taken=new Set(slots.map(x=>x.slot));let free=1;while(taken.has(free))free++;
    result=await db.from('czone_displays').insert({user_id:userId,ctoon_id:id,slot:free});
   }
   if(result.error)throw result.error;
