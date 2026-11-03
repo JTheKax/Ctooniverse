@@ -1522,3 +1522,12 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 .collection-empty p{margin:0 0 1rem}
 .ctoons-collection-entry{margin:1.25rem auto 1.75rem;text-align:center;padding:1.25rem;max-width:520px;background:#18104cbb;border:2px solid #6adfff;border-radius:14px;box-shadow:0 0 18px #4c8fff44}
 .ctoons-collection-entry p{margin:.65rem 0 0}
+
+
+/* CToons hub uses the same shop display component and dimensions. */
+.ctoons-featured-display{margin:1.5rem auto;padding:1rem;max-width:640px;text-align:center;border:2px solid #5ad9ff;border-radius:16px;background:linear-gradient(135deg,#131b56d9,#2d1459e6);box-shadow:0 0 22px #39baff55}
+.ctoons-featured-display h2{margin:.2rem 0 .75rem}
+.ctoons-featured-grid{display:flex;justify-content:center;align-items:flex-start}
+.ctoons-featured-grid .ctoon-shop-card{margin:.5rem auto!important}
+.ctoon-preview-buy{display:inline-block;text-decoration:none!important;line-height:1.3}
+.ctoon-preview-buy:hover{filter:brightness(1.15)}
