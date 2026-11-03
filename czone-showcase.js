@@ -120,7 +120,7 @@ async function load(force=false){
   userId=user.id;
   const [{data:owned,error:ownError},{data:placed,error:placeError}]=await Promise.all([
    db.from('player_ctoons').select('ctoon_id,quantity').eq('user_id',userId).gt('quantity',0),
-   db.from('czone_displays').select('ctoon_id,slot').eq('user_id',userId)
+   db.from('czone_displays').select('ctoon_id,slot,scale,rotation,position_x,position_y').eq('user_id',userId)
   ]);
   if(ownError||placeError)throw ownError||placeError;
   const ids=(owned||[]).map(x=>x.ctoon_id);slots=(placed||[]).filter(x=>ids.includes(x.ctoon_id));
