@@ -1717,3 +1717,9 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 .ctoons-featured-grid,.kingdom-ctoon-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:16px;width:100%;margin:1rem auto}
 .ctoons-featured-grid .ctoon-shop-card,.kingdom-ctoon-grid .ctoon-shop-card{flex:0 0 182px;margin:0!important}
 .ctoons-featured-grid .ctoon-shop-art,.kingdom-ctoon-grid .ctoon-shop-art{flex-shrink:0}
+
+/* Owner-only CToon card editing controls. */
+.ctoon-edit-button{font:700 11px Arial,sans-serif;border:1px solid #a8eeff;border-radius:5px;background:#243c99;color:white;padding:4px 7px;cursor:pointer;margin-top:3px}
+.ctoon-editor-dialog{background:#101a4b;color:white;border:2px solid #6de8ff;border-radius:14px;box-shadow:0 0 25px #25ccff99;width:min(92vw,440px);padding:24px}
+.ctoon-editor-dialog::backdrop{background:#05051cbb}
+.ctoon-editor-dialog form{display:grid;gap:12px}.ctoon-editor-dialog label{display:grid;gap:4px;font-weight:700}.ctoon-editor-dialog input,.ctoon-editor-dialog select{width:100%;box-sizing:border-box;padding:9px;border-radius:6px;border:1px solid #78caff;background:#fff;color:#15214b}
