@@ -1349,3 +1349,54 @@ html body > .ctoon-music-player::after{
  .site-header .header-player.is-owner #header-player-name{font-size:clamp(10px,4.7vw,17px)!important}
  .site-header .header-player.is-owner #header-player-coins{font-size:clamp(9px,4vw,15px)!important}
 }
+
+/* Illustrated player badge; owner-specific styling above remains unchanged. */
+.site-header .header-player:not(.is-owner):not(.is-guest){
+ position:relative!important;display:block!important;
+ box-sizing:border-box!important;
+ width:300px!important;min-width:0!important;max-width:300px!important;
+ height:150px!important;min-height:0!important;aspect-ratio:2/1!important;
+ padding:0!important;margin:0!important;overflow:hidden!important;
+ background:transparent url("public/images/ctoon-player-card.png") center/100% 100% no-repeat!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+.site-header .header-player:not(.is-owner):not(.is-guest)::before,
+.site-header .header-player:not(.is-owner):not(.is-guest)::after{
+ display:none!important;content:none!important;
+}
+.site-header .header-player:not(.is-owner):not(.is-guest) .header-player-icon{display:none!important}
+.site-header .header-player:not(.is-owner):not(.is-guest) .header-player-info{
+ position:absolute!important;z-index:3!important;inset:0!important;
+ width:100%!important;max-width:100%!important;height:100%!important;
+ display:block!important;padding:0!important;margin:0!important;
+ background:none!important;overflow:visible!important;
+}
+.site-header .header-player:not(.is-owner):not(.is-guest) #header-player-name{
+ position:absolute!important;top:32%!important;left:31%!important;width:39%!important;
+ max-width:39%!important;height:23%!important;box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ padding:1px 3px!important;margin:0!important;background:#eff7ff!important;
+ border:0!important;border-radius:5px!important;color:#161329!important;
+ font-size:18px!important;font-weight:1000!important;line-height:1!important;
+ text-shadow:none!important;text-align:center!important;white-space:nowrap!important;
+ overflow:hidden!important;text-overflow:ellipsis!important;overflow-wrap:normal!important;
+}
+.site-header .header-player:not(.is-owner):not(.is-guest) #header-player-coins{
+ position:absolute!important;top:65%!important;left:43%!important;width:45%!important;
+ max-width:45%!important;height:16%!important;box-sizing:border-box!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ padding:1px 3px!important;margin:0!important;background:#07378c!important;
+ border:0!important;border-radius:4px!important;color:#ffe33b!important;
+ font-size:16px!important;font-weight:1000!important;line-height:1!important;
+ white-space:nowrap!important;text-align:center!important;
+ text-shadow:1px 1px #0b1a3c!important;overflow:hidden!important;
+}
+@media(max-width:650px){
+ .site-header .header-player:not(.is-owner):not(.is-guest){
+  grid-column:1!important;grid-row:2!important;justify-self:center!important;
+  width:min(88vw,280px)!important;max-width:280px!important;
+  height:auto!important;min-height:0!important;aspect-ratio:2/1!important;
+ }
+ .site-header .header-player:not(.is-owner):not(.is-guest) #header-player-name{font-size:clamp(10px,4.7vw,17px)!important}
+ .site-header .header-player:not(.is-owner):not(.is-guest) #header-player-coins{font-size:clamp(9px,4vw,15px)!important}
+}
