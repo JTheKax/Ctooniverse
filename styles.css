@@ -1571,3 +1571,36 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 /* Shrink the actual CToon artwork inside its existing uniform card frame. */
 .ctoon-shop-art{display:flex!important;align-items:center!important;justify-content:center!important}
 .ctoon-shop-art img{position:relative!important;z-index:1!important;display:block!important;width:76%!important;height:76%!important;max-width:76%!important;max-height:76%!important;object-fit:contain!important;object-position:center!important;flex:none!important;margin:auto!important}
+
+
+/* My CZone: immersive neon arcade room background, built with CSS. */
+body.czone-page{
+ background-color:#08091d!important;
+ background-image:
+  radial-gradient(ellipse at 50% 12%,rgba(101,63,255,.42),transparent 48%),
+  radial-gradient(ellipse at 12% 48%,rgba(0,194,255,.2),transparent 46%),
+  radial-gradient(ellipse at 88% 48%,rgba(201,48,255,.19),transparent 46%),
+  linear-gradient(180deg,#0b0d2c 0%,#151046 48%,#070b23 100%)!important;
+ background-attachment:fixed!important;
+}
+body.czone-page #main{position:relative;isolation:isolate;min-height:75vh;overflow:hidden}
+body.czone-page #main::before{
+ content:"";position:absolute;z-index:-1;left:-35%;right:-35%;bottom:-18%;height:65%;
+ background-image:linear-gradient(rgba(43,198,255,.5) 1px,transparent 1px),linear-gradient(90deg,rgba(151,69,255,.48) 1px,transparent 1px);
+ background-size:52px 52px;transform:perspective(340px) rotateX(58deg);
+ transform-origin:bottom center;opacity:.75;pointer-events:none;
+ -webkit-mask-image:linear-gradient(to bottom,transparent,#000 35%,#000);
+ mask-image:linear-gradient(to bottom,transparent,#000 35%,#000);
+}
+body.czone-page #main::after{
+ content:"";position:absolute;z-index:-1;inset:0;pointer-events:none;
+ background:repeating-linear-gradient(90deg,transparent 0 14%,rgba(75,150,255,.055) 14.1% 14.3%,transparent 14.4% 28%);
+}
+body.czone-page .czone-section{position:relative;padding-top:2.5rem;padding-bottom:5rem}
+body.czone-page .czone-section>h1{font-size:clamp(2.4rem,6vw,4.6rem);letter-spacing:.06em;color:#f7fbff;text-shadow:0 0 12px #33d7ff,0 0 34px #8949ff}
+body.czone-page .czone-preview{
+ background:linear-gradient(145deg,rgba(16,28,81,.87),rgba(39,15,87,.89));
+ border:2px solid #65e1ff;box-shadow:0 0 22px #3abfff77,inset 0 0 36px #884dff44;
+ backdrop-filter:blur(8px);
+}
+@media(max-width:600px){body.czone-page #main::before{background-size:36px 36px;bottom:-12%;height:55%}}
