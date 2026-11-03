@@ -6,11 +6,21 @@
  if(!form)return;
  const button=document.getElementById('emu-upload');
  const status=document.getElementById('emu-status');
- const {data:{user}}=await db.auth.getUser();
- if(!user)return;
- const {data:owner}=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();
- if(!owner)return;
  form.hidden=false;
+ const message=document.createElement('p');message.id='emu-owner-auth-status';message.setAttribute('role','status');form.insertBefore(message,button);
+ button.disabled=true;
+ async function verifyOwner(){
+  message.textContent='Checking Owner access…';
+  const {data:{user},error:authError}=await db.auth.getUser();
+  if(authError||!user){message.textContent='Sign in to your Owner account to upload games.';return false}
+  const {data:owner,error:ownerError}=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();
+  if(ownerError){message.textContent='Unable to verify Owner access: '+ownerError.message;return false}
+  if(!owner){message.textContent='This account does not have Owner upload permissions.';return false}
+  message.textContent='Owner verified. Choose a game file to upload.';
+  button.disabled=false;return true
+ }
+ await verifyOwner();
+ db.auth.onAuthStateChange(()=>{setTimeout(verifyOwner,0)});
  button.addEventListener('click',async()=>{
   const title=document.getElementById('emu-title').value.trim();
   const rom=document.getElementById('emu-owner-file').files[0];
