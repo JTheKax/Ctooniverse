@@ -1664,3 +1664,6 @@ body.czone-page .czone-logo{display:block;width:min(100%,780px);height:auto;max-
 
 /* Fill the entire CZone display frame with the chosen scene image. */
 body.czone-page.czone-traverse-town .czone-preview{background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
+
+/* Shared sizing rule for every current and future My CZone image background. */
+body.czone-page .czone-preview[class*="czone-scene-"]{background-size:100% 100%!important;background-position:center!important;background-repeat:no-repeat!important}
