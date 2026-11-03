@@ -1075,3 +1075,23 @@ html body > .ctoon-music-player::after{
 .owner-collectible-card{max-width:350px;margin:20px auto 28px;text-align:center}
 .owner-collectible-card img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 14px #5d26ab77)}
 .owner-collectible-card p{font-size:13px;color:#e9d7ff}
+
+/* Balanced responsive sizes for player badge and owner collectible card */
+.site-header .header-player{
+  box-sizing:border-box!important;
+  width:min(100%,230px)!important;
+  min-width:0!important;max-width:230px!important;
+  gap:8px!important;padding:12px 12px 9px!important;
+}
+.site-header .header-player-icon{
+  flex:0 0 38px!important;width:38px!important;height:38px!important;font-size:21px!important;
+}
+.site-header #header-player-name{font-size:14px!important}
+.site-header #header-player-coins{font-size:11px!important}
+.owner-collectible-card{width:min(100%,270px);max-width:270px;margin:18px auto 24px}
+.owner-collectible-card img{width:100%;height:auto;object-fit:contain}
+@media(max-width:650px){
+  .site-header .header-player{width:min(90vw,215px)!important;max-width:215px!important;padding:11px 10px 8px!important}
+  .site-header .header-player-icon{flex-basis:34px!important;width:34px!important;height:34px!important}
+  .owner-collectible-card{width:min(80vw,240px);max-width:240px}
+}
