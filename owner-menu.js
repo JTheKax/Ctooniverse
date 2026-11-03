@@ -6,8 +6,10 @@ const ownerLinks=[
  ['Coin Management','owner.html#coin-management'],
  ['Redeem Codes','owner.html#owner-redeem-codes'],
  ['Music Management','owner.html#music-management'],
+ ['Upload Game','emulator.html#emu-owner'],
  ['CToon Maker & Editor','owner.html#ctoon-maker']
-];
+]; 
+ownerLinks.sort((a,b)=>a[0].localeCompare(b[0]));
 for(const link of document.querySelectorAll('.site-header nav a.owner-nav')){
  const menu=document.createElement('div');
  menu.className='owner-menu owner-nav';
