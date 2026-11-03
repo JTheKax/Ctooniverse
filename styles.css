@@ -969,3 +969,34 @@ html body > .ctoon-music-player::after{
 .jukebox-upcoming-slot strong{color:#fff}
 .jukebox-upcoming-slot small{color:#c6bfff}
 @media(max-width:650px){.jukebox-upcoming{margin:18px 12px 30px}.jukebox-upcoming-icon{width:55px;height:55px;font-size:30px}.jukebox-upcoming-slots{grid-template-columns:1fr}.jukebox-upcoming-slot{padding:12px}}
+
+
+/* Hand-drawn navigation: real accessible links/buttons, not a flat image */
+.site-header nav{
+  border:4px solid #19102f!important;border-radius:19px!important;
+  background:repeating-linear-gradient(166deg,#4b2590 0 7px,#6536b0 7px 10px,#30206c 10px 15px)!important;
+  box-shadow:inset 0 0 0 3px #e879e9,inset 0 -7px 0 #251251,0 5px 0 #120a29,0 0 19px #8b50e4aa!important;
+  padding:9px 12px!important;gap:7px!important;
+}
+.site-header nav .nav-link,.site-header nav .community-dropdown-trigger,.site-header nav .account-dropdown-trigger,
+.site-header nav .owner-dropdown-trigger{
+  border:3px solid #1a1326!important;border-radius:12px 17px 10px 15px!important;
+  background:repeating-linear-gradient(155deg,#fff1ce 0 8px,#f6deb0 8px 10px,#fff0cc 10px 17px)!important;
+  color:#18111e!important;font-weight:1000!important;
+  text-shadow:1px 1px 0 #fff!important;
+  box-shadow:inset 0 -4px 0 #75b9f7,3px 4px 0 #170d2d!important;
+  transform:rotate(-.5deg);transition:transform .15s,box-shadow .15s,filter .15s!important;
+}
+.site-header nav .nav-link:nth-child(even){transform:rotate(.6deg)}
+.site-header nav .nav-link:hover,.site-header nav button:hover{
+  transform:rotate(0deg) translateY(-3px)!important;
+  filter:saturate(1.2)!important;box-shadow:inset 0 -4px 0 #ffcd4e,3px 6px 0 #170d2d!important;
+}
+.site-header nav .nav-link.active,.site-header nav .nav-link[aria-current="page"]{
+  background:repeating-linear-gradient(150deg,#ff5544 0 9px,#ff7956 9px 12px,#f74237 12px 20px)!important;
+  color:#fff!important;text-shadow:2px 2px 0 #231025!important;
+  box-shadow:inset 0 -5px 0 #a91d34,3px 4px 0 #170d2d!important;
+}
+.site-header nav :is(a,button):focus-visible{outline:3px solid #ffe85d!important;outline-offset:3px!important}
+@media(max-width:850px){.site-header nav{flex-wrap:wrap!important;justify-content:center!important;gap:8px!important}}
+@media(prefers-reduced-motion:reduce){.site-header nav .nav-link,.site-header nav button{transition:none!important}}
