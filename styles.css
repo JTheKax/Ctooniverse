@@ -1727,3 +1727,8 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 /* Small collectible inspection enhancement, preserving existing card layout. */
 .ctoon-inspectable{cursor:pointer}.ctoon-inspectable:focus-visible{outline:3px solid #8eefff;outline-offset:4px}
 .ctoon-preview-dialog{max-height:85vh;overflow:auto;text-align:center}.ctoon-preview-image{display:block;max-width:min(100%,280px);max-height:360px;object-fit:contain;margin:12px auto}.ctoon-preview-content p{margin:8px 0}
+
+/* Collection display controls: retain the existing CToon card dimensions. */
+.collection-display-tools{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:16px 0;padding:14px;border:1px solid #655bcd;border-radius:12px;background:rgba(10,16,49,.84)}
+.collection-display-tools[hidden]{display:none!important}.collection-display-tools label{display:grid;gap:5px;font-size:12px;font-weight:700;flex:1 1 135px;color:#e8ebff}.collection-display-tools input,.collection-display-tools select{width:100%;min-width:0;box-sizing:border-box;border-radius:7px;padding:9px;background:#fff;color:#17204c;border:1px solid #9bbcff}
+.collection-grid .ctoon-inspectable{cursor:pointer}.collection-grid .ctoon-inspectable:hover{box-shadow:0 0 16px #6ce5ff66}
