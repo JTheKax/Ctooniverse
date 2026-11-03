@@ -1,7 +1,7 @@
 "use strict";
 (async()=>{
  const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
- const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co',document.querySelector('meta[name="supabase-public-key"]')?.content||'');
+ const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
  const form=document.getElementById('emu-owner');
  if(!form)return;
  const button=document.getElementById('emu-upload');
