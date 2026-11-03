@@ -1691,3 +1691,15 @@ body.czone-page .czone-display .czone-placed-art{
 body.czone-page .czone-display{gap:clamp(8px,1.4vw,18px)!important}
 body.czone-page .czone-display .czone-placed-details .ctoon-shop-name{font-size:10px!important}
 body.czone-page .czone-display .czone-placed-details .czone-action{font-size:9px!important;padding:2px 5px!important}
+
+
+/* Player-controlled scale and rotation for displayed CToons. */
+body.czone-page .czone-placed-art{transition:transform .12s ease;will-change:transform}
+body.czone-page .czone-transform-editor{position:relative;z-index:3;width:min(100%,540px);box-sizing:border-box;margin:1rem auto 0;padding:16px 20px;border:2px solid #6ee6ff;border-radius:14px;background:rgba(8,12,44,.94);box-shadow:0 6px 24px #0009;color:#fff}
+body.czone-page .czone-transform-editor[hidden]{display:none!important}
+body.czone-page .czone-transform-editor h3{margin:0 0 12px}
+body.czone-page .czone-transform-editor label{display:grid;grid-template-columns:100px 1fr 55px;align-items:center;gap:12px;margin:12px 0;text-align:left}
+body.czone-page .czone-transform-editor input[type=range]{width:100%;accent-color:#74dcff}
+body.czone-page .czone-editor-actions{display:flex;justify-content:center;gap:12px;margin-top:12px}
+body.czone-page .czone-placed-ctoon{cursor:pointer}
+@media(max-width:480px){body.czone-page .czone-transform-editor label{grid-template-columns:65px 1fr 45px;gap:6px}}
