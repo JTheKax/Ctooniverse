@@ -1531,3 +1531,13 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 .ctoons-featured-grid .ctoon-shop-card{margin:.5rem auto!important}
 .ctoon-preview-buy{display:inline-block;text-decoration:none!important;line-height:1.3}
 .ctoon-preview-buy:hover{filter:brightness(1.15)}
+
+
+/* Main navigation: CToons dropdown matches existing neon arcade menus. */
+.ctoons-dropdown{position:relative;display:inline-flex;align-items:stretch}
+.ctoons-dropdown-trigger{cursor:pointer;font:inherit;display:inline-flex;align-items:center;gap:.35rem}
+.ctoons-dropdown-panel{display:none;position:absolute;top:100%;left:0;z-index:1000;min-width:190px;padding:8px;background:linear-gradient(145deg,#121b58,#2e1465);border:2px solid #59dfff;border-radius:10px;box-shadow:0 8px 22px #06081bd9,0 0 16px #4f9fff88}
+.ctoons-dropdown-panel a{display:block;padding:11px 13px;border-radius:7px;color:#f3f5ff;text-decoration:none;white-space:nowrap;font-weight:700}
+.ctoons-dropdown-panel a:hover,.ctoons-dropdown-panel a:focus-visible,.ctoons-dropdown-panel a[aria-current="page"]{background:#356bc4;color:#fff;outline-offset:2px}
+.ctoons-dropdown:hover .ctoons-dropdown-panel,.ctoons-dropdown:focus-within .ctoons-dropdown-panel,.ctoons-dropdown.is-open .ctoons-dropdown-panel{display:block}
+@media(max-width:700px){.ctoons-dropdown-panel{left:0;right:auto;min-width:170px}}
