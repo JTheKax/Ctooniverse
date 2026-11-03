@@ -1703,3 +1703,12 @@ body.czone-page .czone-transform-editor input[type=range]{width:100%;accent-colo
 body.czone-page .czone-editor-actions{display:flex;justify-content:center;gap:12px;margin-top:12px}
 body.czone-page .czone-placed-ctoon{cursor:pointer}
 @media(max-width:480px){body.czone-page .czone-transform-editor label{grid-template-columns:65px 1fr 45px;gap:6px}}
+
+
+/* Freely movable CToons in the My Display scene. Coordinates are percentages
+   of the display area, preserving placement across screen sizes. */
+body.czone-page #czone-display{display:block!important;position:relative!important;width:100%;min-height:clamp(400px,65vh,960px);padding:0!important;touch-action:pan-y}
+body.czone-page #czone-display .czone-placed-ctoon{position:absolute!important;transform:translate(-50%,-50%);margin:0!important;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;z-index:2}
+body.czone-page #czone-display .czone-placed-ctoon:active{cursor:grabbing;z-index:5}
+body.czone-page #czone-display .czone-placed-art img{pointer-events:none;-webkit-user-drag:none}
+body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;text-align:center}
