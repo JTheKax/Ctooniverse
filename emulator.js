@@ -33,7 +33,7 @@ file.addEventListener('change',()=>{selectedGame=null;document.querySelectorAll(
 async function loadCases(){
  const host=$('emu-library');if(!host)return;
  host.textContent='Loading game cases…';
- const {data,error}=await db.from('emulator_games').select('id,title,console,storage_path').eq('published',true).order('title',{ascending:true});
+ const {data,error}=await db.from('emulator_games').select('id,title,console,storage_path,cover_path').eq('published',true).order('title',{ascending:true});
  if(error){host.textContent='Could not load game library: '+error.message;return}
  host.replaceChildren();
  if(!data?.length){
@@ -52,13 +52,13 @@ async function loadCases(){
  }
  const grid=document.createElement('div');grid.className='emu-case-grid';
  for(const game of data){
-  const caseEl=document.createElement('button');caseEl.type='button';caseEl.className='emu-case';caseEl.disabled=started;
+  const caseEl=document.createElement('button');caseEl.type='button';caseEl.dataset.gameId=game.id;caseEl.className='emu-case';caseEl.disabled=started;
   const cover=document.createElement('span');cover.className='emu-case-cover';
   const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=game.console.toUpperCase();
   const art=document.createElement('span');art.className='emu-case-art';art.textContent='🎮';
   const image=document.createElement('img');image.className='emu-case-image';image.alt=game.title+' cover art';image.loading='lazy';
   const slug=game.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  image.src='images/emulator-covers/'+slug+'.png';
+  image.src=game.cover_path?db.storage.from('emulator-covers').getPublicUrl(game.cover_path).data.publicUrl:'images/emulator-covers/'+slug+'.png';
   image.addEventListener('load',()=>{art.replaceWith(image)});
   image.addEventListener('error',()=>{});
   const coverTitle=document.createElement('span');coverTitle.className='emu-case-cover-title';coverTitle.textContent=game.title;
@@ -72,5 +72,6 @@ async function loadCases(){
   });grid.append(caseEl)
  }host.append(grid)
 }
+window.ctoonReloadGameCases=loadCases;
 await loadCases();
 })();
