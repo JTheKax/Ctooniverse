@@ -781,3 +781,37 @@ body.home-universe-page::before,body.home-universe-page::after{display:none!impo
 body.home-universe-page main{position:relative;z-index:1;background:transparent!important}
 body.home-universe-page .page-placeholder{background:rgba(12,10,42,.79)!important;border-color:rgba(120,137,255,.78)!important;backdrop-filter:blur(6px)}
 @media(max-width:700px){body.home-universe-page{background-attachment:scroll!important;background-position:center top!important}}
+
+
+/* Radio v7: responsive neon arcade console; override generic body child positioning. */
+body > .ctoon-music-player,body .ctoon-music-player{
+ position:fixed!important;right:clamp(10px,2vw,24px)!important;bottom:clamp(10px,2vw,24px)!important;
+ left:auto!important;top:auto!important;z-index:20000!important;
+ width:min(380px,calc(100vw - 20px));max-width:calc(100vw - 20px);
+ box-sizing:border-box;filter:none;color:#f7f5ff;font-family:system-ui,sans-serif;
+}
+.ctoon-music-player *, .ctoon-music-player *::before,.ctoon-music-player *::after{box-sizing:border-box}
+.ctoon-music-player .music-toggle{display:block;margin-left:auto;max-width:100%;border:2px solid #80ddff;border-radius:999px;background:linear-gradient(110deg,#2549cc,#7434db 65%,#ad48ec);color:#fff;padding:12px 20px;font-size:13px;letter-spacing:.08em;box-shadow:0 5px 24px #18135caa,0 0 16px #5b91ff80}
+.ctoon-music-player .music-controls{width:100%;max-width:100%;max-height:min(74dvh,620px);margin:0 0 12px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;padding:18px;border:2px solid #6aaaff;border-radius:20px;background:linear-gradient(150deg,#1a1450,#111237 55%,#241049);box-shadow:0 10px 36px #03031ccc,0 0 20px #6358ff55;color:#fff}
+.ctoon-music-player .music-controls[hidden]{display:none!important}
+.ctoon-music-player .music-heading{display:flex;align-items:flex-start;gap:10px}
+.ctoon-music-player .music-brand{min-width:0;overflow-wrap:anywhere}
+.ctoon-music-player .music-close{flex:none;min-width:36px;min-height:36px;display:grid;place-items:center}
+.ctoon-music-player .music-now-playing{min-width:0;gap:12px;padding:12px;margin:14px 0;background:#20255e99;border:1px solid #606ee2}
+.ctoon-music-player .music-disc{width:58px;height:58px}
+.ctoon-music-player .music-track{font-size:15px;line-height:1.4;overflow-wrap:anywhere}
+.ctoon-music-player .music-song-choice{width:100%;min-width:0;max-width:100%;font-size:14px;background:#10173e;color:#fff;border:1px solid #7d9cf9}
+.ctoon-music-player .music-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;align-items:stretch}
+.ctoon-music-player .music-actions>button{min-width:0;min-height:43px;padding:9px 5px;font-size:12px;white-space:normal;line-height:1.3;overflow-wrap:anywhere;background:#283d82;border:1px solid #738ee9;color:#fff}
+.ctoon-music-player .music-actions>.music-play{background:linear-gradient(120deg,#336dff,#8a47ee);border-color:#84cbff}
+.ctoon-music-player .music-actions>.music-repeat[aria-pressed="true"]{background:#215b73;border-color:#54e8ff;color:#d7ffff}
+.ctoon-music-player .music-volume-label{grid-column:1/-1;min-width:0;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;font-size:13px}
+.ctoon-music-player .music-volume{width:100%;max-width:none;accent-color:#64c8ff}
+.ctoon-music-player button:focus-visible,.ctoon-music-player select:focus-visible,.ctoon-music-player input:focus-visible{outline:3px solid #6fe7ff;outline-offset:3px}
+@media(max-width:480px){
+ body > .ctoon-music-player,body .ctoon-music-player{right:10px!important;bottom:10px!important;width:min(350px,calc(100vw - 20px))}
+ .ctoon-music-player .music-controls{max-height:min(72dvh,550px);padding:14px}
+ .ctoon-music-player .music-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .ctoon-music-player .music-volume-label{grid-column:1/-1}
+}
+@media(prefers-reduced-motion:reduce){.ctoon-music-player *{animation:none!important;transition:none!important}}
