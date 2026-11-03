@@ -102,11 +102,11 @@ if (year) year.textContent = String(new Date().getFullYear());
  if(!original)return;
  const wrap=document.createElement('div');wrap.className='ctoons-dropdown games-dropdown';
  const btn=document.createElement('button');btn.type='button';btn.className='nav-link ctoons-dropdown-trigger';
- if(location.pathname.endsWith('/games.html')||location.pathname.endsWith('/emulator.html'))btn.classList.add('active');
+ if(location.pathname.endsWith('/games.html')||location.pathname.endsWith('/emulator.html')||location.pathname.endsWith('/prize-wheel.html'))btn.classList.add('active');
  btn.setAttribute('aria-haspopup','true');btn.setAttribute('aria-expanded','false');
  btn.innerHTML='<span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span><span aria-hidden="true">▾</span>';
  const panel=document.createElement('div');panel.className='ctoons-dropdown-panel';
- for(const [label,url] of [['Games','games.html'],['Video Game Emulator','emulator.html']]){
+ for(const [label,url] of [['Games','games.html'],['Video Game Emulator','emulator.html'],['Prize Games','prize-wheel.html']]){
   const a=document.createElement('a');a.href=url;a.textContent=label;if(location.pathname.endsWith('/'+url))a.setAttribute('aria-current','page');panel.append(a);
  }
  const close=()=>{wrap.classList.remove('is-open');btn.setAttribute('aria-expanded','false')};
