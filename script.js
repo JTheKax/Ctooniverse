@@ -40,9 +40,14 @@ if (year) year.textContent = String(new Date().getFullYear());
         if(id===checkId&&confirmedUserId===null)setVisible(false);
       }
     }
-    db.auth.onAuthStateChange(()=>setTimeout(verify,100));
-    window.addEventListener('pageshow',verify);
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden)verify();});
+    let lastAuthUserId;
+    db.auth.onAuthStateChange((event,session)=>{
+      if(event!=='SIGNED_IN'&&event!=='SIGNED_OUT')return;
+      const next=session?.user?.id||null;
+      if(lastAuthUserId===next)return;
+      lastAuthUserId=next;
+      setTimeout(verify,100);
+    });
     await verify();
   }catch(_){setVisible(false);}
 })();
