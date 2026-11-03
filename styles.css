@@ -1712,3 +1712,8 @@ body.czone-page #czone-display .czone-placed-ctoon{position:absolute!important;t
 body.czone-page #czone-display .czone-placed-ctoon:active{cursor:grabbing;z-index:5}
 body.czone-page #czone-display .czone-placed-art img{pointer-events:none;-webkit-user-drag:none}
 body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;text-align:center}
+
+/* One consistent neon arcade card layout in every Featured CToons section. */
+.ctoons-featured-grid,.kingdom-ctoon-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:stretch;gap:16px;width:100%;margin:1rem auto}
+.ctoons-featured-grid .ctoon-shop-card,.kingdom-ctoon-grid .ctoon-shop-card{flex:0 0 182px;margin:0!important}
+.ctoons-featured-grid .ctoon-shop-art,.kingdom-ctoon-grid .ctoon-shop-art{flex-shrink:0}
