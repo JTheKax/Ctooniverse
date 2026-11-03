@@ -15,3 +15,25 @@ el('ctoon-maker-new').addEventListener('click',()=>{editing=-1;form.reset();prev
 el('ctoon-maker-export').addEventListener('click',()=>{if(!authorized)return;const blob=new Blob([JSON.stringify(drafts,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ctoon-drafts.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
 el('ctoon-maker-import').addEventListener('change',async e=>{if(!authorized)return;const file=e.target.files[0];if(!file||file.size>1000000){status.textContent='Choose a JSON file smaller than 1 MB.';return}try{const data=JSON.parse(await file.text());if(!Array.isArray(data)||data.length>200||!data.every(d=>d&&fields.every(k=>typeof d[k]==='string'&&d[k].length<=500)&&safeImage(d.image)))throw Error('Invalid draft file');drafts=data;persist();status.textContent='Drafts imported. Not published.'}catch{status.textContent='Could not import drafts. Check the JSON format.'}e.target.value=''});
 db.auth.onAuthStateChange(()=>setTimeout(init,0));init();
+
+const existingWebsiteCtoons=[
+{title:'Traverse Town Jewelry',set:'Kingdom Hearts',series:'Kingdom Hearts',image:'kingdom-hearts-traverse-town-jewelry.png',rarity:'Common',description:'Hand-drawn Traverse Town Jewelry floating island. Coming Soon.'}
+];
+function renderExisting(){
+ const holder=el('ctoon-maker-existing');holder.replaceChildren();
+ for(const entry of existingWebsiteCtoons){
+  const p=document.createElement('p'),btn=document.createElement('button');
+  btn.type='button';btn.className='button secondary';btn.textContent='Edit '+entry.title;
+  btn.addEventListener('click',()=>{
+   if(!authorized){status.textContent='Owner verification required.';return}
+   const found=drafts.findIndex(d=>d.image===entry.image);
+   const d=found>=0?drafts[found]:{...entry};
+   if(found<0){drafts.push(d);persist();editing=drafts.length-1}else editing=found;
+   fields.forEach(k=>el('ctoon-maker-'+k).value=d[k]||'');
+   showPreview(d);status.textContent='Editing '+d.title+'. Saving updates your draft, not the published page.';
+   form.scrollIntoView({block:'center'});
+  });
+  p.append(btn);holder.append(p);
+ }
+}
+renderExisting();
