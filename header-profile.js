@@ -11,7 +11,8 @@ async function updateHeader(){
  const id=++seq;
  try{
   const {data:{user},error}=await db.auth.getUser();if(id!==seq)return;
-  if(error||!user){name.textContent='Guest';coins.textContent='Sign in';profile.classList.add('is-guest');hideOwner();previousBalance=null;revealProfile();return;}
+  if(error||!user){activeUserId=null;name.textContent='Guest';coins.textContent='Sign in';profile.classList.add('is-guest');hideOwner();previousBalance=null;revealProfile();return;}
+  activeUserId=user.id;
   const raw=user.user_metadata?.display_name;
   name.textContent=typeof raw==='string'&&raw.trim()?raw.trim().slice(0,30):user.email?.split('@')[0]||'Player';
   profile.classList.remove('is-guest');
@@ -27,8 +28,11 @@ async function updateHeader(){
   coins.textContent=walletError?'Coins unavailable':(data?.balance??0).toLocaleString()+' Coins';
  }catch(_){if(id===seq){name.textContent='Guest';coins.textContent='Unavailable';hideOwner();revealProfile();}}
 }
-db.auth.onAuthStateChange(()=>setTimeout(updateHeader,50));
-window.addEventListener('pageshow',updateHeader);
+let activeUserId=null;
+db.auth.onAuthStateChange((event,session)=>{
+ if(event==='SIGNED_IN'&&session?.user?.id!==activeUserId){activeUserId=session.user.id;setTimeout(updateHeader,50)}
+ else if(event==='SIGNED_OUT'&&activeUserId!==null){activeUserId=null;setTimeout(updateHeader,50)}
+});
+window.addEventListener('pageshow',event=>{if(!event.persisted) return; /* Keep restored page state intact. */});
 window.addEventListener('ctoon-profile-updated',updateHeader);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateHeader();});
 updateHeader();
