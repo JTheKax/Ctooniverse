@@ -63,3 +63,28 @@ if (year) year.textContent = String(new Date().getFullYear());
  if (document.querySelector('.shooting-star')) return;
  for(let i=0;i<2;i++){const star=document.createElement('span');star.className='shooting-star';star.setAttribute('aria-hidden','true');document.body.prepend(star);}
 })();
+
+
+/* Site-wide CToons navigation dropdown, accessible on desktop and mobile. */
+(() => {
+ const nav=document.querySelector('.site-header nav');
+ if(!nav||nav.querySelector('.ctoons-dropdown'))return;
+ const original=[...nav.querySelectorAll('a.nav-link')].find(a=>{try{return new URL(a.href,location.href).pathname.endsWith('/ctoons.html')}catch{return false}});
+ if(!original)return;
+ const wrapper=document.createElement('div');wrapper.className='ctoons-dropdown';
+ const button=document.createElement('button');button.type='button';button.className='nav-link ctoons-dropdown-trigger';
+ if(original.classList.contains('active')||location.pathname.endsWith('/my-collection.html'))button.classList.add('active');
+ button.setAttribute('aria-haspopup','true');button.setAttribute('aria-expanded','false');
+ button.innerHTML='<span class="nav-icon" aria-hidden="true">▣</span><span>CToons</span><span aria-hidden="true">▾</span>';
+ const panel=document.createElement('div');panel.className='ctoons-dropdown-panel';
+ for(const [label,url] of [['CToons','ctoons.html'],['My Collection','my-collection.html']]){
+  const a=document.createElement('a');a.href=url;a.textContent=label;
+  if(location.pathname.endsWith('/'+url))a.setAttribute('aria-current','page');
+  panel.append(a);
+ }
+ const close=()=>{wrapper.classList.remove('is-open');button.setAttribute('aria-expanded','false')};
+ button.addEventListener('click',()=>{const open=!wrapper.classList.contains('is-open');wrapper.classList.toggle('is-open',open);button.setAttribute('aria-expanded',String(open))});
+ wrapper.addEventListener('keydown',e=>{if(e.key==='Escape'){close();button.focus()}});
+ document.addEventListener('click',e=>{if(!wrapper.contains(e.target))close()});
+ wrapper.append(button,panel);original.replaceWith(wrapper);
+})();
