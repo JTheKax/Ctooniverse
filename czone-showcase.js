@@ -68,7 +68,7 @@ function installDrag(box,id){
   if(!drag||e.pointerId!==drag.pointer)return;
   const state=drag;drag=null;
   if(!state.moved)return;
-  box.dataset.justDragged='1';
+  box.dataset.justDragged='1';setTimeout(()=>{box.dataset.justDragged='0'},100);
   const slot=slots.find(x=>x.ctoon_id===id);if(!slot)return;
   const x=Number.parseFloat(box.style.left),y=Number.parseFloat(box.style.top);
   const previousX=slot.position_x,previousY=slot.position_y;
