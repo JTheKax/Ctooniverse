@@ -1604,3 +1604,14 @@ body.czone-page .czone-preview{
  backdrop-filter:blur(8px);
 }
 @media(max-width:600px){body.czone-page #main::before{background-size:36px 36px;bottom:-12%;height:55%}}
+
+
+/* CZone interactive owned-collectible display. */
+.czone-display,.czone-owned{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px;justify-items:center;margin:1rem auto}
+.czone-picker{max-width:950px;margin:2rem auto;padding:1.25rem;border:2px solid #785cff;border-radius:18px;background:rgba(14,15,53,.87);box-shadow:0 0 20px #5a4dff55}
+.czone-picker h2{margin-top:0}
+.czone-card{margin:0!important}
+.czone-card .ctoon-shop-details{justify-content:space-around!important}
+.czone-action{cursor:pointer;border:1px solid #a9f5ff;border-radius:6px;background:linear-gradient(135deg,#1669c9,#5730ac);color:white;font-weight:800;padding:5px 8px;font-size:11px}
+.czone-action:hover{filter:brightness(1.2)}.czone-action:disabled{opacity:.5;cursor:wait}
+.czone-empty{grid-column:1/-1;margin:1rem;text-align:center;color:#e7e9ff}
