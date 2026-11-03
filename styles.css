@@ -1444,3 +1444,41 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 /* Ownership badges: gray when unowned, green when owned. */
 .ctoon-shop-owned{background:#626b78!important;color:#fff!important;border:1px solid #b0b6c0!important;box-shadow:0 1px 3px #0006}
 .ctoon-shop-owned.is-owned{background:#198a35!important;color:#fff!important;border:1px solid #83ef9d!important;box-shadow:0 1px 4px #064b1b99}
+
+
+/* Neon arcade showcase window: glass, beveled chrome and subtle light effects. */
+.ctoon-shop-card{
+ width:190px;max-width:100%;padding:7px;border:2px solid #6de8ff;border-radius:13px;
+ background:linear-gradient(135deg,#78e9ff 0%,#125aa9 9%,#102d77 48%,#421b90 91%,#8e6aff 100%);
+ box-shadow:inset 0 0 0 2px #09194c,inset 0 0 0 4px #5489ec,0 0 13px #26cfff88,0 9px 23px #08041fbb;
+ transition:transform .2s ease,box-shadow .2s ease;
+}
+.ctoon-shop-card:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 2px #09194c,inset 0 0 0 4px #5489ec,0 0 22px #4feaffc9,0 13px 27px #08041fcc}
+.ctoon-shop-art{
+ isolation:isolate;border:3px solid #b9faff;border-radius:8px;aspect-ratio:1/1;
+ background:radial-gradient(ellipse at 50% 45%,#a9f6ff 0%,#5dcdf6 30%,#2083d6 64%,#2539a0 100%);
+ box-shadow:inset 0 0 0 2px #2863bc,inset 0 0 19px #052c8b,0 0 0 2px #12378c,0 0 12px #4af3ff;
+}
+.ctoon-shop-art::before{
+ content:"";position:absolute;inset:-35%;z-index:0;pointer-events:none;
+ background:repeating-conic-gradient(from 0deg at 50% 50%,#d4faff55 0deg 9deg,transparent 9deg 24deg);
+ animation:ctoon-window-glow 24s linear infinite;
+}
+.ctoon-shop-art::after{
+ content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+ background:linear-gradient(125deg,#fff8 0%,#fff3 13%,transparent 29%,transparent 70%,#b2e9ff22 100%);
+ border-radius:5px;box-shadow:inset 0 0 13px #d5fbff8c;
+}
+.ctoon-shop-art img{z-index:1;width:94%;height:94%;object-fit:contain;filter:drop-shadow(0 5px 4px #00275dbb)}
+.ctoon-shop-owned{top:5px;right:5px;z-index:4;border-radius:5px;padding:3px 5px;font-size:10px;letter-spacing:.02em}
+.ctoon-shop-details{padding:8px 4px 4px;background:linear-gradient(180deg,#0d4d9b,#152460);border-radius:0 0 7px 7px}
+.ctoon-shop-name{font-size:14px;font-weight:800;min-height:20px}
+.ctoon-shop-rarity{border:1px solid #e4f1ff;box-shadow:0 1px 3px #0005}
+.ctoon-shop-price strong{font-size:16px}
+.ctoon-shop-buy{border-radius:6px;padding:5px 13px;box-shadow:inset 0 1px 0 #dbffaf,0 2px 5px #061d47}
+.ctoon-shop-buy:not(:disabled):hover{filter:brightness(1.15)}
+.ctoon-shop-buy:focus-visible{outline:3px solid #ffe45a;outline-offset:3px}
+.ctoon-shop-status{font-size:10px;line-height:1.35;margin-top:6px}
+@keyframes ctoon-window-glow{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.ctoon-shop-art::before{animation:none}.ctoon-shop-card{transition:none}}
+@media(max-width:420px){.ctoon-shop-card{width:min(190px,90vw)}}
