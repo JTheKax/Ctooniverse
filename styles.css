@@ -1070,3 +1070,8 @@ html body > .ctoon-music-player::after{
 @media(prefers-reduced-motion:reduce){
  html body > .ctoon-music-player .music-actions>button{transition:none!important}
 }
+
+/* Exclusive hand-drawn owner collectible card, only inside verified dashboard */
+.owner-collectible-card{max-width:350px;margin:20px auto 28px;text-align:center}
+.owner-collectible-card img{display:block;width:100%;height:auto;filter:drop-shadow(0 8px 14px #5d26ab77)}
+.owner-collectible-card p{font-size:13px;color:#e9d7ff}
