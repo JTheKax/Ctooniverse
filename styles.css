@@ -1482,3 +1482,13 @@ body.community-neon-page main .lead{color:#f0e8ff!important}
 @keyframes ctoon-window-glow{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.ctoon-shop-art::before{animation:none}.ctoon-shop-card{transition:none}}
 @media(max-width:420px){.ctoon-shop-card{width:min(190px,90vw)}}
+
+
+/* Uniform CToon shop display sizing for every card and image. */
+.ctoon-shop-card{box-sizing:border-box;width:190px!important;min-width:190px;max-width:190px!important;min-height:286px;display:flex;flex-direction:column;margin:1.2rem auto}
+.ctoon-shop-art{box-sizing:border-box;width:100%;height:auto!important;aspect-ratio:1 / 1!important;flex:none;overflow:hidden}
+.ctoon-shop-art img{display:block;width:100%!important;height:100%!important;max-width:100%;max-height:100%;object-fit:contain!important;object-position:center}
+.ctoon-shop-details{box-sizing:border-box;width:100%;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.ctoon-shop-name{white-space:normal;overflow-wrap:anywhere;min-height:36px;display:flex;align-items:center;justify-content:center;gap:4px}
+.ctoon-shop-status{min-height:27px}
+@media(max-width:420px){.ctoon-shop-card{width:190px!important;min-width:190px;max-width:190px!important}}
