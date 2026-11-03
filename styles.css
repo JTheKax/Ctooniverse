@@ -889,3 +889,67 @@ html body > .ctoon-music-player,html body .ctoon-music-player{
 html body > .ctoon-music-player .music-controls{width:min(1440px,100%)!important}
 @media(max-width:1000px){html body{padding-bottom:0!important}}
 @media(max-width:600px){html body{padding-bottom:0!important}}
+
+
+/* Ctooniverse jukebox v11 — in-document neon arcade jukebox */
+html body > .ctoon-music-player{
+ --juke-blue:#4ccaff;--juke-violet:#9b63ff;--juke-pink:#fa69e9;
+ padding:28px clamp(10px,3vw,35px) 18px!important;
+ background:radial-gradient(ellipse at 50% 0%,#49318c 0%,#1b1649 48%,#0c1234 100%)!important;
+ border-top:4px solid #8edaff!important;
+ box-shadow:inset 0 8px 0 #5b3bc0,inset 0 12px 0 #1b164b,0 -4px 24px #8b61ff66!important;
+}
+html body > .ctoon-music-player::before{
+ content:"♪  CTOONIVERSE  JUKEBOX  ♪";display:block;
+ width:min(760px,90%);margin:0 auto -1px;padding:14px 12px 12px;
+ border:4px solid #7bdfff;border-bottom:0;border-radius:110px 110px 0 0;
+ background:repeating-linear-gradient(90deg,#202058 0 18px,#2d286f 18px 22px);
+ color:#fff;text-align:center;font-size:clamp(14px,2.4vw,23px);font-weight:1000;
+ letter-spacing:clamp(.06em,.6vw,.22em);text-shadow:0 0 9px #65ddff,0 0 19px #b269ff;
+ box-shadow:inset 0 0 15px #fa69e977,0 -8px 22px #8b61ff66;
+}
+html body > .ctoon-music-player .music-controls{
+ position:relative!important;max-width:1050px!important;width:100%!important;
+ padding:18px clamp(14px,3vw,32px)!important;
+ border:4px solid #7bdfff!important;border-radius:22px!important;
+ background:linear-gradient(160deg,#352366,#171b50 54%,#20133f)!important;
+ box-shadow:inset 0 0 0 5px #523da0,inset 0 0 35px #5c3c9e99,0 0 28px #55bbff66!important;
+ grid-template-columns:minmax(110px,170px) minmax(160px,1fr) minmax(150px,230px) minmax(280px,1.5fr)!important;
+}
+html body > .ctoon-music-player .music-controls::before{display:block!important;height:5px!important;background:linear-gradient(90deg,#4ce3ff,#ad6bff,#ff73e1,#4ce3ff)!important}
+html body > .ctoon-music-player .music-brand{font-size:14px;color:#f9efff;text-shadow:0 0 9px #9b6dff}
+html body > .ctoon-music-player .music-brand small{color:#75e9ff}
+html body > .ctoon-music-player .music-now-playing{
+ border:2px solid #73cbff!important;background:linear-gradient(110deg,#0b1d40,#2a205f)!important;
+ box-shadow:inset 0 0 12px #4ccaff33,0 0 12px #65b7ff44!important;
+}
+html body > .ctoon-music-player .music-disc{border-color:#ff80e7;box-shadow:0 0 16px #ff69e999}
+html body > .ctoon-music-player .music-song-choice{
+ background:#0b1b40;color:#fff;border:2px solid #7ccfff;border-radius:9px;
+ box-shadow:inset 0 0 10px #3a83f944;
+}
+html body > .ctoon-music-player .music-actions>button{
+ border:2px solid #86bbff;border-radius:10px;background:linear-gradient(160deg,#3d3c9b,#172b67);
+ box-shadow:inset 0 2px #ffffff33,0 3px 0 #090d2d;
+ color:#fff;font-weight:850;
+}
+html body > .ctoon-music-player .music-actions>.music-play{background:linear-gradient(140deg,#216df1,#9d50ed);border-color:#91e6ff}
+html body > .ctoon-music-player .music-actions>.music-repeat[aria-pressed="true"]{background:linear-gradient(140deg,#086e86,#3046a5);border-color:#65f4ec}
+html body > .ctoon-music-player .music-actions>button:hover:not(:disabled){background:#6855ba;transform:translateY(-1px)}
+html body > .ctoon-music-player .music-volume{accent-color:#6ee2ff}
+html body > .ctoon-music-player::after{
+ content:"◉  ▥ ▥ ▥ ▥ ▥ ▥ ▥ ▥ ▥ ▥ ▥  ◉";
+ display:block;width:min(550px,85%);margin:12px auto 0;padding:8px;
+ border-radius:20px;border:2px solid #7c70db;
+ background:#0d1035;color:#7cd8ff;text-align:center;letter-spacing:.12em;
+ text-shadow:0 0 10px #5ccaff;box-shadow:inset 0 0 12px #5938a0;
+}
+@media(max-width:1000px){
+ html body > .ctoon-music-player .music-controls{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}
+}
+@media(max-width:600px){
+ html body > .ctoon-music-player{padding:17px 8px 12px!important}
+ html body > .ctoon-music-player::before{width:95%;padding:11px 7px;font-size:14px;letter-spacing:.05em}
+ html body > .ctoon-music-player .music-controls{padding:14px 10px!important;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)!important}
+ html body > .ctoon-music-player::after{font-size:10px;letter-spacing:0}
+}
