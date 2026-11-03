@@ -9,7 +9,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   const links=[...document.querySelectorAll('.owner-nav')];
   if(!links.length)return;
   const cacheKey='ctooniverse-verified-owner-id';
-  const setVisible=visible=>links.forEach(link=>{
+  const setVisible=visible=>document.querySelectorAll('.owner-nav').forEach(link=>{
     link.classList.toggle('owner-visible',visible);
     link.style.setProperty('display',visible?'inline-flex':'none','important');
   });
