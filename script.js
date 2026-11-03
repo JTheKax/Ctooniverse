@@ -73,11 +73,11 @@ if (year) year.textContent = String(new Date().getFullYear());
  if(!original)return;
  const wrapper=document.createElement('div');wrapper.className='ctoons-dropdown';
  const button=document.createElement('button');button.type='button';button.className='nav-link ctoons-dropdown-trigger';
- if(original.classList.contains('active')||location.pathname.endsWith('/my-collection.html'))button.classList.add('active');
+ if(original.classList.contains('active')||location.pathname.endsWith('/my-collection.html')||location.pathname.endsWith('/czone.html'))button.classList.add('active');
  button.setAttribute('aria-haspopup','true');button.setAttribute('aria-expanded','false');
  button.innerHTML='<span class="nav-icon" aria-hidden="true">▣</span><span>CToons</span><span aria-hidden="true">▾</span>';
  const panel=document.createElement('div');panel.className='ctoons-dropdown-panel';
- for(const [label,url] of [['CToons','ctoons.html'],['My Collection','my-collection.html']]){
+ for(const [label,url] of [['CToons','ctoons.html'],['My Collection','my-collection.html'],['CZone','czone.html']]){
   const a=document.createElement('a');a.href=url;a.textContent=label;
   if(location.pathname.endsWith('/'+url))a.setAttribute('aria-current','page');
   panel.append(a);
