@@ -10,14 +10,14 @@ function showPreview(d){preview.replaceChildren();const h=document.createElement
 async function verify(){const {data:{user},error}=await db.auth.getUser();if(error||!user)return false;const {data,error:e}=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();return !e&&!!data}
 async function init(){authorized=await verify();if(!authorized){status.textContent='Owner verification required to use this editor.';form.hidden=true;return}form.hidden=false;status.textContent='Drafts stay in this browser until exported. They are not published.';try{const data=JSON.parse(localStorage.getItem('ctoon-maker-drafts-v1')||'[]');if(Array.isArray(data))drafts=data.slice(0,200)}catch{}render()}
 function persist(){try{localStorage.setItem('ctoon-maker-drafts-v1',JSON.stringify(drafts))}catch{status.textContent='Local storage is full. Export your drafts now.'}render()}
-form.addEventListener('submit',e=>{e.preventDefault();if(!authorized)return;const d=read();if(!safeImage(d.image)){status.textContent='Enter a safe image filename, such as kingdom-hearts-traverse-town-jewelry.png';return}if(editing<0)drafts.push(d);else drafts[editing]=d;editing=-1;persist();showPreview(d);status.textContent='Draft saved in this browser. Not published.';form.reset()});
+form.addEventListener('submit',e=>{e.preventDefault();if(!authorized)return;const d=read();if(!safeImage(d.image)){status.textContent='Enter a safe image filename, such as kingdom-hearts-traverse-town.png';return}if(editing<0)drafts.push(d);else drafts[editing]=d;editing=-1;persist();showPreview(d);status.textContent='Draft saved in this browser. Not published.';form.reset()});
 el('ctoon-maker-new').addEventListener('click',()=>{editing=-1;form.reset();preview.replaceChildren();status.textContent='New draft ready.'});
 el('ctoon-maker-export').addEventListener('click',()=>{if(!authorized)return;const blob=new Blob([JSON.stringify(drafts,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ctoon-drafts.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)});
 el('ctoon-maker-import').addEventListener('change',async e=>{if(!authorized)return;const file=e.target.files[0];if(!file||file.size>1000000){status.textContent='Choose a JSON file smaller than 1 MB.';return}try{const data=JSON.parse(await file.text());if(!Array.isArray(data)||data.length>200||!data.every(d=>d&&fields.every(k=>typeof d[k]==='string'&&d[k].length<=500)&&safeImage(d.image)))throw Error('Invalid draft file');drafts=data;persist();status.textContent='Drafts imported. Not published.'}catch{status.textContent='Could not import drafts. Check the JSON format.'}e.target.value=''});
 db.auth.onAuthStateChange(()=>setTimeout(init,0));init();
 
 const existingWebsiteCtoons=[
-{title:'Traverse Town Jewelry',set:'Kingdom Hearts',series:'Kingdom Hearts',image:'kingdom-hearts-traverse-town-jewelry.png',rarity:'Common',description:'Hand-drawn Traverse Town Jewelry floating island. Coming Soon.'}
+{title:'Traverse Town Jewelry',set:'Kingdom Hearts',series:'Kingdom Hearts',image:'kingdom-hearts-traverse-town.png',rarity:'Common',description:'Hand-drawn Traverse Town Jewelry floating island. Coming Soon.'}
 ];
 function renderExisting(){
  const holder=el('ctoon-maker-existing');holder.replaceChildren();
