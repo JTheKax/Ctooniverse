@@ -36,7 +36,20 @@ async function loadCases(){
  const {data,error}=await db.from('emulator_games').select('id,title,console,storage_path').eq('published',true).order('title',{ascending:true});
  if(error){host.textContent='Could not load game library: '+error.message;return}
  host.replaceChildren();
- if(!data?.length){host.textContent='No games have been published yet. Game cases will appear here once games are uploaded.';return}
+ if(!data?.length){
+  const consoles=[['Game Boy','gb'],['Game Boy Advance','gba'],['Game Boy Color','gbc'],['Nintendo 64','n64'],['Nintendo Entertainment System','nes'],['Sega Genesis / Mega Drive','segaMD'],['Super Nintendo','snes']];
+  const grid=document.createElement('div');grid.className='emu-case-grid';
+  for(const [name,code] of consoles){
+    const item=document.createElement('div');item.className='emu-case emu-case-placeholder';
+    const cover=document.createElement('span');cover.className='emu-case-cover';
+    const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=code.toUpperCase();
+    const art=document.createElement('span');art.className='emu-case-art';art.textContent='🎮';
+    const title=document.createElement('span');title.className='emu-case-cover-title';title.textContent=name;
+    const caption=document.createElement('span');caption.className='emu-case-name';caption.textContent='COMING SOON';
+    cover.append(spine,art,title);item.append(cover,caption);grid.append(item);
+  }
+  host.append(grid);return
+ }
  const grid=document.createElement('div');grid.className='emu-case-grid';
  for(const game of data){
   const caseEl=document.createElement('button');caseEl.type='button';caseEl.className='emu-case';caseEl.disabled=started;
