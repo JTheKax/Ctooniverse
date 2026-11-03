@@ -30,14 +30,14 @@ async function change(id,slot){
   let result;
   if(slot){result=await db.from('czone_displays').delete().eq('user_id',userId).eq('slot',slot)}
   else{const taken=new Set(slots.map(x=>x.slot));let free=0;for(let n=1;n<=12;n++){if(!taken.has(n)){free=n;break}}
-   if(!free){note('Your display is full. Remove a CToon first.');return}
+   if(!free){throw new Error('Your display is full. Remove a CToon first.')}
    result=await db.from('czone_displays').insert({user_id:userId,ctoon_id:id,slot:free});
   }
   if(result.error)throw result.error;
   const {data,error}=await db.from('czone_displays').select('ctoon_id,slot').eq('user_id',userId);
   if(error)throw error;slots=data||[];
- }catch(e){note('Could not save: '+e.message);return}
- finally{loading=false;render()}
+ }catch(e){loading=false;render();note('Could not save: '+e.message);return}
+ loading=false;render()
 }
 async function load(){
  const n=++seq;note('Loading your CToons…');display.replaceChildren();picker.replaceChildren();
