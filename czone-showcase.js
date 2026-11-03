@@ -1,7 +1,7 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const display=document.getElementById('czone-display'),picker=document.getElementById('czone-owned'),status=document.getElementById('czone-status');
-let userId=null,items=[],slots=[],loading=false,seq=0,editing=null,saveTimer=null;
+let userId=null,items=[],slots=[],loading=false,seq=0,editing=null,saveTimer=null,hasLoaded=false,loadPromise=null;
 const note=s=>{status.textContent=s};
 function card(item,slot,quantity){
  const box=document.createElement('article');box.className=slot?'czone-placed-ctoon':'ctoon-shop-card czone-card';
@@ -107,12 +107,16 @@ async function change(id,slot){
  }catch(e){loading=false;render();note('Could not save: '+e.message);return}
  loading=false;render()
 }
-async function load(){
- const n=++seq;note('Loading your CToons…');display.replaceChildren();picker.replaceChildren();
+async function load(force=false){
+ if(loadPromise)return loadPromise;
+ if(hasLoaded&&!force)return;
+ const n=++seq;
+ if(!hasLoaded)note('Loading your CToons…');
+ loadPromise=(async()=>{
  try{
   const {data:{user},error:authError}=await db.auth.getUser();
   if(n!==seq)return;
-  if(authError||!user){userId=null;note('Sign in to customize your CZone.');const a=document.createElement('a');a.href='login.html';a.className='button primary';a.textContent='Sign In';display.append(a);return}
+  if(authError||!user){userId=null;items=[];slots=[];display.replaceChildren();picker.replaceChildren();hasLoaded=true;note('Sign in to customize your CZone.');const a=document.createElement('a');a.href='login.html';a.className='button primary';a.textContent='Sign In';display.append(a);return}
   userId=user.id;
   const [{data:owned,error:ownError},{data:placed,error:placeError}]=await Promise.all([
    db.from('player_ctoons').select('ctoon_id,quantity').eq('user_id',userId).gt('quantity',0),
@@ -122,8 +126,16 @@ async function load(){
   const ids=(owned||[]).map(x=>x.ctoon_id);slots=(placed||[]).filter(x=>ids.includes(x.ctoon_id));
   if(ids.length){const {data,error}=await db.from('ctoon_catalog').select('id,name,rarity,series,image_path').in('id',ids);if(error)throw error;items=data||[]}
   else items=[];
-  if(n===seq)render();
+  if(n===seq){hasLoaded=true;render()}
  }catch(e){if(n===seq)note('Unable to load CZone: '+e.message)}
+ })();
+ try{await loadPromise}finally{loadPromise=null}
 }
-db.auth.onAuthStateChange(()=>setTimeout(load,0));
-window.addEventListener('pageshow',load);load();
+// Token refresh and tab visibility changes must not rebuild the scene.
+// Only reload when the actual signed-in account changes.
+db.auth.onAuthStateChange((event,session)=>{
+ if(event==='SIGNED_IN'&&session?.user?.id!==userId){setTimeout(()=>load(true),0)}
+ else if(event==='SIGNED_OUT'&&userId!==null){setTimeout(()=>{hasLoaded=false;load(true)},0)}
+});
+window.addEventListener('pageshow',event=>{if(!hasLoaded&&!loadPromise)load()});
+load();
