@@ -10,6 +10,8 @@ async function refresh(){
   if(n!==seq)return;
   if(!catalog?.length)return; // Retain the original featured card if catalog is empty.
   const {data:{user}}=await db.auth.getUser();
+  const {data:ownerRow,error:ownerError}=user?await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle():{data:null,error:null};
+  const isOwner=!!ownerRow&&!ownerError;
   let owned=new Map();
   if(user){
    const {data,error:ownedError}=await db.from('player_ctoons').select('ctoon_id,quantity').eq('user_id',user.id).in('ctoon_id',catalog.map(item=>item.id));
@@ -32,8 +34,25 @@ async function refresh(){
    const action=document.createElement(item.is_for_sale?'a':'span');action.className='ctoon-shop-buy ctoon-preview-buy';action.textContent=item.is_for_sale?'Shop':'Soon';if(item.is_for_sale)action.href='shop.html#ctoon-store';purchase.append(price,action);
    const status=document.createElement('p');status.className='ctoon-shop-status';status.textContent=(item.series||'CTooniverse')+' CToon Set';
    details.append(name,purchase,status);card.append(art,details);
+   const edit=()=>{
+    if(!isOwner)return;
+    const dialog=document.createElement('dialog');dialog.className='ctoon-editor-dialog';
+    const form=document.createElement('form');form.innerHTML='<h2>Edit CToon</h2><label>Name<input name="name" required maxlength="80"></label><label>Image path or HTTPS URL<input name="image_path" required maxlength="1000"></label><label>Rarity<select name="rarity"><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select></label><label>Price (Cartoon Coins)<input name="price_coins" type="number" min="0" max="1000000" step="1" required></label><p role="status" class="ctoon-edit-feedback"></p><div class="hero-actions"><button type="button" class="button secondary" data-cancel>Cancel</button><button type="submit" class="button primary">Save Changes</button></div>';
+    form.elements.name.value=item.name;form.elements.image_path.value=item.image_path||'';form.elements.rarity.value=item.rarity||'Common';form.elements.price_coins.value=item.price_coins??0;
+    const feedback=form.querySelector('.ctoon-edit-feedback');form.querySelector('[data-cancel]').onclick=()=>dialog.close();
+    form.addEventListener('submit',async event=>{
+     event.preventDefault();const name=form.elements.name.value.trim(),image_path=form.elements.image_path.value.trim(),rarity=form.elements.rarity.value,price_coins=Number(form.elements.price_coins.value);
+     if(!name||!(/^(https:\/\/|public\/images\/)/.test(image_path))||!Number.isInteger(price_coins)||price_coins<0){feedback.textContent='Enter a valid name, HTTPS image URL or public/images/ path, and whole-number price.';return}
+     const save=form.querySelector('[type=submit]');save.disabled=true;feedback.textContent='Saving…';
+     const {data,error}=await db.from('ctoon_catalog').update({name,image_path,rarity,price_coins}).eq('id',item.id).select('id').single();
+     save.disabled=false;if(error||!data){feedback.textContent='Could not save: '+(error?.message||'No permission');return}
+     dialog.close();refresh();
+    });
+    dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.append(form);document.body.append(dialog);dialog.showModal();
+   };
+   if(isOwner){const button=document.createElement('button');button.type='button';button.className='ctoon-edit-button';button.textContent='Edit CToon';button.addEventListener('click',edit);details.append(button);}
    const open=()=>{const dialog=document.createElement('dialog');dialog.className='ctoon-editor-dialog ctoon-preview-dialog';const title=document.createElement('h2');title.textContent=item.name;const picture=document.createElement('img');picture.src=img.src;picture.alt=img.alt;picture.className='ctoon-preview-image';const info=document.createElement('p');info.textContent=(item.series||'CTooniverse')+' · '+(item.rarity||'Common')+' · '+(item.is_for_sale?price.textContent:'Coming Soon')+(qty?' · Owned ×'+qty:'');const close=document.createElement('button');close.className='button secondary';close.textContent='Close';close.onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.remove(),{once:true});dialog.append(title,picture,info,close);document.body.append(dialog);dialog.showModal()};
-   card.addEventListener('click',event=>{if(!event.target.closest('a,button'))open()});card.addEventListener('keydown',event=>{if(event.target===card&&(event.key==='Enter'||event.key===' ')){event.preventDefault();open()}});
+   card.addEventListener('click',event=>{if(!event.target.closest('a,button'))(isOwner?edit:open)()});card.addEventListener('keydown',event=>{if(event.target===card&&(event.key==='Enter'||event.key===' ')){event.preventDefault();(isOwner?edit:open)()}});
    fragment.append(card);
   }
   grid.replaceChildren(fragment);
