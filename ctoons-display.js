@@ -11,7 +11,7 @@ function applyFilters(){
  for(const card of grid?.querySelectorAll('[data-ctoon-id]')||[]){
   const item=catalogRows.find(x=>x.id===card.dataset.ctoonId);if(!item)continue;
   const quantity=ownership.get(item.id)||0;
-  const match=(!query||(item.name+' '+(item.series||'')).toLowerCase().includes(query))&&(!category||item.parent_series===category)&&(!series||item.series===series)&&(!rarity||item.rarity===rarity)&&(!owned||(owned==='owned'?quantity>0:quantity===0));
+  const match=(!query||(item.name+' '+(item.series||'')).toLowerCase().includes(query))&&(!category||item.parent_series===category)&&(!series||item.series===series)&&(!rarity||item.rarity===rarity)&&(!owned||(owned==='wishlist'?wishlist.has(item.id):owned==='owned'?quantity>0:quantity===0));
   card.hidden=!match;if(match)visible++;
  }
  const count=document.getElementById('ctoon-catalog-result-count');if(count)count.textContent='Showing '+visible+' of '+catalogRows.length+' CToons';
@@ -85,7 +85,7 @@ async function refresh(){
      wish.disabled=true;const active=wishlist.has(item.id);
      const result=active?await db.from('ctoon_wishlist').delete().eq('user_id',user.id).eq('ctoon_id',item.id):await db.from('ctoon_wishlist').insert({user_id:user.id,ctoon_id:item.id});
      if(result.error){alert('Wishlist update failed: '+result.error.message);}
-     else{if(active)wishlist.delete(item.id);else wishlist.add(item.id);updateLabel();}
+     else{if(active)wishlist.delete(item.id);else wishlist.add(item.id);updateLabel();applyFilters();}
      wish.disabled=false;
     });details.append(wish);
    }
