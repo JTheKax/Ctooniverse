@@ -2,6 +2,22 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const grid=document.querySelector('.ctoons-featured-display .ctoons-featured-grid');
 let seq=0;
+let catalogRows=[],ownership=new Map(),ownerMode=false;
+const filterIds=['search','category','series','rarity','owned'];
+const filter=id=>document.getElementById('ctoon-catalog-'+id);
+function applyFilters(){
+ const query=(filter('search')?.value||'').trim().toLowerCase(),category=filter('category')?.value||'',series=filter('series')?.value||'',rarity=filter('rarity')?.value||'',owned=filter('owned')?.value||'';
+ let visible=0;
+ for(const card of grid?.querySelectorAll('[data-ctoon-id]')||[]){
+  const item=catalogRows.find(x=>x.id===card.dataset.ctoonId);if(!item)continue;
+  const quantity=ownership.get(item.id)||0;
+  const match=(!query||(item.name+' '+(item.series||'')).toLowerCase().includes(query))&&(!category||item.parent_series===category)&&(!series||item.series===series)&&(!rarity||item.rarity===rarity)&&(!owned||(owned==='owned'?quantity>0:quantity===0));
+  card.hidden=!match;if(match)visible++;
+ }
+ const count=document.getElementById('ctoon-catalog-result-count');if(count)count.textContent='Showing '+visible+' of '+catalogRows.length+' CToons';
+}
+function setOptions(id,values,label){const select=filter(id);if(!select)return;const current=select.value;select.replaceChildren(new Option(label,''));for(const value of [...new Set(values.filter(Boolean))].sort())select.add(new Option(value,value));select.value=[...select.options].some(o=>o.value===current)?current:'';}
+for(const id of filterIds)filter(id)?.addEventListener('input',applyFilters);
 function renderCounts(catalog){
  const list=document.getElementById('ctoon-counts-list'),status=document.getElementById('ctoon-counts-status');if(!list)return;
  const groups=new Map();let saleTotal=0;
@@ -42,9 +58,11 @@ async function refresh(){
    }catch(ownedError){console.warn('Ownership unavailable; displaying public catalog',ownedError)}
   }
   if(n!==seq)return;
+  catalogRows=catalog;ownership=owned;ownerMode=isOwner;
+  setOptions('category',catalog.map(x=>x.parent_series),'All categories');setOptions('series',catalog.map(x=>x.series),'All sets');setOptions('rarity',catalog.map(x=>x.rarity),'All rarities');
   const fragment=document.createDocumentFragment();
   for(const item of catalog){
-   const card=document.createElement('article');card.className='ctoon-shop-card ctoon-inspectable';card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','View '+item.name+' CToon details');
+   const card=document.createElement('article');card.className='ctoon-shop-card ctoon-inspectable';card.dataset.ctoonId=item.id;card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','View '+item.name+' CToon details');
    const art=document.createElement('div');art.className='ctoon-shop-art';
    const badge=document.createElement('span');badge.className='ctoon-shop-owned';
    const qty=owned.get(item.id)||0;badge.textContent=qty?'Owned ×'+qty:!item.is_for_sale?'Coming Soon':user?'Unowned':'Sign in';badge.classList.toggle('is-owned',qty>0);
@@ -79,7 +97,7 @@ async function refresh(){
    card.addEventListener('click',event=>{if(!event.target.closest('a,button'))(isOwner?edit:open)()});card.addEventListener('keydown',event=>{if(event.target===card&&(event.key==='Enter'||event.key===' ')){event.preventDefault();(isOwner?edit:open)()}});
    fragment.append(card);
   }
-  grid.replaceChildren(fragment);
+  grid.replaceChildren(fragment);applyFilters();
  }catch(e){console.warn('Featured CToons could not refresh; preserving current cards.',e);const status=document.getElementById('ctoon-counts-status');if(status)status.textContent='Unable to refresh CToons right now. Please try again.';}
 }
 db.auth.onAuthStateChange(()=>setTimeout(refresh,0));
