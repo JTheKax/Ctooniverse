@@ -46,7 +46,7 @@ function render(item,quantity){
  const count=document.createElement('p');count.className='collection-quantity';count.textContent='Copies owned: '+quantity;
  details.append(name,series,count);card.append(art,details);return card;
 }
-const tools=document.getElementById('collection-tools'),search=document.getElementById('collection-search'),seriesFilter=document.getElementById('collection-series-filter'),rarityFilter=document.getElementById('collection-rarity-filter'),sort=document.getElementById('collection-sort');
+const tools=document.getElementById('collection-tools'),search=document.getElementById('collection-search'),seriesFilter=document.getElementById('collection-series-filter'),rarityFilter=document.getElementById('collection-rarity-filter'),sort=document.getElementById('collection-sort'),copyFilter=document.getElementById('collection-copy-filter');
 let rows=[];
 const rarityOrder=['Common','Uncommon','Rare','Epic','Legendary'];
 const preview=document.createElement('dialog');preview.className='ctoon-editor-dialog ctoon-preview-dialog';document.body.append(preview);
@@ -60,7 +60,7 @@ function inspect(item,quantity){
 }
 function showRows(){
  const query=search.value.trim().toLocaleLowerCase(),series=seriesFilter.value,rarity=rarityFilter.value;
- const visible=rows.filter(({item})=>(!query||item.name.toLocaleLowerCase().includes(query))&&(!series||item.series===series)&&(!rarity||item.rarity===rarity));
+ const visible=rows.filter(({item,quantity})=>(!query||item.name.toLocaleLowerCase().includes(query))&&(!series||item.series===series)&&(!rarity||item.rarity===rarity)&&(copyFilter.value==='all'||(copyFilter.value==='duplicates'?quantity>1:quantity===1)));
  visible.sort((a,b)=>sort.value==='quantity'?b.quantity-a.quantity||a.item.name.localeCompare(b.item.name):sort.value==='rarity'?(rarityOrder.indexOf(a.item.rarity)-rarityOrder.indexOf(b.item.rarity))||a.item.name.localeCompare(b.item.name):sort.value==='name-desc'?b.item.name.localeCompare(a.item.name):a.item.name.localeCompare(b.item.name));
  grid.replaceChildren();
  for(const {item,quantity} of visible){
@@ -71,7 +71,7 @@ function showRows(){
  say('Showing '+visible.length+' of '+rows.length+' owned CToons.');
  if(!visible.length)empty('No CToons match your filters.');
 }
-for(const control of [search,seriesFilter,rarityFilter,sort])control.addEventListener('input',showRows);
+for(const control of [search,seriesFilter,rarityFilter,sort,copyFilter])control.addEventListener('input',showRows);
 async function load(){
  const current=++sequence;grid.replaceChildren();summary.hidden=true;tools.hidden=true;progress.hidden=true;duplicateSection.hidden=true;rows=[];say('Loading your collection…');
  try{
