@@ -4,7 +4,7 @@ const grid=document.getElementById('sets-grid'),status=document.getElementById('
 const categories=['Cartoons','Anime','Movies','Video Games','Misc'];
 async function load(){
  try{
-  const {data:catalog,error}=await db.from('ctoon_catalog').select('id,name,series,parent_series').order('name');
+  const {data:catalog,error}=await db.from('ctoon_catalog').select('id,name,series,parent_series,image_path,rarity,is_for_sale').order('name');
   if(error)throw error;
   const {data:{user}}=await db.auth.getUser();let owned=new Set();
   if(user){const r=await db.from('player_ctoons').select('ctoon_id').eq('user_id',user.id).gt('quantity',0);if(!r.error)owned=new Set((r.data||[]).map(x=>x.ctoon_id))}
@@ -22,10 +22,10 @@ async function load(){
    for(const group of matches){
     const collected=group.items.filter(x=>owned.has(x.id)).length,pct=Math.round(collected/group.items.length*100);
     const row=document.createElement('div');row.style.marginBottom='1rem';
-    const link=document.createElement('a');link.href='ctoons.html?category='+encodeURIComponent(category)+'&series='+encodeURIComponent(group.series)+'#ctoon-catalog-filters';link.textContent=group.series+' — '+group.items.length+' CToons';link.style.fontWeight='bold';
+    const link=document.createElement('a');link.href='ctoon-set.html?category='+encodeURIComponent(category)+'&series='+encodeURIComponent(group.series);link.textContent=group.series+' — '+group.items.length+' CToons';link.style.fontWeight='bold';
     const count=document.createElement('p');count.textContent=user?collected+' / '+group.items.length+' owned ('+pct+'%)':'Sign in to track collection';
     const bar=document.createElement('progress');bar.max=group.items.length;bar.value=collected;bar.style.width='100%';bar.setAttribute('aria-label',group.series+' completion');
-    row.append(link,count,bar);section.append(row);
+    const browse=document.createElement('a');browse.href=link.href;browse.className='button secondary';browse.textContent='View Set & Checklist';row.append(link,count,bar,browse);section.append(row);
    }
    grid.append(section);
   }
