@@ -2,6 +2,11 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const el=id=>document.getElementById(id),params=new URLSearchParams(location.search),category=params.get('category')||'',series=params.get('series')||'';
 let items=[],owned=new Map(),user=null,wishlist=new Set();
+const logos={'Cartoons / King of the Hill':'king-of-the-hill.png','Video Games / Kingdom Hearts':'kingdom-hearts-ctoon-set.png'};
+const defaults={'Cartoons':'cartoon-ctoon-set.png','Anime':'cartoon-anime-ctoon-set.png','Video Games':'video-games-ctoon-sets.png'};
+const logo=logos[category+' / '+series]||defaults[category];
+if(logo){el('set-logo').src='public/images/ctoon-set-logos/'+logo;el('set-logo').alt=series+' CToon Set artwork';el('set-artwork').hidden=false;el('set-logo').onerror=()=>{el('set-artwork').hidden=true};}
+
 el('set-title').textContent=series||'CToon Set';el('set-category').textContent=category||'CTooniverse';document.title=(series||'CToon Set')+' | CTooniverse';
 function draw(){
  const filter=el('set-filter').value,q=el('set-search').value.trim().toLowerCase(),grid=el('set-grid');grid.replaceChildren();
@@ -14,7 +19,7 @@ function draw(){
   const details=document.createElement('div');details.className='ctoon-shop-details';
   const title=document.createElement('h3');title.className='ctoon-shop-name';title.textContent=item.name;
   const rarity=document.createElement('p');rarity.textContent=(item.rarity||'Common')+' · '+(item.is_for_sale?'Available in Shop':'Coming Soon');
-  details.append(title,rarity);
+  const check=document.createElement('p');check.className='ctoon-checklist-state';check.textContent=qty?'✓ Collected · '+qty+' owned':'○ Needed';details.append(title,rarity,check);
   if(user){
    const wish=document.createElement('button');wish.type='button';wish.className='button secondary';
    const label=()=>{wish.textContent=wishlist.has(item.id)?'♥ On Wishlist':'♡ Add to Wishlist';wish.setAttribute('aria-pressed',String(wishlist.has(item.id)))};
@@ -23,6 +28,7 @@ function draw(){
   card.append(art,details);grid.append(card);
  }
  el('set-status').textContent='Showing '+visible.length+' of '+items.length+' CToons'+(!user?' · Sign in to track owned CToons':'');
+ const collected=items.filter(x=>(owned.get(x.id)||0)>0).length;el('set-checklist-summary').textContent=user?collected+' collected · '+(items.length-collected)+' needed · '+(items.length?Math.round(collected/items.length*100):0)+'% complete':'Sign in to see your personal checklist.';
 }
 async function load(){
  if(!category||!series){el('set-status').textContent='Select a set from Sets Overview.';return}
