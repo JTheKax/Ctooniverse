@@ -3,6 +3,28 @@ const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable
 const grid=document.getElementById('collection-grid'),message=document.getElementById('collection-message'),summary=document.getElementById('collection-summary');
 const unique=document.getElementById('collection-unique'),total=document.getElementById('collection-total');
 let sequence=0;
+const progress=document.getElementById('collection-progress'),progressList=document.getElementById('collection-progress-list'),progressTotal=document.getElementById('collection-progress-total');
+function renderProgress(catalog,owned){
+ progressList.replaceChildren();
+ const sets=new Map();
+ for(const item of catalog){
+  const category=item.parent_series||'Misc',name=item.series||'Uncategorized',key=category+' / '+name;
+  if(!sets.has(key))sets.set(key,{category,name,total:0,owned:0});
+  const group=sets.get(key);group.total++;if((owned.get(item.id)||0)>0)group.owned++;
+ }
+ const totalOwned=catalog.filter(item=>(owned.get(item.id)||0)>0).length;
+ const percent=catalog.length?Math.round(totalOwned/catalog.length*100):0;
+ progressTotal.textContent=totalOwned+' / '+catalog.length+' unique CToons collected ('+percent+'% complete)';
+ for(const group of [...sets.values()].sort((a,b)=>a.category.localeCompare(b.category)||a.name.localeCompare(b.name))){
+  const box=document.createElement('div');box.className='ctoon-count-group';
+  const label=document.createElement('p');const pct=group.total?Math.round(group.owned/group.total*100):0;
+  label.textContent=group.category+' / '+group.name+' — '+group.owned+'/'+group.total+' ('+pct+'%)';
+  const bar=document.createElement('progress');bar.max=group.total;bar.value=group.owned;bar.style.cssText='width:100%;height:14px;accent-color:#9e70ff';bar.setAttribute('aria-label',group.name+' collection completion');
+  box.append(label,bar);progressList.append(box);
+ }
+ progress.hidden=false;
+}
+
 const say=(value)=>{message.textContent=value;};
 function empty(text,linkText,link){
  grid.replaceChildren();const box=document.createElement('div');box.className='collection-empty';
@@ -49,7 +71,7 @@ function showRows(){
 }
 for(const control of [search,seriesFilter,rarityFilter,sort])control.addEventListener('input',showRows);
 async function load(){
- const current=++sequence;grid.replaceChildren();summary.hidden=true;tools.hidden=true;rows=[];say('Loading your collection…');
+ const current=++sequence;grid.replaceChildren();summary.hidden=true;tools.hidden=true;progress.hidden=true;rows=[];say('Loading your collection…');
  try{
   const {data:{user},error:authError}=await db.auth.getUser();
   if(current!==sequence)return;
@@ -57,11 +79,12 @@ async function load(){
   const {data:owned,error:ownedError}=await db.from('player_ctoons').select('ctoon_id,quantity').eq('user_id',user.id).gt('quantity',0);
   if(ownedError)throw ownedError;
   if(current!==sequence)return;
-  if(!owned?.length){say('No CToons collected yet.');empty('Your collection is empty. Visit the Shop to collect your first CToon!','Browse CToons','shop.html#ctoon-store');return}
-  const ids=[...new Set(owned.map(x=>x.ctoon_id))];
-  const {data:catalog,error:catalogError}=await db.from('ctoon_catalog').select('id,name,rarity,image_path,series').in('id',ids);
+  const {data:catalog,error:catalogError}=await db.from('ctoon_catalog').select('id,name,rarity,image_path,series,parent_series').order('name');
   if(catalogError)throw catalogError;
   if(current!==sequence)return;
+  const ownedMap=new Map((owned||[]).map(x=>[x.ctoon_id,Number(x.quantity)||0]));
+  renderProgress(catalog||[],ownedMap);
+  if(!owned?.length){say('No CToons collected yet. Your set progress is shown above.');empty('Your collection is empty. Visit the Shop to collect your first CToon!','Browse CToons','shop.html#ctoon-store');return}
   const byId=new Map((catalog||[]).map(item=>[item.id,item]));
   rows=owned.map(row=>({item:byId.get(row.ctoon_id),quantity:Number(row.quantity)||0})).filter(row=>row.item&&row.quantity>0);
   const copies=rows.reduce((n,row)=>n+row.quantity,0);
