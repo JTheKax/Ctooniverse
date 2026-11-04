@@ -3,6 +3,8 @@ const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable
 const grid=document.getElementById('collection-grid'),message=document.getElementById('collection-message'),summary=document.getElementById('collection-summary');
 const unique=document.getElementById('collection-unique'),total=document.getElementById('collection-total');
 let sequence=0;
+const duplicateSection=document.getElementById('collection-duplicates'),duplicateList=document.getElementById('collection-duplicates-list'),duplicateSummary=document.getElementById('collection-duplicates-summary');
+function renderDuplicates(items){const duplicates=items.filter(x=>x.quantity>1);duplicateList.replaceChildren();const extra=duplicates.reduce((n,x)=>n+x.quantity-1,0);duplicateSummary.textContent=extra+' extra copies across '+duplicates.length+' CToons. Duplicates are preserved for future trading.';for(const row of duplicates){const p=document.createElement('p');p.textContent=row.item.name+' — '+row.quantity+' owned ('+(row.quantity-1)+' extra)';duplicateList.append(p)}duplicateSection.hidden=false;}
 const progress=document.getElementById('collection-progress'),progressList=document.getElementById('collection-progress-list'),progressTotal=document.getElementById('collection-progress-total');
 function renderProgress(catalog,owned){
  progressList.replaceChildren();
@@ -71,7 +73,7 @@ function showRows(){
 }
 for(const control of [search,seriesFilter,rarityFilter,sort])control.addEventListener('input',showRows);
 async function load(){
- const current=++sequence;grid.replaceChildren();summary.hidden=true;tools.hidden=true;progress.hidden=true;rows=[];say('Loading your collection…');
+ const current=++sequence;grid.replaceChildren();summary.hidden=true;tools.hidden=true;progress.hidden=true;duplicateSection.hidden=true;rows=[];say('Loading your collection…');
  try{
   const {data:{user},error:authError}=await db.auth.getUser();
   if(current!==sequence)return;
@@ -93,7 +95,7 @@ async function load(){
    control.replaceChildren(new Option(control===seriesFilter?'All series':'All rarities',''));
    for(const value of values.sort((a,b)=>a.localeCompare(b)))control.add(new Option(value,value));
   }
-  tools.hidden=false;showRows();
+  renderDuplicates(rows);tools.hidden=false;showRows();
  }catch(e){say('Unable to load collection: '+(e?.message||'Unknown error'));empty('Please refresh to try again.')}
 }
 db.auth.onAuthStateChange(()=>setTimeout(load,0));
