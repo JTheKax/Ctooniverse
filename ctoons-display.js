@@ -61,6 +61,7 @@ async function refresh(){
   wishlist=new Set();if(user){const w=await db.from('ctoon_wishlist').select('ctoon_id').eq('user_id',user.id);if(!w.error)wishlist=new Set((w.data||[]).map(x=>x.ctoon_id));}if(n!==seq)return;
   catalogRows=catalog;ownership=owned;ownerMode=isOwner;
   setOptions('category',catalog.map(x=>x.parent_series),'All categories');setOptions('series',catalog.map(x=>x.series),'All sets');setOptions('rarity',catalog.map(x=>x.rarity),'All rarities');
+  const params=new URLSearchParams(location.search);if(params.has('category'))filter('category').value=params.get('category');if(params.has('series'))filter('series').value=params.get('series');
   const fragment=document.createDocumentFragment();
   for(const item of catalog){
    const card=document.createElement('article');card.className='ctoon-shop-card ctoon-inspectable';card.dataset.ctoonId=item.id;card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','View '+item.name+' CToon details');
