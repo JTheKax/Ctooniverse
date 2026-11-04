@@ -27,15 +27,19 @@ async function refresh(){
   const {data:catalog,error}=await db.from('ctoon_catalog').select('id,name,rarity,price_coins,image_path,series,parent_series,is_for_sale').order('name');
   if(error)throw error;
   if(n!==seq)return;
-  if(!catalog?.length)return; // Retain the original featured card if catalog is empty.
+  if(!catalog?.length){renderCounts([]);grid.replaceChildren();const empty=document.createElement('p');empty.textContent='No CToons are currently listed.';grid.append(empty);return;}
   renderCounts(catalog);
-  const {data:{user}}=await db.auth.getUser();
-  const {data:ownerRow,error:ownerError}=user?await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle():{data:null,error:null};
-  const isOwner=!!ownerRow&&!ownerError;
+  let user=null,isOwner=false;
+  try{
+   const auth=await db.auth.getUser();user=auth.data?.user||null;
+   if(user){const owner=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();isOwner=!!owner.data&&!owner.error;}
+  }catch(authError){console.warn('CToon account status unavailable; displaying public catalog',authError)}
   let owned=new Map();
   if(user){
-   const {data,error:ownedError}=await db.from('player_ctoons').select('ctoon_id,quantity').eq('user_id',user.id).in('ctoon_id',catalog.map(item=>item.id));
-   if(!ownedError)owned=new Map((data||[]).map(row=>[row.ctoon_id,Number(row.quantity)||0]));
+   try{
+    const {data,error:ownedError}=await db.from('player_ctoons').select('ctoon_id,quantity').eq('user_id',user.id).in('ctoon_id',catalog.map(item=>item.id));
+    if(!ownedError)owned=new Map((data||[]).map(row=>[row.ctoon_id,Number(row.quantity)||0]));
+   }catch(ownedError){console.warn('Ownership unavailable; displaying public catalog',ownedError)}
   }
   if(n!==seq)return;
   const fragment=document.createDocumentFragment();
@@ -76,7 +80,7 @@ async function refresh(){
    fragment.append(card);
   }
   grid.replaceChildren(fragment);
- }catch(e){console.warn('Featured CToons could not load; showing original preview.',e)}
+ }catch(e){console.warn('Featured CToons could not refresh; preserving current cards.',e);const status=document.getElementById('ctoon-counts-status');if(status)status.textContent='Unable to refresh CToons right now. Please try again.';}
 }
 db.auth.onAuthStateChange(()=>setTimeout(refresh,0));
 window.addEventListener('pageshow',refresh);
