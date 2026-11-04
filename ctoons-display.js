@@ -2,7 +2,7 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const grid=document.querySelector('.ctoons-featured-display .ctoons-featured-grid');
 let seq=0;
-let catalogRows=[],ownership=new Map(),ownerMode=false;
+let catalogRows=[],ownership=new Map(),ownerMode=false,wishlist=new Set();
 const filterIds=['search','category','series','rarity','owned'];
 const filter=id=>document.getElementById('ctoon-catalog-'+id);
 function applyFilters(){
@@ -58,6 +58,7 @@ async function refresh(){
    }catch(ownedError){console.warn('Ownership unavailable; displaying public catalog',ownedError)}
   }
   if(n!==seq)return;
+  wishlist=new Set();if(user){const w=await db.from('ctoon_wishlist').select('ctoon_id').eq('user_id',user.id);if(!w.error)wishlist=new Set((w.data||[]).map(x=>x.ctoon_id));}if(n!==seq)return;
   catalogRows=catalog;ownership=owned;ownerMode=isOwner;
   setOptions('category',catalog.map(x=>x.parent_series),'All categories');setOptions('series',catalog.map(x=>x.series),'All sets');setOptions('rarity',catalog.map(x=>x.rarity),'All rarities');
   const fragment=document.createDocumentFragment();
@@ -75,7 +76,20 @@ async function refresh(){
    const price=document.createElement('span');price.className='ctoon-shop-price';price.textContent=Number(item.price_coins||0).toLocaleString()+' pts';
    const action=document.createElement(item.is_for_sale?'a':'span');action.className='ctoon-shop-buy ctoon-preview-buy';action.textContent=item.is_for_sale?'Shop':'Soon';if(item.is_for_sale)action.href='shop.html#ctoon-store';purchase.append(price,action);
    const status=document.createElement('p');status.className='ctoon-shop-status';status.textContent=(item.series||'CTooniverse')+' CToon Set';
-   details.append(name,purchase,status);card.append(art,details);
+   details.append(name,purchase,status);
+   if(user){
+    const wish=document.createElement('button');wish.type='button';wish.className='button secondary';
+    const updateLabel=()=>{wish.textContent=wishlist.has(item.id)?'♥ On Wishlist':'♡ Add to Wishlist';wish.setAttribute('aria-pressed',String(wishlist.has(item.id)));};
+    updateLabel();
+    wish.addEventListener('click',async()=>{
+     wish.disabled=true;const active=wishlist.has(item.id);
+     const result=active?await db.from('ctoon_wishlist').delete().eq('user_id',user.id).eq('ctoon_id',item.id):await db.from('ctoon_wishlist').insert({user_id:user.id,ctoon_id:item.id});
+     if(result.error){alert('Wishlist update failed: '+result.error.message);}
+     else{if(active)wishlist.delete(item.id);else wishlist.add(item.id);updateLabel();}
+     wish.disabled=false;
+    });details.append(wish);
+   }
+   card.append(art,details);
    const edit=()=>{
     if(!isOwner)return;
     const dialog=document.createElement('dialog');dialog.className='ctoon-editor-dialog';
