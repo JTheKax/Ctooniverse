@@ -115,3 +115,17 @@ if (year) year.textContent = String(new Date().getFullYear());
  document.addEventListener('click',e=>{if(!wrap.contains(e.target))close()});
  wrap.append(btn,panel);original.replaceWith(wrap);
 })();
+
+/* Dedicated top-level CToon Clash tab on every standard site page. */
+(() => {
+ const nav=document.querySelector('.site-header nav');
+ if(!nav||nav.querySelector('.clash-nav-link'))return;
+ const link=document.createElement('a');link.href='clash.html';link.className='nav-link clash-nav-link';
+ if(location.pathname.endsWith('/clash.html')){link.classList.add('active');link.setAttribute('aria-current','page')}
+ const icon=document.createElement('span');icon.className='nav-icon';icon.setAttribute('aria-hidden','true');icon.textContent='⚔';
+ const label=document.createElement('span');label.textContent='CToon Clash';link.append(icon,label);
+ const games=[...nav.querySelectorAll('a.nav-link')].find(a=>a.getAttribute('href')==='games.html');
+ const dropdown=nav.querySelector('.games-dropdown');
+ const anchor=dropdown||games;
+ if(anchor)anchor.after(link);else nav.append(link);
+})();
