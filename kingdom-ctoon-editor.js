@@ -3,10 +3,17 @@ const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable
 const grid=document.querySelector('.kingdom-ctoon-grid');
 if(grid){
  const {data:catalog,error}=await db.from('ctoon_catalog').select('id,name,rarity,price_coins,image_path,is_for_sale').eq('series','Kingdom Hearts').order('name');
- if(!error&&catalog){
-  grid.replaceChildren();
-  const {data:{user}}=await db.auth.getUser();
-  const {data:owner}=user?await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle():{data:null};
+ if(error){
+  console.error('Kingdom Hearts CToons failed to load',error);
+  grid.setAttribute('aria-busy','false');
+  const notice=document.createElement('p');notice.setAttribute('role','alert');notice.textContent='Could not refresh CToons. Please try again shortly.';grid.prepend(notice);
+ }else if(catalog){
+  let user=null,owner=null;
+  try{
+   const auth=await db.auth.getUser();user=auth.data?.user||null;
+   if(user){const result=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();owner=result.data||null;}
+  }catch(authError){console.warn('CToon owner controls unavailable',authError)}
+  grid.replaceChildren();grid.setAttribute('aria-busy','false');
   const dialog=document.createElement('dialog');dialog.className='ctoon-editor-dialog';
   dialog.innerHTML='<form method="dialog" id="ctoon-edit-form"><h2>Edit CToon</h2><label>Name <input name="name" required maxlength="80"></label><label>Image URL or site path <input name="image_path" required maxlength="1000"></label><label>Rarity <select name="rarity"><option>Common</option><option>Uncommon</option><option>Rare</option><option>Epic</option><option>Legendary</option></select></label><label>Price (coins) <input name="price_coins" type="number" min="0" max="1000000" required></label><label class="ctoon-sale-toggle"><input name="is_for_sale" type="checkbox"> List for sale in Shop</label><p class="ctoon-edit-feedback" role="status"></p><div class="hero-actions"><button type="button" class="button secondary" id="ctoon-edit-cancel">Cancel</button><button type="submit" class="button primary">Save Changes</button></div></form>';
   document.body.append(dialog);
