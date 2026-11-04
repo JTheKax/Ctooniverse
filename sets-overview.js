@@ -12,7 +12,9 @@ async function load(){
   const groups=new Map();
   for(const item of catalog||[]){const category=item.parent_series||'Misc',series=item.series||'Uncategorized',key=category+' / '+series;if(!groups.has(key))groups.set(key,{category,series,items:[]});groups.get(key).items.push(item)}
   const ordered=[...categories,...new Set([...groups.values()].map(x=>x.category).filter(x=>!categories.includes(x)))];
+  const only=grid.dataset.category||'';
   for(const category of ordered){
+   if(only&&category!==only)continue;
    const section=document.createElement('section');section.className='shop-department';section.style.textAlign='left';
    const title=document.createElement('h2');title.textContent=category;section.append(title);
    const matches=[...groups.values()].filter(g=>g.category===category).sort((a,b)=>a.series.localeCompare(b.series));
@@ -27,7 +29,8 @@ async function load(){
    }
    grid.append(section);
   }
-  status.textContent=(catalog||[]).length+' CToons across '+groups.size+' sets.';
+  const visible=[...groups.values()].filter(g=>!only||g.category===only);
+  status.textContent=visible.reduce((n,g)=>n+g.items.length,0)+' CToons across '+visible.length+' '+(only||'')+' sets.';
  }catch(e){status.textContent='Unable to load sets: '+e.message}
 }
 db.auth.onAuthStateChange(()=>setTimeout(load,0));load();
