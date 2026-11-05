@@ -1770,3 +1770,45 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 .ctoon-checklist-state{font-weight:700;color:#e4d6ff;background:rgba(84,45,162,.35);padding:7px 10px;border-radius:8px}
 #set-checklist-summary{font-weight:700;color:#d9c7ff}
 @media(max-width:480px){.ctoon-set-checklist{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.ctoon-set-checklist .ctoon-shop-art{min-height:140px}.ctoon-set-checklist .ctoon-shop-art img{max-height:150px}}
+
+
+/* Mobile dropdown repair: keep menus above wrapped navigation tabs. */
+@media (max-width: 700px) {
+  body > .site-header,
+  .site-header nav {
+    overflow: visible !important;
+    isolation: auto !important;
+  }
+  .site-header nav {
+    position: relative !important;
+    z-index: 10001 !important;
+  }
+  .site-header .community-dropdown,
+  .site-header .account-dropdown,
+  .site-header .owner-menu {
+    position: relative !important;
+    overflow: visible !important;
+  }
+  .site-header .community-dropdown:has([aria-expanded="true"]),
+  .site-header .account-dropdown:has([aria-expanded="true"]),
+  .site-header .owner-menu:has([aria-expanded="true"]) {
+    z-index: 10050 !important;
+  }
+  .site-header .community-dropdown .community-dropdown-panel,
+  .site-header .account-dropdown .account-dropdown-panel,
+  .site-header .owner-menu .owner-menu-panel {
+    position: fixed !important;
+    top: 18vh !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    max-height: 65dvh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    z-index: 10051 !important;
+    box-shadow: 0 12px 36px #000b !important;
+  }
+}
