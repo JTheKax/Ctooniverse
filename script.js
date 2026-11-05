@@ -129,3 +129,12 @@ if (year) year.textContent = String(new Date().getFullYear());
  const anchor=dropdown||games;
  if(anchor)anchor.after(link);else nav.append(link);
 })();
+
+/* Load the shared mobile stylesheet on every page that uses site navigation. */
+(function(){
+  if(document.querySelector('link[data-mobile-layout]'))return;
+  const sheet=document.createElement('link');
+  sheet.rel='stylesheet';sheet.href='mobile-responsive.css?v=20261105-1';
+  sheet.setAttribute('data-mobile-layout','');
+  document.head.appendChild(sheet);
+})();
