@@ -6,9 +6,9 @@
  const {data:owner}=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();if(!owner)return;
  const host=document.getElementById('emu-library');if(!host)return;
  const dialog=document.createElement('dialog');dialog.className='emu-edit-dialog';
- dialog.innerHTML='<form method="dialog" class="emu-edit-form"><h2>Edit Game Case</h2><label>Game name<input name="title" maxlength="100" required></label><label>Cover artwork (PNG, JPG or WebP, max 5 MB)<input name="cover" type="file" accept="image/png,image/jpeg,image/webp"></label><p class="emu-edit-status" role="status"></p><div class="emulator-controls"><button type="button" class="button primary" data-save>Save Changes</button><button type="submit" class="button">Cancel</button></div></form>';
+ dialog.innerHTML='<form method="dialog" class="emu-edit-form"><h2>Edit Game Case</h2><label>Game name<input name="title" maxlength="100" required></label><label>Cover artwork (PNG, JPG or WebP, max 5 MB)<input name="cover" type="file" accept="image/png,image/jpeg,image/webp"></label><p class="emu-edit-status" role="status"></p><div class="emulator-controls"><button type="button" class="button primary" data-save>Save Changes</button><button type="button" class="button secondary" data-play>▶ Play Game</button><button type="submit" class="button">Cancel</button></div></form>';
  document.body.append(dialog);
- const title=dialog.querySelector('[name=title]'),cover=dialog.querySelector('[name=cover]'),message=dialog.querySelector('.emu-edit-status'),save=dialog.querySelector('[data-save]');
+ const title=dialog.querySelector('[name=title]'),cover=dialog.querySelector('[name=cover]'),message=dialog.querySelector('.emu-edit-status'),save=dialog.querySelector('[data-save]'),play=dialog.querySelector('[data-play]');
  let game=null;
  host.addEventListener('click',async e=>{
   const card=e.target.closest('.emu-case[data-game-id]');if(!card)return;
@@ -17,6 +17,16 @@
   if(error){alert('Unable to open game editor: '+error.message);return}
   game=data;title.value=data.title;cover.value='';message.textContent='';dialog.showModal();
  },true);
+ play.addEventListener('click',async()=>{
+  if(!game)return;
+  play.disabled=true;
+  try{
+   const launched=await window.ctoonPlayGameCase?.(game.id);
+   if(launched)dialog.close();
+   else message.textContent='Unable to start this game. Check that it is published and no other game is running.';
+  }catch(err){message.textContent='Play failed: '+err.message}
+  finally{play.disabled=false}
+ });
  save.addEventListener('click',async()=>{
   if(!game)return;
   const next=title.value.trim(),file=cover.files[0];
