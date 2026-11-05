@@ -1,0 +1,52 @@
+/* Site-wide mobile layout repair. Loaded after the main stylesheet. */
+@media (max-width: 700px) {
+  html { width:100%; overflow-x:clip; -webkit-text-size-adjust:100%; }
+  body { width:100%; min-width:0; overflow-x:clip; }
+  *, *::before, *::after { box-sizing:border-box; }
+  img, video, iframe, canvas, svg { max-width:100%; }
+  img, video { height:auto; }
+  main, main > *, section, article, aside, .site-header, footer { min-width:0; max-width:100%; }
+  h1,h2,h3,p,li,a,button,label { overflow-wrap:break-word; }
+  .site-header { position:relative; z-index:100; height:auto; }
+  .site-header nav { display:flex; flex-wrap:wrap; align-items:stretch; justify-content:center; gap:6px; width:100%; min-width:0; overflow:visible!important; }
+  .site-header nav > * { min-width:0; }
+  .site-header .nav-link { display:flex; align-items:center; justify-content:center; gap:5px; min-height:44px; max-width:100%; white-space:normal; text-align:center; }
+  .site-header .community-dropdown, .site-header .account-dropdown, .site-header .owner-menu { position:static!important; }
+  .site-header .community-dropdown-panel, .site-header .account-dropdown-panel, .site-header .owner-menu-panel {
+    position:fixed!important; top:auto!important; bottom:max(12px,env(safe-area-inset-bottom))!important;
+    left:12px!important; right:12px!important; width:auto!important; min-width:0!important;
+    max-height:min(65dvh,520px)!important; overflow-y:auto!important;
+    z-index:2147483000!important; overscroll-behavior:contain;
+  }
+  .site-header .community-dropdown:has([aria-expanded="true"]),
+  .site-header .account-dropdown:has([aria-expanded="true"]),
+  .site-header .owner-menu:has([aria-expanded="true"]) { z-index:2147483000!important; }
+  .home-top, .home-sections, .welcome-panel, .announcement-panel, .home-tiles,
+  .jukebox-upcoming-header, .jukebox-upcoming-slots { max-width:100%; min-width:0; }
+  .home-top { display:grid; grid-template-columns:minmax(0,1fr); }
+  .home-tiles, .jukebox-upcoming-slots { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .hero-actions, .collection-display-tools, .pinball-controls { flex-wrap:wrap; }
+  .hero-actions > *, .collection-display-tools > * { max-width:100%; }
+  .ctoons-featured-grid, .kingdom-ctoon-grid { gap:10px; }
+  .ctoons-featured-grid .ctoon-shop-card, .kingdom-ctoon-grid .ctoon-shop-card {
+    flex:0 1 min(182px,calc((100% - 10px)/2)); min-width:0; max-width:182px;
+  }
+  .ctoon-shop-card, .ctoon-shop-art, .ctoon-shop-details { min-width:0; }
+  .ctoon-shop-art img, .ctoon-set-checklist img { max-width:100%; object-fit:contain; }
+  .ctoon-editor-dialog, dialog { max-width:calc(100vw - 24px); max-height:calc(100dvh - 32px); overflow:auto; }
+  input,select,textarea,button { max-width:100%; }
+  input,select,textarea { min-width:0; }
+  .collection-grid, .ctoon-set-checklist { max-width:100%; }
+  .pinball-cabinet, .prize-wheel-stage { max-width:calc(100vw - 36px); }
+  .pinball-cabinet canvas { display:block; width:100%; }
+  .header-player { min-width:0; max-width:100%; }
+  .header-player-info { min-width:0; }
+  .header-player-name, #header-player-name { overflow-wrap:anywhere; }
+  table { max-width:100%; }
+  .table-responsive, .table-wrapper { overflow-x:auto; max-width:100%; }
+  iframe { max-width:100%; }
+}
+@media (max-width:380px) {
+  .home-tiles, .jukebox-upcoming-slots { grid-template-columns:minmax(0,1fr); }
+  .site-header .nav-link { font-size:.85rem; padding:8px; }
+}
