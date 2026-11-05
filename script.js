@@ -94,6 +94,31 @@ if (year) year.textContent = String(new Date().getFullYear());
  wrapper.append(button,panel);original.replaceWith(wrapper);
 })();
 
+
+/* Shop dropdown shared across desktop and mobile navigation. */
+(() => {
+ const nav=document.querySelector('.site-header nav');
+ if(!nav||nav.querySelector('.shop-dropdown'))return;
+ const original=[...nav.querySelectorAll('a.nav-link')].find(a=>{try{return new URL(a.href,location.href).pathname.endsWith('/shop.html')}catch{return false}});
+ if(!original)return;
+ const wrap=document.createElement('div');wrap.className='ctoons-dropdown shop-dropdown';
+ const btn=document.createElement('button');btn.type='button';btn.className='nav-link ctoons-dropdown-trigger';
+ if(['shop.html','auction.html'].some(p=>location.pathname.endsWith('/'+p)))btn.classList.add('active');
+ btn.setAttribute('aria-haspopup','true');btn.setAttribute('aria-expanded','false');
+ btn.innerHTML='<span class="nav-icon" aria-hidden="true">🛒</span><span>Shop</span><span aria-hidden="true">▾</span>';
+ const panel=document.createElement('div');panel.className='ctoons-dropdown-panel';
+ for(const [label,url] of [['Shop','shop.html'],['Auction House','auction.html']]){
+  const link=document.createElement('a');link.href=url;link.textContent=label;
+  if(location.pathname.endsWith('/'+url))link.setAttribute('aria-current','page');
+  panel.append(link);
+ }
+ const close=()=>{wrap.classList.remove('is-open');btn.setAttribute('aria-expanded','false')};
+ btn.addEventListener('click',()=>{const open=!wrap.classList.contains('is-open');wrap.classList.toggle('is-open',open);btn.setAttribute('aria-expanded',String(open))});
+ wrap.addEventListener('keydown',e=>{if(e.key==='Escape'){close();btn.focus()}});
+ document.addEventListener('click',e=>{if(!wrap.contains(e.target))close()});
+ wrap.append(btn,panel);original.replaceWith(wrap);
+})();
+
 /* Games dropdown: separate emulator page. */
 (() => {
  const nav=document.querySelector('.site-header nav');
