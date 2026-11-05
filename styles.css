@@ -1812,3 +1812,104 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
     box-shadow: 0 12px 36px #000b !important;
   }
 }
+
+/* Mobile navigation: expand dropdowns in document flow instead of covering tabs.
+   Overrides older fixed/absolute dropdown rules on all pages. */
+@media (max-width:700px) {
+  .site-header nav {
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    align-items:start !important;
+    justify-items:stretch !important;
+    gap:9px !important;
+    width:100% !important;
+    max-width:100% !important;
+    overflow:visible !important;
+    isolation:auto !important;
+  }
+  .site-header nav > * {
+    min-width:0 !important;
+    max-width:100% !important;
+    width:100% !important;
+    margin:0 !important;
+  }
+  .site-header nav > .nav-link,
+  .site-header nav > .ctoons-dropdown,
+  .site-header nav > .community-dropdown,
+  .site-header nav > .account-dropdown,
+  .site-header nav > .owner-menu {
+    align-self:start !important;
+  }
+  .site-header nav .nav-link,
+  .site-header nav .ctoons-dropdown-trigger,
+  .site-header nav .community-dropdown-trigger,
+  .site-header nav .account-dropdown-trigger,
+  .site-header nav .owner-menu-trigger {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    min-height:48px !important;
+    padding:9px 6px !important;
+    justify-content:center !important;
+    font-size:clamp(10px,2.9vw,14px) !important;
+    white-space:normal !important;
+    text-align:center !important;
+  }
+  .site-header nav .ctoons-dropdown,
+  .site-header nav .community-dropdown,
+  .site-header nav .account-dropdown,
+  .site-header nav .owner-menu {
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    position:relative !important;
+    overflow:visible !important;
+    z-index:auto !important;
+  }
+  .site-header nav .ctoons-dropdown-panel,
+  .site-header nav .community-dropdown-panel,
+  .site-header nav .account-dropdown-panel,
+  .site-header nav .owner-menu-panel {
+    position:static !important;
+    inset:auto !important;
+    top:auto !important;
+    right:auto !important;
+    bottom:auto !important;
+    left:auto !important;
+    transform:none !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    max-height:none !important;
+    overflow:visible !important;
+    margin-top:7px !important;
+    padding:6px !important;
+    box-sizing:border-box !important;
+    z-index:auto !important;
+  }
+  .site-header nav .ctoons-dropdown-panel a,
+  .site-header nav .community-dropdown-panel a,
+  .site-header nav .account-dropdown-panel a,
+  .site-header nav .owner-menu-panel a {
+    white-space:normal !important;
+    overflow-wrap:anywhere !important;
+    padding:10px 7px !important;
+    font-size:13px !important;
+  }
+  .site-header nav .ctoons-dropdown:not(.is-open) .ctoons-dropdown-panel {
+    display:none !important;
+  }
+  .site-header nav .ctoons-dropdown.is-open .ctoons-dropdown-panel {
+    display:grid !important;
+  }
+  .site-header nav .community-dropdown:not(.is-open) .community-dropdown-panel,
+  .site-header nav .owner-menu:not(.is-open) .owner-menu-panel,
+  .site-header nav .account-dropdown:not(:has(.account-dropdown-trigger[aria-expanded="true"])) .account-dropdown-panel {
+    display:none !important;
+  }
+  .site-header nav .community-dropdown.is-open .community-dropdown-panel,
+  .site-header nav .owner-menu.is-open .owner-menu-panel,
+  .site-header nav .account-dropdown:has(.account-dropdown-trigger[aria-expanded="true"]) .account-dropdown-panel {
+    display:grid !important;
+  }
+}
