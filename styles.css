@@ -1913,3 +1913,80 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
     display:grid !important;
   }
 }
+
+
+/* Mobile display polish — November 2026. Desktop styling stays unchanged. */
+@media (max-width:700px) {
+  html { max-width:100%; overflow-x:clip; }
+  body { max-width:100%; overflow-x:clip; }
+  *, *::before, *::after { box-sizing:border-box; }
+  img, video, iframe, canvas, svg { max-width:100%; }
+  .site-header { width:100%; max-width:100%; padding-inline:clamp(10px,3vw,18px); }
+  .site-header nav { gap:8px !important; }
+  .site-header nav .nav-link,
+  .site-header nav button.nav-link {
+    min-height:48px !important;
+    border-radius:12px;
+    line-height:1.25;
+    overflow-wrap:anywhere;
+  }
+  .site-header nav .nav-icon { flex-shrink:0; }
+  .site-header nav .ctoons-dropdown-panel,
+  .site-header nav .community-dropdown-panel,
+  .site-header nav .account-dropdown-panel,
+  .site-header nav .owner-menu-panel {
+    box-shadow:0 12px 24px rgba(0,0,0,.35) !important;
+    border-radius:12px !important;
+  }
+  .site-header nav .ctoons-dropdown-panel button,
+  .site-header nav .community-dropdown-panel button,
+  .site-header nav .account-dropdown-panel button,
+  .site-header nav .owner-menu-panel button { width:100%; min-height:42px; white-space:normal; overflow-wrap:anywhere; }
+  main, main > section, main > article, main > div { min-width:0; max-width:100%; }
+  .welcome-panel, .announcement-panel, .collection-display-tools, .ctoon-counts-panel,
+  .ctoon-editor-dialog { max-width:100%; }
+  .hero-actions, .collection-display-tools, .ctoon-editor-dialog form { min-width:0; }
+  .hero-actions > *, .collection-display-tools > * { max-width:100%; }
+  .ctoons-featured-grid, .kingdom-ctoon-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    align-items:stretch;
+    justify-items:center;
+  }
+  .ctoons-featured-grid .ctoon-shop-card,
+  .kingdom-ctoon-grid .ctoon-shop-card {
+    width:100%;
+    max-width:182px;
+    min-width:0;
+    flex:none;
+  }
+  .ctoon-shop-card img, .ctoon-set-checklist img { max-width:100%; height:auto; object-fit:contain; }
+  .ctoon-shop-details, .ctoon-shop-details * { min-width:0; overflow-wrap:anywhere; }
+  .ctoon-set-checklist { gap:10px; }
+  .ctoon-set-checklist .ctoon-shop-card { min-width:0; }
+  .ctoon-editor-dialog { width:min(94vw,440px); max-height:88dvh; overflow-y:auto; padding:16px; }
+  .ctoon-editor-dialog input, .ctoon-editor-dialog select, .ctoon-editor-dialog textarea { min-width:0; max-width:100%; }
+  .collection-display-tools { padding:12px; }
+  .collection-display-tools label { min-width:0; flex-basis:min(100%,135px); }
+  .prize-wheel-stage, .pinball-cabinet { max-width:calc(100vw - 32px); }
+  :where(.dvd-case,.game-case,.movie-case,.video-game-case) { min-width:0; max-width:100%; }
+  :where(.dvd-case,.game-case,.movie-case,.video-game-case) img { max-width:100%; height:auto; object-fit:contain; }
+  :where(.owner-panel,.owner-card,.owner-section,.editor-panel,.management-panel) { min-width:0; max-width:100%; }
+  :where(.owner-panel,.owner-card,.owner-section,.editor-panel,.management-panel) input,
+  :where(.owner-panel,.owner-card,.owner-section,.editor-panel,.management-panel) select,
+  :where(.owner-panel,.owner-card,.owner-section,.editor-panel,.management-panel) textarea {
+    max-width:100%; min-width:0;
+  }
+  :where(.table-wrap,.table-responsive,.owner-table-wrap) { max-width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  :where(.music-player,.jukebox,.radio-player) { max-width:100%; }
+}
+@media (max-width:380px) {
+  .site-header nav { gap:6px !important; }
+  .site-header nav .nav-link,
+  .site-header nav button.nav-link { padding:8px 4px !important; font-size:11px !important; }
+  .ctoons-featured-grid, .kingdom-ctoon-grid, .ctoon-set-checklist { gap:7px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .site-header nav .nav-link { scroll-behavior:auto; }
+}
