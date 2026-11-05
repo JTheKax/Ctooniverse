@@ -74,6 +74,16 @@ async function loadCases(){
   });grid.append(caseEl)
  }host.append(grid)
 }
+window.ctoonPlayGameCase=async gameId=>{
+ if(started){status.textContent='A game is already running. Refresh to load a different game.';return false}
+ const {data:game,error}=await db.from('emulator_games').select('id,title,console,storage_path').eq('id',gameId).eq('published',true).single();
+ if(error||!game){status.textContent='Unable to load this published game.';return false}
+ selectedGame=game;file.value='';consoleSelect.value=game.console;
+ document.querySelectorAll('.emu-case').forEach(el=>el.classList.toggle('selected',el.dataset.gameId===String(game.id)));
+ $('emu-screen').scrollIntoView({behavior:'smooth',block:'center'});
+ start.click();
+ return true;
+};
 window.ctoonReloadGameCases=loadCases;
 await loadCases();
 })();
