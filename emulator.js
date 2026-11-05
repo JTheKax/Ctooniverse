@@ -20,7 +20,9 @@ start.addEventListener('click',()=>{
  window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
  window.EJS_startOnLoaded=true;
  window.EJS_color='#8057e7';
- status.textContent='Loading emulator engine… This may take a moment.';
+ window.EJS_Buttons={playPause:true,restart:true,mute:true,settings:true,fullscreen:true,saveState:true,loadState:true};
+ window.EJS_startButtonName='Play';
+ status.textContent='Loading emulator engine… On mobile, use the on-screen controls after the game loads.';
  const script=document.createElement('script');script.src='https://cdn.emulatorjs.org/stable/data/loader.js';
  script.onload=()=>{status.textContent='Emulator loaded. If the game does not start, check compatibility or try a different file.'};
  script.onerror=()=>{status.textContent='Unable to load emulator engine. Check your connection and try refreshing.';started=false;start.disabled=false;file.disabled=false;consoleSelect.disabled=false;if(!selectedGame)URL.revokeObjectURL(currentUrl);currentUrl=null};
@@ -70,7 +72,7 @@ async function loadCases(){
    if(started)return;selectedGame=game;file.value='';consoleSelect.value=game.console;
    grid.querySelectorAll('.emu-case').forEach(el=>el.classList.remove('selected'));caseEl.classList.add('selected');
    status.textContent=game.title+' selected. Press Start Game to play.';
-   $('emu-screen').scrollIntoView({behavior:'smooth',block:'center'});
+   $('emu-screen').scrollIntoView({behavior:'smooth',block:'start'});
   });grid.append(caseEl)
  }host.append(grid)
 }
@@ -80,7 +82,7 @@ window.ctoonPlayGameCase=async gameId=>{
  if(error||!game){status.textContent='Unable to load this published game.';return false}
  selectedGame=game;file.value='';consoleSelect.value=game.console;
  document.querySelectorAll('.emu-case').forEach(el=>el.classList.toggle('selected',el.dataset.gameId===String(game.id)));
- $('emu-screen').scrollIntoView({behavior:'smooth',block:'center'});
+ $('emu-screen').scrollIntoView({behavior:'smooth',block:'start'});
  start.click();
  return true;
 };
