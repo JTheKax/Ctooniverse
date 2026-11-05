@@ -1990,3 +1990,32 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 @media (prefers-reduced-motion:reduce) {
   .site-header nav .nav-link { scroll-behavior:auto; }
 }
+
+/* Auction House — mobile-first, isolated styles */
+.auction-main{width:min(1100px,100%);margin:0 auto;padding:16px clamp(12px,3vw,24px) 50px}
+.auction-main .section{margin:18px 0;padding:clamp(18px,3vw,32px)}
+.auction-hero{text-align:center;border:1px solid #56dfff;border-radius:22px;background:linear-gradient(145deg,rgba(32,19,94,.96),rgba(8,23,61,.95));box-shadow:0 0 30px #6949e844}
+.auction-hero h1{font-size:clamp(2rem,6vw,3.6rem);margin:8px 0;color:#fff;text-shadow:0 0 18px #55cfff}
+.auction-hero p{max-width:680px;margin:10px auto 20px}
+.auction-hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}
+.auction-panel{border:1px solid #5757b9;border-radius:18px;background:linear-gradient(160deg,rgba(18,24,71,.95),rgba(26,15,65,.94));box-shadow:0 10px 25px #0003}
+.auction-section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.auction-section-heading h2{margin:0}
+.auction-status{font-size:.8rem;color:#a7eafa;border:1px solid #4289ae;padding:7px 10px;border-radius:99px}
+.auction-toolbar{display:grid;grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr));gap:12px;margin:22px 0}
+.auction-toolbar label{display:grid;gap:7px;min-width:0;font-weight:700;font-size:.85rem}
+.auction-toolbar input,.auction-toolbar select{width:100%;min-width:0;min-height:44px;padding:10px;border-radius:10px;border:1px solid #7290d5;background:#0c143c;color:white}
+.auction-empty{text-align:center;border:1px dashed #6372bd;border-radius:16px;padding:35px 16px;background:#0c143c99}
+.auction-empty-icon{font-size:3rem;display:block}
+.auction-empty h3{margin:12px 0 5px}
+.auction-empty p{max-width:520px;margin:auto}
+.auction-center-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.auction-center-grid article{min-width:0;padding:20px 15px;border:1px solid #526ec2;border-radius:14px;background:#151b52}
+.auction-center-grid article>span{font-size:2rem}
+.auction-center-grid h3{margin:10px 0}
+.auction-center-grid button{min-height:44px;width:100%;padding:10px;border-radius:10px;border:1px solid #777ca9;background:#30365b;color:#c9cde2;cursor:not-allowed;white-space:normal}
+.auction-steps{padding-left:22px;line-height:1.7}
+.auction-steps li{margin-bottom:10px}
+.auction-disclaimer{font-size:.85rem;opacity:.85}
+@media(max-width:700px){.auction-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.auction-toolbar label:first-child{grid-column:1/-1}.auction-center-grid{grid-template-columns:1fr}.auction-main .section{padding:18px 14px}.auction-hero-actions .button{flex:1 1 140px;text-align:center}}
+@media(max-width:380px){.auction-toolbar{grid-template-columns:1fr}.auction-toolbar label:first-child{grid-column:auto}}
