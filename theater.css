@@ -120,3 +120,6 @@
 .theater-library .theater-case .theater-edit-case{box-sizing:border-box;display:block;width:100%;min-height:32px;margin:0;padding:6px 8px;flex:none}
 @media(max-width:650px){.theater-library .theater-cases{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px 8px!important}.theater-library .theater-case{max-width:none}.theater-library .theater-case .theater-case-main{padding:4px;gap:5px}.theater-library .theater-case .theater-case-title{font-size:.72rem}.theater-library .theater-case .theater-edit-case{font-size:.72rem;padding:5px 2px}}
 @media(min-width:651px) and (max-width:900px){.theater-library .theater-cases{grid-template-columns:repeat(auto-fill,minmax(116px,135px))!important}.theater-library .theater-case{max-width:135px}}
+
+/* Keep native hidden state authoritative for theater playback and episode lists */
+.theater-screen [hidden],#theater-episodes[hidden],#theater-owner[hidden]{display:none!important}
