@@ -163,3 +163,13 @@ if (year) year.textContent = String(new Date().getFullYear());
   sheet.setAttribute('data-mobile-layout','');
   document.head.appendChild(sheet);
 })();
+
+/* Sitewide Cash App support link, appended once to each page footer. */
+(function(){
+ const footer=document.querySelector('footer');
+ if(!footer||footer.querySelector('[data-ctoon-donate]'))return;
+ const link=document.createElement('a');link.href='https://cash.app/$jomanmax28';link.target='_blank';link.rel='noopener noreferrer';
+ link.textContent='♥ Support CTooniverse';link.setAttribute('aria-label','Support CTooniverse through Cash App (opens in a new tab)');link.setAttribute('data-ctoon-donate','');
+ link.style.cssText='display:inline-flex;align-items:center;justify-content:center;padding:.7rem 1.15rem;border:2px solid #8cecff;border-radius:999px;background:linear-gradient(120deg,#233caa,#702cb6);color:#fff;font-weight:800;text-decoration:none;box-shadow:0 0 15px #7c55ff88;margin:.5rem;white-space:nowrap';
+ footer.append(link);
+})();
