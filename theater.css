@@ -106,3 +106,17 @@
 .theater-grand-marquee-subtitle{font-size:clamp(1.2rem,3.5vw,2.5rem);font-weight:900;letter-spacing:.24em;color:#ffd16f;text-shadow:2px 2px #552255,0 0 16px #ffbe60}
 .theater-grand-marquee-stars{color:#fff0a5;letter-spacing:1.2em;font-size:clamp(.75rem,2vw,1.25rem);text-shadow:0 0 13px #ffe3a0}
 @media(max-width:650px){.theater-grand-marquee{margin:16px auto 10px;padding:5px;border-width:5px;border-radius:18px}.theater-grand-marquee-lights{min-height:130px;padding:15px 8px;border-width:5px;border-radius:12px}.theater-grand-marquee strong{letter-spacing:.02em;-webkit-text-stroke:.5px #8d3a75}.theater-grand-marquee-subtitle{letter-spacing:.1em}.theater-grand-marquee-stars{letter-spacing:.5em}}
+
+
+/* Final DVD library layout: one consistent sizing system, no nested cover distortion */
+.theater-library{min-width:0}
+.theater-library .theater-cases{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(116px,140px))!important;gap:22px 16px!important;align-items:start;justify-content:start;min-width:0}
+.theater-library .theater-case{box-sizing:border-box;display:flex;flex-direction:column;gap:8px;align-items:stretch;width:100%;max-width:140px;min-width:0;margin:0}
+.theater-library .theater-case .theater-case-main{box-sizing:border-box;display:flex;flex-direction:column;align-items:stretch;gap:8px;width:100%;min-width:0;max-width:100%;padding:6px;overflow:hidden;text-align:center}
+.theater-library .theater-case .theater-cover{position:relative;box-sizing:border-box;display:block;flex:none;width:100%;height:auto;aspect-ratio:2/3;min-height:0;max-height:none;overflow:hidden;margin:0;padding:0;background:linear-gradient(145deg,#30205f,#17558b);font-size:2.5rem;line-height:1}
+.theater-library .theater-case .theater-cover img{position:absolute;inset:0;display:block;box-sizing:border-box;width:100%;height:100%;max-width:none;max-height:none;min-width:0;min-height:0;object-fit:cover;object-position:center;border:0;border-radius:0;margin:0;padding:0}
+.theater-library .theater-case .theater-cover.is-placeholder{display:grid;place-items:center}
+.theater-library .theater-case .theater-case-title{box-sizing:border-box;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere;width:100%;height:2.5em;min-height:2.5em;max-height:2.5em;margin:0;font-size:.82rem;line-height:1.25}
+.theater-library .theater-case .theater-edit-case{box-sizing:border-box;display:block;width:100%;min-height:32px;margin:0;padding:6px 8px;flex:none}
+@media(max-width:650px){.theater-library .theater-cases{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px 8px!important}.theater-library .theater-case{max-width:none}.theater-library .theater-case .theater-case-main{padding:4px;gap:5px}.theater-library .theater-case .theater-case-title{font-size:.72rem}.theater-library .theater-case .theater-edit-case{font-size:.72rem;padding:5px 2px}}
+@media(min-width:651px) and (max-width:900px){.theater-library .theater-cases{grid-template-columns:repeat(auto-fill,minmax(116px,135px))!important}.theater-library .theater-case{max-width:135px}}
