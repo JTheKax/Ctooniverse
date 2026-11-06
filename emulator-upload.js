@@ -31,12 +31,22 @@
   if(title.length>100){status.textContent='Game title must be 100 characters or fewer.';return}
   if(!rom){status.textContent='Choose a game file from your computer.';return}
   if(!allowed[consoleId]?.includes(extension)){status.textContent='File .'+(extension||'unknown')+' is not supported for the selected console. Choose the matching console or a supported ROM file.';return}
-  if(rom.size>50*1024*1024){status.textContent='Maximum file size is 50 MB.';return}
+  const maxUploadBytes=50*1024*1024; // Free-plan server limit; increase only after upgrading Supabase and bucket limits.
+  if(rom.size>maxUploadBytes){status.textContent='Cloud uploads are currently limited to 50 MB by the Supabase Free plan. A Pro upgrade and storage settings change are required for 1 GB uploads. You can play larger PS1 files locally instead.';return}
   button.disabled=true;status.textContent='Uploading game…';
   const path=crypto.randomUUID()+'.'+extension;
   try{
-   const uploaded=await db.storage.from('emulator-games').upload(path,rom,{contentType:'application/octet-stream'});
-   if(uploaded.error)throw uploaded.error;
+   if(rom.size>6*1024*1024){
+    const {data:{session}}=await db.auth.getSession();if(!session?.access_token)throw new Error('Your session expired. Sign in again.');
+    const {Upload}=await import('https://esm.sh/tus-js-client@4.3.1');
+    await new Promise((resolve,reject)=>{
+     const upload=new Upload(rom,{endpoint:'https://hsxdyxdazsdmpucyhqly.storage.supabase.co/storage/v1/upload/resumable',retryDelays:[0,3000,5000,10000,20000],headers:{authorization:'Bearer '+session.access_token},uploadDataDuringCreation:true,removeFingerprintOnSuccess:true,metadata:{bucketName:'emulator-games',objectName:path,contentType:'application/octet-stream'},chunkSize:6*1024*1024,onError:reject,onSuccess:resolve,onProgress:(sent,total)=>{status.textContent='Uploading game… '+Math.floor(sent/total*100)+'%';}});
+     upload.findPreviousUploads().then(previous=>{if(previous.length)upload.resumeFromPreviousUpload(previous[0]);upload.start()}).catch(reject);
+    });
+   }else{
+    const uploaded=await db.storage.from('emulator-games').upload(path,rom,{contentType:'application/octet-stream'});
+    if(uploaded.error)throw uploaded.error;
+   }
    const saved=await db.from('emulator_games').insert({title,console:consoleId,storage_path:path,published:true});
    if(saved.error){await db.storage.from('emulator-games').remove([path]);throw saved.error}
    status.textContent='Game saved to the library. Refresh to see its case.';
