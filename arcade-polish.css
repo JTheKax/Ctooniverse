@@ -1,0 +1,18 @@
+/* CTooniverse arcade visual refresh — additive, mobile-safe */
+:root{--arcade-blue:#37c9ff;--arcade-purple:#ad6cff;--arcade-pink:#ff65d9}
+body{background-color:#0c0920}
+.site-header{background:linear-gradient(110deg,rgba(13,12,38,.97),rgba(36,17,73,.96));border-bottom:2px solid rgba(100,201,255,.55);box-shadow:0 8px 30px #08041988,0 2px 16px #4e83ff33}
+.site-header .nav-link{position:relative;border-radius:12px;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
+.site-header .nav-link:hover,.site-header .nav-link:focus-visible{transform:translateY(-2px);background:rgba(108,78,208,.24);box-shadow:inset 0 0 0 1px #a878ff88,0 0 16px #7757ff44}
+.site-header .nav-link.active{box-shadow:inset 0 -3px 0 var(--arcade-blue),0 5px 18px #299dff38}
+.home-tile{position:relative;overflow:hidden;isolation:isolate;border:1px solid #7b78ff80!important;box-shadow:0 8px 24px #08051d80,inset 0 0 20px #8a58ff15;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.home-tile:before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(135deg,#5acaff15,transparent 52%,#bc5aff20);pointer-events:none}
+.home-tile:hover,.home-tile:focus-visible{transform:translateY(-5px);border-color:var(--arcade-blue)!important;box-shadow:0 14px 30px #08051db0,0 0 22px #3fa8ff55,inset 0 0 24px #a16bff20}
+.home-tile .tile-symbol{filter:drop-shadow(0 0 9px #55c8ff88)}
+.welcome-panel,.announcement-panel,.jukebox-upcoming{box-shadow:0 12px 36px #07041c88,inset 0 0 0 1px #a58bff28}
+.hero-actions .button{transition:transform .18s ease,box-shadow .18s ease}
+.hero-actions .button:hover,.hero-actions .button:focus-visible{transform:translateY(-2px);box-shadow:0 0 22px #8d69ff66}
+.header-player{box-shadow:0 0 15px #59bbff2b}
+:focus-visible{outline:2px solid #79e0ff;outline-offset:3px}
+@media(max-width:760px){.site-header .nav-link:hover,.site-header .nav-link:focus-visible{transform:none}.home-tile:hover,.home-tile:focus-visible{transform:none}.site-header{isolation:isolate}.site-header nav{overflow:visible}.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel{z-index:9999}.home-tile{min-width:0}}
+@media(prefers-reduced-motion:reduce){.site-header .nav-link,.home-tile,.hero-actions .button{transition:none!important;transform:none!important}}
