@@ -2,8 +2,8 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const el=id=>document.getElementById(id);let entries=[],shelf='Cartoons & Anime',owner=false,selected=null;
 const stage=document.querySelector('.theater-stage');
-function openCurtains(){stage?.classList.add('curtains-open')}
-function closeCurtains(){stage?.classList.remove('curtains-open')}
+function openCurtains(){stage?.classList.add('curtains-open');document.body.classList.add('theater-lights-dimmed')}
+function closeCurtains(){stage?.classList.remove('curtains-open');document.body.classList.remove('theater-lights-dimmed')}
 const video=el('theater-video'),embed=el('theater-embed'),empty=el('theater-empty'),status=el('theater-playback-status');
 function playable(url){try{const u=new URL(url);return ['https:','http:'].includes(u.protocol)}catch{return false}}
 function embedUrl(url){try{const u=new URL(url);const host=u.hostname.toLowerCase();if(host==='youtube.com'||host==='www.youtube.com'||host==='m.youtube.com'){const id=u.searchParams.get('v');if(id&&/^[\w-]{11}$/.test(id))return 'https://www.youtube-nocookie.com/embed/'+id}if(host==='youtu.be'){const id=u.pathname.slice(1);if(/^[\w-]{11}$/.test(id))return 'https://www.youtube-nocookie.com/embed/'+id}if(host==='player.vimeo.com')return url;if(host==='vimeo.com'&&/^\/\d+$/.test(u.pathname))return 'https://player.vimeo.com/video'+u.pathname}catch{}return null}
