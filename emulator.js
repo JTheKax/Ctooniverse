@@ -44,7 +44,7 @@ async function loadCases(){
   for(const [name,code] of consoles){
     const item=document.createElement('div');item.className='emu-case emu-case-placeholder emu-system-'+code;
     const cover=document.createElement('span');cover.className='emu-case-cover';
-    const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=code.toUpperCase();
+    const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=code==='gba'?'':code.toUpperCase();
     const art=document.createElement('span');art.className='emu-case-art';art.textContent='🎮';
     const title=document.createElement('span');title.className='emu-case-cover-title';title.textContent=name;
     const caption=document.createElement('span');caption.className='emu-case-name';caption.textContent='COMING SOON';
@@ -56,7 +56,7 @@ async function loadCases(){
  for(const game of data){
   const caseEl=document.createElement('button');caseEl.type='button';caseEl.dataset.gameId=game.id;caseEl.className='emu-case emu-system-'+game.console;caseEl.disabled=started;
   const cover=document.createElement('span');cover.className='emu-case-cover';
-  const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=game.console.toUpperCase();
+  const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=game.console==='gba'?'':game.console.toUpperCase();
   const art=document.createElement('span');art.className='emu-case-art';art.textContent='🎮';
   const image=document.createElement('img');image.className='emu-case-image';image.alt=game.title+' cover art';image.loading='lazy';
   const slug=game.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
