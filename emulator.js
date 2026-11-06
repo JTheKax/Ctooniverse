@@ -58,8 +58,16 @@ async function loadCases(){
   }
   host.append(grid);return
  }
- const grid=document.createElement('div');grid.className='emu-case-grid';
+ const consoleNames={gb:'Game Boy',gba:'Game Boy Advance',gbc:'Game Boy Color',n64:'Nintendo 64',nds:'Nintendo DS',nes:'Nintendo Entertainment System',psx:'PlayStation 1',segaMD:'Sega Genesis / Mega Drive',snes:'Super Nintendo'};
+ const sections=new Map();
+ for(const [code,name] of Object.entries(consoleNames)){
+  if(!data.some(game=>game.console===code))continue;
+  const section=document.createElement('section');section.className='emu-console-section';section.dataset.console=code;
+  const heading=document.createElement('h3');heading.textContent=name;heading.style.cssText='margin:1.5rem 0 .75rem;color:#a9eaff';
+  const grid=document.createElement('div');grid.className='emu-case-grid';section.append(heading,grid);host.append(section);sections.set(code,grid);
+ }
  for(const game of data){
+  const grid=sections.get(game.console);if(!grid)continue;
   const caseEl=document.createElement('button');caseEl.type='button';caseEl.dataset.gameId=game.id;caseEl.className='emu-case emu-system-'+game.console;caseEl.disabled=false;
   const cover=document.createElement('span');cover.className='emu-case-cover';
   const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=game.console==='gba'?'':game.console.toUpperCase();
@@ -76,11 +84,11 @@ async function loadCases(){
   cover.append(spine,art,coverTitle);caseEl.append(cover,title);
   caseEl.addEventListener('click',()=>{
    if(started)stopGame();selectedGame=game;file.value='';consoleSelect.value=game.console;
-   grid.querySelectorAll('.emu-case').forEach(el=>el.classList.remove('selected'));caseEl.classList.add('selected');
+   host.querySelectorAll('.emu-case').forEach(el=>el.classList.remove('selected'));caseEl.classList.add('selected');
    status.textContent=game.title+' selected. Press Start Game to play.';
    $('emu-screen').scrollIntoView({behavior:'smooth',block:'start'});
   });grid.append(caseEl)
- }host.append(grid)
+ }
 }
 window.ctoonPlayGameCase=async gameId=>{
  if(started)stopGame();
