@@ -32,3 +32,15 @@
 .theater-owner input:focus,.theater-owner select:focus,.theater-toolbar input:focus{outline:2px solid #7fe4ff;outline-offset:2px}
 @media(max-width:650px){.watch-theater-page{background-attachment:scroll}.theater-intro{padding-top:25px}.theater-stage{padding:8px 7px 12px;border-width:4px;border-radius:19px}.theater-stage:before,.theater-stage:after{letter-spacing:5px;font-size:10px}.theater-curtains{padding:15px 9px 18px}.theater-screen{border-width:4px}.theater-library,.theater-owner{border-width:3px}.theater-cases{gap:13px 9px}.theater-case button{border-left-width:5px}}
 @media(prefers-reduced-motion:reduce){.theater-case button,.theater-shelf-tabs button{transition:none}}
+
+
+/* Larger silver projection screen and dramatic stage curtains */
+.theater-stage{max-width:1240px;width:100%;padding:14px 12px 22px;margin:8px auto 48px}
+.theater-curtains{padding:35px clamp(8px,2.4vw,32px) 34px;background:repeating-linear-gradient(90deg,#31051e 0,#7e103e 17px,#b41e54 29px,#4b092d 48px);isolation:isolate}
+.theater-curtains:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;background:linear-gradient(100deg,rgba(49,2,27,.98) 0%,rgba(111,9,49,.9) 5%,rgba(128,11,55,.28) 13%,transparent 20%,transparent 80%,rgba(128,11,55,.28) 87%,rgba(111,9,49,.9) 95%,rgba(49,2,27,.98) 100%);box-shadow:inset 22px 0 26px #23051c,inset -22px 0 26px #23051c}
+.theater-screen{width:100%;aspect-ratio:16/9;min-height:0;border:11px solid #c5c8d3;border-radius:4px;background:radial-gradient(ellipse at 50% 35%,#dce2ed 0%,#aeb6c8 52%,#727f9a 100%);box-shadow:0 0 0 5px #f1f2f6,0 0 0 13px #272137,0 0 35px #a6c8ff99,inset 0 0 40px #66738d}
+.theater-screen:has(video:not([hidden])),.theater-screen:has(#theater-embed:not([hidden])){background:#070710}
+#theater-empty{color:#1a2548;text-shadow:0 1px 0 #fff9;font-weight:800}
+.theater-reel{filter:drop-shadow(0 4px 4px #3e4e6b)}
+.theater-marquee{font-size:clamp(1.2rem,3.3vw,2.6rem)}
+@media(max-width:650px){.theater-stage{padding:7px 5px 13px}.theater-curtains{padding:22px 7px 22px}.theater-curtains:after{background:linear-gradient(90deg,#450625dd,transparent 14%,transparent 86%,#450625dd)}.theater-screen{border-width:5px;box-shadow:0 0 0 3px #f1f2f6,0 0 0 6px #272137,0 0 18px #a6c8ff88}}
