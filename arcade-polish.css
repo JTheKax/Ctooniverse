@@ -16,3 +16,14 @@ body{background-color:#0c0920}
 :focus-visible{outline:2px solid #79e0ff;outline-offset:3px}
 @media(max-width:760px){.site-header .nav-link:hover,.site-header .nav-link:focus-visible{transform:none}.home-tile:hover,.home-tile:focus-visible{transform:none}.site-header{isolation:isolate}.site-header nav{overflow:visible}.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel{z-index:9999}.home-tile{min-width:0}}
 @media(prefers-reduced-motion:reduce){.site-header .nav-link,.home-tile,.hero-actions .button{transition:none!important;transform:none!important}}
+
+/* Arcade overhaul: shared page treatments */
+:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) :is(main section,main article){border-radius:16px}
+:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) :is(main h1,main h2){text-shadow:0 2px 14px #7b61ff66}
+:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) :is(main a.button,main button:not(.nav-link)){transition:box-shadow .2s ease,filter .2s ease,transform .2s ease}
+@media(hover:hover){:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) :is(main a.button,main button:not(.nav-link)):hover{filter:brightness(1.12);box-shadow:0 0 16px #6e9bff55}}
+:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) :is(main input,main select,main textarea):focus-visible{outline:2px solid #65d5ff;outline-offset:2px}
+:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) .site-header{position:relative;z-index:30}
+:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) :is(.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel){z-index:1000}
+@media(max-width:760px){:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) main{max-width:100%;min-width:0} :is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) .site-header nav{max-width:100%;min-width:0}}
+@media(prefers-reduced-motion:reduce){:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.owner-neon-page) :is(main a.button,main button:not(.nav-link)){transition:none!important}}
