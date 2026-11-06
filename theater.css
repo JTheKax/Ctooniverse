@@ -65,3 +65,19 @@
 .watch-theater-page.theater-lights-dimmed .theater-intro,.watch-theater-page.theater-lights-dimmed .theater-library,.watch-theater-page.theater-lights-dimmed .theater-owner{filter:brightness(.55);transition:filter 1.3s ease}
 .watch-theater-page .theater-intro,.watch-theater-page .theater-library,.watch-theater-page .theater-owner{transition:filter 1.3s ease}
 @media(prefers-reduced-motion:reduce){.watch-theater-page:before,.watch-theater-page .theater-intro,.watch-theater-page .theater-library,.watch-theater-page .theater-owner{transition:none}}
+
+
+/* Compact, evenly sized DVD cases and Owner editing controls */
+.theater-cases{grid-template-columns:repeat(auto-fill,minmax(120px,145px));gap:18px 15px;justify-content:start;align-items:start}
+.theater-case{width:100%;min-width:0;display:flex;flex-direction:column;gap:7px}
+.theater-case>button:first-child{width:100%;padding:6px;min-height:0;display:flex;flex-direction:column;gap:7px}
+.theater-case .theater-cover{width:100%;height:auto;aspect-ratio:2/3;flex:none;object-fit:cover;display:grid;place-items:center;margin:0;overflow:hidden}
+.theater-case .theater-cover img{width:100%;height:100%;object-fit:cover;display:block;border:0;border-radius:0}
+.theater-case strong{font-size:.82rem;line-height:1.25;min-height:2.5em;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+.theater-case .theater-edit-case{width:100%;min-height:32px;padding:5px 8px;border:2px solid #6fd5f4;border-radius:8px;background:#153e75;color:#fff;font-size:.8rem;font-weight:800;cursor:pointer;box-shadow:none}
+.theater-case .theater-edit-case:hover,.theater-case .theater-edit-case:focus-visible{background:#2366a7;transform:none;box-shadow:0 0 12px #55caff88}
+#theater-edit-notice{color:#ffe3a3;font-weight:800}
+#theater-cancel-edit{background:#442353;border-color:#c5a7ee}
+#theater-episode-list .theater-edit-episode{background:#164676;border-color:#67d9ff}
+@media(max-width:650px){.theater-cases{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 9px}.theater-case>button:first-child{padding:4px}.theater-case strong{font-size:.72rem}.theater-case .theater-edit-case{font-size:.72rem;padding:5px 2px}}
+@media(min-width:651px) and (max-width:850px){.theater-cases{grid-template-columns:repeat(auto-fill,minmax(115px,135px))}}
