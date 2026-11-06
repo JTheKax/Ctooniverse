@@ -43,3 +43,15 @@ for(const menu of ownerMenus){
 document.addEventListener('click',event=>{if(!event.target.closest('.owner-menu'))closeOwnerMenus();});
 document.addEventListener('keydown',event=>{if(event.key==='Escape')closeOwnerMenus();});
 window.addEventListener('pageshow',closeOwnerMenus);
+/* Preserve keyboard navigation and prevent other dropdowns from covering Owner. */
+for(const menu of ownerMenus){
+ const trigger=menu.querySelector('.owner-menu-trigger');
+ trigger.addEventListener('click',()=>{
+  if(trigger.getAttribute('aria-expanded')==='true'){
+   for(const other of document.querySelectorAll('.community-dropdown-trigger,.account-dropdown-trigger')){
+    other.setAttribute('aria-expanded','false');other.closest('.community-dropdown,.account-dropdown')?.classList.remove('is-open');
+   }
+  }
+ });
+}
+
