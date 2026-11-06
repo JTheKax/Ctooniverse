@@ -96,3 +96,13 @@
 
 /* Owner DVD artwork preview */
 .theater-cover-preview{display:block;width:116px;max-width:100%;min-height:0;margin-top:5px}.theater-cover-preview img{display:block;width:116px;aspect-ratio:2/3;object-fit:cover;border:2px solid #7fdcff;border-radius:7px;box-shadow:0 0 14px #3388ff66}.theater-cover-preview-status{font-size:.78rem;font-weight:400;color:#b8dfff;line-height:1.4}
+
+
+/* Oversized illuminated cinema marquee at the top of Watch */
+.theater-grand-marquee{position:relative;width:min(100%,1180px);margin:24px auto 14px;padding:11px;border:9px solid #552a87;border-radius:30px 30px 20px 20px;background:linear-gradient(135deg,#ffcc66,#b36c2d 24%,#f8d98b 50%,#8d4a29 80%,#ffe6a2);box-shadow:0 0 0 5px #180b36,0 0 0 9px #6c36bb,0 15px 40px #000b,0 0 40px #edb85880;transform:rotate(-.25deg)}
+.theater-grand-marquee-lights{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:190px;gap:4px;padding:20px 24px;border:9px dotted #ffe7a0;border-radius:17px;background:repeating-linear-gradient(0deg,#341044,#3d1455 15px,#321043 30px);box-shadow:inset 0 0 28px #0a031d,0 0 24px #ffc55e;text-align:center}
+.theater-grand-marquee strong{font-family:Georgia,'Trebuchet MS',serif;font-size:clamp(2.1rem,7vw,5.6rem);line-height:1;letter-spacing:.07em;color:#fff2c2;-webkit-text-stroke:1px #8d3a75;text-shadow:3px 4px 0 #9a3b6e,0 0 18px #ffe092,0 0 32px #f4ae5a;overflow-wrap:anywhere}
+.theater-grand-marquee-kicker{font-size:clamp(.75rem,1.7vw,1.1rem);font-weight:900;letter-spacing:.25em;color:#a8f1ff;text-shadow:0 0 10px #40d9ff}
+.theater-grand-marquee-subtitle{font-size:clamp(1.2rem,3.5vw,2.5rem);font-weight:900;letter-spacing:.24em;color:#ffd16f;text-shadow:2px 2px #552255,0 0 16px #ffbe60}
+.theater-grand-marquee-stars{color:#fff0a5;letter-spacing:1.2em;font-size:clamp(.75rem,2vw,1.25rem);text-shadow:0 0 13px #ffe3a0}
+@media(max-width:650px){.theater-grand-marquee{margin:16px auto 10px;padding:5px;border-width:5px;border-radius:18px}.theater-grand-marquee-lights{min-height:130px;padding:15px 8px;border-width:5px;border-radius:12px}.theater-grand-marquee strong{letter-spacing:.02em;-webkit-text-stroke:.5px #8d3a75}.theater-grand-marquee-subtitle{letter-spacing:.1em}.theater-grand-marquee-stars{letter-spacing:.5em}}
