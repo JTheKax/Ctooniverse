@@ -5,8 +5,8 @@ let selectedGame=null;
 const $=id=>document.getElementById(id);
 const start=$('emu-start'),status=$('emu-status'),file=$('emu-file'),consoleSelect=$('emu-console');
 let currentUrl=null,started=false;
-const cores={nes:'nes',snes:'snes',gb:'gb',gba:'gba',gbc:'gbc',n64:'n64',segaMD:'segaMD'};
-const ext={nes:['nes','zip'],snes:['sfc','smc','zip'],gb:['gb','zip'],gba:['gba','zip'],gbc:['gbc','zip'],n64:['n64','z64','v64','zip'],segaMD:['md','gen','bin','zip']};
+const cores={nes:'nes',snes:'snes',gb:'gb',gba:'gba',gbc:'gbc',n64:'n64',segaMD:'segaMD',nds:'nds'};
+const ext={nes:['nes','zip'],snes:['sfc','smc','zip'],gb:['gb','zip'],gba:['gba','zip'],gbc:['gbc','zip'],n64:['n64','z64','v64','zip'],segaMD:['md','gen','bin','zip'],nds:['nds','zip']};
 start.addEventListener('click',()=>{
  if(started){status.textContent='A game is already running. Refresh this page to load a different game.';return}
  const rom=selectedGame?null:file.files?.[0],core=consoleSelect.value;
@@ -19,6 +19,9 @@ start.addEventListener('click',()=>{
  window.EJS_player='#game';window.EJS_core=cores[core];window.EJS_gameUrl=currentUrl;
  window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
  window.EJS_startOnLoaded=true;
+ window.EJS_VirtualGamepadSettings=core==='nds'?{enabled:true}:undefined;
+ $('emu-screen').classList.toggle('nds-active',core==='nds');
+ const ndsHelp=$('emu-nds-help');if(ndsHelp)ndsHelp.hidden=core!=='nds';
  window.EJS_color='#8057e7';
  window.EJS_Buttons={playPause:true,restart:true,mute:true,settings:true,fullscreen:true,saveState:true,loadState:true};
  window.EJS_startButtonName='Play';
@@ -39,7 +42,7 @@ async function loadCases(){
  if(error){host.textContent='Could not load game library: '+error.message;return}
  host.replaceChildren();
  if(!data?.length){
-  const consoles=[['Game Boy','gb'],['Game Boy Advance','gba'],['Game Boy Color','gbc'],['Nintendo 64','n64'],['Nintendo Entertainment System','nes'],['Sega Genesis / Mega Drive','segaMD'],['Super Nintendo','snes']];
+  const consoles=[['Game Boy','gb'],['Game Boy Advance','gba'],['Game Boy Color','gbc'],['Nintendo 64','n64'],['Nintendo DS','nds'],['Nintendo Entertainment System','nes'],['Sega Genesis / Mega Drive','segaMD'],['Super Nintendo','snes']];
   const grid=document.createElement('div');grid.className='emu-case-grid';
   for(const [name,code] of consoles){
     const item=document.createElement('div');item.className='emu-case emu-case-placeholder emu-system-'+code;
