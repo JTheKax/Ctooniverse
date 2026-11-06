@@ -5,15 +5,15 @@ let selectedGame=null;
 const $=id=>document.getElementById(id);
 const start=$('emu-start'),status=$('emu-status'),file=$('emu-file'),consoleSelect=$('emu-console');
 let currentUrl=null,started=false;
-const cores={nes:'nes',snes:'snes',gb:'gb',gba:'gba',gbc:'gbc',n64:'n64',segaMD:'segaMD',nds:'nds'};
-const ext={nes:['nes','zip'],snes:['sfc','smc','zip'],gb:['gb','zip'],gba:['gba','zip'],gbc:['gbc','zip'],n64:['n64','z64','v64','zip'],segaMD:['md','gen','bin','zip'],nds:['nds','zip']};
+const cores={nes:'nes',snes:'snes',gb:'gb',gba:'gba',gbc:'gbc',n64:'n64',segaMD:'segaMD',nds:'nds',psx:'psx'};
+const ext={nes:['nes','zip'],snes:['sfc','smc','zip'],gb:['gb','zip'],gba:['gba','zip'],gbc:['gbc','zip'],n64:['n64','z64','v64','zip'],segaMD:['md','gen','bin','zip'],nds:['nds','zip'],psx:['chd','pbp','iso','zip']};
 start.addEventListener('click',()=>{
  if(started){status.textContent='A game is already running. Refresh this page to load a different game.';return}
  const rom=selectedGame?null:file.files?.[0],core=consoleSelect.value;
  if(!rom&&!selectedGame){status.textContent='Choose a game case or local file first.';return}
  const suffix=(rom?.name||selectedGame?.storage_path||'').split('.').pop().toLowerCase();
  if(!ext[core]?.includes(suffix)){status.textContent='This file type does not match the selected console.';return}
- if(rom&&rom.size>128*1024*1024){status.textContent='Game file is too large (128 MB maximum).';return}
+ if(rom&&rom.size>(core==='psx'?1024:128)*1024*1024){status.textContent='Game file is too large for this console.';return}
  started=true;start.disabled=true;file.disabled=true;consoleSelect.disabled=true;
  currentUrl=selectedGame?db.storage.from('emulator-games').getPublicUrl(selectedGame.storage_path).data.publicUrl:URL.createObjectURL(rom);
  window.EJS_player='#game';window.EJS_core=cores[core];window.EJS_gameUrl=currentUrl;
@@ -42,7 +42,7 @@ async function loadCases(){
  if(error){host.textContent='Could not load game library: '+error.message;return}
  host.replaceChildren();
  if(!data?.length){
-  const consoles=[['Game Boy','gb'],['Game Boy Advance','gba'],['Game Boy Color','gbc'],['Nintendo 64','n64'],['Nintendo DS','nds'],['Nintendo Entertainment System','nes'],['Sega Genesis / Mega Drive','segaMD'],['Super Nintendo','snes']];
+  const consoles=[['Game Boy','gb'],['Game Boy Advance','gba'],['Game Boy Color','gbc'],['Nintendo 64','n64'],['Nintendo DS','nds'],['PlayStation 1','psx'],['Nintendo Entertainment System','nes'],['Sega Genesis / Mega Drive','segaMD'],['Super Nintendo','snes']];
   const grid=document.createElement('div');grid.className='emu-case-grid';
   for(const [name,code] of consoles){
     const item=document.createElement('div');item.className='emu-case emu-case-placeholder emu-system-'+code;
