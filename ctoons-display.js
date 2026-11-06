@@ -3,13 +3,14 @@ const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable
 const grid=document.querySelector('.ctoons-featured-display .ctoons-featured-grid');
 let seq=0;
 let catalogRows=[],ownership=new Map(),ownerMode=false,wishlist=new Set();
+const catalogById=new Map();
 const filterIds=['search','category','series','rarity','owned'];
 const filter=id=>document.getElementById('ctoon-catalog-'+id);
 function applyFilters(){
  const query=(filter('search')?.value||'').trim().toLowerCase(),category=filter('category')?.value||'',series=filter('series')?.value||'',rarity=filter('rarity')?.value||'',owned=filter('owned')?.value||'';
  let visible=0;
  for(const card of grid?.querySelectorAll('[data-ctoon-id]')||[]){
-  const item=catalogRows.find(x=>x.id===card.dataset.ctoonId);if(!item)continue;
+  const item=catalogById.get(card.dataset.ctoonId);if(!item)continue;
   const quantity=ownership.get(item.id)||0;
   const match=(!query||(item.name+' '+(item.series||'')).toLowerCase().includes(query))&&(!category||item.parent_series===category)&&(!series||item.series===series)&&(!rarity||item.rarity===rarity)&&(!owned||(owned==='wishlist'?wishlist.has(item.id):owned==='owned'?quantity>0:quantity===0));
   card.hidden=!match;if(match)visible++;
@@ -40,10 +41,17 @@ function renderCounts(catalog){
 async function refresh(){
  const n=++seq;if(!grid)return;
  try{
-  const {data:catalog,error}=await db.from('ctoon_catalog').select('id,name,rarity,price_coins,image_path,series,parent_series,is_for_sale').order('name');
-  if(error)throw error;
+  const catalog=[];let offset=0;const pageSize=500;
+  while(true){
+   const {data,error}=await db.from('ctoon_catalog').select('id,name,rarity,price_coins,image_path,series,parent_series,is_for_sale').order('name').order('id').range(offset,offset+pageSize-1);
+   if(error)throw error;
+   catalog.push(...(data||[]));
+   if(n!==seq)return;
+   if(!data||data.length<pageSize)break;
+   offset+=pageSize;
+  }
   if(n!==seq)return;
-  if(!catalog?.length){renderCounts([]);grid.replaceChildren();const empty=document.createElement('p');empty.textContent='No CToons are currently listed.';grid.append(empty);return;}
+  if(!catalog?.length){catalogRows=[];catalogById.clear();ownership=new Map();wishlist=new Set();renderCounts([]);grid.replaceChildren();const empty=document.createElement('p');empty.textContent='No CToons are currently listed.';grid.append(empty);return;}
   renderCounts(catalog);
   let user=null,isOwner=false;
   try{
@@ -58,8 +66,8 @@ async function refresh(){
    }catch(ownedError){console.warn('Ownership unavailable; displaying public catalog',ownedError)}
   }
   if(n!==seq)return;
-  wishlist=new Set();if(user){const w=await db.from('ctoon_wishlist').select('ctoon_id').eq('user_id',user.id);if(!w.error)wishlist=new Set((w.data||[]).map(x=>x.ctoon_id));}if(n!==seq)return;
-  catalogRows=catalog;ownership=owned;ownerMode=isOwner;
+  wishlist=new Set();if(user){try{const w=await db.from('ctoon_wishlist').select('ctoon_id').eq('user_id',user.id);if(!w.error)wishlist=new Set((w.data||[]).map(x=>x.ctoon_id));}catch(e){console.warn('Wishlist unavailable',e)}}if(n!==seq)return;
+  catalogRows=catalog;catalogById.clear();for(const item of catalog)catalogById.set(String(item.id),item);ownership=owned;ownerMode=isOwner;
   setOptions('category',catalog.map(x=>x.parent_series),'All categories');setOptions('series',catalog.map(x=>x.series),'All sets');setOptions('rarity',catalog.map(x=>x.rarity),'All rarities');
   const params=new URLSearchParams(location.search);if(params.has('category'))filter('category').value=params.get('category');if(params.has('series'))filter('series').value=params.get('series');if(params.get('owned')==='wishlist'&&filter('owned'))filter('owned').value='wishlist';
   const fragment=document.createDocumentFragment();
@@ -67,7 +75,7 @@ async function refresh(){
    const card=document.createElement('article');card.className='ctoon-shop-card ctoon-inspectable';card.dataset.ctoonId=item.id;card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','View '+item.name+' CToon details');
    const art=document.createElement('div');art.className='ctoon-shop-art';
    const badge=document.createElement('span');badge.className='ctoon-shop-owned';
-   const qty=owned.get(item.id)||0;badge.textContent=qty?'Owned ×'+qty:!item.is_for_sale?'Coming Soon':user?'Unowned':'Sign in';badge.classList.toggle('is-owned',qty>0);
+   const qty=owned.get(item.id)||0;badge.textContent=qty?'Owned ×'+qty:!item.is_for_sale?'Coming Soon':user?'Need':'Sign in';badge.classList.toggle('is-owned',qty>0);
    const img=document.createElement('img');img.src=item.image_path||'ctooniverse-logo.png';img.alt=item.name+' CToon artwork';img.loading='lazy';img.addEventListener('error',()=>{img.src='ctooniverse-logo.png'},{once:true});
    art.append(badge,img);
    const details=document.createElement('div');details.className='ctoon-shop-details';
@@ -101,7 +109,7 @@ async function refresh(){
      event.preventDefault();const name=form.elements.name.value.trim(),image_path=form.elements.image_path.value.trim(),rarity=form.elements.rarity.value,price_coins=Number(form.elements.price_coins.value);
      if(!name||!(/^(https:\/\/|public\/images\/)/.test(image_path))||!Number.isInteger(price_coins)||price_coins<0){feedback.textContent='Enter a valid name, HTTPS image URL or public/images/ path, and whole-number price.';return}
      const save=form.querySelector('[type=submit]');save.disabled=true;feedback.textContent='Saving…';
-     const parent_series=form.elements.parent_series.value.trim(),series=form.elements.series.value.trim();if(!parent_series||!series){feedback.textContent='Main series and subseries are required.';return}const is_for_sale=form.elements.is_for_sale.checked;const {data,error}=await db.from('ctoon_catalog').update({name,image_path,rarity,price_coins,is_for_sale,parent_series,series}).eq('id',item.id).select('id').single();
+     const parent_series=form.elements.parent_series.value.trim(),series=form.elements.series.value.trim();if(!parent_series||!series){save.disabled=false;feedback.textContent='Main series and subseries are required.';return}const is_for_sale=form.elements.is_for_sale.checked;const {data,error}=await db.from('ctoon_catalog').update({name,image_path,rarity,price_coins,is_for_sale,parent_series,series}).eq('id',item.id).select('id').single();
      save.disabled=false;if(error||!data){feedback.textContent='Could not save: '+(error?.message||'No permission');return}
      dialog.close();refresh();
     });
@@ -113,7 +121,7 @@ async function refresh(){
    fragment.append(card);
   }
   grid.replaceChildren(fragment);applyFilters();
- }catch(e){console.warn('Featured CToons could not refresh; preserving current cards.',e);const status=document.getElementById('ctoon-counts-status');if(status)status.textContent='Unable to refresh CToons right now. Please try again.';}
+ }catch(e){console.warn('Featured CToons could not refresh; preserving current cards.',e);const status=document.getElementById('ctoon-counts-status');if(status)status.textContent='Unable to refresh CToons right now. Please try again.';if(!catalogRows.length){grid.replaceChildren();const error=document.createElement('p');error.setAttribute('role','alert');error.textContent='Unable to load the CToon catalog. Please refresh the page to retry.';grid.append(error)}}
 }
 db.auth.onAuthStateChange(()=>setTimeout(refresh,0));
 window.addEventListener('pageshow',refresh);
