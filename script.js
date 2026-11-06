@@ -170,7 +170,7 @@ if (year) year.textContent = String(new Date().getFullYear());
  if(!footer||footer.querySelector('[data-ctoon-donate]'))return;
  const link=document.createElement('a');link.href='https://cash.app/$jomanmax28';link.target='_blank';link.rel='noopener noreferrer';
  link.textContent='♥ Support CTooniverse';link.setAttribute('aria-label','Support CTooniverse through Cash App (opens in a new tab)');link.setAttribute('data-ctoon-donate','');
- link.style.cssText='display:inline-flex;align-items:center;justify-content:center;padding:.7rem 1.15rem;border:2px solid #8cecff;border-radius:999px;background:linear-gradient(120deg,#233caa,#702cb6);color:#fff;font-weight:800;text-decoration:none;box-shadow:0 0 15px #7c55ff88;margin:.5rem;white-space:nowrap';
+ link.style.cssText='display:inline-flex;align-items:center;justify-content:center;padding:.7rem 1.15rem;border:2px solid #8cecff;border-radius:999px;background:linear-gradient(120deg,#233caa,#702cb6);color:#fff;font-weight:800;text-decoration:none;box-shadow:0 0 15px #7c55ff88;margin:.25rem .15rem;white-space:nowrap';
  footer.append(link);
 })();
 
@@ -185,6 +185,16 @@ if (year) year.textContent = String(new Date().getFullYear());
  link.textContent='Join Our Discord';
  link.setAttribute('aria-label','Join the CTooniverse Discord server (opens in a new tab)');
  link.setAttribute('data-ctoon-discord','');
- link.style.cssText='display:inline-flex;align-items:center;justify-content:center;padding:.7rem 1.15rem;border:2px solid #8cecff;border-radius:999px;background:linear-gradient(120deg,#3546ba,#6941c6);color:#fff;font-weight:800;text-decoration:none;box-shadow:0 0 15px #7c55ff88;margin:.5rem;white-space:nowrap';
+ link.style.cssText='display:inline-flex;align-items:center;justify-content:center;padding:.7rem 1.15rem;border:2px solid #8cecff;border-radius:999px;background:linear-gradient(120deg,#3546ba,#6941c6);color:#fff;font-weight:800;text-decoration:none;box-shadow:0 0 15px #7c55ff88;margin:.25rem .15rem;white-space:nowrap';
  footer.append(link);
+})();
+
+/* Keep footer support links grouped closely together across layouts. */
+(function(){
+ const footer=document.querySelector('footer');if(!footer)return;
+ const donation=footer.querySelector('[data-ctoon-donate]'),discord=footer.querySelector('[data-ctoon-discord]');
+ if(!donation||!discord)return;
+ const group=document.createElement('span');group.className='ctoon-footer-actions';
+ group.style.cssText='display:inline-flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.35rem;vertical-align:middle';
+ footer.insertBefore(group,donation);group.append(donation,discord);
 })();
