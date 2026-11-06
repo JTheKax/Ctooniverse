@@ -7,34 +7,37 @@ const start=$('emu-start'),status=$('emu-status'),file=$('emu-file'),consoleSele
 let currentUrl=null,started=false;
 const cores={nes:'nes',snes:'snes',gb:'gb',gba:'gba',gbc:'gbc',n64:'n64',segaMD:'segaMD',nds:'nds',psx:'psx'};
 const ext={nes:['nes','zip'],snes:['sfc','smc','zip'],gb:['gb','zip'],gba:['gba','zip'],gbc:['gbc','zip'],n64:['n64','z64','v64','zip'],segaMD:['md','gen','bin','zip'],nds:['nds','zip'],psx:['chd','pbp','iso','zip']};
-start.addEventListener('click',()=>{
- if(started){status.textContent='A game is already running. Refresh this page to load a different game.';return}
+function stopGame(){
+ const screen=$('game');screen.replaceChildren();
+ if(currentUrl&&currentUrl.startsWith('blob:'))URL.revokeObjectURL(currentUrl);
+ currentUrl=null;started=false;start.textContent='Start Game';start.disabled=false;file.disabled=false;consoleSelect.disabled=false;
+ document.querySelectorAll('.emu-case[data-game-id]').forEach(el=>el.disabled=false);
+ $('emu-screen').classList.remove('nds-active');const help=$('emu-nds-help');if(help)help.hidden=true;
+ status.textContent='Game stopped. Select another game or press Start Game.';
+}
+function launchGame(){
+ if(started){stopGame();return}
  const rom=selectedGame?null:file.files?.[0],core=consoleSelect.value;
  if(!rom&&!selectedGame){status.textContent='Choose a game case or local file first.';return}
  const suffix=(rom?.name||selectedGame?.storage_path||'').split('.').pop().toLowerCase();
  if(!ext[core]?.includes(suffix)){status.textContent='This file type does not match the selected console.';return}
  if(rom&&rom.size>(core==='psx'?1024:128)*1024*1024){status.textContent='Game file is too large for this console.';return}
- started=true;start.disabled=true;file.disabled=true;consoleSelect.disabled=true;
+ started=true;start.textContent='Stop Game';file.disabled=false;consoleSelect.disabled=false;
  currentUrl=selectedGame?db.storage.from('emulator-games').getPublicUrl(selectedGame.storage_path).data.publicUrl:URL.createObjectURL(rom);
- window.EJS_player='#game';window.EJS_core=cores[core];window.EJS_gameUrl=currentUrl;
- window.EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';
- window.EJS_startOnLoaded=true;
- window.EJS_VirtualGamepadSettings=core==='nds'?{enabled:true}:undefined;
- $('emu-screen').classList.toggle('nds-active',core==='nds');
- const ndsHelp=$('emu-nds-help');if(ndsHelp)ndsHelp.hidden=core!=='nds';
- window.EJS_color='#8057e7';
- window.EJS_Buttons={playPause:true,restart:true,mute:true,settings:true,fullscreen:true,saveState:true,loadState:true};
- window.EJS_startButtonName='Play';
- status.textContent='Loading emulator engine… On mobile, use the on-screen controls after the game loads.';
- const script=document.createElement('script');script.src='https://cdn.emulatorjs.org/stable/data/loader.js';
- script.onload=()=>{status.textContent='Emulator loaded. If the game does not start, check compatibility or try a different file.'};
- script.onerror=()=>{status.textContent='Unable to load emulator engine. Check your connection and try refreshing.';started=false;start.disabled=false;file.disabled=false;consoleSelect.disabled=false;if(!selectedGame)URL.revokeObjectURL(currentUrl);currentUrl=null};
- document.body.append(script);
-});
+ const frame=document.createElement('iframe');frame.title='CTooniverse game player';frame.allow='fullscreen; autoplay; gamepad';frame.style.cssText='width:100%;height:100%;min-height:380px;border:0;display:block';
+ // Isolate each EmulatorJS instance so switching never reuses its global state.
+ const config={EJS_player:'#game',EJS_core:cores[core],EJS_gameUrl:currentUrl,EJS_pathtodata:'https://cdn.emulatorjs.org/stable/data/',EJS_startOnLoaded:true,EJS_VirtualGamepadSettings:core==='nds'?{enabled:true}:undefined,EJS_color:'#8057e7',EJS_Buttons:{playPause:true,restart:true,mute:true,settings:true,fullscreen:true,saveState:true,loadState:true},EJS_startButtonName:'Play'};
+ const serialized=JSON.stringify(config).replace(/</g,'\\u003c');
+ frame.srcdoc='<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#030712"><div id="game" style="height:100vh;width:100%"></div><script>Object.assign(window,'+serialized+');<\\/script><script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\\/script></body></html>';
+ $('game').replaceChildren(frame);
+ $('emu-screen').classList.toggle('nds-active',core==='nds');const help=$('emu-nds-help');if(help)help.hidden=core!=='nds';
+ status.textContent='Loading game… Use Stop Game to switch to another game.';
+}
+start.addEventListener('click',launchGame);
 $('emu-fullscreen').addEventListener('click',async()=>{try{if(!document.fullscreenElement)await $('emu-screen').requestFullscreen();else await document.exitFullscreen()}catch{status.textContent='Fullscreen is unavailable in this browser.'}});
-window.addEventListener('pagehide',()=>{if(currentUrl&&!selectedGame)URL.revokeObjectURL(currentUrl)});
+window.addEventListener('pagehide',()=>{if(currentUrl?.startsWith('blob:'))URL.revokeObjectURL(currentUrl)});
 
-file.addEventListener('change',()=>{selectedGame=null;document.querySelectorAll('.emu-case').forEach(el=>el.classList.remove('selected'))});
+file.addEventListener('change',()=>{if(started)stopGame();selectedGame=null;document.querySelectorAll('.emu-case').forEach(el=>el.classList.remove('selected'))});
 async function loadCases(){
  const host=$('emu-library');if(!host)return;
  host.textContent='Loading game cases…';
@@ -57,7 +60,7 @@ async function loadCases(){
  }
  const grid=document.createElement('div');grid.className='emu-case-grid';
  for(const game of data){
-  const caseEl=document.createElement('button');caseEl.type='button';caseEl.dataset.gameId=game.id;caseEl.className='emu-case emu-system-'+game.console;caseEl.disabled=started;
+  const caseEl=document.createElement('button');caseEl.type='button';caseEl.dataset.gameId=game.id;caseEl.className='emu-case emu-system-'+game.console;caseEl.disabled=false;
   const cover=document.createElement('span');cover.className='emu-case-cover';
   const spine=document.createElement('span');spine.className='emu-case-spine';spine.textContent=game.console==='gba'?'':game.console.toUpperCase();
   const art=document.createElement('span');art.className='emu-case-art';art.textContent='🎮';
@@ -72,7 +75,7 @@ async function loadCases(){
   const title=document.createElement('span');title.className='emu-case-name';title.textContent=game.title;
   cover.append(spine,art,coverTitle);caseEl.append(cover,title);
   caseEl.addEventListener('click',()=>{
-   if(started)return;selectedGame=game;file.value='';consoleSelect.value=game.console;
+   if(started)stopGame();selectedGame=game;file.value='';consoleSelect.value=game.console;
    grid.querySelectorAll('.emu-case').forEach(el=>el.classList.remove('selected'));caseEl.classList.add('selected');
    status.textContent=game.title+' selected. Press Start Game to play.';
    $('emu-screen').scrollIntoView({behavior:'smooth',block:'start'});
@@ -80,7 +83,7 @@ async function loadCases(){
  }host.append(grid)
 }
 window.ctoonPlayGameCase=async gameId=>{
- if(started){status.textContent='A game is already running. Refresh to load a different game.';return false}
+ if(started)stopGame();
  const {data:game,error}=await db.from('emulator_games').select('id,title,console,storage_path').eq('id',gameId).eq('published',true).single();
  if(error||!game){status.textContent='Unable to load this published game.';return false}
  selectedGame=game;file.value='';consoleSelect.value=game.console;
