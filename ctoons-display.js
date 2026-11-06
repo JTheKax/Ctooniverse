@@ -39,7 +39,7 @@ function renderCounts(catalog){
  status.textContent=catalog.length+' CToons created across '+groups.size+' main series · '+saleTotal+' for sale.';
 }
 async function refresh(){
- const n=++seq;if(!grid)return;
+ const n=++seq;
  try{
   const catalog=[];let offset=0;const pageSize=500;
   while(true){
@@ -51,8 +51,9 @@ async function refresh(){
    offset+=pageSize;
   }
   if(n!==seq)return;
-  if(!catalog?.length){catalogRows=[];catalogById.clear();ownership=new Map();wishlist=new Set();renderCounts([]);grid.replaceChildren();const empty=document.createElement('p');empty.textContent='No CToons are currently listed.';grid.append(empty);return;}
+  if(!catalog?.length){catalogRows=[];catalogById.clear();ownership=new Map();wishlist=new Set();renderCounts([]);if(!grid)return;grid.replaceChildren();const empty=document.createElement('p');empty.textContent='No CToons are currently listed.';grid.append(empty);return;}
   renderCounts(catalog);
+  if(!grid)return;
   let user=null,isOwner=false;
   try{
    const auth=await db.auth.getUser();user=auth.data?.user||null;
@@ -121,7 +122,7 @@ async function refresh(){
    fragment.append(card);
   }
   grid.replaceChildren(fragment);applyFilters();
- }catch(e){console.warn('Featured CToons could not refresh; preserving current cards.',e);const status=document.getElementById('ctoon-counts-status');if(status)status.textContent='Unable to refresh CToons right now. Please try again.';if(!catalogRows.length){grid.replaceChildren();const error=document.createElement('p');error.setAttribute('role','alert');error.textContent='Unable to load the CToon catalog. Please refresh the page to retry.';grid.append(error)}}
+ }catch(e){console.warn('Featured CToons could not refresh; preserving current cards.',e);const status=document.getElementById('ctoon-counts-status');if(status)status.textContent='Unable to refresh CToons right now. Please try again.';if(grid&&!catalogRows.length){grid.replaceChildren();const error=document.createElement('p');error.setAttribute('role','alert');error.textContent='Unable to load the CToon catalog. Please refresh the page to retry.';grid.append(error)}}
 }
 db.auth.onAuthStateChange(()=>setTimeout(refresh,0));
 window.addEventListener('pageshow',refresh);
