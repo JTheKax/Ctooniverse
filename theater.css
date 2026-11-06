@@ -56,3 +56,12 @@
 .theater-stage.curtains-open .theater-screen:after{transform:translateX(101%)}
 .theater-screen{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.theater-curtains .theater-screen:before,.theater-curtains .theater-screen:after{transition:none}}
+
+
+/* Movie-night lighting: dim surrounding auditorium, never obscure the player */
+.watch-theater-page:before{content:"";position:fixed;inset:0;background:rgba(2,2,13,.7);opacity:0;visibility:hidden;pointer-events:none;z-index:30;transition:opacity 1.3s ease,visibility 1.3s ease}
+.watch-theater-page.theater-lights-dimmed:before{opacity:1;visibility:visible}
+.watch-theater-page.theater-lights-dimmed .theater-stage{z-index:31;position:relative;box-shadow:0 0 0 3px #f4bd60,0 0 0 8px #321d68,0 22px 65px #000,0 0 50px #738dff99}
+.watch-theater-page.theater-lights-dimmed .theater-intro,.watch-theater-page.theater-lights-dimmed .theater-library,.watch-theater-page.theater-lights-dimmed .theater-owner{filter:brightness(.55);transition:filter 1.3s ease}
+.watch-theater-page .theater-intro,.watch-theater-page .theater-library,.watch-theater-page .theater-owner{transition:filter 1.3s ease}
+@media(prefers-reduced-motion:reduce){.watch-theater-page:before,.watch-theater-page .theater-intro,.watch-theater-page .theater-library,.watch-theater-page .theater-owner{transition:none}}
