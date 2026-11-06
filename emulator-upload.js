@@ -36,9 +36,16 @@
   button.disabled=true;status.textContent='Uploading game…';
   const path=crypto.randomUUID()+'.'+extension;
   try{
-   // Browser-native File upload. The previous TUS CDN build expected Node Buffer/Readable.
-   const uploaded=await db.storage.from('emulator-games').upload(path,rom,{contentType:'application/octet-stream'});
-   if(uploaded.error)throw uploaded.error;
+   // Send the browser File directly: avoids CDN bundlers choosing a Node-only upload adapter.
+   const {data:{session},error:sessionError}=await db.auth.getSession();
+   if(sessionError||!session?.access_token)throw new Error('Owner session expired. Please sign in again.');
+   const uploadResponse=await fetch('https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/emulator-games/'+encodeURIComponent(path),{
+    method:'POST',headers:{'Authorization':'Bearer '+session.access_token,'apikey':'sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS','Content-Type':'application/octet-stream','cache-control':'3600','x-upsert':'false'},body:rom
+   });
+   if(!uploadResponse.ok){
+    const details=await uploadResponse.json().catch(()=>({}));
+    throw new Error(details.message||details.error||('Storage upload rejected (HTTP '+uploadResponse.status+')'));
+   }
    const saved=await db.from('emulator_games').insert({title,console:consoleId,storage_path:path,published:true});
    if(saved.error){await db.storage.from('emulator-games').remove([path]);throw saved.error}
    status.textContent='Game saved to the library. Refresh to see its case.';
