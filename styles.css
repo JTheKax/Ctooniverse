@@ -2019,3 +2019,45 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 .auction-disclaimer{font-size:.85rem;opacity:.85}
 @media(max-width:700px){.auction-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}.auction-toolbar label:first-child{grid-column:1/-1}.auction-center-grid{grid-template-columns:1fr}.auction-main .section{padding:18px 14px}.auction-hero-actions .button{flex:1 1 140px;text-align:center}}
 @media(max-width:380px){.auction-toolbar{grid-template-columns:1fr}.auction-toolbar label:first-child{grid-column:auto}}
+
+/* CTooniverse unified neon blue / purple navigation theme — 2026-11-06.
+   Visual overrides only: preserve existing positioning, sizing and menu behavior. */
+.site-header nav :is(a.nav-link,button.nav-link),
+.site-header nav :is(.ctoons-dropdown-trigger,.community-dropdown-trigger,.account-dropdown-trigger,.owner-menu-trigger){
+  background:linear-gradient(145deg,#2563eb,#6d28d9)!important;
+  border-color:#8bbcff!important;
+  color:#fff!important;
+  text-shadow:0 1px 2px #15113f!important;
+  box-shadow:inset 0 -3px 0 #31218d,0 3px 9px #090b2a88!important;
+}
+.site-header nav :is(a.nav-link,button.nav-link):is(:hover,:focus-visible),
+.site-header nav :is(.ctoons-dropdown-trigger,.community-dropdown-trigger,.account-dropdown-trigger,.owner-menu-trigger):is(:hover,:focus-visible),
+.site-header nav :is(.ctoons-dropdown,.community-dropdown,.account-dropdown,.owner-menu).is-open > button{
+  background:linear-gradient(145deg,#3b82f6,#8b5cf6)!important;
+  border-color:#93e7ff!important;
+  color:#fff!important;
+}
+.site-header nav .nav-link.active,
+.site-header nav .nav-link[aria-current="page"],
+.site-header nav .nav-link[aria-expanded="true"]{
+  background:linear-gradient(145deg,#1d4ed8,#7c3aed)!important;
+  border-color:#a5d8ff!important;
+  color:#fff!important;
+  box-shadow:inset 0 -3px 0 #312e81,0 0 13px #818cf899!important;
+}
+.site-header nav :is(.ctoons-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel),
+.site-header :is(.ctoons-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel){
+  background:linear-gradient(155deg,#111a45,#281454)!important;
+  border-color:#7869ed!important;
+  color:#fff!important;
+  box-shadow:0 12px 28px #05071fbb,0 0 14px #6366f144!important;
+}
+.site-header :is(.ctoons-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) :is(a,button){
+  color:#f8faff!important;
+  background:transparent!important;
+  border-color:transparent!important;
+}
+.site-header :is(.ctoons-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) :is(a,button):is(:hover,:focus-visible){
+  color:#fff!important;
+  background:linear-gradient(90deg,#1d4ed8,#6d28d9)!important;
+}
