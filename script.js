@@ -173,3 +173,18 @@ if (year) year.textContent = String(new Date().getFullYear());
  link.style.cssText='display:inline-flex;align-items:center;justify-content:center;padding:.7rem 1.15rem;border:2px solid #8cecff;border-radius:999px;background:linear-gradient(120deg,#233caa,#702cb6);color:#fff;font-weight:800;text-decoration:none;box-shadow:0 0 15px #7c55ff88;margin:.5rem;white-space:nowrap';
  footer.append(link);
 })();
+
+/* Shared Discord footer link beside the Cash App support button. */
+(function(){
+ const footer=document.querySelector('footer');
+ if(!footer||footer.querySelector('[data-ctoon-discord]'))return;
+ const link=document.createElement('a');
+ link.href='https://discord.gg/kKfPxFYm9';
+ link.target='_blank';
+ link.rel='noopener noreferrer';
+ link.textContent='Join Our Discord';
+ link.setAttribute('aria-label','Join the CTooniverse Discord server (opens in a new tab)');
+ link.setAttribute('data-ctoon-discord','');
+ link.style.cssText='display:inline-flex;align-items:center;justify-content:center;padding:.7rem 1.15rem;border:2px solid #8cecff;border-radius:999px;background:linear-gradient(120deg,#3546ba,#6941c6);color:#fff;font-weight:800;text-decoration:none;box-shadow:0 0 15px #7c55ff88;margin:.5rem;white-space:nowrap';
+ footer.append(link);
+})();
