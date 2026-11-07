@@ -13,9 +13,10 @@ function sprite(id,pose,step){
  const p=PALETTES[id]||PALETTES['training-rival'],jack=id==='jack-skellington';
  const c=document.createElement('canvas');c.width=96;c.height=112;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
  const px=(color,a,b,w,h)=>{x.fillStyle=color;x.fillRect(Math.round(a),Math.round(b),Math.round(w),Math.round(h))};
- const outline='#14111d';const walking=pose==='walk'?(step?3:-3):0,low=pose==='crouch'?9:0,jump=pose==='jump'?-4:0;
+ const outline='#14111d';const walking=pose==='walk'?(step===0?-4:step===1?0:4):0,low=pose==='crouch'?9:0,jump=pose==='jump'?-4:0;
 
  const attacking=['punch','kick','special'].includes(pose),kick=pose==='kick',guard=pose==='block';
+ const attackReach=step===0?3:step===1?9:15;
  // Arcade sprites are composed at a consistent native resolution with hard pixel edges.
  x.save();x.translate(15,5);x.scale(1.02,1.24);
  // Character shadow is rendered in the arena, not in the sprite.
@@ -38,7 +39,7 @@ function sprite(id,pose,step){
  for(const side of [-1,1]){
   const ax=side<0?(jack?23:16):(jack?41:47),ay=30+low+jump;
   const punch=attacking&&side===1&&!kick;
-  if(punch){const reach=step?13:8;px(outline,ax-1,ay+4,reach+5,9);px(jack?p.body:p.skin,ax+1,ay+6,reach+1,5);px(outline,Math.min(56,ax+reach),ay+2,7,12);px(p.skin,Math.min(57,ax+reach+1),ay+4,5,8)}
+  if(punch){const reach=attackReach;px(outline,ax-1,ay+4,reach+5,9);px(jack?p.body:p.skin,ax+1,ay+6,reach+1,5);px(outline,Math.min(56,ax+reach),ay+2,7,12);px(p.skin,Math.min(57,ax+reach+1),ay+4,5,8)}
   else if(guard){px(outline,ax-4,ay-7,9,19);px(jack?p.body:p.skin,ax-2,ay-5,5,15);px(p.skin,ax-3,ay-9,7,6)}
   else{px(outline,ax-5,ay,10,22);px(jack?p.body:p.skin,ax-3,ay+2,6,17);px(outline,ax-5,ay+19,10,8);px(p.skin,ax-3,ay+20,6,6);
    if(jack){for(let j=0;j<3;j++)px(p.skin,ax-3+j*2,ay+25,1,5)}}
@@ -69,23 +70,32 @@ function sprite(id,pose,step){
   px('#6d3a79',29,48+low,10,2);
  }
  if(pose==='hurt'){px('#fff6c8',40,16+jump,3,3);px('#ff7878',44,14+jump,4,2)}
+ // Additional attack anticipation and recovery frames to avoid frozen-looking strikes.
+ if(pose==='punch'&&step===0){px(outline,41,30+low,11,9);px(p.skin,43,32+low,7,5)}
+ if(pose==='kick'&&step===0){px(outline,39,48+low,13,9);px(p.pants,40,50+low,10,5)}
+ if(pose==='idle'&&step===2){px(p.trim,31,45+low,3,2)}
  x.restore();cache.set(key,c);return c;
 }
 export function drawPixelFighter(ctx,f,id,time=0,ground=445){
  const pose=f.hp<=0?'hurt':f.guard?'block':f.crouch?'crouch':f.y<ground-3?'jump':f.attack>0?(f.kind||'punch'):Math.abs(f.vx)>.1?'walk':'idle';
- const frame=Math.floor(time*9)%2,source=sprite(id,pose,frame);
+ const frame=Math.floor(time*(pose==='idle'?4:pose==='walk'?12:16))%3,source=sprite(id,pose,frame);
  ctx.save();ctx.imageSmoothingEnabled=false;
  ctx.fillStyle='#07071999';ctx.beginPath();ctx.ellipse(f.x,ground+1,42,9,0,0,Math.PI*2);ctx.fill();
  ctx.translate(Math.round(f.x),Math.round(f.y));
  ctx.scale(f.face===-1?-1:1,1);
  // 96x112 arcade sprite, displayed at crisp native 2x resolution.
  ctx.drawImage(source,-96,-224,192,224);
+ if(pose==='special'){
+  const pulse=7+frame*4;ctx.strokeStyle=id==='jack-skellington'?'#a99cff':'#ffe67b';ctx.lineWidth=3;
+  ctx.strokeRect(64,-181-pulse/2,18+pulse,18+pulse);
+ }
  if(f.hit&&f.attack>0){ctx.strokeStyle='#f4f0a3';ctx.lineWidth=4;ctx.strokeRect(-96,-224,192,224)}
  ctx.restore();
 }
 export function mountPixelPreview(container,id){
  const canvas=document.createElement('canvas');canvas.width=192;canvas.height=224;canvas.className='pixel-fighter-preview';
  container.replaceChildren(canvas);const ctx=canvas.getContext('2d');let live=true,raf=0;
- function tick(t){if(!live)return;ctx.clearRect(0,0,192,224);ctx.imageSmoothingEnabled=false;const frame=Math.floor(t/240)%2;ctx.drawImage(sprite(id,frame?'walk':'idle',frame),0,0,192,224);raf=requestAnimationFrame(tick)}
+ function tick(t){if(!live)return;ctx.clearRect(0,0,192,224);ctx.imageSmoothingEnabled=false;const sequence=['idle','idle','walk','walk','punch','punch','block','special'];const phase=Math.floor(t/700)%sequence.length;
+ const pose=sequence[phase],frame=Math.floor(t/110)%3;ctx.drawImage(sprite(id,pose,frame),0,0,192,224);raf=requestAnimationFrame(tick)}
  raf=requestAnimationFrame(tick);return()=>{live=false;cancelAnimationFrame(raf);canvas.remove()};
 }
