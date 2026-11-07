@@ -511,13 +511,21 @@ function buildCleanAvatar(){
     const thumb=part(armPivot,new THREE.CapsuleGeometry(.041,.09,4,8),skin,side*.045,-1.00,.15);
     thumb.rotation.z=side*.62;
    }else{
-    part(armPivot,ball,shirt,0,-.08,0,style.arm*1.42,style.arm*1.35,style.arm*1.30);
-    sculptLimb(armPivot,[0,-.10,0],[side*.16,-.78,.02],style.arm,shirt);
-    part(armPivot,ball,shirt,side*.16,-.77,.02,style.arm*1.08,.14,style.arm*1.05);
-    part(armPivot,ball,skin,side*.16,-.98,.055,style.arm*.90,.19,style.arm*.82);
-    part(armPivot,ball,skin,side*.16-side*.115,-.95,.16,.065,.12,.075);
-    for(let finger=0;finger<3;finger++)
-     part(armPivot,ball,skin,side*.16+(finger-1)*.075,-1.105,.095,.042,.10,.055);
+    // A tapered sleeve with a rounded shoulder and a fitted cuff.
+    const armReach=model==='chibi'?.66:model==='southpark'?.69:.78;
+    part(armPivot,ball,shirt,0,-.08,0,style.arm*1.20,style.arm*1.25,style.arm*1.16);
+    sculptLimb(armPivot,[0,-.12,0],[side*.13,-armReach,.015],style.arm*.94,shirt);
+    part(armPivot,ball,shirt,side*.13,-armReach,.015,style.arm*.96,.10,style.arm*.96);
+    const palmY=-armReach-.19;
+    part(armPivot,ball,skin,side*.13,palmY,.045,style.arm*.76,.15,style.arm*.66);
+    if(model!=='southpark'){
+     for(let finger=0;finger<4;finger++){
+      const fingerX=side*.13+(finger-1.5)*style.arm*.34;
+      part(armPivot,new THREE.CapsuleGeometry(style.arm*.17,.075,4,8),skin,fingerX,palmY-.15,.085);
+     }
+     const thumb=part(armPivot,new THREE.CapsuleGeometry(style.arm*.24,.08,4,8),skin,side*.13-side*.13,palmY+.035,.13);
+     thumb.rotation.z=side*.55;
+    }
    }
    avatarRig.arms.push({joint:armPivot,side});
    const legPivot=new THREE.Group();legPivot.position.set(side*.32,1.27,0);avatar.add(legPivot);
@@ -537,14 +545,18 @@ function buildCleanAvatar(){
      part(legPivot,new THREE.CapsuleGeometry(.011,.15,3,8),white,
       side*.02,-1.005-i*.048,.45-i*.018);
    }else{
-    part(legPivot,ball,pants,0,-.08,0,style.leg*1.26,.22,style.leg*1.22);
-    part(legPivot,new THREE.CylinderGeometry(style.leg*1.32,style.leg*.98,.43,20),pants,0,-.30,0);
-    part(legPivot,ball,pants,side*.01,-.54,0,style.leg*1.03,.17,style.leg*1.01);
-    sculptLimb(legPivot,[side*.01,-.55,0],[side*.02,-.88,0],style.leg*.83,pants);
-    part(legPivot,ball,pants,side*.02,-.79,0,style.leg*1.04,.13,style.leg*1.04);
-    part(legPivot,ball,shoe,side*.02,-1.045,.11,style.leg*1.20,.17,.28);
-    part(legPivot,ball,shoe,side*.02,-1.075,.35,style.leg*1.30,.145,.30);
-    part(legPivot,ball,white,side*.02,-1.195,.27,style.leg*1.31,.038,.39);
+    // One continuous trouser silhouette with knee and ankle taper.
+    const thigh=style.leg*(model==='hero'?1.18:1.12);
+    loftBody(legPivot,pants,[
+     [-.97,style.leg*.76,style.leg*.75,0],
+     [-.82,style.leg*.83,style.leg*.83,0],
+     [-.57,style.leg*.96,style.leg*.91,0],
+     [-.35,thigh,style.leg,0],
+     [-.08,thigh*1.13,style.leg*1.06,0],
+     [.08,style.leg*.98,style.leg*.95,0]
+    ],28);
+    part(legPivot,ball,shoe,0,-1.07,.19,style.leg*1.22,.15,.35);
+    part(legPivot,ball,white,0,-1.18,.23,style.leg*1.23,.035,.37);
    }
    avatarRig.legs.push({joint:legPivot,side});
   }
