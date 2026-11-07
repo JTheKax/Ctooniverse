@@ -4,7 +4,7 @@ import {buildJack} from './jack-skellington-3d.js';
 export function createArena3D(canvas){
  const host=canvas.parentElement;
  const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
- renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.75));
  renderer.outputColorSpace=THREE.SRGBColorSpace;
  renderer.domElement.className='showdown-webgl';
  renderer.domElement.setAttribute('aria-hidden','true');
@@ -48,16 +48,17 @@ export function createArena3D(canvas){
   return {root,body,arms,legs,cape,phase:0};
  }
  const hercules=build(true),jack=buildJack(),rival=build(false);scene.add(jack.root);
+ // Both characters use the same ground plane and body-part pivot conventions.
  const platform=new THREE.Mesh(new THREE.PlaneGeometry(15,4),new THREE.MeshStandardMaterial({color:0x302655,roughness:.8}));platform.rotation.x=-Math.PI/2;platform.position.y=-.06;scene.add(platform);
  const rings=new THREE.GridHelper(15,15,0xb95bea,0x473f7d);rings.position.y=-.04;scene.add(rings);
  const geometry=new THREE.TorusGeometry(.35,.045,8,28);const aura=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:0xffdb63,transparent:true,opacity:.85}));aura.visible=false;scene.add(aura);
  let active=true;
- function resize(){const w=host.clientWidth||960,h=host.clientHeight||540;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
- const observer=new ResizeObserver(resize);observer.observe(host);resize();
- function pose(model,f,t){model.root.position.set((f.x-480)/95,Math.max(0,(445-f.y)/105),0);model.root.rotation.y=f.face===1?Math.PI/2:-Math.PI/2;model.phase+=t;
+ function resize(){const w=canvas.clientWidth||host.clientWidth||960,h=canvas.clientHeight||w*540/960;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+ const observer=new ResizeObserver(resize);observer.observe(canvas);resize();
+ function pose(model,f,t){model.root.position.set((f.x-480)/95,Math.max(0,(445-f.y)/105),0);model.root.rotation.y=f.face===1?Math.PI/3:-Math.PI/3;model.phase+=t;
  const walking=Math.abs(f.vx)>.1?Math.sin(model.phase*13)*.36:Math.sin(model.phase*2)*.035;
- model.legs[0].rotation.z=walking;model.legs[1].rotation.z=-walking;
- model.arms[0].rotation.z=-walking*.35;model.arms[1].rotation.z=walking*.35;
+ model.legs[0].rotation.set(0,0,walking);model.legs[1].rotation.set(0,0,-walking);
+ model.arms[0].rotation.set(0,0,-walking*.35);model.arms[1].rotation.set(0,0,walking*.35);
  model.body.position.y=f.crouch?-.48:Math.sin(model.phase*3)*.025;
  if(f.guard){model.arms[0].rotation.x=-1.1;model.arms[1].rotation.x=-1.1}
  else if(f.attack>0){const progress=f.attack/(f.kind==='special'?.48:f.kind==='kick'?.33:.24);const impulse=Math.sin(Math.PI*Math.min(1,1-progress));
