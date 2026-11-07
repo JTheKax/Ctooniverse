@@ -17,16 +17,16 @@ export const ANIMATIONS=['idle','walk','run','punch','kick','block','jump','crou
 const atlases=new Map();
 export function loadFighterSprites(id){
  const asset=FIGHTER_SPRITES[id];if(!asset)return Promise.resolve(false);
- if(atlases.has(id))return atlases.get(id).promise;
- const state={image:null,ready:false,source:null,frameWidth:asset.frameWidth,frameHeight:asset.frameHeight,promise:null};atlases.set(id,state);
+ if(atlases.has(id)){const existing=atlases.get(id);if(existing.ready||existing.loading)return existing.promise;atlases.delete(id)}
+ const state={image:null,ready:false,source:null,frameWidth:asset.frameWidth,frameHeight:asset.frameHeight,promise:null,loading:true};atlases.set(id,state);
  const candidates=id==='jack-skellington'?[asset.url,'/images/showdown/jack-cleaned-atlas.png','/images/showdown/jack-skellington-atlas.svg']:[asset.url,'/images/showdown/hercules-atlas.svg'];
  state.promise=new Promise(resolve=>{
   function tryNext(index){
-   if(index>=candidates.length){resolve(false);return}
+   if(index>=candidates.length){state.loading=false;resolve(false);return}
    const image=new Image();image.decoding='async';
    image.onload=()=>{
     if(image.naturalWidth%3===0&&image.naturalHeight%ANIMATIONS.length===0&&image.naturalWidth/3>=32&&image.naturalHeight/ANIMATIONS.length>=32){
-     state.image=image;state.source=candidates[index];state.frameWidth=image.naturalWidth/3;state.frameHeight=image.naturalHeight/ANIMATIONS.length;state.ready=true;resolve(true);
+     state.image=image;state.source=candidates[index];state.frameWidth=image.naturalWidth/3;state.frameHeight=image.naturalHeight/ANIMATIONS.length;state.ready=true;state.loading=false;resolve(true);
     }else tryNext(index+1);
    };
    image.onerror=()=>tryNext(index+1);
@@ -165,7 +165,7 @@ export function mountPixelPreview(container,id){
   let elapsed=(t-previewStart)%cycle,part=sequence[0];
   for(const item of sequence){part=item;if(elapsed<item.duration)break;elapsed-=item.duration}
   const rawFrame=Math.floor(elapsed*part.fps/1000);
-  const frame=['ko','hurt','jump','block','punch','kick','special'].includes(part.pose)?Math.min(2,rawFrame):rawFrame%3;
+  const frame=['ko','hurt','jump','crouch','block','punch','kick','special'].includes(part.pose)?Math.min(2,rawFrame):rawFrame%3;
   ctx.imageSmoothingEnabled=atlases.get(id)?.ready===true;
   if(!atlasFrame(ctx,id,part.pose,frame,0,0,192,224)){
    ctx.imageSmoothingEnabled=false;ctx.drawImage(sprite(id,part.pose,frame),0,0,192,224);
