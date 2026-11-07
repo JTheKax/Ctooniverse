@@ -117,12 +117,12 @@ function sprite(id,pose,step){
  x.restore();cache.set(key,c);return c;
 }
 export function drawPixelFighter(ctx,f,id,time=0,ground=445){
- const pose=f.hp<=0?'ko':f.guard?'block':f.crouch?'crouch':f.y<ground-3?'jump':f.attack>0?(f.kind||'punch'):Math.abs(f.vx)>.1?'walk':'idle';
+ const pose=f.hp<=0?'ko':f.guard?'block':f.crouch?'crouch':f.y<ground-3?'jump':f.attack>0?(ANIMATIONS.includes(f.kind)?f.kind:'punch'):Math.abs(f.vx)>2.5?'run':Math.abs(f.vx)>.1?'walk':'idle';
  const playback=spritePlayback.get(f)||{pose:'',start:time};
  if(playback.pose!==pose){playback.pose=pose;playback.start=time;spritePlayback.set(f,playback)}
- const fps=pose==='idle'?4:pose==='walk'?10:pose==='ko'?5:pose==='special'?9:14;
+ const fps=pose==='idle'?4:pose==='walk'?10:pose==='run'?13:pose==='ko'?5:pose==='special'?9:14;
  const index=Math.floor(Math.max(0,time-playback.start)*fps);
- const frame=['ko','hurt','jump','crouch','block'].includes(pose)?Math.min(2,index):['punch','kick','special'].includes(pose)?Math.min(2,index):index%3;
+ const frame=['ko','hurt','jump','crouch','block','punch','kick','special'].includes(pose)?Math.min(2,index):index%3;
  // Generate the procedural fallback only when the illustrated atlas is unavailable.
  const illustrated=atlases.get(id)?.ready===true;
  ctx.save();ctx.imageSmoothingEnabled=false;
@@ -155,15 +155,17 @@ export function getFighterSpriteStatus(id){
 export function mountPixelPreview(container,id){
  const canvas=document.createElement('canvas');canvas.width=192;canvas.height=224;canvas.className='pixel-fighter-preview';
  container.replaceChildren(canvas);loadFighterSprites(id);const ctx=canvas.getContext('2d');let live=true,raf=0;
- const sequence=[{pose:'idle',duration:1200,fps:4},{pose:'walk',duration:850,fps:10},{pose:'punch',duration:450,fps:12},{pose:'kick',duration:500,fps:12},{pose:'block',duration:650,fps:6},{pose:'jump',duration:650,fps:6},{pose:'special',duration:650,fps:9},{pose:'hurt',duration:450,fps:7},{pose:'ko',duration:950,fps:5}];
+ const sequence=[{pose:'idle',duration:1200,fps:4},{pose:'walk',duration:850,fps:10},{pose:'run',duration:600,fps:13},{pose:'punch',duration:450,fps:12},{pose:'kick',duration:500,fps:12},{pose:'block',duration:650,fps:6},{pose:'jump',duration:650,fps:6},{pose:'special',duration:650,fps:9},{pose:'hurt',duration:450,fps:7},{pose:'ko',duration:950,fps:5}];
  const cycle=sequence.reduce((sum,part)=>sum+part.duration,0);
+ let previewStart=null;
  function tick(t){
   if(!live)return;
   ctx.clearRect(0,0,192,224);
-  let elapsed=t%cycle,part=sequence[0];
+  if(previewStart===null)previewStart=t;
+  let elapsed=(t-previewStart)%cycle,part=sequence[0];
   for(const item of sequence){part=item;if(elapsed<item.duration)break;elapsed-=item.duration}
   const rawFrame=Math.floor(elapsed*part.fps/1000);
-  const frame=['ko','hurt','jump','block'].includes(part.pose)?Math.min(2,rawFrame):rawFrame%3;
+  const frame=['ko','hurt','jump','block','punch','kick','special'].includes(part.pose)?Math.min(2,rawFrame):rawFrame%3;
   ctx.imageSmoothingEnabled=atlases.get(id)?.ready===true;
   if(!atlasFrame(ctx,id,part.pose,frame,0,0,192,224)){
    ctx.imageSmoothingEnabled=false;ctx.drawImage(sprite(id,part.pose,frame),0,0,192,224);
