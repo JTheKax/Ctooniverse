@@ -12,16 +12,18 @@ function sprite(id,pose,step){
  const p=PALETTES[id]||PALETTES['training-rival'],jack=id==='jack-skellington';
  const c=document.createElement('canvas');c.width=64;c.height=80;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
  const px=(color,a,b,w,h)=>{x.fillStyle=color;x.fillRect(Math.round(a),Math.round(b),Math.round(w),Math.round(h))};
- const outline='#14111d';const walking=pose==='walk'?(step?3:-3):0,low=pose==='crouch'?12:0,jump=pose==='jump'?-4:0;
+ const outline='#14111d';const walking=pose==='walk'?(step?3:-3):0,low=pose==='crouch'?9:0,jump=pose==='jump'?-4:0;
+
  const attacking=['punch','kick','special'].includes(pose),kick=pose==='kick',guard=pose==='block';
  // Character shadow is rendered in the arena, not in the sprite.
- if(p.cape){px(outline,17,27+low,34,39);px(p.cape,19,29+low,29,34);px('#db4b59',20,32+low,3,25)}
+ if(p.cape){px(outline,15,27+low,34,38-low);px(p.cape,17,29+low,29,34-low);px('#db4b59',19,32+low,3,25-low)}
  // Legs, sandals and boots.
  const legs=[{x:24,offset:walking},{x:36,offset:-walking}];
  for(let i=0;i<2;i++){const leg=legs[i];const extended=kick&&i===1;
-  px(outline,leg.x-5,47+low+leg.offset,11,24);px(p.pants,leg.x-3,48+low+leg.offset,7,19);
-  if(extended){px(outline,37,52+low,20,9);px(p.pants,39,53+low,15,6);px(outline,52,53+low,9,9);px(p.trim,54,55+low,6,4)}
-  else{px(outline,leg.x-6,68+low+leg.offset,14,7);px(jack?'#24222b':p.trim,leg.x-4,69+low+leg.offset,12,5)}
+  const legTop=47+low+leg.offset,legLength=pose==='crouch'?14:21;
+  if(!extended){px(outline,leg.x-5,legTop,11,legLength+2);px(p.pants,leg.x-3,legTop+1,7,legLength-1)}
+  if(extended){px(outline,36,50+low,20,9);px(p.pants,38,51+low,15,6);px(outline,52,51+low,10,9);px(p.trim,54,53+low,6,4)}
+  else{const footY=Math.min(72,legTop+legLength);px(outline,leg.x-6,footY,14,7);px(jack?'#24222b':p.trim,leg.x-4,footY+1,12,5)}
  }
  // Torso with differentiated silhouette.
  px(outline,jack?26:19,26+low+jump,jack?14:27,26);
@@ -33,7 +35,7 @@ function sprite(id,pose,step){
  for(const side of [-1,1]){
   const ax=side<0?(jack?23:16):(jack?41:47),ay=30+low+jump;
   const punch=attacking&&side===1&&!kick;
-  if(punch){px(outline,ax-1,ay,19,9);px(jack?p.body:p.skin,ax+1,ay+2,16,5);px(outline,ax+16,ay-2,8,12);px(p.skin,ax+18,ay,5,8)}
+  if(punch){const reach=step?13:8;px(outline,ax-1,ay+4,reach+5,9);px(jack?p.body:p.skin,ax+1,ay+6,reach+1,5);px(outline,Math.min(56,ax+reach),ay+2,7,12);px(p.skin,Math.min(57,ax+reach+1),ay+4,5,8)}
   else if(guard){px(outline,ax-4,ay-7,9,19);px(jack?p.body:p.skin,ax-2,ay-5,5,15);px(p.skin,ax-3,ay-9,7,6)}
   else{px(outline,ax-5,ay,10,22);px(jack?p.body:p.skin,ax-3,ay+2,6,17);px(outline,ax-5,ay+19,10,8);px(p.skin,ax-3,ay+20,6,6);
    if(jack){for(let j=0;j<3;j++)px(p.skin,ax-3+j*2,ay+25,1,5)}}
@@ -52,7 +54,7 @@ function sprite(id,pose,step){
   px('#ffffff',35,16+jump,4,3);px(p.eyes,37,16+jump,2,3);
   px(p.shade,34,23+jump,7,2);
  }
- if(pose==='special'){px('#f7ec88',52,20,6,6);px('#ffffff',54,22,2,2);px('#b26aff',58,17,4,4)}
+ if(pose==='special'){px(jack?'#b7d5ff':'#f7ec88',55,19,6,6);px('#ffffff',57,21,2,2);px(jack?'#8b73d8':'#b26aff',59,15,4,4)}
  cache.set(key,c);return c;
 }
 export function drawPixelFighter(ctx,f,id,time=0,ground=445){
