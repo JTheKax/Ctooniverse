@@ -555,56 +555,52 @@ function buildCleanAvatar(){
  }else{
   // Family-specific facial sculpting, placed relative to each head's actual depth.
   const faceZ=style.head[2];
-  if(model==='anime'||model==='hero'){
-   ballAt(skin,0,headY-.29,faceZ*.60,.31,.24,.22);
-   for(const side of [-1,1]){
-    const brow=part(avatar,new THREE.BoxGeometry(model==='hero'?.23:.19,.045,.045),hair,side*.25,headY+.32,faceZ*.90);
-    brow.rotation.z=side*(model==='hero'?.20:.09);
-    ballAt(skin,side*.38,headY-.20,faceZ*.55,.19,.15,.16);
-   }
-   ballAt(skin,0,headY-.11,faceZ+.035,.09,.17,.12);
-   ballAt(skin,0,headY-.40,faceZ*.58,.22,.12,.18);
-  }else if(model==='chibi'){
-   for(const side of [-1,1])ballAt(skin,side*.49,headY-.25,faceZ*.64,.24,.17,.17);
-   ballAt(skin,0,headY-.42,faceZ*.58,.30,.16,.19);
-  }else if(model==='southpark'){
-   // A flattened face and shallow button nose keep this family deliberately graphic.
-   ballAt(skin,0,headY-.31,faceZ*.62,.56,.19,.15);
-   ballAt(skin,0,headY-.12,faceZ+.015,.075,.075,.045);
-  }else if(model==='simpsons'){
-   ballAt(skin,0,headY-.28,faceZ+.15,.23,.18,.21);
-   ballAt(skin,0,headY-.49,faceZ+.17,.30,.10,.17);
+  // Keep the face as one sculpted head; avoid intersecting cheek, jaw and nose spheres.
+  // Small, shallow details follow each family's proportions.
+  if(model==='simpsons'){
+   ballAt(skin,0,headY-.31,faceZ*.92,.22,.12,.10);
   }else if(model==='classic'){
-   for(const side of [-1,1])ballAt(skin,side*.36,headY-.29,faceZ*.68,.24,.22,.21);
-   ballAt(skin,0,headY-.20,faceZ+.06,.16,.16,.16);
+   ballAt(skin,0,headY-.19,faceZ*.91,.12,.10,.08);
+  }else if(model==='anime'||model==='hero'){
+   for(const side of [-1,1]){
+    const brow=part(avatar,new THREE.CapsuleGeometry(.021,.13,4,8),hair,side*.25,headY+.32,faceZ*.96);
+    brow.rotation.z=side*.16;
+   }
   }
-  // A single coherent hair system: no duplicate caps or intersecting extra face layers.
+  // Curved, tapered locks grown from a fitted scalp instead of stacked cones.
   if(v.style!=='bald'){
-   ballAt(hair,0,headY+style.head[1]*.69,-.09,style.head[0]*1.02,.25,style.head[2]*.91);
    const hairstyle=v.style||'swoop';
-   const count=hairstyle==='locs'?12:hairstyle==='curls'?12:hairstyle==='mohawk'?5:9;
-   for(let i=0;i<count;i++){
-    const t=(i/(count-1)-.5)*2.25;
+   const scalp=ballAt(hair,0,headY+style.head[1]*.72,-.065,style.head[0]*1.005,.245,style.head[2]*.98);
+   const strand=(material,points,radius)=>{
+    const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));
+    return part(avatar,new THREE.TubeGeometry(curve,12,radius,7,false),material,0,0,0);
+   };
+   const n=hairstyle==='locs'?11:hairstyle==='curls'?12:hairstyle==='mohawk'?5:9;
+   for(let i=0;i<n;i++){
+    const t=(i/(n-1)-.5)*1.9;
     const x=Math.sin(t)*style.head[0]*.83;
-    const z=Math.cos(t)*style.head[2]*.78;
-    if(hairstyle==='mohawk'&&Math.abs(x)>.24)continue;
-    const length=hairstyle==='bob'?.57:hairstyle==='locs'?.67:hairstyle==='curls'?.34:hairstyle==='spikes'?.48:.29;
+    const z=Math.cos(t)*style.head[2]*.89;
+    const rootY=headY+style.head[1]*.80;
+    const tint=i%5===0?accent:hair;
     if(hairstyle==='curls'){
-     ballAt(i%4===0?accent:hair,x,headY+style.head[1]*.78-length*.22,z,.17,.17,.17);
-     ballAt(hair,x,headY+style.head[1]*.58-length*.40,z+.06,.14,.14,.14);
+     for(let k=0;k<2;k++)ballAt(tint,x+(k-.5)*.12,rootY-.17-k*.13,z+.035,.12,.12,.12);
+    }else if(hairstyle==='locs'||hairstyle==='bob'){
+     const length=hairstyle==='locs'?.53:.43;
+     strand(tint,[[x,rootY,z-.10],[x*1.06,rootY-.12,z+.015],[x*1.09,rootY-length,z+.035]],hairstyle==='locs'?.07:.095);
+    }else if(hairstyle==='mohawk'){
+     const spike=part(avatar,new THREE.ConeGeometry(.125,.38,12),tint,x*.25,rootY+.25,-.06);
+     spike.rotation.z=-t*.16;
     }else{
-     const lock=part(avatar,new THREE.ConeGeometry(hairstyle==='locs'?.085:.13,length,10),i%4===0?accent:hair,x,headY+style.head[1]*.82-length*.32,z);
-     lock.rotation.z=-t*(hairstyle==='swoop'?.36:.16);
+     const sweep=hairstyle==='swoop'?.18:hairstyle==='undercut'?.10:.04;
+     strand(tint,[[x,rootY,z-.16],[x-sweep,rootY-.08,z+.04],[x-sweep*1.5,rootY-.25,z+.09]],.085);
     }
    }
-   if(hairstyle==='undercut'){
-    ballAt(accent,0,headY+style.head[1]*.84,.03,style.head[0]*.76,.085,style.head[2]*.70);
+   if(hairstyle==='spikes')for(let i=-2;i<=2;i++){
+    const spike=part(avatar,new THREE.ConeGeometry(.13,.38,12),i===1?accent:hair,i*.19,headY+style.head[1]+.12,-.07);
+    spike.rotation.z=i*.19;
    }
-   if(hairstyle==='spikes'||hairstyle==='mohawk')for(let i=-2;i<=2;i++){
-    const spike=part(avatar,new THREE.ConeGeometry(.16,.47,9),i%2?accent:hair,i*(hairstyle==='mohawk'?.085:.20),headY+style.head[1]+.20,0);
-    spike.rotation.z=i*.13;
-   }
-   if(v.style==='ponytail')ballAt(hair,0,headY+.18,-style.head[2]-.23,.22,.42,.22);
+   if(hairstyle==='ponytail')strand(hair,[[0,headY+.48,-style.head[2]*.65],[0,headY+.22,-style.head[2]-.23],[0,headY-.22,-style.head[2]-.23]],.16);
+   if(hairstyle==='undercut')scalp.scale.y=.15;
   }
   if(v.accessory==='glasses')for(const side of [-1,1])part(avatar,new THREE.TorusGeometry(style.eye*1.22,.026,8,28),gold,side*(model==='chibi'?.34:.25),headY+.10,style.head[2]*.84+.11);
   if(v.accessory==='crown')part(avatar,new THREE.CylinderGeometry(.35,.43,.27,8),gold,0,headY+style.head[1]+.27,0);
@@ -620,48 +616,19 @@ function buildCleanAvatar(){
   if(outfit==='jacket')boxAt(gold,0,1.92,.40,.035,.54,.03);
   if(outfit==='legendary'||v.outfit==='armor'||model==='hero')ballAt(gold,0,2.11,.43,.26,.19,.06);
  }
- // Anime realism pass: soft fabric folds, layered hair strands and detailed footwear.
+ // Restrained fabric details: avoid decorative strips floating over the torso.
  if(model==='anime'){
-  const fabricShadow=mat('#3c4382'),stitch=mat('#c3a9ee'),sole=mat('#e9e8f0');
+  const stitch=mat('#c3a9ee');
   for(const side of [-1,1]){
-   // Thin, angled fabric folds follow the shirt instead of floating across it.
-   for(let i=0;i<3;i++){
-    const fold=part(avatar,new THREE.CapsuleGeometry(.012,.16+i*.035,3,8),
-      i===1?stitch:fabricShadow,side*(.18+i*.085),1.78+i*.13,.365-i*.016);
-    fold.rotation.z=side*(.32+i*.12);
-   }
-   // Hair grows in tapered swept clumps with individual smaller strands.
-   if(v.style!=='bald'){
-    for(let i=0;i<5;i++){
-     const angle=(i/4-.5)*1.55;
-     const strand=part(avatar,new THREE.ConeGeometry(.062,.34+i*.025,12),
-       i===2?accent:hair,side*(.13+i*.075),headY+.57-i*.035,.31);
-     strand.rotation.z=side*(.38+angle*.25);
-     strand.rotation.x=-.18;
-    }
-   }
-   // A wristband and cuff give the arm a believable sleeve transition.
-   const wrist=part(avatar,new THREE.TorusGeometry(.125,.033,8,24),stitch,
-     side*(style.body[0]*.95+.16),1.39,.055);
-   wrist.rotation.x=Math.PI/2;
+   const cuff=part(avatar,new THREE.TorusGeometry(.125,.023,8,24),stitch,side*.82,1.47,.055);
+   cuff.rotation.x=Math.PI/2;
   }
-  // Neckline seam and a central zipper-like stitch.
-  const neckline=part(avatar,new THREE.TorusGeometry(.19,.024,8,32,Math.PI),stitch,0,2.58,.24);
-  neckline.rotation.x=Math.PI*.13;
-  const zip=part(avatar,new THREE.CapsuleGeometry(.012,.29,3,8),stitch,0,2.14,.39);
-  // Subtle cheek shading made of translucent materials.
-  const blush=new THREE.MeshStandardMaterial({color:'#ce7d88',transparent:true,opacity:.26,roughness:1,depthWrite:false});
-  for(const side of [-1,1])ballAt(blush,side*.36,headY-.20,.438,.15,.07,.014);
  }
  // Distinctive sculpted accessories and silhouettes for every model family.
  // These meshes are built into the active preview, not legacy unused builders.
  if(model==='anime'){
   const trim=mat('#f0c5ff');
-  for(const side of [-1,1]){
-   const sash=boxAt(trim,side*.33,1.66,.35,.085,.42,.07);sash.rotation.z=side*.16;
-   ballAt(gold,side*.57,2.32,.18,.12,.11,.12);
-  }
-  boxAt(trim,0,1.50,.39,.62,.075,.06);
+  for(const side of [-1,1])ballAt(shirt,side*.58,2.30,0,.19,.16,.22);
  }else if(model==='hero'){
   for(const side of [-1,1]){
    const pauldron=ballAt(metal,side*.86,2.43,.02,.35,.19,.42);
