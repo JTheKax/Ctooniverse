@@ -12,7 +12,7 @@ function renderProgress(catalog,owned){
  for(const item of catalog){
   const category=item.parent_series||'Misc',name=item.series||'Uncategorized',key=category+' / '+name;
   if(!sets.has(key))sets.set(key,{category,name,total:0,owned:0});
-  const group=sets.get(key);group.total++;if((owned.get(item.id)||0)>0)group.owned++;
+  const group=sets.get(key);group.total++;if((owned.get(String(item.id))||0)>0)group.owned++;
  }
  const totalOwned=catalog.filter(item=>(owned.get(item.id)||0)>0).length;
  const percent=catalog.length?Math.round(totalOwned/catalog.length*100):0;
@@ -78,17 +78,15 @@ async function load(){
   const {data:{user},error:authError}=await db.auth.getUser();
   if(current!==sequence)return;
   if(authError||!user){say('Sign in to view your collection.');empty('Your personal collection is available after you sign in.','Sign In','login.html');return}
-  const {data:owned,error:ownedError}=await db.from('player_ctoons').select('ctoon_id,quantity').eq('user_id',user.id).gt('quantity',0);
-  if(ownedError)throw ownedError;
+  const owned=[];for(let offset=0;;offset+=500){const {data,error}=await db.from('player_ctoons').select('ctoon_id,quantity').eq('user_id',user.id).gt('quantity',0).order('ctoon_id').range(offset,offset+499);if(error)throw error;owned.push(...(data||[]));if(current!==sequence)return;if(!data||data.length<500)break;}
   if(current!==sequence)return;
-  const {data:catalog,error:catalogError}=await db.from('ctoon_catalog').select('id,name,rarity,image_path,series,parent_series').order('name');
-  if(catalogError)throw catalogError;
+  const catalog=[];for(let offset=0;;offset+=500){const {data,error}=await db.from('ctoon_catalog').select('id,name,rarity,image_path,series,parent_series').order('name').order('id').range(offset,offset+499);if(error)throw error;catalog.push(...(data||[]));if(current!==sequence)return;if(!data||data.length<500)break;}
   if(current!==sequence)return;
-  const ownedMap=new Map((owned||[]).map(x=>[x.ctoon_id,Number(x.quantity)||0]));
+  const ownedMap=new Map();for(const x of owned){const id=String(x.ctoon_id);ownedMap.set(id,(ownedMap.get(id)||0)+(Number(x.quantity)||0));}
   renderProgress(catalog||[],ownedMap);
   if(!owned?.length){say('No CToons collected yet. Your set progress is shown above.');empty('Your collection is empty. Visit the Shop to collect your first CToon!','Browse CToons','shop.html#ctoon-store');return}
-  const byId=new Map((catalog||[]).map(item=>[item.id,item]));
-  rows=owned.map(row=>({item:byId.get(row.ctoon_id),quantity:Number(row.quantity)||0})).filter(row=>row.item&&row.quantity>0);
+  const byId=new Map(catalog.map(item=>[String(item.id),item]));
+  rows=[...ownedMap].map(([id,quantity])=>({item:byId.get(id),quantity})).filter(row=>row.item&&row.quantity>0);
   const copies=rows.reduce((n,row)=>n+row.quantity,0);
   unique.textContent=rows.length.toLocaleString();total.textContent=copies.toLocaleString();summary.hidden=false;
   for(const [control,values] of [[seriesFilter,[...new Set(rows.map(x=>x.item.series).filter(Boolean))]],[rarityFilter,[...new Set(rows.map(x=>x.item.rarity).filter(Boolean))]]]){
