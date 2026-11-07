@@ -3,33 +3,88 @@ const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable
 const fallback=[['tee','Basic T-shirt','Tops',100,'👕'],['jeans','Classic Jeans','Pants',150,'👖'],['sneakers','Arcade Sneakers','Shoes',200,'👟'],['hoodie','Neon Hoodie','Tops',300,'🧥'],['jacket','Street Jacket','Tops',500,'🧥'],['outfit','Arcade Outfit','Outfits',1000,'🕺'],['legendary','Legendary Outfit','Outfits',5000,'✨']].map(([id,name,category,price_coins,emoji])=>({id,name,category,price_coins,emoji}));
 import * as THREE from 'https://esm.sh/three@0.170.0';
 const fitting=document.querySelector('#clothing-fitting-room');
-let renderer,scene,camera,avatarGroup,shirt,pants,shoes;
+let renderer,scene,camera,avatarGroup,garments={},modelReady=false;
+const clothColors={tee:0x36cfff,hoodie:0x8b50e9,jacket:0xd047a8,jeans:0x3566a7,sneakers:0xff53a8,outfit:0xf3bb43,legendary:0xffd65c};
 function initFitting(){
  if(!fitting)return;
  try{
- scene=new THREE.Scene();scene.background=new THREE.Color('#17143b');
- camera=new THREE.PerspectiveCamera(35,1,0.1,100);camera.position.set(0,1.55,5.6);camera.lookAt(0,1.1,0);
- renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));fitting.append(renderer.domElement);
- scene.add(new THREE.HemisphereLight(0xc7c9ff,0x302050,2.2));const key=new THREE.DirectionalLight(0xffffff,2.5);key.position.set(3,6,5);scene.add(key);
+ scene=new THREE.Scene();scene.background=new THREE.Color(0x15112d);
+ camera=new THREE.PerspectiveCamera(34,1,.1,50);camera.position.set(0,1.58,5.7);camera.lookAt(0,1.45,0);
+ renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power'});
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.7));renderer.outputColorSpace=THREE.SRGBColorSpace;
+ fitting.append(renderer.domElement);
+ scene.add(new THREE.HemisphereLight(0xd8e4ff,0x37234c,2.5));
+ const key=new THREE.DirectionalLight(0xffffff,3);key.position.set(3,5,5);scene.add(key);
+ const rim=new THREE.DirectionalLight(0x9966ff,2);rim.position.set(-3,3,-4);scene.add(rim);
  avatarGroup=new THREE.Group();scene.add(avatarGroup);
- const skin=new THREE.MeshStandardMaterial({color:0xc68d6d,roughness:.8});
- const material=(color)=>new THREE.MeshStandardMaterial({color,roughness:.65});
- function part(geometry,mat,x,y,z,parent=avatarGroup){const mesh=new THREE.Mesh(geometry,mat);mesh.position.set(x,y,z);parent.add(mesh);return mesh}
- const sphere=(radius,mat,x,y,z)=>part(new THREE.SphereGeometry(radius,20,16),mat,x,y,z);
- sphere(.31,skin,0,2.55,0);part(new THREE.CylinderGeometry(.13,.15,.19,16),skin,0,2.22,0);
- shirt=part(new THREE.CylinderGeometry(.34,.27,.85,20),material(0x9e68fa),0,1.76,0);
- for(const x of [-.43,.43]){const arm=part(new THREE.CylinderGeometry(.12,.11,.78,14),skin,x,1.68,0);arm.rotation.z=x>0?.18:-.18}
- pants=new THREE.Group();avatarGroup.add(pants);
- for(const x of [-.16,.16])part(new THREE.CylinderGeometry(.15,.13,.85,16),material(0x333b8a),x,.89,0,pants);
- shoes=new THREE.Group();avatarGroup.add(shoes);
- for(const x of [-.16,.16])part(new THREE.BoxGeometry(.3,.18,.49),material(0xe5e8ff),x,.38,.12,shoes);
- const eyes=material(0x21182e);for(const x of [-.11,.11])sphere(.035,eyes,x,2.59,.286);
- let dragging=false,lastX=0;renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>dragging=false);renderer.domElement.addEventListener('pointermove',e=>{if(dragging){avatarGroup.rotation.y+=(e.clientX-lastX)*.012;lastX=e.clientX}});
- function resize(){const w=fitting.clientWidth;renderer.setSize(w,Math.min(400,Math.max(270,w*.85)),false);camera.aspect=w/renderer.domElement.clientHeight;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(fitting);resize();
- let running=true;function animate(){if(!running)return;requestAnimationFrame(animate);renderer.render(scene,camera)}animate();
- }catch(e){fitting.textContent='3D preview unavailable on this device.'}
+ const mat=(color,metalness=0)=>new THREE.MeshStandardMaterial({color,roughness:.7,metalness});
+ const skin=mat(0xb98262),hair=mat(0x252033),eye=mat(0x181626),white=mat(0xf9f3ed);
+ function mesh(geo,m,x,y,z,parent=avatarGroup){const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);parent.add(o);return o}
+ const ball=(x,y,z,sx,sy,sz,m,parent)=>{const o=mesh(new THREE.SphereGeometry(1,24,16),m,x,y,z,parent);o.scale.set(sx,sy,sz);return o};
+ function limb(a,b,r1,r2,m,parent=avatarGroup){const d=new THREE.Vector3(...b).sub(new THREE.Vector3(...a));const o=mesh(new THREE.CylinderGeometry(r1,r2,d.length(),16),m,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,parent);o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());return o}
+ // Anatomical silhouette: tapered torso, separate joints, hands, feet and facial details.
+ const neck=mesh(new THREE.CylinderGeometry(.105,.12,.19,18),skin,0,2.29,0);
+ ball(0,2.61,0,.275,.34,.26,skin);
+ ball(0,2.82,-.04,.29,.17,.26,hair);
+ for(const x of [-1,1]){
+  ball(x*.27,2.78,-.06,.14,.16,.20,hair);
+  ball(x*.103,2.62,.245,.065,.045,.023,white);
+  ball(x*.103,2.62,.265,.031,.037,.014,eye);
+  mesh(new THREE.BoxGeometry(.12,.025,.025),hair,x*.105,2.73,.254);
+  ball(x*.278,2.55,.005,.055,.09,.038,skin);
+  ball(x*.355,2.05,0,.15,.15,.15,skin);
+  limb([x*.355,2.06,0],[x*.42,1.65,0],.125,.10,skin);
+  limb([x*.42,1.65,0],[x*.45,1.29,.065],.095,.075,skin);
+  ball(x*.45,1.23,.075,.092,.13,.08,skin);
+  limb([x*.15,1.16,0],[x*.16,.59,0],.16,.12,skin);
+  limb([x*.16,.59,0],[x*.16,.29,.035],.12,.09,skin);
+ }
+ ball(0,2.52,.256,.048,.055,.04,skin);
+ mesh(new THREE.BoxGeometry(.13,.018,.025),mat(0x8e4b52),0,2.42,.254);
+ ball(0,1.29,0,.28,.19,.20,skin);
+ const ground=mesh(new THREE.CylinderGeometry(1.1,1.1,.07,48),mat(0x342569,.2),0,.055,0);
+ const ring=mesh(new THREE.TorusGeometry(.95,.025,8,48),mat(0x9e77ff,.5),0,.105,0);ring.rotation.x=Math.PI/2;
+ function group(){const g=new THREE.Group();avatarGroup.add(g);return g}
+ garments.tops=group();garments.pants=group();garments.shoes=group();garments.details=group();
+ const topMat=mat(0x9e68fa),pantsMat=mat(0x293e78),shoeMat=mat(0xe6e9ff);
+ garments.topMat=topMat;garments.pantsMat=pantsMat;garments.shoeMat=shoeMat;
+ const torso=mesh(new THREE.CylinderGeometry(.33,.26,.82,24),topMat,0,1.88,0,garments.tops);
+ ball(0,2.18,0,.35,.16,.21,topMat,garments.tops);
+ for(const x of [-1,1]){
+  limb([x*.34,2.16,0],[x*.39,1.94,0],.16,.135,topMat,garments.tops);
+  limb([x*.15,1.20,0],[x*.16,.65,0],.167,.13,pantsMat,garments.pants);
+  ball(x*.16,.28,.12,.18,.13,.31,shoeMat,garments.shoes);
+  mesh(new THREE.BoxGeometry(.29,.035,.47),mat(0xffffff),x*.16,.17,.16,garments.shoes);
+ }
+ ball(0,1.42,0,.29,.18,.22,pantsMat,garments.pants);
+ garments.hood=ball(0,2.27,-.18,.33,.23,.22,topMat,garments.details);
+ garments.hood.visible=false;
+ garments.trim=mesh(new THREE.BoxGeometry(.045,.64,.012),mat(0xf5d6ff),0,1.85,.27,garments.details);
+ garments.trim.visible=false;
+ garments.badge=ball(0,2.04,.286,.07,.07,.02,mat(0xffe380,.6),garments.details);
+ garments.badge.visible=false;
+ let lastX=0,dragging=false;
+ const canvas=renderer.domElement;
+ canvas.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;canvas.setPointerCapture(e.pointerId)});
+ canvas.addEventListener('pointerup',()=>dragging=false);
+ canvas.addEventListener('pointercancel',()=>dragging=false);
+ canvas.addEventListener('pointermove',e=>{if(dragging){avatarGroup.rotation.y+=(e.clientX-lastX)*.012;lastX=e.clientX}});
+ function resize(){const w=fitting.clientWidth||320;const h=Math.min(440,Math.max(300,w*.95));renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+ const observer=new ResizeObserver(resize);observer.observe(fitting);resize();
+ modelReady=true;
+ let visible=true;document.addEventListener('visibilitychange',()=>visible=!document.hidden);
+ function animate(){requestAnimationFrame(animate);if(visible)renderer.render(scene,camera)}animate();
+ }catch(e){fitting.textContent='3D preview unavailable on this device.';console.warn('Avatar fitting room:',e)}
 }
-function tryOn(item){if(!shirt)return;const colors={tee:0x41d9ff,hoodie:0x8c46eb,jacket:0xd046a6,outfit:0xf3bb43,legendary:0xf5d84b,jeans:0x2863bc,sneakers:0xff52d0};const color=colors[item.id]||0x9e68fa;const targets=item.category==='Pants'?[...pants.children]:item.category==='Shoes'?[...shoes.children]:[shirt];for(const mesh of targets)mesh.material.color.setHex(color);avatarGroup.rotation.y=0}
+function tryOn(item){
+ if(!modelReady)return;
+ const color=clothColors[item.id]||0x9e68fa;
+ if(item.category==='Pants')garments.pantsMat.color.setHex(color);
+ else if(item.category==='Shoes')garments.shoeMat.color.setHex(color);
+ else {garments.topMat.color.setHex(color);if(item.category==='Outfits'){garments.pantsMat.color.setHex(item.id==='legendary'?0x492a88:0x272e5c);garments.shoeMat.color.setHex(item.id==='legendary'?0xffd65c:0xffffff)}}
+ garments.hood.visible=item.id==='hoodie';garments.trim.visible=item.id==='jacket'||item.category==='Outfits';
+ garments.badge.visible=item.id==='legendary';avatarGroup.rotation.y=0;
+}
 initFitting();
 const grid=document.querySelector('#clothing-grid'),balanceEl=document.querySelector('#clothing-balance'),preview=document.querySelector('#clothing-preview');
 let items=fallback,owned=new Set(),user=null,balance=null,filter='All',ready=false;
