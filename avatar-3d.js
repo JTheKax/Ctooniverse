@@ -595,12 +595,19 @@ function buildCleanAvatar(){
     const mitten=model==='southpark';
     const handMaterial=glove?white:mitten?shirt:skin;
     const handWidth=style.arm*(model==='hero'?.72:model==='simpsons'?.70:model==='classic'?.90:.82);
+    // Fitted wrist bridge prevents floating hands across every avatar family.
+    const wristX=side*.13;
+    loftBody(armPivot,handMaterial,[
+     [-armReach-.105,handWidth*.57,style.arm*.43,wristX],
+     [-armReach-.045,handWidth*.62,style.arm*.47,wristX],
+     [-armReach+.035,handWidth*.72,style.arm*.52,wristX]
+    ],24);
     const palmY=-armReach-.105;
     if(mitten){
-     part(armPivot,ball,handMaterial,side*.13,palmY-.04,.055,handWidth,.16,style.arm*.70);
-     part(armPivot,ball,handMaterial,side*.13-side*handWidth*.70,palmY+.02,.13,handWidth*.40,.09,handWidth*.40);
+     part(armPivot,ball,handMaterial,wristX,palmY-.065,.035,handWidth*.93,.14,style.arm*.66);
+     part(armPivot,ball,handMaterial,wristX-side*handWidth*.76,palmY-.025,.11,handWidth*.38,.095,handWidth*.38);
     }else{
-     buildDetailedHand(armPivot,handMaterial,side,-armReach,side*.13,handWidth,style.arm*.67,model==='chibi'?.80:1);
+     buildDetailedHand(armPivot,handMaterial,side,-armReach,wristX,handWidth,style.arm*.67,model==='chibi'?.80:1);
     }
    }
    avatarRig.arms.push({joint:armPivot,side});
