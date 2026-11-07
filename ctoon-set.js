@@ -33,7 +33,7 @@ function draw(){
 async function load(){
  if(!category||!series){el('set-status').textContent='Select a set from Sets Overview.';return}
  try{
-  const r=await db.from('ctoon_catalog').select('id,name,rarity,image_path,is_for_sale').eq('parent_series',category).eq('series',series).order('name');
+  const r=await db.from('ctoon_catalog').select('id,name,rarity,image_path,is_for_sale').eq('series',series).order('name');
   if(r.error)throw r.error;items=r.data||[];
   const auth=await db.auth.getUser();user=auth.data?.user||null;
   if(user&&items.length){
@@ -42,7 +42,7 @@ async function load(){
   }
   const count=items.filter(x=>(owned.get(x.id)||0)>0).length,percent=items.length?Math.round(count/items.length*100):0;
   el('set-owned').textContent=user?count:'—';el('set-total').textContent=items.length;el('set-percent').textContent=user?percent+'%':'—';el('set-progress').value=user?percent:0;
-  draw();
+  draw();if(!items.length)el('set-status').textContent='Coming Soon — no collectible CToons have been added to this set yet.';
  }catch(e){el('set-status').textContent='Unable to load set: '+e.message}
 }
 for(const id of ['set-filter','set-search'])el(id).addEventListener('input',draw);
