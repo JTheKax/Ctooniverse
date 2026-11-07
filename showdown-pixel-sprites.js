@@ -48,7 +48,7 @@ function sprite(id,pose,step){
  const c=document.createElement('canvas');c.width=96;c.height=112;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
  const px=(color,a,b,w,h)=>{x.fillStyle=color;x.fillRect(Math.round(a),Math.round(b),Math.round(w),Math.round(h))};
  const outline='#14111d';
- const polygon=(color,points)=>{x.fillStyle=color;x.beginPath();points.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.closePath();x.fill()};const walking=pose==='walk'?(step===0?-4:step===1?0:4):0,low=pose==='crouch'?9:0,jump=pose==='jump'?-4:0;
+ const polygon=(color,points)=>{x.fillStyle=color;x.beginPath();points.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.closePath();x.fill()};const walking=['walk','run'].includes(pose)?(step===0?-5:step===1?0:5):0,low=pose==='crouch'?9:0,jump=pose==='jump'?-4:0;
 
  const attacking=['punch','kick','special'].includes(pose),kick=pose==='kick',guard=pose==='block';
  const attackReach=step===0?3:step===1?9:15;
@@ -98,7 +98,7 @@ function sprite(id,pose,step){
   px('#ffffff',35,16+jump,5,3);px(p.eyes,38,16+jump,2,3);px('#6b3929',33,14+jump,8,1);
   px(p.shade,33,24+jump,7,2);px('#713a2b',35,27+jump,5,1);
  }
- if(f.stun>0&&f.hp>0){ctx.globalAlpha=.82;}
+ if(f.stun>0&&f.hp>0){ctx.globalAlpha=.88;}
  if(pose==='special'){px(jack?'#b7d5ff':'#f7ec88',55,19,6,6);px('#ffffff',57,21,2,2);px(jack?'#8b73d8':'#b26aff',59,15,4,4)}
  // Distinctive shaded outlines, muscle/suit highlights and secondary motion.
  if(jack){
@@ -123,7 +123,10 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
  if(playback.pose!==pose){playback.pose=pose;playback.start=time;spritePlayback.set(f,playback)}
  const fps=pose==='idle'?4:pose==='walk'?10:pose==='run'?13:pose==='ko'?5:pose==='special'?9:14;
  const index=Math.floor(Math.max(0,time-playback.start)*fps);
- const frame=['ko','hurt','jump','crouch','block','punch','kick','special'].includes(pose)?Math.min(2,index):index%3;
+ const attackDuration=pose==='special'?.48:pose==='kick'?.33:.24;
+ // Synchronize anticipation, impact and recovery with the actual combat attack timer.
+ const attackProgress=Math.max(0,Math.min(1,1-(f.attack||0)/attackDuration));
+ const frame=['punch','kick','special'].includes(pose)?(attackProgress<.22?0:attackProgress<.78?1:2):['ko','hurt','jump','crouch','block'].includes(pose)?Math.min(2,index):index%3;
  // Generate the procedural fallback only when the illustrated atlas is unavailable.
  const illustrated=atlases.get(id)?.ready===true;
  ctx.save();ctx.imageSmoothingEnabled=false;
