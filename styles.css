@@ -2061,3 +2061,38 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
   color:#fff!important;
   background:linear-gradient(90deg,#1d4ed8,#6d28d9)!important;
 }
+
+
+/* Hand-drawn comic display windows — visual-only, 2026-11-07.
+   Keep card markup, dimensions, purchase and inspection interactions intact. */
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card{
+  position:relative!important;isolation:isolate;overflow:hidden;
+  border:4px solid #19153f!important;border-radius:14px 19px 13px 20px!important;
+  background:linear-gradient(145deg,#2d2385 0%,#5929a6 52%,#251958 100%)!important;
+  box-shadow:4px 5px 0 #100d30,7px 8px 0 #f8ce39,0 0 18px #795aff88!important;
+  transform:rotate(-.25deg);transition:transform .18s ease,box-shadow .18s ease;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card:nth-child(3n+2){transform:rotate(.35deg)}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card:is(:hover,:focus-visible,:focus-within){
+  transform:translateY(-4px) rotate(0deg);box-shadow:4px 7px 0 #100d30,7px 10px 0 #ffdb58,0 0 22px #c78dffbb!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-art{
+  position:relative;overflow:hidden;border:3px solid #151036!important;border-radius:9px 13px 8px 12px!important;
+  background:repeating-linear-gradient(135deg,#42259e 0 13px,#6234ba 13px 16px,#42259e 16px 27px)!important;
+  box-shadow:inset 0 0 0 3px #f6cb44,3px 3px 0 #11113d!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-art img{object-fit:contain!important}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-details{
+  background:linear-gradient(170deg,#e5edff,#c8d8ff)!important;color:#18133d!important;
+  border:3px solid #19153f!important;border-radius:10px 8px 13px 9px!important;
+  box-shadow:3px 3px 0 #f4c84b!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-name{color:#18133d!important;font-weight:900!important;text-shadow:1px 1px 0 #fff!important}
+:is(.ctoons-featured-grid,.collection-grid) :is(.ctoon-shop-rarity,.collection-series,.collection-quantity,.ctoon-shop-price,.ctoon-shop-status){color:#32265d!important}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-owned{
+  border:2px solid #151036!important;border-radius:8px 11px 8px 12px!important;
+  box-shadow:2px 3px 0 #151036!important;font-weight:800!important;
+}
+@media(prefers-reduced-motion:reduce){
+  :is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card{transition:none}
+}
