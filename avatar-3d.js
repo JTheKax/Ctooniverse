@@ -394,7 +394,7 @@ function buildCleanAvatar(){
  const ballAt=(m,x,y,z,sx,sy,sz)=>part(avatar,ball,m,x,y,z,sx,sy,sz);
  const boxAt=(m,x,y,z,w,h,d)=>part(avatar,new THREE.BoxGeometry(w,h,d),m,x,y,z);
  const style={
-  anime:{head:[.57,.70,.47],body:[.68,1.42,.43],arm:.19,leg:.23,eye:.145},
+  anime:{head:[.54,.67,.45],body:[.68,1.42,.43],arm:.165,leg:.225,eye:.125},
   hero:{head:[.52,.62,.46],body:[.87,1.62,.49],arm:.26,leg:.28,eye:.13},
   classic:{head:[.74,.75,.53],body:[.53,1.32,.38],arm:.13,leg:.16,eye:.24},
   chibi:{head:[.96,.98,.68],body:[.53,.92,.39],arm:.17,leg:.20,eye:.30},
@@ -464,8 +464,8 @@ function buildCleanAvatar(){
    ballAt(skin,0,headY-.30,.35,.42,.26,.25);
   }
   for(const side of [-1,1]){
-   const x=side*(model==='southpark'?.29:model==='chibi'?.34:.24);
-   const eyeZ=style.head[2]*.84;
+   const x=side*(model==='southpark'?.29:model==='chibi'?.34:model==='anime'?.205:.24);
+   const eyeZ=style.head[2]*(model==='anime'?.96:.84);
    const eyeball=ballAt(white,x,headY+.10,eyeZ,style.eye,style.eye*1.28,.085);
    // Blink the whole eye (sclera, iris and pupil) about the same center.
    const eyeParts=[eyeball,
@@ -477,29 +477,27 @@ function buildCleanAvatar(){
     mesh.userData.eyeOffsetY=mesh.position.y-(headY+.10);
     avatarRig.eyes.push(mesh);
    }
-   ballAt(skin,side*(style.head[0]+.035),headY-.10,0,.13,.19,.13);
+   if(model!=='anime')ballAt(skin,side*(style.head[0]+.035),headY-.10,0,.13,.19,.13);
   }
-  ballAt(skin,0,headY-.15,style.head[2]*.99,.09,.10,.09);
-  ballAt(dark,0,headY-.37,style.head[2]*.91,.17,.025,.025);
+  if(model!=='anime'){
+   ballAt(skin,0,headY-.15,style.head[2]*.99,.09,.10,.09);
+   ballAt(dark,0,headY-.37,style.head[2]*.91,.17,.025,.025);
+  }
  }
- // Anime benchmark: sculpted eyelids, shaped brows, subtle lips and ear rims.
+ // Anime facial details use one aligned set of brows, ears, nose and mouth.
+ // Avoid duplicate ears, eyebrows and overlapping eyelid toruses.
  if(model==='anime'){
-  const browMaterial=hair;
-  const lip=mat('#b66c78');
+  const lip=mat('#9f5b68');
   for(const side of [-1,1]){
-   const brow=part(avatar,new THREE.CapsuleGeometry(.026,.15,5,10),browMaterial,side*.235,headY+.30,.444);
-   brow.rotation.z=side*.18;
-   const lid=part(avatar,new THREE.TorusGeometry(.14,.014,7,32,Math.PI),skin,side*.24,headY+.10,.479);
-   lid.rotation.z=Math.PI;
-   const earRim=ballAt(skin,side*.615,headY-.12,.005,.105,.17,.105);
-   ballAt(lip,side*.625,headY-.12,.095,.035,.075,.014);
+   const ear=ballAt(skin,side*.555,headY-.12,-.015,.085,.145,.09);
+   ear.rotation.z=-side*.12;
+   ballAt(lip,side*.567,headY-.13,.061,.018,.046,.011);
   }
-  ballAt(skin,0,headY-.11,.493,.075,.14,.105);
-  ballAt(lip,0,headY-.405,.422,.145,.024,.025);
-  // A fitted collar and seam panels read as fabric instead of floating boxes.
+  ballAt(skin,0,headY-.145,.448,.055,.075,.055);
+  ballAt(lip,0,headY-.365,.399,.095,.014,.014);
   const collar=mat('#c2ddf5');
   for(const side of [-1,1]){
-   const panel=part(avatar,new THREE.BoxGeometry(.25,.095,.12),collar,side*.17,2.55,.30);
+   const panel=part(avatar,new THREE.BoxGeometry(.22,.075,.085),collar,side*.15,2.55,.27);
    panel.rotation.z=side*.35;
   }
  }
@@ -531,7 +529,7 @@ function buildCleanAvatar(){
    }
   }
  }
- const shoulder=style.body[0]*.95;
+ const shoulder=style.body[0]*(model==='anime'?.88:.95);
  // Subtle anatomical collarbone volumes blend the upper arms into the torso.
  if(!robot && model!=='southpark'){
   for(const side of [-1,1]){
@@ -549,7 +547,7 @@ function buildCleanAvatar(){
    boxAt(shoe,side*.34,.20,.20,.52,.26,.72);
   }else{
    // Shoulder and hip pivot groups form an articulated procedural rig.
-   const armPivot=new THREE.Group();armPivot.position.set(side*shoulder,2.28,0);avatar.add(armPivot);
+   const armPivot=new THREE.Group();armPivot.position.set(side*shoulder,model==='anime'?2.30:2.28,0);avatar.add(armPivot);
    if(model==='anime'){
     // Smooth ring-loft arm with fitted sleeve, narrowing wrist and anatomical palm.
     const armSkin=skinnedLoft(armPivot,shirt,[
@@ -558,9 +556,9 @@ function buildCleanAvatar(){
      [-.57,style.arm*.91,style.arm*.89,side*.12],
      [-.49,style.arm*.88,style.arm*.87,side*.10],
      [-.37,style.arm*1.03,style.arm*.99,side*.07],
-     [-.20,style.arm*1.25,style.arm*1.19,side*.035],
-     [-.07,style.arm*1.29,style.arm*1.22,side*.01],
-     [-.01,style.arm*1.09,style.arm*1.11,0]
+     [-.20,style.arm*1.12,style.arm*1.10,side*.035],
+     [-.07,style.arm*1.16,style.arm*1.12,side*.01],
+     [-.01,style.arm*1.03,style.arm*1.05,0]
     ],-.53,36);
     avatarRig.skinnedLimbs.push({bone:armSkin.lowerBone,side,type:'arm'});
     // Attach both the wrist bridge and palm directly to the forearm bone.
@@ -572,7 +570,7 @@ function buildCleanAvatar(){
      [-.33,.078,.070,wristCenter],
      [-.275,.078,.070,wristCenter]
     ],28);
-    const animeHand=buildDetailedHand(forearm,skin,side,-.35,wristCenter,.112,.078,1.05);
+    const animeHand=buildDetailedHand(forearm,skin,side,-.35,wristCenter,.135,.082,1.08);
     // The bone's origin is at the elbow (shoulder-local y=-.53).
     // Thus local y=-.35 places the palm at shoulder-local y=-.88.
 
