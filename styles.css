@@ -2302,3 +2302,42 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 @media(max-width:330px){
  :is(.ctoons-featured-grid,.collection-grid){grid-template-columns:minmax(0,182px)!important}
 }
+
+
+/* CToon Clash shared custom illustrated card frame and arena art */
+.clash .tcg-card,.maker-preview{
+ position:relative!important;isolation:isolate!important;
+ border:5px solid #1b0e46!important;border-radius:17px 22px 16px 20px!important;
+ background:linear-gradient(155deg,#7c25bd 0%,#2d1d84 35%,#087bc3 68%,#591b91 100%)!important;
+ outline:3px solid #f5c447!important;outline-offset:-8px!important;
+ box-shadow:inset 0 0 0 3px #36caff,4px 5px 0 #100a32,0 0 14px #963cf188!important;
+}
+.clash .tcg-card::before,.maker-preview::before{
+ content:"✦ CTOON CLASH ⚡";display:block;flex:0 0 auto;
+ color:#ffdf54;font-weight:1000;font-size:clamp(8px,1vw,12px);line-height:1.25;
+ letter-spacing:.02em;text-align:center;text-shadow:1px 2px #190c51;
+ padding:3px 1px 5px;white-space:normal;
+}
+.clash .tcg-card-art,.maker-art{
+ position:relative!important;overflow:hidden!important;
+ background:
+ radial-gradient(circle at 74% 20%,#e4b5ff 0 7%,transparent 8%),
+ linear-gradient(160deg,transparent 0 45%,#24154d 45% 49%,transparent 49%),
+ repeating-linear-gradient(160deg,transparent 0 19px,#d68aff25 20px 21px),
+ linear-gradient(160deg,#43158d 0%,#5125a8 42%,#104e9b 75%,#19134d 100%)!important;
+ border:3px solid #ffd15a!important;border-radius:12px!important;
+ box-shadow:inset 0 0 0 2px #11133c,0 2px 0 #0a1235!important;
+}
+.clash .tcg-card-art::after,.maker-art::after{
+ content:"✧  ⚡  ✧";position:absolute;bottom:2px;right:5px;
+ color:#e2bdff;font-size:10px;pointer-events:none;text-shadow:0 0 5px #fff;
+}
+.clash .tcg-card strong,.maker-name{
+ color:#fff3bc!important;text-shadow:1px 2px #1d0c53;
+}
+.clash .tcg-card span,.clash .tcg-card small,.maker-stats span{
+ border-radius:7px!important;background:#141747cf!important;
+ color:#fff!important;border:1px solid #e6bc54!important;
+}
+.clash .tcg-card.selected{outline-color:#fff6a6!important}
+@media(max-width:650px){.clash .tcg-card::before{font-size:9px!important;letter-spacing:0!important}.clash-lane .tcg-card::before{font-size:7px!important}}
