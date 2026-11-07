@@ -619,18 +619,21 @@ function buildCleanAvatar(){
    if(model==='anime'){
     // Continuous thigh-to-ankle leg with sculpted knee and calf volumes.
     const legSkin=skinnedLoft(legPivot,pants,[
-     [-.99,.16,.16,side*.02],[-.84,.18,.18,side*.02],
-     [-.70,.20,.19,side*.015],[-.57,.185,.18,side*.01],
-     [-.44,.22,.21,side*.01],[-.26,.265,.25,0],
-     [-.08,.29,.265,0],[.06,.25,.23,0]
+     [-.99,.145,.15,side*.02],[-.89,.165,.17,side*.02],
+     [-.73,.195,.195,side*.015],[-.60,.185,.18,side*.01],
+     [-.53,.18,.175,side*.01],[-.46,.205,.195,side*.01],
+     [-.32,.245,.235,0],[-.17,.275,.255,0],
+     [-.06,.285,.265,0],[.06,.25,.23,0]
     ],-.54,32);
     avatarRig.skinnedLimbs.push({bone:legSkin.lowerBone,side,type:'leg'});
     // Shoe shell, toe box and outsole remain separate for recoloring.
     const foot=new THREE.Group();
     legSkin.lowerBone.add(foot);
     foot.position.y=-legSkin.lowerBone.position.y;
-    part(foot,ball,shoe,side*.02,-1.075,.22,.27,.16,.40);
-    part(foot,ball,white,side*.02,-1.185,.26,.275,.045,.41);
+    // Sculpted heel, raised instep, forward toe and a fitted outsole.
+    part(foot,ball,shoe,side*.02,-1.065,.075,.205,.19,.225);
+    part(foot,ball,shoe,side*.02,-1.105,.305,.245,.125,.34);
+    part(foot,ball,white,side*.02,-1.187,.22,.258,.043,.415);
     for(let i=0;i<3;i++)
      part(foot,new THREE.CapsuleGeometry(.011,.15,3,8),white,
       side*.02,-1.005-i*.048,.45-i*.018);
@@ -638,10 +641,13 @@ function buildCleanAvatar(){
     // One continuous trouser silhouette with knee and ankle taper.
     const thigh=style.leg*(model==='hero'?1.18:1.12);
     const legSkin=skinnedLoft(legPivot,pants,[
-     [-.97,style.leg*.76,style.leg*.75,0],
-     [-.82,style.leg*.83,style.leg*.83,0],
-     [-.57,style.leg*.96,style.leg*.91,0],
+     [-.97,style.leg*.70,style.leg*.73,0],
+     [-.84,style.leg*.79,style.leg*.82,0],
+     [-.68,style.leg*.91,style.leg*.91,0],
+     [-.56,style.leg*.89,style.leg*.87,0],
+     [-.48,style.leg*.91,style.leg*.88,0],
      [-.35,thigh,style.leg,0],
+     [-.16,thigh*1.12,style.leg*1.06,0],
      [-.08,thigh*1.13,style.leg*1.06,0],
      [.08,style.leg*.98,style.leg*.95,0]
     ],-.55,28);
@@ -650,8 +656,9 @@ function buildCleanAvatar(){
     const foot=new THREE.Group();
     legSkin.lowerBone.add(foot);
     foot.position.y=-legSkin.lowerBone.position.y;
-    part(foot,ball,shoe,0,-1.07,.19,style.leg*1.22,.15,.35);
-    part(foot,ball,white,0,-1.18,.23,style.leg*1.23,.035,.37);
+    part(foot,ball,shoe,0,-1.055,.075,style.leg*.98,.18,.20);
+    part(foot,ball,shoe,0,-1.105,.29,style.leg*1.16,.12,.31);
+    part(foot,ball,white,0,-1.185,.21,style.leg*1.18,.038,.39);
    }
    avatarRig.legs.push({joint:legPivot,side});
   }
@@ -1095,8 +1102,9 @@ function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientH
 for(const {bone,side,type} of avatarRig.skinnedLimbs){
  // Hands and shoes are parented to their lower bones so joint movement
  // preserves the wrist and ankle connections.
- bone.rotation.z=animationEnabled?(type==='arm'?side*.035*Math.sin(t*1.5):side*.015*Math.sin(t*1.3)):0;
- bone.rotation.x=animationEnabled?(type==='arm'?.075*Math.max(0,Math.sin(t*1.3+side)):.045*Math.max(0,Math.sin(t*1.4+side*Math.PI))):0;
+ bone.rotation.z=animationEnabled?(type==='arm'?side*.025*Math.sin(t*1.5):side*.009*Math.sin(t*1.3)):0;
+ // Gentle elbow and knee flex, limited to keep the hands and shoes stable.
+ bone.rotation.x=animationEnabled?(type==='arm'?.11*Math.max(0,Math.sin(t*1.3+side)):.085*Math.max(0,Math.sin(t*1.4+side*Math.PI))):0;
 }
 if(avatarRig.head){
  avatarRig.head.rotation.y=animationEnabled?Math.sin(t*.72)*.055:0;
