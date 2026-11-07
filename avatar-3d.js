@@ -356,9 +356,9 @@ function buildDetailedHand(parent,material,side,wristY,centerX,width,depth,scale
   [palmY+.035*scale,width*.94,depth*.96,0],
   [palmY+.12*scale,width*.68,depth*.77,0]
  ],24);
- const lengths=[.085,.112,.105,.080].map(n=>n*scale);
+ const lengths=[.088,.118,.108,.079].map(n=>n*scale);
  for(let i=0;i<4;i++){
-  const x=(i-1.5)*width*.48;
+  const x=(i-1.5)*width*.49;
   const radius=Math.max(.012,width*.205);
   const digit=part(hand,new THREE.CapsuleGeometry(radius,lengths[i],5,10),
    material,x,palmY-.105*scale-lengths[i]*.48,depth*.20);
@@ -369,7 +369,7 @@ function buildDetailedHand(parent,material,side,wristY,centerX,width,depth,scale
  const thumb=part(hand,new THREE.CapsuleGeometry(Math.max(.015,width*.26),.082*scale,5,10),
   material,-side*width*.92,palmY+.005*scale,depth*.95);
  thumb.rotation.z=side*.66;
- thumb.rotation.x=-.22;
+ thumb.rotation.x=-.35;
  return hand;
 }
 
@@ -526,6 +526,14 @@ function buildCleanAvatar(){
   }
  }
  const shoulder=style.body[0]*.95;
+ // Subtle anatomical collarbone volumes blend the upper arms into the torso.
+ if(!robot && model!=='southpark'){
+  for(const side of [-1,1]){
+   const clavicle=part(avatar,ball,shirt,side*shoulder*.69,2.34,.045,
+    style.arm*1.35,.105,style.arm*1.35);
+   clavicle.rotation.z=-side*.17;
+  }
+ }
  for(const side of [-1,1]){
   if(robot){
    boxAt(metal,side*(shoulder+.16),2.18,0,.42,.42,.46);
@@ -547,7 +555,16 @@ function buildCleanAvatar(){
      [-.02,style.arm*1.12,style.arm*1.15,0]
     ],-.53,32);
     avatarRig.skinnedLimbs.push({bone:armSkin.lowerBone,side,type:'arm'});
-    buildDetailedHand(armPivot,skin,side,-.86,side*.16,.112,.078,1.12);
+    // Exposed wrist bridges the sleeve to the hand without a floating gap.
+    loftBody(armPivot,skin,[
+     [-.965,.085,.074,side*.16],
+     [-.91,.092,.080,side*.16],
+     [-.845,.082,.075,side*.155],
+     [-.80,.078,.073,side*.15]
+    ],24);
+    const animeHand=buildDetailedHand(armPivot,skin,side,-.86,side*.16,.112,.078,1.12);
+    // Hands follow the lower-arm bone when the elbow bends.
+    animeHand.position.y=0;
    }else{
     // A tapered sleeve with a rounded shoulder and a fitted cuff.
     const armReach=model==='chibi'?.66:model==='southpark'?.69:.78;
@@ -560,7 +577,9 @@ function buildCleanAvatar(){
      [-.10,style.arm*1.13,style.arm*1.12,0],
      [-.015,style.arm*.85,style.arm*.90,0]
     ],24);
-    part(armPivot,ball,shirt,side*.13,-armReach,.015,style.arm*.77,.075,style.arm*.79);
+    // Fitted wrist cuff hides the seam between sleeve and hand.
+    part(armPivot,ball,shirt,side*.13,-armReach+.025,.015,
+     style.arm*.79,.072,style.arm*.80);
     const glove=model==='classic'||model==='chibi';
     const mitten=model==='southpark';
     const handMaterial=glove?white:mitten?shirt:skin;
