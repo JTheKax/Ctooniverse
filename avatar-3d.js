@@ -341,6 +341,34 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 
 
 
+// Anatomical five-digit hand: a tapered palm, four separated fingers and an opposable thumb.
+// All pieces are parented to the shoulder pivot, so avatar poses keep the hands attached.
+function buildDetailedHand(parent,material,side,wristY,centerX,width,depth,scale=1){
+ const palmY=wristY-.145*scale;
+ loftBody(parent,material,[
+  [palmY-.105*scale,width*.80,depth*.75,centerX],
+  [palmY-.075*scale,width,depth,centerX],
+  [palmY+.035*scale,width*.94,depth*.96,centerX],
+  [palmY+.12*scale,width*.68,depth*.77,centerX]
+ ],24);
+ const lengths=[.085,.112,.105,.080].map(n=>n*scale);
+ for(let i=0;i<4;i++){
+  const x=centerX+(i-1.5)*width*.48;
+  const radius=Math.max(.012,width*.205);
+  const digit=part(parent,new THREE.CapsuleGeometry(radius,lengths[i],5,10),
+   material,x,palmY-.105*scale-lengths[i]*.48,depth*.20);
+  digit.rotation.z=(i-1.5)*.075;
+  // Subtle knuckles improve silhouette without expensive mesh detail.
+  part(parent,new THREE.SphereGeometry(radius*1.12,10,8),material,
+   x,palmY-.097*scale,depth*.24,radius*1.12,radius*.78,radius);
+ }
+ const thumb=part(parent,new THREE.CapsuleGeometry(Math.max(.015,width*.26),.082*scale,5,10),
+  material,centerX-side*width*.92,palmY+.005*scale,depth*.95);
+ thumb.rotation.z=side*.66;
+ thumb.rotation.x=-.22;
+ return palmY;
+}
+
 let avatarRig={arms:[],legs:[],eyes:[],head:null,skinnedLimbs:[]};
 function buildCleanAvatar(){
  avatarRig={arms:[],legs:[],eyes:[],head:null,skinnedLimbs:[]};
@@ -515,21 +543,7 @@ function buildCleanAvatar(){
      [-.02,style.arm*1.12,style.arm*1.15,0]
     ],-.53,32);
     avatarRig.skinnedLimbs.push({bone:armSkin.lowerBone,side,type:'arm'});
-    // Palm is one tapered volume; four fingers graduate in length.
-    loftBody(armPivot,skin,[
-     [-1.105,.062,.050,side*.16],[-1.06,.105,.072,side*.16],
-     [-.99,.119,.079,side*.16],[-.90,.102,.078,side*.15],
-     [-.835,.083,.075,side*.15]
-    ],28);
-    const fingerLengths=[.085,.115,.108,.078];
-    for(let finger=0;finger<4;finger++){
-     const x=side*.16+(finger-1.5)*.051;
-     const length=fingerLengths[finger];
-     const digit=part(armPivot,new THREE.CapsuleGeometry(.021,length,5,10),skin,x,-1.12-length*.42,.092);
-     digit.rotation.z=(finger-1.5)*.065;
-    }
-    const thumb=part(armPivot,new THREE.CapsuleGeometry(.032,.082,5,10),skin,side*.065,-1.008,.155);
-    thumb.rotation.z=side*.55;
+    buildDetailedHand(armPivot,skin,side,-.86,side*.16,.112,.078,1.12);
    }else{
     // A tapered sleeve with a rounded shoulder and a fitted cuff.
     const armReach=model==='chibi'?.66:model==='southpark'?.69:.78;
@@ -548,22 +562,12 @@ function buildCleanAvatar(){
     const handMaterial=glove?white:mitten?shirt:skin;
     const handWidth=style.arm*(model==='hero'?.72:model==='simpsons'?.70:.82);
     const palmY=-armReach-.145;
-    // Hand follows its arm pivot and uses one palm, not overlapping spheres.
-    const palm=part(armPivot,ball,handMaterial,side*.13,palmY,.052,handWidth,.125,style.arm*.67);
-    palm.rotation.z=side*.045;
     if(mitten){
-     part(armPivot,ball,handMaterial,side*.13,palmY-.105,.065,handWidth*.92,.12,style.arm*.66);
+     part(armPivot,ball,handMaterial,side*.13,palmY-.04,.055,handWidth,.16,style.arm*.70);
+     part(armPivot,ball,handMaterial,side*.13-side*handWidth*.70,palmY+.02,.13,handWidth*.40,.09,handWidth*.40);
     }else{
-     const lengths=model==='chibi'?[.055,.068,.063,.05]:[.075,.105,.095,.067];
-     for(let finger=0;finger<4;finger++){
-      const fingerX=side*.13+(finger-1.5)*handWidth*.43;
-      const length=lengths[finger];
-      const digit=part(armPivot,new THREE.CapsuleGeometry(handWidth*.18,length,4,8),handMaterial,fingerX,palmY-.125-length*.42,.092);
-      digit.rotation.z=(finger-1.5)*.07;
-     }
+     buildDetailedHand(armPivot,handMaterial,side,-armReach,side*.13,handWidth,style.arm*.67,model==='chibi'?.80:1);
     }
-    const thumb=part(armPivot,new THREE.CapsuleGeometry(handWidth*.25,mitten?.06:.075,4,8),handMaterial,side*.13-side*handWidth*.73,palmY+.01,.14);
-    thumb.rotation.z=side*.55;
    }
    avatarRig.arms.push({joint:armPivot,side});
    const legPivot=new THREE.Group();legPivot.position.set(side*.32,1.27,0);avatar.add(legPivot);
