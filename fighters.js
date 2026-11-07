@@ -84,7 +84,7 @@ async function loadFighterCatalog(){
  try{
   const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
   db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
-  const {data:{user},error:userError}=await db.auth.getUser();if(userError)throw userError;viewer=user;
+  const {data:{session}}=await db.auth.getSession();viewer=session?.user||null;
   const {data:catalog,error}=await db.from('fighter_catalog').select('id,name,series,portrait,unlock_type,coin_cost,achievement_key').eq('enabled',true).order('name').limit(5000);
   if(error)throw error;
   if(viewer){
