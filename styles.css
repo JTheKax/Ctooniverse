@@ -2175,3 +2175,29 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 .global-chat-compose button{flex:0 0 auto}
 #global-chat-status{min-height:1.4em;font-size:.85rem;color:#f4df99}
 @media(max-width:440px){.global-chat{padding:10px}.global-chat-messages{height:300px}.global-chat-compose button{padding:9px 12px}}
+
+
+/* Global chat sizing repair: compact desktop window, responsive phone layout. */
+.global-chat{
+ box-sizing:border-box!important;width:min(100%,680px)!important;max-width:680px!important;
+ min-width:0!important;margin:20px auto!important;padding:16px!important;
+ overflow:hidden!important;
+}
+.global-chat-messages{
+ box-sizing:border-box!important;width:100%!important;min-width:0!important;
+ height:320px!important;min-height:0!important;max-height:320px!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+}
+.global-chat-message{box-sizing:border-box!important;width:100%!important;min-width:0!important}
+.global-chat-meta{flex-wrap:wrap!important;min-width:0!important}
+.global-chat-meta strong{min-width:0;overflow-wrap:anywhere}
+.global-chat form,.global-chat-compose{box-sizing:border-box!important;width:100%!important;min-width:0!important}
+.global-chat-compose input{box-sizing:border-box!important;width:100%!important;min-width:0!important;flex:1 1 0!important}
+.global-chat-compose button{width:auto!important;max-width:110px!important;white-space:nowrap!important}
+@media(max-width:600px){
+ .global-chat{width:100%!important;max-width:100%!important;margin:14px auto!important;padding:10px!important;border-width:3px!important}
+ .global-chat-messages{height:260px!important;max-height:260px!important;padding:8px!important}
+ .global-chat-compose{gap:6px!important}
+ .global-chat-compose input{font-size:16px!important;padding:10px 8px!important}
+ .global-chat-compose button{font-size:13px!important;padding:9px 10px!important}
+}
