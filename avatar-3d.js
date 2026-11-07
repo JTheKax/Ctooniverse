@@ -460,26 +460,63 @@ function buildCleanAvatar(){
   }else{
    // Shoulder and hip pivot groups form an articulated procedural rig.
    const armPivot=new THREE.Group();armPivot.position.set(side*shoulder,2.28,0);avatar.add(armPivot);
-   // Rounded shoulder, shaped sleeve, wrist cuff and articulated-looking palm.
-   part(armPivot,ball,shirt,0,-.08,0,style.arm*1.42,style.arm*1.35,style.arm*1.30);
-   sculptLimb(armPivot,[0,-.10,0],[side*.16,-.78,.02],style.arm,shirt);
-   part(armPivot,ball,shirt,side*.16,-.77,.02,style.arm*1.08,.14,style.arm*1.05);
-   part(armPivot,ball,skin,side*.16,-.98,.055,style.arm*.90,.19,style.arm*.82);
-   part(armPivot,ball,skin,side*.16-side*.115,-.95,.16,.065,.12,.075);
-   for(let finger=0;finger<3;finger++)
+   if(model==='anime'){
+    // Smooth ring-loft arm with fitted sleeve, narrowing wrist and anatomical palm.
+    loftBody(armPivot,shirt,[
+     [-.82,style.arm*.80,style.arm*.78,side*.15],
+     [-.69,style.arm*.90,style.arm*.90,side*.13],
+     [-.50,style.arm*.86,style.arm*.88,side*.10],
+     [-.34,style.arm*1.08,style.arm*1.05,side*.06],
+     [-.15,style.arm*1.32,style.arm*1.28,side*.02],
+     [-.02,style.arm*1.12,style.arm*1.15,0]
+    ],32);
+    loftBody(armPivot,skin,[
+     [-1.10,.075,.062,side*.16],[-1.04,.11,.075,side*.16],
+     [-.95,.13,.085,side*.16],[-.85,.095,.084,side*.15]
+    ],24);
+    // Individually shaped fingers and opposing thumb.
+    for(let finger=0;finger<4;finger++){
+     const x=side*.16+(finger-1.5)*.052;
+     const fingerMesh=part(armPivot,new THREE.CapsuleGeometry(.027,.085-(finger===3?.02:0),4,8),skin,x,-1.145,.09);
+     fingerMesh.rotation.z=(finger-1.5)*.10;
+    }
+    const thumb=part(armPivot,new THREE.CapsuleGeometry(.041,.09,4,8),skin,side*.045,-1.00,.15);
+    thumb.rotation.z=side*.62;
+   }else{
+    part(armPivot,ball,shirt,0,-.08,0,style.arm*1.42,style.arm*1.35,style.arm*1.30);
+    sculptLimb(armPivot,[0,-.10,0],[side*.16,-.78,.02],style.arm,shirt);
+    part(armPivot,ball,shirt,side*.16,-.77,.02,style.arm*1.08,.14,style.arm*1.05);
+    part(armPivot,ball,skin,side*.16,-.98,.055,style.arm*.90,.19,style.arm*.82);
+    part(armPivot,ball,skin,side*.16-side*.115,-.95,.16,.065,.12,.075);
+    for(let finger=0;finger<3;finger++)
      part(armPivot,ball,skin,side*.16+(finger-1)*.075,-1.105,.095,.042,.10,.055);
+   }
    avatarRig.arms.push({joint:armPivot,side});
    const legPivot=new THREE.Group();legPivot.position.set(side*.32,1.27,0);avatar.add(legPivot);
-   part(legPivot,ball,pants,0,-.08,0,style.leg*1.26,.22,style.leg*1.22);
-   // Upper thigh tapers toward the knee; calf is a separate fitted volume.
-   part(legPivot,new THREE.CylinderGeometry(style.leg*1.32,style.leg*.98,.43,20),pants,0,-.30,0);
-   part(legPivot,ball,pants,side*.01,-.54,0,style.leg*1.03,.17,style.leg*1.01);
-   sculptLimb(legPivot,[side*.01,-.55,0],[side*.02,-.88,0],style.leg*.83,pants);
-   part(legPivot,ball,pants,side*.02,-.79,0,style.leg*1.04,.13,style.leg*1.04);
-   // Separate heel, toe box and outsole give the shoe a readable 3D profile.
-   part(legPivot,ball,shoe,side*.02,-1.045,.11,style.leg*1.20,.17,.28);
-   part(legPivot,ball,shoe,side*.02,-1.075,.35,style.leg*1.30,.145,.30);
-   part(legPivot,ball,white,side*.02,-1.195,.27,style.leg*1.31,.038,.39);
+   if(model==='anime'){
+    // Continuous thigh-to-ankle leg with sculpted knee and calf volumes.
+    loftBody(legPivot,pants,[
+     [-.99,.16,.16,side*.02],[-.84,.18,.18,side*.02],
+     [-.70,.20,.19,side*.015],[-.57,.185,.18,side*.01],
+     [-.44,.22,.21,side*.01],[-.26,.265,.25,0],
+     [-.08,.29,.265,0],[.06,.25,.23,0]
+    ],32);
+    // Shoe shell, toe box and outsole remain separate for recoloring.
+    part(legPivot,ball,shoe,side*.02,-1.075,.22,.27,.16,.40);
+    part(legPivot,ball,white,side*.02,-1.185,.26,.275,.045,.41);
+    for(let i=0;i<3;i++)
+     part(legPivot,new THREE.CapsuleGeometry(.011,.15,3,8),white,
+      side*.02,-1.005-i*.048,.45-i*.018);
+   }else{
+    part(legPivot,ball,pants,0,-.08,0,style.leg*1.26,.22,style.leg*1.22);
+    part(legPivot,new THREE.CylinderGeometry(style.leg*1.32,style.leg*.98,.43,20),pants,0,-.30,0);
+    part(legPivot,ball,pants,side*.01,-.54,0,style.leg*1.03,.17,style.leg*1.01);
+    sculptLimb(legPivot,[side*.01,-.55,0],[side*.02,-.88,0],style.leg*.83,pants);
+    part(legPivot,ball,pants,side*.02,-.79,0,style.leg*1.04,.13,style.leg*1.04);
+    part(legPivot,ball,shoe,side*.02,-1.045,.11,style.leg*1.20,.17,.28);
+    part(legPivot,ball,shoe,side*.02,-1.075,.35,style.leg*1.30,.145,.30);
+    part(legPivot,ball,white,side*.02,-1.195,.27,style.leg*1.31,.038,.39);
+   }
    avatarRig.legs.push({joint:legPivot,side});
   }
  }
