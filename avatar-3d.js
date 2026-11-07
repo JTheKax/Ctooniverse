@@ -416,9 +416,9 @@ function buildCleanAvatar(){
   if(model==='anime'){
    // Sculpted upper body: shoulders, pectorals, ribcage and tapered waist.
    loftBody(avatar,shirt,[
-    [1.31,.34,.26],[1.39,.39,.29],[1.58,.37,.30],
-    [1.77,.40,.31],[1.98,.48,.35],[2.19,.54,.36],
-    [2.36,.55,.34],[2.49,.43,.29],[2.57,.25,.22],[2.60,.14,.15]
+    [1.31,.34,.26],[1.39,.38,.29],[1.58,.36,.30],
+    [1.77,.40,.31],[1.98,.47,.35],[2.17,.53,.36],
+    [2.32,.57,.35],[2.43,.50,.32],[2.53,.28,.23],[2.60,.14,.15]
    ]);
   }else{
    // Family-specific closed-looking torso silhouette: rounded shoulders,
@@ -430,9 +430,10 @@ function buildCleanAvatar(){
     [1.29,w*waistScale*.56,d*.66],
     [1.39,w*waistScale*.75,d*.79],
     [1.60,w*waistScale*.91,d*.91],
-    [1.83,w*.88,d],
-    [2.08,w*shoulderScale,d*1.02],
-    [2.29,w*shoulderScale*.98,d*.96],
+    [1.83,w*.86,d],
+    [2.08,w*shoulderScale*.96,d*1.02],
+    [2.25,w*shoulderScale,d*.98],
+    [2.36,w*shoulderScale*.91,d*.91],
     [2.45,w*.70,d*.75],
     [2.56,w*.28,d*.40]
    ],36);
@@ -552,13 +553,15 @@ function buildCleanAvatar(){
    if(model==='anime'){
     // Smooth ring-loft arm with fitted sleeve, narrowing wrist and anatomical palm.
     const armSkin=skinnedLoft(armPivot,shirt,[
-     [-.82,style.arm*.80,style.arm*.78,side*.15],
-     [-.69,style.arm*.90,style.arm*.90,side*.13],
-     [-.50,style.arm*.86,style.arm*.88,side*.10],
-     [-.34,style.arm*1.08,style.arm*1.05,side*.06],
-     [-.15,style.arm*1.32,style.arm*1.28,side*.02],
-     [-.02,style.arm*1.12,style.arm*1.15,0]
-    ],-.53,32);
+     [-.82,style.arm*.73,style.arm*.73,side*.15],
+     [-.70,style.arm*.82,style.arm*.83,side*.14],
+     [-.57,style.arm*.91,style.arm*.89,side*.12],
+     [-.49,style.arm*.88,style.arm*.87,side*.10],
+     [-.37,style.arm*1.03,style.arm*.99,side*.07],
+     [-.20,style.arm*1.25,style.arm*1.19,side*.035],
+     [-.07,style.arm*1.29,style.arm*1.22,side*.01],
+     [-.01,style.arm*1.09,style.arm*1.11,0]
+    ],-.53,36);
     avatarRig.skinnedLimbs.push({bone:armSkin.lowerBone,side,type:'arm'});
     // Attach both the wrist bridge and palm directly to the forearm bone.
     // Use bone-local coordinates so elbow animation cannot detach the hand.
@@ -576,11 +579,15 @@ function buildCleanAvatar(){
    }else{
     // A tapered sleeve with a rounded shoulder and a fitted cuff.
     const armReach=model==='chibi'?.66:model==='southpark'?.69:.78;
-    part(armPivot,ball,shirt,0,-.08,0,style.arm*1.20,style.arm*1.25,style.arm*1.16);
+    // Rounded deltoid follows the shoulder pivot rather than floating at the torso.
+    const deltoid=part(armPivot,ball,shirt,side*.012,-.105,0,
+     style.arm*1.23,style.arm*1.36,style.arm*1.18);
+    deltoid.rotation.z=-side*.10;
     loftBody(armPivot,shirt,[
      [-armReach,style.arm*.70,style.arm*.73,side*.13],
      [-armReach+.10,style.arm*.77,style.arm*.79,side*.12],
-     [-armReach*.65,style.arm*.89,style.arm*.88,side*.09],
+     [-armReach*.65,style.arm*.84,style.arm*.84,side*.09],
+     [-armReach*.48,style.arm*.90,style.arm*.87,side*.065],
      [-.24,style.arm*1.06,style.arm*1.04,side*.025],
      [-.10,style.arm*1.13,style.arm*1.12,0],
      [-.015,style.arm*.85,style.arm*.90,0]
