@@ -13,13 +13,28 @@ async function loadWardrobe(){
  const [owned,catalog]=await Promise.all([db.from('player_avatar_clothing').select('item_id').eq('user_id',owner.id),db.from('avatar_clothing_catalog').select('id,name,category')]);
  if(owned.error||catalog.error){wardrobeHost.textContent='Unable to load wardrobe.';return}
  const byId=new Map((catalog.data||[]).map(x=>[x.id,x]));
- const available=(owned.data||[]).map(x=>byId.get(x.item_id)).filter(Boolean);if(equippedClothing&&!available.some(x=>x.id===equippedClothing)){equippedClothing=null;window.ctoonEquippedClothing=null;window.dispatchEvent(new Event('avatar-clothing-changed'))}
+ const available=(owned.data||[]).map(x=>byId.get(x.item_id)).filter(Boolean);
+ // Clothing is saved by catalog UUID; the renderer needs a visual garment type.
+ const visualType=item=>{
+  if(!item)return null;
+  const label=(item.name+' '+(item.category||'')).toLowerCase();
+  if(/armor|legendary|battle|knight/.test(label))return 'legendary';
+  if(/hoodie|hood|sweatshirt/.test(label))return 'hoodie';
+  if(/jacket|coat|blazer/.test(label))return 'jacket';
+  if(/jeans|pants|trousers|denim/.test(label))return 'jeans';
+  if(/sneaker|shoe|boot|trainer/.test(label))return 'sneakers';
+  if(/outfit|costume|uniform|set/.test(label))return 'outfit';
+  return 'tee';
+ };
+ const selected=available.find(x=>x.id===equippedClothing);
+ window.ctoonEquippedClothingStyle=selected?visualType(selected):null;
+ window.dispatchEvent(new Event('avatar-clothing-changed'));if(equippedClothing&&!available.some(x=>x.id===equippedClothing)){equippedClothing=null;window.ctoonEquippedClothing=null;window.dispatchEvent(new Event('avatar-clothing-changed'))}
  if(!available.length){wardrobeHost.textContent='No purchased clothing yet.';return}
  wardrobeHost.replaceChildren();
  for(const item of available){
   const button=document.createElement('button');button.type='button';button.textContent=(equippedClothing===item.id?'✓ Equipped: ':'Equip: ')+item.name;
   button.style.cssText='padding:10px;border-radius:10px;background:#5834a4;color:white;border:2px solid #d4b7ff;cursor:pointer';
-  button.onclick=()=>{equippedClothing=item.id;window.ctoonEquippedClothing=item.id;message.textContent='Equipped '+item.name+'. Press Save Avatar to keep this outfit.';window.dispatchEvent(new Event('avatar-clothing-changed'));loadWardrobe()};
+  button.onclick=()=>{equippedClothing=item.id;window.ctoonEquippedClothing=item.id;window.ctoonEquippedClothingStyle=visualType(item);message.textContent='Equipped '+item.name+'. Press Save Avatar to keep this outfit.';window.dispatchEvent(new Event('avatar-clothing-changed'));loadWardrobe()};
   wardrobeHost.append(button);
  }
 }
