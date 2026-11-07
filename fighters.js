@@ -3,7 +3,7 @@ const canvas=document.getElementById('fight');
 const ctx=canvas.getContext('2d');
 // Reserved slots only: no characters, avatars, or opponents are loaded.
 const roster=Array.from({length:120},(_,i)=>({slot:i+1,character:null}));
-let db=null,viewer=null;
+let db=null,viewer=null,disposePreview=null,previewSlot=null;
 const grid=document.getElementById('fighter-roster');
 const search=document.getElementById('roster-search'),group=document.getElementById('roster-group');
 const sort=document.getElementById('roster-sort'),seriesFilter=document.getElementById('roster-series');
@@ -21,8 +21,13 @@ function refreshSeries(){const previous=seriesFilter.value;const names=[...new S
 const slotLabel=n=>'SLOT '+String(n).padStart(3,'0');
 function selectSlot(n){
  selectedSlot=n;const item=roster.find(entry=>entry.slot===n),character=item.character,rule=unlockRule(item),state=unlockState(item);
+ const preview=document.getElementById('fighter-3d-preview');
+ if(previewSlot!==n){disposePreview?.();disposePreview=null;preview.replaceChildren();previewSlot=n;preview.hidden=true;
+ if(character?.id==='disney-hercules'&&state==='unlocked'){
+  preview.hidden=false;import('./hercules-3d.js').then(mod=>{if(selectedSlot===n)disposePreview=mod.mountHercules(preview)}).catch(error=>{console.warn('3D preview unavailable',error);preview.hidden=true});
+ }}
  document.getElementById('selected-fighter').textContent=character?.name||slotLabel(n);
- document.getElementById('preview-symbol').textContent=state==='locked'?'🔒':character?.name?.slice(0,1).toUpperCase()||String(n).padStart(3,'0');
+ document.getElementById('preview-symbol').textContent=character?.id==='disney-hercules'&&state==='unlocked'?'':state==='locked'?'🔒':character?.name?.slice(0,1).toUpperCase()||String(n).padStart(3,'0');
  document.getElementById('preview-description').textContent=character?(character.series||'Uncategorized')+' · '+(state==='unlocked'?'Ready to select':'Not yet unlocked'):'Empty fighter position '+n+' of '+roster.length+'. Ready for a future character.';
  document.getElementById('preview-unlock-status').textContent=state==='empty'?'EMPTY SLOT':state==='unlocked'?'✓ UNLOCKED':'🔒 LOCKED';
  const action=document.getElementById('unlock-fighter'),help=document.getElementById('unlock-help');
