@@ -566,13 +566,13 @@ function buildCleanAvatar(){
     const forearm=armSkin.lowerBone;
     const wristCenter=side*.15;
     const wrist=loftBody(forearm,skin,[
-     [-.39,.073,.065,wristCenter],
-     [-.33,.078,.070,wristCenter],
-     [-.275,.078,.070,wristCenter]
+     [-.32,.073,.065,wristCenter],
+     [-.26,.078,.070,wristCenter],
+     [-.205,.078,.070,wristCenter]
     ],28);
-    const animeHand=buildDetailedHand(forearm,skin,side,-.35,wristCenter,.135,.082,1.08);
+    const animeHand=buildDetailedHand(forearm,skin,side,-.29,wristCenter,.135,.082,1.08);
     // The bone's origin is at the elbow (shoulder-local y=-.53).
-    // Thus local y=-.35 places the palm at shoulder-local y=-.88.
+    // Local y=-.29 puts the wrist at shoulder-local y=-.82, matching the sleeve tip.
 
    }else{
     // A tapered sleeve with a rounded shoulder and a fitted cuff.
