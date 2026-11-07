@@ -148,7 +148,7 @@ if (year) year.textContent = String(new Date().getFullYear());
  const link=document.createElement('a');link.href='clash.html';link.className='nav-link clash-nav-link';
  if(location.pathname.endsWith('/clash.html')){link.classList.add('active');link.setAttribute('aria-current','page')}
  const icon=document.createElement('span');icon.className='nav-icon';icon.setAttribute('aria-hidden','true');icon.textContent='⚔';
- const label=document.createElement('span');label.textContent='CToon Clash';link.append(icon,label);
+ const label=document.createElement('span');label.textContent='Cards';link.append(icon,label);
  const games=[...nav.querySelectorAll('a.nav-link')].find(a=>a.getAttribute('href')==='games.html');
  const dropdown=nav.querySelector('.games-dropdown');
  const anchor=dropdown||games;
