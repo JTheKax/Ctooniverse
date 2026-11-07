@@ -30,6 +30,7 @@ function atlasFrame(ctx,id,pose,step,x,y,width,height){
  ctx.drawImage(state.image,(step%3)*config.frameWidth,row*config.frameHeight,config.frameWidth,config.frameHeight,x,y,width,height);return true;
 }
 const cache=new Map();
+const spritePlayback=new WeakMap();
 function sprite(id,pose,step){
  const key=id+':'+pose+':'+step;if(cache.has(key))return cache.get(key);
  const p=PALETTES[id]||PALETTES['training-rival'],jack=id==='jack-skellington';
@@ -105,8 +106,13 @@ function sprite(id,pose,step){
  x.restore();cache.set(key,c);return c;
 }
 export function drawPixelFighter(ctx,f,id,time=0,ground=445){
- const pose=f.hp<=0?'hurt':f.guard?'block':f.crouch?'crouch':f.y<ground-3?'jump':f.attack>0?(f.kind||'punch'):Math.abs(f.vx)>.1?'walk':'idle';
- const frame=Math.floor(time*(pose==='idle'?4:pose==='walk'?12:16))%3,source=sprite(id,pose,frame);
+ const pose=f.hp<=0?'ko':f.guard?'block':f.crouch?'crouch':f.y<ground-3?'jump':f.attack>0?(f.kind||'punch'):Math.abs(f.vx)>.1?'walk':'idle';
+ const playback=spritePlayback.get(f)||{pose:'',start:time};
+ if(playback.pose!==pose){playback.pose=pose;playback.start=time;spritePlayback.set(f,playback)}
+ const fps=pose==='idle'?4:pose==='walk'?10:pose==='ko'?5:pose==='special'?9:14;
+ const index=Math.floor(Math.max(0,time-playback.start)*fps);
+ const frame=['ko','hurt','jump','crouch','block'].includes(pose)?Math.min(2,index):index%3;
+ const source=sprite(id,pose,frame);
  ctx.save();ctx.imageSmoothingEnabled=false;
  ctx.fillStyle='#07071999';ctx.beginPath();ctx.ellipse(f.x,ground+1,42,9,0,0,Math.PI*2);ctx.fill();
  ctx.translate(Math.round(f.x),Math.round(f.y));
@@ -123,7 +129,7 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
 export function mountPixelPreview(container,id){
  const canvas=document.createElement('canvas');canvas.width=192;canvas.height=224;canvas.className='pixel-fighter-preview';
  container.replaceChildren(canvas);loadFighterSprites(id);const ctx=canvas.getContext('2d');let live=true,raf=0;
- function tick(t){if(!live)return;ctx.clearRect(0,0,192,224);ctx.imageSmoothingEnabled=false;const sequence=['idle','idle','walk','walk','punch','punch','block','special'];const phase=Math.floor(t/700)%sequence.length;
+ function tick(t){if(!live)return;ctx.clearRect(0,0,192,224);ctx.imageSmoothingEnabled=false;const sequence=['idle','idle','walk','walk','punch','kick','block','special'];const phase=Math.floor(t/700)%sequence.length;
  const pose=sequence[phase],frame=Math.floor(t/110)%3;if(!atlasFrame(ctx,id,pose,frame,0,0,192,224))ctx.drawImage(sprite(id,pose,frame),0,0,192,224);raf=requestAnimationFrame(tick)}
  raf=requestAnimationFrame(tick);return()=>{live=false;cancelAnimationFrame(raf);canvas.remove()};
 }
