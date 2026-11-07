@@ -4,10 +4,13 @@ const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable
 let selectedGame=null;
 const $=id=>document.getElementById(id);
 const start=$('emu-start'),status=$('emu-status'),file=$('emu-file'),consoleSelect=$('emu-console');
-let currentUrl=null,started=false;
+let currentUrl=null,started=false,loadTimer=null;
+function setStatus(message){status.textContent=message}
+
 const cores={nes:'nes',snes:'snes',gb:'gb',gba:'gba',gbc:'gbc',n64:'n64',segaMD:'segaMD',nds:'nds',psx:'psx'};
 const ext={nes:['nes','zip'],snes:['sfc','smc','zip'],gb:['gb','zip'],gba:['gba','zip'],gbc:['gbc','zip'],n64:['n64','z64','v64','zip'],segaMD:['md','gen','bin','zip'],nds:['nds','zip'],psx:['chd','pbp','iso','zip']};
 function stopGame(){
+ if(loadTimer){clearTimeout(loadTimer);loadTimer=null}
  const screen=$('game');screen.replaceChildren();
  if(currentUrl&&currentUrl.startsWith('blob:'))URL.revokeObjectURL(currentUrl);
  currentUrl=null;started=false;start.textContent='Start Game';start.disabled=false;file.disabled=false;consoleSelect.disabled=false;
@@ -19,19 +22,19 @@ function launchGame(){
  if(started){stopGame();return}
  const rom=selectedGame?null:file.files?.[0],core=consoleSelect.value;
  if(!rom&&!selectedGame){status.textContent='Choose a game case or local file first.';return}
- const suffix=(rom?.name||selectedGame?.storage_path||'').split('.').pop().toLowerCase();
+ const suffix=(rom?.name||selectedGame?.storage_path||'').split('?')[0].split('.').pop().toLowerCase();
  if(!ext[core]?.includes(suffix)){status.textContent='This file type does not match the selected console.';return}
  if(rom&&rom.size>(core==='psx'?1024:128)*1024*1024){status.textContent='Game file is too large for this console.';return}
  started=true;start.textContent='Stop Game';file.disabled=false;consoleSelect.disabled=false;
  currentUrl=selectedGame?db.storage.from('emulator-games').getPublicUrl(selectedGame.storage_path).data.publicUrl:URL.createObjectURL(rom);
- const frame=document.createElement('iframe');frame.title='CTooniverse game player';frame.allow='fullscreen; autoplay; gamepad';frame.style.cssText='width:100%;height:100%;min-height:380px;border:0;display:block';
+ const frame=document.createElement('iframe');frame.title='CTooniverse game player';frame.allow='fullscreen; autoplay; gamepad';frame.setAttribute('allowfullscreen','');frame.style.cssText='width:100%;height:100%;min-height:380px;border:0;display:block';
  // Isolate each EmulatorJS instance so switching never reuses its global state.
- const config={EJS_player:'#game',EJS_core:cores[core],EJS_gameUrl:currentUrl,EJS_pathtodata:'https://cdn.emulatorjs.org/stable/data/',EJS_startOnLoaded:true,EJS_VirtualGamepadSettings:core==='nds'?{enabled:true}:undefined,EJS_color:'#8057e7',EJS_Buttons:{playPause:true,restart:true,mute:true,settings:true,fullscreen:true,saveState:true,loadState:true},EJS_startButtonName:'Play'};
+ const config={EJS_player:'#game',EJS_core:cores[core],EJS_gameUrl:currentUrl,EJS_pathtodata:'https://cdn.emulatorjs.org/stable/data/',EJS_startOnLoaded:true,EJS_VirtualGamepadSettings:core==='nds'?{enabled:true,opacity:0.75}:undefined,EJS_color:'#8057e7',EJS_Buttons:{playPause:true,restart:true,mute:true,settings:true,fullscreen:true,saveState:true,loadState:true},EJS_startButtonName:'Play'};
  const serialized=JSON.stringify(config).replace(/</g,'\\u003c');
  frame.srcdoc='<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#030712"><div id="game" style="height:100vh;width:100%"></div><script>Object.assign(window,'+serialized+');<\/script><script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script></body></html>';
  $('game').replaceChildren(frame);
  $('emu-screen').classList.toggle('nds-active',core==='nds');const help=$('emu-nds-help');if(help)help.hidden=core!=='nds';
- status.textContent='Loading game… Use Stop Game to switch to another game.';
+ status.textContent=core==='nds'?'Loading Nintendo DS… Tap the lower screen to use the stylus. Tap inside the player to enable audio.':'Loading game… Use Stop Game to switch to another game.';
 }
 start.addEventListener('click',launchGame);
 $('emu-fullscreen').addEventListener('click',async()=>{try{if(!document.fullscreenElement)await $('emu-screen').requestFullscreen();else await document.exitFullscreen()}catch{status.textContent='Fullscreen is unavailable in this browser.'}});
