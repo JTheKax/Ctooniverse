@@ -1,5 +1,4 @@
-// Guilty Gear-inspired original sprite atlases will load when the PNGs are uploaded.
-// The previous working Hercules and Jack atlases remain automatic fallbacks.
+// Load committed Showdown atlases first. Missing optional artwork never leaves a blank fighter.
 // Ctoon Showdown standard: crisp 2D pixel-art character sprites.
 // M.U.G.E.N.-inspired arcade proportions, expressive silhouettes and pose API.
 // Original procedural artwork; no third-party game sprite sheets.
@@ -12,8 +11,8 @@ export const PALETTES={
 // Illustrated atlas contract: 3 columns and one row per animation, transparent PNG.
 // Missing assets safely fall back to procedural art until production sheets are uploaded.
 export const FIGHTER_SPRITES={
- 'disney-hercules':{url:'/public/images/showdown/hercules-guilty-gear-style-atlas.png',frameWidth:192,frameHeight:224},
- 'jack-skellington':{url:'/public/images/showdown/jack-guilty-gear-style-atlas.png',frameWidth:192,frameHeight:224}
+ 'disney-hercules':{url:'/images/showdown/hercules-cleaned-atlas.png',fallbacks:['/images/showdown/hercules-atlas.svg','/public/images/showdown/hercules-cleaned-atlas.png'],frameWidth:192,frameHeight:224},
+ 'jack-skellington':{url:'/images/showdown/jack-cleaned-atlas.png',fallbacks:['/images/showdown/jack-skellington-atlas.svg','/public/images/showdown/jack-cleaned-atlas.png'],frameWidth:192,frameHeight:224}
 };
 export const ANIMATIONS=['idle','walk','run','punch','kick','block','jump','crouch','special','hurt','ko'];
 const atlases=new Map();
@@ -21,7 +20,7 @@ export function loadFighterSprites(id){
  const asset=FIGHTER_SPRITES[id];if(!asset)return Promise.resolve(false);
  if(atlases.has(id)){const existing=atlases.get(id);if(existing.ready||existing.loading)return existing.promise;atlases.delete(id)}
  const state={image:null,ready:false,source:null,frameWidth:asset.frameWidth,frameHeight:asset.frameHeight,promise:null,loading:true,attempts:[]};atlases.set(id,state);
- const candidates=id==='jack-skellington'?[asset.url,'/public/images/showdown/jack-showdown-rebuilt-v23.png','/images/showdown/jack-cleaned-atlas.png','/images/showdown/jack-skellington-atlas.svg']:[asset.url,'/public/images/showdown/hercules-showdown-animated-v7.png','/images/showdown/hercules-cleaned-atlas.png','/images/showdown/hercules-atlas.svg'];
+ const candidates=[asset.url,...asset.fallbacks];
  state.promise=new Promise(resolve=>{
   function tryNext(index){
    if(index>=candidates.length){state.loading=false;console.warn('Showdown: no compatible 3-column x 11-row sprite atlas for',id,state.attempts);resolve(false);return}
