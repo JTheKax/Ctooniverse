@@ -329,7 +329,23 @@ function buildCleanAvatar(){
  }else{
   sculptTorso(avatar,shirt,1.89,style.body[0],style.body[1],style.body[2]);
   ballAt(skin,0,2.69,0,.17,.24,.17);
-  ballAt(skin,0,headY,0,...style.head);
+  if(model==='anime'){
+   // Custom tapered facial mesh: cheekbones, jaw and chin are sculpted into
+   // one continuous surface rather than stacked spherical primitives.
+   const faceGeometry=new THREE.SphereGeometry(1,48,36);
+   const pos=faceGeometry.attributes.position;
+   for(let i=0;i<pos.count;i++){
+    const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
+    const lower=THREE.MathUtils.smoothstep(-y,.02,.90);
+    const cheek=1+.075*Math.exp(-Math.pow((y+.10)/.22,2));
+    const jaw=1-lower*.27;
+    pos.setXYZ(i,x*jaw*cheek,y,z*(1-lower*.10));
+   }
+   pos.needsUpdate=true;faceGeometry.computeVertexNormals();
+   part(avatar,faceGeometry,skin,0,headY,0,...style.head);
+  }else{
+   ballAt(skin,0,headY,0,...style.head);
+  }
   if(model==='simpsons'){
    ballAt(skin,0,headY-.35,.43,.36,.23,.29);
    ballAt(skin,0,headY-.46,.53,.29,.11,.19);
@@ -354,6 +370,27 @@ function buildCleanAvatar(){
   }
   ballAt(skin,0,headY-.15,style.head[2]*.99,.09,.10,.09);
   ballAt(dark,0,headY-.37,style.head[2]*.91,.17,.025,.025);
+ }
+ // Anime benchmark: sculpted eyelids, shaped brows, subtle lips and ear rims.
+ if(model==='anime'){
+  const browMaterial=hair;
+  const lip=mat('#b66c78');
+  for(const side of [-1,1]){
+   const brow=part(avatar,new THREE.CapsuleGeometry(.033,.18,5,10),browMaterial,side*.245,headY+.33,.446);
+   brow.rotation.z=side*.18;
+   const lid=part(avatar,new THREE.TorusGeometry(.158,.022,7,32,Math.PI),skin,side*.24,headY+.10,.492);
+   lid.rotation.z=Math.PI;
+   const earRim=ballAt(skin,side*.615,headY-.12,.005,.105,.17,.105);
+   ballAt(lip,side*.625,headY-.12,.095,.035,.075,.014);
+  }
+  ballAt(skin,0,headY-.11,.493,.075,.14,.105);
+  ballAt(lip,0,headY-.405,.422,.145,.024,.025);
+  // A fitted collar and seam panels read as fabric instead of floating boxes.
+  const collar=mat('#c2ddf5');
+  for(const side of [-1,1]){
+   const panel=part(avatar,new THREE.BoxGeometry(.25,.095,.12),collar,side*.17,2.55,.30);
+   panel.rotation.z=side*.35;
+  }
  }
  // Layered waist and clothing panels provide a continuous body silhouette.
  if(!robot){
