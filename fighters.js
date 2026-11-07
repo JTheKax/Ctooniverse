@@ -1,4 +1,5 @@
 import {avatarDataUrl,defaults} from './avatar-art.js';
+import {drawRig} from './fighter-rig.js';
 const canvas=document.getElementById('fight'),ctx=canvas.getContext('2d'),$=id=>document.getElementById(id);
 const keys=new Set(),edge=new Set();let running=false,paused=false,round=1,wins=[0,0],remaining=60,last=0,clock=0,freeze=0;
 const ground=445,gravity=1700;
@@ -28,24 +29,15 @@ function hitCheck(f,target,dt){if(!f.attack)return;const a=f.attack;a.time+=dt;c
 function endRound(){running=false;player.ko=player.hp<=0;cpu.ko=cpu.hp<=0;const winner=player.hp===cpu.hp?(player.hp>=cpu.hp?0:1):player.hp>cpu.hp?0:1;wins[winner]++;updateHUD();$('fight-message').textContent=winner===0?'PLAYER WINS!':'CPU WINS!';if(wins[winner]===2){$('fight-status').textContent=winner===0?'Victory! Press Start for a rematch.':'Defeat. Press Start for a rematch.';}else{round++;const nextRound=round;setTimeout(()=>{if(!running&&round===nextRound){running=true;resetRound()}},1800)}}
 function updateHUD(){$('p1-health').style.width=player.hp+'%';$('p2-health').style.width=cpu.hp+'%';$('p1-meter').textContent=Math.floor(player.meter)+'%';$('p2-meter').textContent=Math.floor(cpu.meter)+'%';$('timer').textContent=Math.ceil(remaining);$('rounds').textContent='Round '+round+' • '+wins[0]+'–'+wins[1]}
 function tick(dt){if(!running||paused){edge.clear();return}if(freeze>0){freeze-=dt;if(freeze<=0)$('fight-message').textContent='FIGHT!';edge.clear();return}clock+=dt;remaining=Math.max(0,remaining-dt);if(clock>1){clock=0;if($('fight-message').textContent==='FIGHT!')$('fight-message').textContent=''}player.side=player.x<=cpu.x?1:-1;cpu.side=-player.side;const dir=Number(keys.has('d'))-Number(keys.has('a'));move(player,dir,edge.has('w'),keys.has('s'),keys.has('l'),dt);const distance=Math.abs(player.x-cpu.x);const cpuDir=distance>125?cpu.side:distance<80?-cpu.side:0;move(cpu,cpuDir,false,false,distance<155&&player.attack!==null&&Math.random()<.12,dt);if(edge.has('j'))strike(player,'punch');if(edge.has('k'))strike(player,'kick');if(edge.has('u'))strike(player,'special');if(cpu.cooldown===0&&distance<175&&Math.random()<dt*1.7)strike(cpu,cpu.meter>=45&&Math.random()<.25?'special':Math.random()<.5?'kick':'punch');hitCheck(player,cpu,dt);hitCheck(cpu,player,dt);updateHUD();edge.clear();if(player.hp<=0||cpu.hp<=0||remaining<=0)endRound()}
-function drawFighter(f){ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.side,1);ctx.fillStyle='#080b24a0';ctx.beginPath();ctx.ellipse(0,5,65,13,0,0,Math.PI*2);ctx.fill();if(f.flash>0)ctx.globalAlpha=.55;const h=f.crouch?175:240;const w=f.crouch?130:155;const moving=Math.abs(f.vx)>30&&f.y>=ground;const bob=moving?Math.sin(f.pose*19)*5:Math.sin(f.pose*3)*2;const attackLean=f.attack?Math.sin(Math.min(1,f.attack.time/.3)*Math.PI)*14:0;ctx.translate(attackLean,bob);if(f.stun>0)ctx.rotate(-.09);if(f.y<ground)ctx.rotate(f.side*.045);// Layer the existing player avatar portrait over animated procedural limbs.
-if(f.ko){ctx.rotate(-1.25);ctx.translate(0,45)}
-ctx.drawImage(f.img,-w/2,-h,w,h);
-const swing=Math.sin(f.pose*15)*(moving?20:3);
-const attacking=f.attack&&f.attack.time<.30;
-const punch=attacking&&f.attack.type==='punch';
-const kick=attacking&&f.attack.type==='kick';
-const special=attacking&&f.attack.type==='special';
-function limb(x1,y1,x2,y2,x3,y3,color,thickness){ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#22163c';ctx.lineWidth=thickness+6;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.lineTo(x3,y3);ctx.stroke();ctx.strokeStyle=color;ctx.lineWidth=thickness;ctx.stroke()}
-const armColor=f.colors?.shirt||'#6545d7',skinColor=f.colors?.skin||'#f2b989';
-const armReach=punch||special?75:0;
-limb(40,-172,57+armReach*.55,-142,48+armReach,-114+(punch?-12:0),armColor,17);
-limb(-39,-174,-52,-139+Math.sin(f.pose*3)*4,-34,-108,armColor,16);
-ctx.fillStyle=skinColor;ctx.beginPath();ctx.arc(48+armReach,-114+(punch?-12:0),12,0,Math.PI*2);ctx.fill();
-const legReach=kick?95:0;
-limb(27,-68,34+legReach*.55,-36-(kick?42:0),37+legReach,-4-(kick?75:0),'#28274d',22);
-limb(-25,-68,-34+swing*.4,-37,-32+swing*.6,-4,'#28274d',22);
-ctx.fillStyle='#e9e6ff';ctx.fillRect(28+legReach,-13-(kick?75:0),31,14);
-ctx.fillStyle=f.guard?'#7df6ff88':'#ffe777';if(f.guard){ctx.strokeStyle='#7df6ff';ctx.lineWidth=6;ctx.beginPath();ctx.ellipse(36,-110,70,115,0,0,Math.PI*2);ctx.stroke()}if(f.attack){const a=f.attack;ctx.globalAlpha=.85;ctx.fillStyle=a.type==='special'?'#a97bff':a.type==='kick'?'#ffdc66':'#64f4ff';ctx.beginPath();ctx.ellipse(a.type==='special'?125:80,-115,a.type==='special'?85:37,a.type==='special'?42:23,0,0,Math.PI*2);ctx.fill()}ctx.restore()}
+function drawFighter(f){
+ ctx.save();ctx.translate(f.x,f.y);ctx.scale(f.side,1);
+ ctx.fillStyle='#080b24a0';ctx.beginPath();ctx.ellipse(0,5,65,13,0,0,Math.PI*2);ctx.fill();
+ const bob=f.y<ground?0:Math.sin(f.pose*(Math.abs(f.vx)>30?15:3))*(Math.abs(f.vx)>30?4:2);
+ ctx.translate(0,bob);
+ if(f.ko){ctx.translate(0,-12);ctx.rotate(-1.35)}
+ if(f.flash>0)ctx.globalAlpha=.65;
+ drawRig(ctx,f,ground);
+ ctx.restore();
+}
 function draw(){const sky=ctx.createLinearGradient(0,0,0,540);sky.addColorStop(0,'#11144e');sky.addColorStop(.75,'#593a96');sky.addColorStop(1,'#172654');ctx.fillStyle=sky;ctx.fillRect(0,0,960,540);ctx.fillStyle='#8d5aff';for(let i=0;i<12;i++){const h=100+(i*41)%150;ctx.fillRect(i*88,ground-h,70,h);ctx.fillStyle='#70dfff';for(let y=ground-h+15;y<ground-12;y+=25)ctx.fillRect(i*88+15,y,10,8);ctx.fillStyle='#8d5aff'}ctx.fillStyle='#24204d';ctx.fillRect(0,ground,960,95);ctx.strokeStyle='#ff5bd5';ctx.lineWidth=3;for(let i=0;i<11;i++){ctx.beginPath();ctx.moveTo(480,ground);ctx.lineTo(i*130-180,540);ctx.stroke()}for(let y=ground+25;y<540;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(960,y);ctx.stroke()}drawFighter(player);drawFighter(cpu)}
 function frame(t){const dt=Math.min(.033,(t-last)/1000||0);last=t;tick(dt);draw();requestAnimationFrame(frame)}requestAnimationFrame(frame);updateHUD();
