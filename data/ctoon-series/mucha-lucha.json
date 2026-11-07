@@ -1,0 +1,9 @@
+{
+  "name": "Mucha Lucha",
+  "slug": "mucha-lucha",
+  "category": "Cartoon & Anime",
+  "status": "Coming Soon",
+  "artwork": null,
+  "source": "Supabase public.ctoon_series",
+  "note": "Series listings are rendered dynamically from Supabase by ctoon-series-pages.js."
+}
