@@ -345,28 +345,32 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 // All pieces are parented to the shoulder pivot, so avatar poses keep the hands attached.
 function buildDetailedHand(parent,material,side,wristY,centerX,width,depth,scale=1){
  const palmY=wristY-.145*scale;
- loftBody(parent,material,[
-  [palmY-.105*scale,width*.80,depth*.75,centerX],
-  [palmY-.075*scale,width,depth,centerX],
-  [palmY+.035*scale,width*.94,depth*.96,centerX],
-  [palmY+.12*scale,width*.68,depth*.77,centerX]
+ // loftBody's fourth profile coordinate is Z, not X: position the palm
+ // with a group so the palm, knuckles and fingers share the same origin.
+ const hand=new THREE.Group();
+ hand.position.x=centerX;
+ parent.add(hand);
+ loftBody(hand,material,[
+  [palmY-.105*scale,width*.80,depth*.75,0],
+  [palmY-.075*scale,width,depth,0],
+  [palmY+.035*scale,width*.94,depth*.96,0],
+  [palmY+.12*scale,width*.68,depth*.77,0]
  ],24);
  const lengths=[.085,.112,.105,.080].map(n=>n*scale);
  for(let i=0;i<4;i++){
-  const x=centerX+(i-1.5)*width*.48;
+  const x=(i-1.5)*width*.48;
   const radius=Math.max(.012,width*.205);
-  const digit=part(parent,new THREE.CapsuleGeometry(radius,lengths[i],5,10),
+  const digit=part(hand,new THREE.CapsuleGeometry(radius,lengths[i],5,10),
    material,x,palmY-.105*scale-lengths[i]*.48,depth*.20);
   digit.rotation.z=(i-1.5)*.075;
-  // Subtle knuckles improve silhouette without expensive mesh detail.
-  part(parent,new THREE.SphereGeometry(radius*1.12,10,8),material,
+  part(hand,new THREE.SphereGeometry(radius*1.12,10,8),material,
    x,palmY-.097*scale,depth*.24,radius*1.12,radius*.78,radius);
  }
- const thumb=part(parent,new THREE.CapsuleGeometry(Math.max(.015,width*.26),.082*scale,5,10),
-  material,centerX-side*width*.92,palmY+.005*scale,depth*.95);
+ const thumb=part(hand,new THREE.CapsuleGeometry(Math.max(.015,width*.26),.082*scale,5,10),
+  material,-side*width*.92,palmY+.005*scale,depth*.95);
  thumb.rotation.z=side*.66;
  thumb.rotation.x=-.22;
- return palmY;
+ return hand;
 }
 
 let avatarRig={arms:[],legs:[],eyes:[],head:null,skinnedLimbs:[]};
