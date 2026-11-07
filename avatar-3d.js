@@ -348,7 +348,7 @@ function buildCleanAvatar(){
  avatar.traverse(o=>{if(o.isMesh){if(o.geometry!==ball&&o.geometry!==cylinder)geometries.add(o.geometry);(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m))}});
  avatar.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());
  const v=Object.fromEntries(new FormData(form).entries()),model=['anime','hero','classic','chibi','robot','southpark','simpsons'].includes(v.model)?v.model:'anime';
- const outfit=window.ctoonEquippedClothing||v.outfit||'tee';
+ const outfit=window.ctoonEquippedClothingStyle||(['tee','hoodie','jacket','outfit','legendary','jeans','sneakers'].includes(window.ctoonEquippedClothing)?window.ctoonEquippedClothing:null)||v.outfit||'tee';
  const skin=mat(model==='simpsons'&&(!v.skin||v.skin==='#f2b989')?'#f5d43b':v.skin||'#f2b989');
  const shirt=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[outfit])||v.shirt||'#6545d7');
  const pants=mat(outfit==='jeans'?'#3566a7':'#29365d'),shoe=mat(outfit==='sneakers'?'#ff53a8':'#20233f');
