@@ -7,6 +7,28 @@ export const PALETTES={
  'jack-skellington':{skin:'#f3f0e4',shade:'#b3b0ad',hair:'#15141b',body:'#1b1925',trim:'#a4a2b0',pants:'#191820',cape:null,eyes:'#0b0a13'},
  'training-rival':{skin:'#a3b5db',shade:'#6c7eb2',hair:'#27365d',body:'#334b91',trim:'#b0d5fa',pants:'#25396c',cape:null,eyes:'#171b34'}
 };
+// Illustrated atlas contract: 3 columns and one row per animation, transparent PNG.
+// Missing assets safely fall back to procedural art until production sheets are uploaded.
+export const FIGHTER_SPRITES={
+ 'disney-hercules':{url:'./images/showdown/hercules-atlas.png',frameWidth:192,frameHeight:224},
+ 'jack-skellington':{url:'./images/showdown/jack-skellington-atlas.png',frameWidth:192,frameHeight:224}
+};
+export const ANIMATIONS=['idle','walk','run','punch','kick','block','jump','crouch','special','hurt','ko'];
+const atlases=new Map();
+export function loadFighterSprites(id){
+ const asset=FIGHTER_SPRITES[id];if(!asset)return Promise.resolve(false);
+ if(atlases.has(id))return atlases.get(id).promise;
+ const image=new Image(),state={image,ready:false,promise:null};atlases.set(id,state);
+ state.promise=new Promise(resolve=>{
+  image.onload=()=>{state.ready=image.naturalWidth>=asset.frameWidth*3&&image.naturalHeight>=asset.frameHeight*ANIMATIONS.length;resolve(state.ready)};
+  image.onerror=()=>resolve(false);image.src=asset.url;
+ });return state.promise;
+}
+function atlasFrame(ctx,id,pose,step,x,y,width,height){
+ const state=atlases.get(id),config=FIGHTER_SPRITES[id];if(!state?.ready||!config)return false;
+ const row=ANIMATIONS.indexOf(pose);if(row<0)return false;
+ ctx.drawImage(state.image,(step%3)*config.frameWidth,row*config.frameHeight,config.frameWidth,config.frameHeight,x,y,width,height);return true;
+}
 const cache=new Map();
 function sprite(id,pose,step){
  const key=id+':'+pose+':'+step;if(cache.has(key))return cache.get(key);
@@ -90,7 +112,7 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
  ctx.translate(Math.round(f.x),Math.round(f.y));
  ctx.scale(f.face===-1?-1:1,1);
  // 96x112 arcade sprite, displayed at crisp native 2x resolution.
- ctx.drawImage(source,-96,-224,192,224);
+ if(!atlasFrame(ctx,id,pose,frame,-96,-224,192,224))ctx.drawImage(source,-96,-224,192,224);
  if(pose==='special'){
   const pulse=7+frame*4;ctx.strokeStyle=id==='jack-skellington'?'#a99cff':'#ffe67b';ctx.lineWidth=3;
   ctx.strokeRect(64,-181-pulse/2,18+pulse,18+pulse);
@@ -100,8 +122,8 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
 }
 export function mountPixelPreview(container,id){
  const canvas=document.createElement('canvas');canvas.width=192;canvas.height=224;canvas.className='pixel-fighter-preview';
- container.replaceChildren(canvas);const ctx=canvas.getContext('2d');let live=true,raf=0;
+ container.replaceChildren(canvas);loadFighterSprites(id);const ctx=canvas.getContext('2d');let live=true,raf=0;
  function tick(t){if(!live)return;ctx.clearRect(0,0,192,224);ctx.imageSmoothingEnabled=false;const sequence=['idle','idle','walk','walk','punch','punch','block','special'];const phase=Math.floor(t/700)%sequence.length;
- const pose=sequence[phase],frame=Math.floor(t/110)%3;ctx.drawImage(sprite(id,pose,frame),0,0,192,224);raf=requestAnimationFrame(tick)}
+ const pose=sequence[phase],frame=Math.floor(t/110)%3;if(!atlasFrame(ctx,id,pose,frame,0,0,192,224))ctx.drawImage(sprite(id,pose,frame),0,0,192,224);raf=requestAnimationFrame(tick)}
  raf=requestAnimationFrame(tick);return()=>{live=false;cancelAnimationFrame(raf);canvas.remove()};
 }
