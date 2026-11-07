@@ -345,40 +345,39 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 
 
 
-// Anatomical five-digit hand: a tapered palm, four separated fingers and an opposable thumb.
-// All pieces are parented to the shoulder pivot, so avatar poses keep the hands attached.
+// Sculpted five-digit hands: correctly spaced fingers, tapered tips and opposing thumbs.
+// The wrist attaches at wristY; geometry is modeled downward from that joint.
 function buildDetailedHand(parent,material,side,wristY,centerX,width,depth,scale=1){
- // Keep the top of the palm tucked just below the sleeve cuff.
- // The previous .145 offset left an excessive gap on shorter avatar arms.
- const palmY=wristY-.105*scale;
- // loftBody's fourth profile coordinate is Z, not X: position the palm
- // with a group so the palm, knuckles and fingers share the same origin.
  const hand=new THREE.Group();
- hand.position.x=centerX;
+ hand.position.set(centerX,wristY,0);
  parent.add(hand);
+ const palmLength=.205*scale;
+ // Rounded tapered palm, with its top centered at the wrist.
  loftBody(hand,material,[
-  [palmY-.12*scale,width*.77,depth*.72,0],
-  [palmY-.075*scale,width*.96,depth*.94,0],
-  [palmY+.035*scale,width*.90,depth*.92,0],
-  [palmY+.125*scale,width*.65,depth*.72,0]
- ],24);
- const lengths=[.088,.118,.108,.079].map(n=>n*scale);
+  [-palmLength,width*.90,depth*.85,0],
+  [-palmLength*.78,width*1.05,depth,0],
+  [-palmLength*.34,width*.96,depth*.94,0],
+  [.025*scale,width*.57,depth*.66,0]
+ ],32);
+ const lengths=[.115,.155,.145,.112].map(n=>n*scale);
  for(let i=0;i<4;i++){
   const x=(i-1.5)*width*.49;
-  const radius=Math.max(.012,width*.205);
-  const digit=part(hand,new THREE.CapsuleGeometry(radius,lengths[i],5,10),
-   material,x,palmY-.105*scale-lengths[i]*.48,depth*.20);
-  digit.rotation.z=(i-1.5)*.075;
-  part(hand,new THREE.SphereGeometry(radius*1.12,10,8),material,
-   x,palmY-.097*scale,depth*.24,radius*1.12,radius*.78,radius);
+  const radius=Math.max(.011,width*.185);
+  const length=lengths[i];
+  const finger=part(hand,new THREE.CapsuleGeometry(radius,length,5,12),
+   material,x,-palmLength-length*.46,depth*.10);
+  finger.rotation.z=(i-1.5)*.075;
+  // Subtle knuckles smooth the transition from palm to each finger.
+  part(hand,ball,material,x,-palmLength+.018*scale,depth*.12,
+   radius*1.10,radius*.85,radius);
  }
- const thumb=part(hand,new THREE.CapsuleGeometry(Math.max(.015,width*.26),.082*scale,5,10),
-  material,-side*width*.92,palmY+.005*scale,depth*.95);
- thumb.rotation.z=side*.66;
- thumb.rotation.x=-.35;
+ // Thumb grows from the palm's inner side and points diagonally inward.
+ const thumb=part(hand,new THREE.CapsuleGeometry(width*.235,.105*scale,5,12),
+  material,-side*width*.91,-palmLength*.48,depth*.55);
+ thumb.rotation.z=-side*.72;
+ thumb.rotation.x=-.22;
  return hand;
 }
-
 let avatarRig={arms:[],legs:[],eyes:[],head:null,skinnedLimbs:[]};
 function buildCleanAvatar(){
  avatarRig={arms:[],legs:[],eyes:[],head:null,skinnedLimbs:[]};
@@ -561,21 +560,19 @@ function buildCleanAvatar(){
      [-.02,style.arm*1.12,style.arm*1.15,0]
     ],-.53,32);
     avatarRig.skinnedLimbs.push({bone:armSkin.lowerBone,side,type:'arm'});
-    // Exposed wrist bridges the sleeve to the hand without a floating gap.
-    const wrist=loftBody(armPivot,skin,[
-     [-.915,.077,.068,0],
-     [-.88,.081,.072,0],
-     [-.835,.079,.073,0],
-     [-.805,.076,.071,0]
-    ],24);
-    // The wrist and hand share the arm's actual lateral centerline.
-    wrist.position.x=side*.16;
-    const animeHand=buildDetailedHand(armPivot,skin,side,-.86,side*.16,.112,.078,1.12);
-    // Parent both wrist and hand to the forearm bone, preserving their
-    // existing positions in shoulder-pivot space.
-    armSkin.lowerBone.add(wrist,animeHand);
-    wrist.position.y-=armSkin.lowerBone.position.y;
-    animeHand.position.y-=armSkin.lowerBone.position.y;
+    // Attach both the wrist bridge and palm directly to the forearm bone.
+    // Use bone-local coordinates so elbow animation cannot detach the hand.
+    const forearm=armSkin.lowerBone;
+    const wristCenter=side*.15;
+    const wrist=loftBody(forearm,skin,[
+     [-.39,.073,.065,wristCenter],
+     [-.33,.078,.070,wristCenter],
+     [-.275,.078,.070,wristCenter]
+    ],28);
+    const animeHand=buildDetailedHand(forearm,skin,side,-.35,wristCenter,.112,.078,1.05);
+    // The bone's origin is at the elbow (shoulder-local y=-.53).
+    // Thus local y=-.35 places the palm at shoulder-local y=-.88.
+
    }else{
     // A tapered sleeve with a rounded shoulder and a fitted cuff.
     const armReach=model==='chibi'?.66:model==='southpark'?.69:.78;
