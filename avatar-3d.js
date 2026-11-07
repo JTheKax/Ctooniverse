@@ -862,6 +862,32 @@ function addCategoryDetails(){
  }
 }
 
+// Reliable low-complexity fallback when detailed geometry fails on a device.
+function buildSafeAvatar(){
+ avatar.clear();
+ avatarRig={arms:[],legs:[],eyes:[],head:null,skinnedLimbs:[]};
+ const v=Object.fromEntries(new FormData(form).entries());
+ const skin=mat(v.skin||'#f2b989'),shirt=mat(v.shirt||'#6545d7');
+ const pants=mat('#29365d'),hair=mat(v.hair||'#30204d'),white=mat('#ffffff'),dark=mat('#20223b');
+ const b=(m,x,y,z,a,c,d)=>part(avatar,ball,m,x,y,z,a,c,d);
+ b(shirt,0,1.95,0,.55,.72,.37);
+ b(skin,0,3.30,0,.58,.65,.46);
+ b(skin,0,2.67,0,.14,.20,.13);
+ if(v.style!=='bald')b(hair,0,3.79,-.04,.59,.24,.45);
+ for(const side of [-1,1]){
+  b(white,side*.23,3.40,.405,.15,.18,.06);
+  b(mat(v.eyes||'#36d5ed'),side*.23,3.39,.46,.07,.10,.025);
+  b(shirt,side*.68,2.02,0,.18,.52,.21);
+  b(skin,side*.70,1.46,.02,.14,.17,.13);
+  b(pants,side*.29,.82,0,.23,.55,.25);
+  b(dark,side*.29,.19,.17,.26,.15,.37);
+ }
+ b(skin,0,3.18,.46,.07,.08,.07);
+ b(dark,0,3.01,.42,.13,.022,.02);
+ avatar.scale.setScalar(1);
+ camera.userData.avatarCenterY=2.05;
+}
+
 let rotation=.15,drag=false,last=0;let animationEnabled=true;const animationClock=new THREE.Clock();renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointercancel',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-last)*.012;last=e.clientX}});renderer.domElement.style.touchAction='pan-y';
 function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.lookAt(0,camera.userData.avatarCenterY||2.05,0);camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{try{
  buildCleanAvatar();
@@ -870,7 +896,16 @@ function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientH
  host.dataset.previewStatus='ready';
  const warning=host.querySelector('[data-avatar-error]');if(warning)warning.remove();
 }catch(error){
- console.error('CTooniverse 3D preview:',error);
+ console.error('CTooniverse detailed 3D preview:',error);
+ try{
+  buildSafeAvatar();
+  host.dataset.previewStatus='fallback';
+  const prior=host.querySelector('[data-avatar-error]');if(prior)prior.remove();
+  let note=host.querySelector('[data-avatar-fallback]');
+  if(!note){note=document.createElement('div');note.dataset.avatarFallback='';note.style.cssText='position:absolute;bottom:6px;left:8px;right:8px;text-align:center;color:#fff;background:#241a4bbb;border-radius:8px;padding:5px;font:12px sans-serif;pointer-events:none';host.style.position='relative';host.appendChild(note)}
+  note.textContent='Basic 3D mode active. Detailed model error: '+(error?.message||'unknown');
+  return;
+ }catch(fallbackError){console.error('CTooniverse fallback 3D preview:',fallbackError)}
  host.dataset.previewStatus='error';
  let warning=host.querySelector('[data-avatar-error]');
  if(!warning){warning=document.createElement('div');warning.dataset.avatarError='';warning.style.cssText='position:absolute;inset:8px;display:grid;place-items:center;padding:16px;background:#20163ddc;color:white;text-align:center;border-radius:12px;z-index:2';host.style.position='relative';host.appendChild(warning)}
