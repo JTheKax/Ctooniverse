@@ -2246,3 +2246,59 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
  .site-header nav .nav-link{padding:8px 7px!important;font-size:11px!important}
  .site-chat-dock .site-chat-toggle{font-size:12px;padding:9px 12px}
 }
+
+
+/* CToon collection and catalog card display repair. */
+:is(.ctoons-featured-grid,.collection-grid){
+ display:grid!important;
+ grid-template-columns:repeat(auto-fill,182px)!important;
+ justify-content:center!important;align-items:start!important;
+ gap:16px!important;width:100%!important;min-width:0!important;
+ overflow:visible!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ width:182px!important;min-width:0!important;max-width:182px!important;
+ height:282px!important;min-height:282px!important;max-height:282px!important;
+ margin:0!important;transform:none!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card[hidden]{display:none!important}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-art{
+ position:relative!important;box-sizing:border-box!important;
+ flex:0 0 157px!important;width:100%!important;height:157px!important;
+ min-height:157px!important;max-height:157px!important;
+ padding:4px!important;overflow:hidden!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-art img{
+ display:block!important;width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ object-fit:contain!important;object-position:center!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-details{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ flex:1 1 0!important;width:100%!important;min-height:0!important;
+ overflow:hidden!important;padding:5px!important;gap:3px!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-name{
+ font-size:11px!important;line-height:1.2!important;overflow-wrap:anywhere!important;
+ display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;
+ overflow:hidden!important;max-height:29px!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) :is(.ctoon-shop-purchase,.ctoon-shop-status,.collection-series,.collection-quantity){
+ min-width:0!important;max-width:100%!important;font-size:10px!important;line-height:1.2!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-purchase{margin-top:auto!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:3px!important}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-buy{font-size:10px!important;padding:4px 6px!important;white-space:nowrap!important}
+@media(max-width:420px){
+ :is(.ctoons-featured-grid,.collection-grid){grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;padding:0 2px!important}
+ :is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card{
+  width:100%!important;max-width:182px!important;min-width:0!important;
+  height:270px!important;min-height:270px!important;max-height:270px!important;
+ }
+ :is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-art{
+  flex-basis:148px!important;height:148px!important;min-height:148px!important;max-height:148px!important;
+ }
+}
+@media(max-width:330px){
+ :is(.ctoons-featured-grid,.collection-grid){grid-template-columns:minmax(0,182px)!important}
+}
