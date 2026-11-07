@@ -673,51 +673,63 @@ function buildCleanAvatar(){
   const trim=mat('#f0c5ff');
   for(const side of [-1,1])ballAt(shirt,side*.58,2.30,0,.19,.16,.22);
  }else if(model==='hero'){
+  // Contoured shoulder armor, layered chest plates and fitted shin guards.
   for(const side of [-1,1]){
-   const pauldron=ballAt(metal,side*.86,2.43,.02,.35,.19,.42);
-   pauldron.rotation.z=side*.23;
-   boxAt(dark,side*.83,2.34,.36,.30,.10,.09);
-   boxAt(gold,side*.33,.79,.27,.14,.36,.07);
+   const pauldron=ballAt(metal,side*.85,2.40,.015,.30,.18,.37);
+   pauldron.rotation.z=side*.20;
+   const shoulderTrim=ballAt(gold,side*.85,2.47,.25,.22,.055,.08);
+   shoulderTrim.rotation.z=side*.20;
+   const guard=ballAt(metal,side*.33,.70,.24,.21,.31,.095);
+   guard.rotation.z=side*.04;
+   ballAt(gold,side*.34,.83,.33,.09,.07,.035);
   }
-  boxAt(metal,0,2.05,.49,.53,.28,.10);
-  boxAt(gold,0,2.07,.56,.19,.16,.07);
+  ballAt(metal,0,2.08,.41,.48,.29,.12);
+  ballAt(gold,0,2.10,.53,.13,.13,.04);
  }else if(model==='chibi'){
+  // Compact sleeves, oversized cuffs and rounded tunic hem.
   for(const side of [-1,1]){
-   ballAt(shirt,side*.52,2.16,.12,.25,.24,.26);
-   ballAt(gold,side*.36,1.56,.38,.11,.11,.06);
+   ballAt(shirt,side*.52,2.16,.07,.22,.22,.24);
+   ballAt(white,side*.64,1.60,.12,.13,.075,.13);
+   ballAt(gold,side*.32,1.53,.34,.09,.085,.04);
   }
-  ballAt(shirt,0,1.74,.35,.42,.23,.18);
+  ballAt(shirt,0,1.72,.29,.41,.16,.12);
  }else if(model==='classic'){
-  // Rounded white cartoon gloves and oversized contrasting shoe caps.
+  // Simple expressive cartoon silhouette: gloves and rounded shoe toes.
   for(const side of [-1,1]){
-   ballAt(white,side*.79,1.31,.12,.20,.21,.19);
-   ballAt(white,side*.34,.19,.49,.29,.13,.24);
+   ballAt(white,side*.79,1.31,.12,.18,.18,.17);
+   ballAt(white,side*.34,.19,.47,.26,.10,.21);
   }
-  ballAt(gold,0,1.53,.40,.13,.13,.08);
+  ballAt(gold,0,1.53,.40,.11,.11,.06);
  }else if(model==='southpark'){
-  // Puffy winter coat, central zipper and knitted cap with pompom.
-  ballAt(shirt,0,2.01,.18,.71,.43,.43);
-  boxAt(dark,0,1.98,.59,.045,.66,.04);
-  for(const side of [-1,1])ballAt(gold,side*.17,2.38,.49,.13,.10,.10);
+  // Graphic winter jacket with inset zipper, pocket seams and soft mittens.
+  ballAt(shirt,0,2.01,.15,.67,.40,.40);
+  boxAt(dark,0,1.97,.555,.035,.58,.025);
+  for(const side of [-1,1]){
+   ballAt(shirt,side*.78,1.41,.09,.24,.24,.24);
+   const pocket=boxAt(dark,side*.33,1.71,.52,.22,.025,.02);
+   pocket.rotation.z=side*.07;
+  }
   if(v.style!=='bald'){
-   ballAt(hair,0,4.03,0,.68,.16,.52);
-   ballAt(accent,0,4.23,0,.14,.14,.14);
+   ballAt(hair,0,4.03,0,.68,.14,.51);
+   ballAt(accent,0,4.21,0,.12,.12,.12);
   }
  }else if(model==='simpsons'){
-  // Projecting jawline and simple collar distinguish this family from anime.
-  ballAt(skin,0,headY-.48,.48,.35,.14,.25);
+  // Smooth muzzle, fitted collar points and simple shirt sleeve seams.
+  ballAt(skin,0,headY-.42,.43,.29,.12,.17);
   for(const side of [-1,1]){
-   const collar=boxAt(white,side*.20,2.49,.35,.28,.12,.16);
-   collar.rotation.z=side*.35;
+   const collar=boxAt(white,side*.19,2.48,.33,.24,.09,.12);
+   collar.rotation.z=side*.32;
+   ballAt(white,side*.70,2.06,.12,.16,.045,.16);
   }
-  ballAt(dark,0,1.52,.40,.12,.10,.06);
  }else if(model==='robot'){
-  // Recessed illuminated torso and articulated armor on the feet.
-  boxAt(dark,0,1.94,.51,.75,.56,.07);
-  for(let i=-1;i<=1;i++)boxAt(iris,i*.20,1.96,.56,.11,.32,.04);
+  // Layered mechanical armor with articulated knee caps and glowing status bars.
+  boxAt(dark,0,1.94,.51,.73,.54,.055);
+  for(let i=-1;i<=1;i++)boxAt(iris,i*.19,1.96,.55,.09,.27,.035);
   for(const side of [-1,1]){
-   boxAt(gold,side*.87,2.16,.27,.34,.13,.09);
-   boxAt(dark,side*.34,.22,.59,.44,.13,.07);
+   boxAt(gold,side*.87,2.16,.27,.30,.10,.075);
+   ballAt(dark,side*.34,.79,.30,.19,.16,.095);
+   boxAt(metal,side*.34,.50,.31,.33,.26,.085);
+   boxAt(dark,side*.34,.22,.59,.42,.11,.055);
   }
  }
  // Attach all completed face and hair meshes to a head pivot for idle movement.
