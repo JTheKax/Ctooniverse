@@ -18,7 +18,7 @@ const atlases=new Map();
 export function loadFighterSprites(id){
  const asset=FIGHTER_SPRITES[id];if(!asset)return Promise.resolve(false);
  if(atlases.has(id))return atlases.get(id).promise;
- const state={image:null,ready:false,frameWidth:asset.frameWidth,frameHeight:asset.frameHeight,promise:null};atlases.set(id,state);
+ const state={image:null,ready:false,source:null,frameWidth:asset.frameWidth,frameHeight:asset.frameHeight,promise:null};atlases.set(id,state);
  const candidates=[asset.url,id==='jack-skellington'?'/images/showdown/jack-skellington-atlas.svg':'/images/showdown/hercules-atlas.svg'];
  state.promise=new Promise(resolve=>{
   function tryNext(index){
@@ -26,7 +26,7 @@ export function loadFighterSprites(id){
    const image=new Image();image.decoding='async';
    image.onload=()=>{
     if(image.naturalWidth%3===0&&image.naturalHeight%ANIMATIONS.length===0&&image.naturalWidth/3>=32&&image.naturalHeight/ANIMATIONS.length>=32){
-     state.image=image;state.frameWidth=image.naturalWidth/3;state.frameHeight=image.naturalHeight/ANIMATIONS.length;state.ready=true;resolve(true);
+     state.image=image;state.source=candidates[index];state.frameWidth=image.naturalWidth/3;state.frameHeight=image.naturalHeight/ANIMATIONS.length;state.ready=true;resolve(true);
     }else tryNext(index+1);
    };
    image.onerror=()=>tryNext(index+1);
@@ -123,7 +123,8 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
  const fps=pose==='idle'?4:pose==='walk'?10:pose==='ko'?5:pose==='special'?9:14;
  const index=Math.floor(Math.max(0,time-playback.start)*fps);
  const frame=['ko','hurt','jump','crouch','block'].includes(pose)?Math.min(2,index):['punch','kick','special'].includes(pose)?Math.min(2,index):index%3;
- const source=sprite(id,pose,frame);
+ // Generate the procedural fallback only when the illustrated atlas is unavailable.
+ const illustrated=atlases.get(id)?.ready===true;
  ctx.save();ctx.imageSmoothingEnabled=false;
  ctx.fillStyle='#07071999';ctx.beginPath();ctx.ellipse(f.x,ground+1,42,9,0,0,Math.PI*2);ctx.fill();
  ctx.translate(Math.round(f.x),Math.round(f.y));
@@ -131,15 +132,25 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
  // 96x112 arcade sprite, displayed at crisp native 2x resolution.
  // Keep the fighter's feet anchored to the arena even as the atlas changes pose.
  // Smooth illustrated PNGs at display resolution; preserve hard pixels for procedural fallback.
- const illustrated=atlases.get(id)?.ready===true;
  ctx.imageSmoothingEnabled=illustrated;
- if(!atlasFrame(ctx,id,pose,frame,-96,-224,192,224)){ctx.imageSmoothingEnabled=false;ctx.drawImage(source,-96,-224,192,224)}
+ if(!atlasFrame(ctx,id,pose,frame,-96,-224,192,224)){ctx.imageSmoothingEnabled=false;ctx.drawImage(sprite(id,pose,frame),-96,-224,192,224)}
  if(pose==='special'){
   const pulse=7+frame*4;ctx.strokeStyle=id==='jack-skellington'?'#a99cff':'#ffe67b';ctx.lineWidth=3;
   ctx.strokeRect(64,-181-pulse/2,18+pulse,18+pulse);
  }
- if(f.hit&&f.attack>0){ctx.strokeStyle='#f4f0a3';ctx.lineWidth=4;ctx.strokeRect(-96,-224,192,224)}
+ if(f.hit&&f.attack>0){
+  // Small impact sparks, rather than a rectangle surrounding the whole fighter.
+  ctx.strokeStyle='#fff0a0';ctx.lineWidth=3;ctx.beginPath();
+  for(let i=0;i<6;i++){const angle=i*Math.PI/3;const cx=52,cy=-138;
+   ctx.moveTo(cx+Math.cos(angle)*9,cy+Math.sin(angle)*9);
+   ctx.lineTo(cx+Math.cos(angle)*19,cy+Math.sin(angle)*19);
+  }ctx.stroke();
+ }
  ctx.restore();
+}
+export function getFighterSpriteStatus(id){
+ const state=atlases.get(id);
+ return {loaded:!!state?.ready,source:state?.source||null,frameWidth:state?.frameWidth||0,frameHeight:state?.frameHeight||0};
 }
 export function mountPixelPreview(container,id){
  const canvas=document.createElement('canvas');canvas.width=192;canvas.height=224;canvas.className='pixel-fighter-preview';
