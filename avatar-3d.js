@@ -37,6 +37,33 @@ function loftBody(group,material,profiles,segments=40){
  geometry.setIndex(indices);geometry.computeVertexNormals();
  return part(group,geometry,material,0,0,0);
 }
+// Two-bone smooth skinning for the anime arms and legs.
+// The mesh is weighted per vertex, so bending deforms its surface rather
+// than rotating an entire rigid cylinder at the shoulder or hip.
+function skinnedLoft(group,material,profiles,bendY,segments=32){
+ const mesh=loftBody(group,material,profiles,segments);
+ const geometry=mesh.geometry,positions=geometry.getAttribute('position');
+ const skinIndices=[],skinWeights=[];
+ const span=.22;
+ for(let i=0;i<positions.count;i++){
+  const y=positions.getY(i);
+  const lower=1-THREE.MathUtils.smoothstep(y,bendY-span,bendY+span);
+  skinIndices.push(0,1,0,0);
+  skinWeights.push(1-lower,lower,0,0);
+ }
+ geometry.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(skinIndices,4));
+ geometry.setAttribute('skinWeight',new THREE.Float32BufferAttribute(skinWeights,4));
+ group.remove(mesh);
+ const root=new THREE.Bone(),lowerBone=new THREE.Bone();
+ root.name='UpperLimb';lowerBone.name='LowerLimb';
+ lowerBone.position.y=bendY;root.add(lowerBone);
+ group.add(root);
+ const skinned=new THREE.SkinnedMesh(geometry,material);
+ skinned.castShadow=true;skinned.receiveShadow=true;
+ group.add(skinned);
+ skinned.bind(new THREE.Skeleton([root,lowerBone]));
+ return {mesh:skinned,lowerBone};
+}
 function sculptTorso(group,material,y=1.83,width=.68,height=1.75,depth=.43){
  const profile=[
   [0,-.52],[.37,-.51],[.49,-.40],[.46,-.16],[.51,.09],
@@ -314,7 +341,7 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 
 
 
-let avatarRig={arms:[],legs:[],eyes:[],head:null};
+let avatarRig={arms:[],legs:[],eyes:[],head:null,skinnedLimbs:[]};
 function buildCleanAvatar(){
  avatarRig={arms:[],legs:[],eyes:[],head:null};
  const geometries=new Set(),materials=new Set();
@@ -462,14 +489,15 @@ function buildCleanAvatar(){
    const armPivot=new THREE.Group();armPivot.position.set(side*shoulder,2.28,0);avatar.add(armPivot);
    if(model==='anime'){
     // Smooth ring-loft arm with fitted sleeve, narrowing wrist and anatomical palm.
-    loftBody(armPivot,shirt,[
+    const armSkin=skinnedLoft(armPivot,shirt,[
      [-.82,style.arm*.80,style.arm*.78,side*.15],
      [-.69,style.arm*.90,style.arm*.90,side*.13],
      [-.50,style.arm*.86,style.arm*.88,side*.10],
      [-.34,style.arm*1.08,style.arm*1.05,side*.06],
      [-.15,style.arm*1.32,style.arm*1.28,side*.02],
      [-.02,style.arm*1.12,style.arm*1.15,0]
-    ],32);
+    ],-.53,32);
+    avatarRig.skinnedLimbs.push({bone:armSkin.lowerBone,side,type:'arm'});
     loftBody(armPivot,skin,[
      [-1.10,.075,.062,side*.16],[-1.04,.11,.075,side*.16],
      [-.95,.13,.085,side*.16],[-.85,.095,.084,side*.15]
@@ -495,12 +523,13 @@ function buildCleanAvatar(){
    const legPivot=new THREE.Group();legPivot.position.set(side*.32,1.27,0);avatar.add(legPivot);
    if(model==='anime'){
     // Continuous thigh-to-ankle leg with sculpted knee and calf volumes.
-    loftBody(legPivot,pants,[
+    const legSkin=skinnedLoft(legPivot,pants,[
      [-.99,.16,.16,side*.02],[-.84,.18,.18,side*.02],
      [-.70,.20,.19,side*.015],[-.57,.185,.18,side*.01],
      [-.44,.22,.21,side*.01],[-.26,.265,.25,0],
      [-.08,.29,.265,0],[.06,.25,.23,0]
-    ],32);
+    ],-.54,32);
+    avatarRig.skinnedLimbs.push({bone:legSkin.lowerBone,side,type:'leg'});
     // Shoe shell, toe box and outsole remain separate for recoloring.
     part(legPivot,ball,shoe,side*.02,-1.075,.22,.27,.16,.40);
     part(legPivot,ball,white,side*.02,-1.185,.26,.275,.045,.41);
@@ -868,6 +897,10 @@ function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientH
  if(!warning){warning=document.createElement('div');warning.dataset.avatarError='';warning.style.cssText='position:absolute;inset:8px;display:grid;place-items:center;padding:16px;background:#20163ddc;color:white;text-align:center;border-radius:12px;z-index:2';host.style.position='relative';host.appendChild(warning)}
  warning.textContent='3D preview failed: '+(error?.message||'unknown error')+'. Try reloading this page.';
 }};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;for(const {joint,side} of avatarRig.arms){joint.rotation.z=animationEnabled?side*(.045+Math.sin(t*1.4+side)*.055):0;joint.rotation.x=animationEnabled?Math.sin(t*1.3+side)*.045:0}for(const {joint,side} of avatarRig.legs){joint.rotation.x=animationEnabled?Math.sin(t*1.4+side*Math.PI)*.035:0}
+for(const {bone,side,type} of avatarRig.skinnedLimbs){
+ bone.rotation.z=animationEnabled?(type==='arm'?side*.035*Math.sin(t*1.5):side*.015*Math.sin(t*1.3)):0;
+ bone.rotation.x=animationEnabled?(type==='arm'?.09*Math.max(0,Math.sin(t*1.3+side)):.045*Math.max(0,Math.sin(t*1.4+side*Math.PI))):0;
+}
 if(avatarRig.head){
  avatarRig.head.rotation.y=animationEnabled?Math.sin(t*.72)*.055:0;
  avatarRig.head.rotation.z=animationEnabled?Math.sin(t*.83)*.027:0;
