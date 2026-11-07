@@ -8,6 +8,57 @@ function part(group,geometry,material,x,y,z,sx=1,sy=1,sz=1){const mesh=new THREE
 const ball=new THREE.SphereGeometry(1,28,20),cylinder=new THREE.CylinderGeometry(1,1,1,20);
 function limb(group,a,b,r,material){const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b);const mesh=part(group,new THREE.CylinderGeometry(r*.85,r,start.distanceTo(end),14),material,...start.clone().add(end).multiplyScalar(.5).toArray());mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),end.sub(start).normalize());return mesh}
 
+
+function categoryDetails(model,v,equipped,skin,hair,accent,shirt,iris,black,white){
+ const headY=model==='southpark'?3.22:model==='simpsons'?3.34:model==='chibi'?3.18:3.3;
+ const front=model==='southpark'?.62:model==='simpsons'?.62:model==='chibi'?.72:.5;
+ const sphere=(material,x,y,z,sx,sy,sz)=>part(avatar,ball,material,x,y,z,sx,sy,sz);
+ const gold=new THREE.MeshStandardMaterial({color:0xffd56e,metalness:.75,roughness:.24});
+ const hairStyle=v.style||'swoop';
+ if(model!=='robot'&&hairStyle!=='bald'){
+  const cap=sphere(hair,0,headY+.64,-.11,model==='southpark'?.89:model==='chibi'?.88:.62,.27,.51);
+  for(let i=-2;i<=2;i++){
+   const strand=sphere(i===1?accent:hair,i*.19,headY+.57,front*.49,.13,.23,.17);
+   strand.rotation.z=i*.14;
+  }
+  if(hairStyle==='spikes'||hairStyle==='mohawk'){
+   for(let i=-2;i<=2;i++){const spike=part(avatar,new THREE.ConeGeometry(.16,.48,8),i%2?accent:hair,i*.2,headY+.99,-.05);spike.rotation.z=i*.14}
+  }
+  if(hairStyle==='bob'||hairStyle==='locs'||hairStyle==='curls'){
+   for(const side of [-1,1])for(let i=0;i<3;i++)sphere(i===1?accent:hair,side*(model==='southpark'?.78:.55),headY+.35-i*.23,-.02,.15,.18,.23);
+  }
+  if(hairStyle==='ponytail')sphere(hair,0,headY+.25,-.57,.24,.53,.23);
+  if(hairStyle==='undercut')sphere(accent,0,headY+.86,.05,.43,.10,.27);
+ }
+ if(model!=='robot'){
+  if(v.accessory==='glasses')for(const side of [-1,1])part(avatar,new THREE.TorusGeometry(.23,.025,8,24),gold,side*.29,headY+.10,front+.055);
+  if(v.accessory==='crown')part(avatar,new THREE.CylinderGeometry(.39,.46,.28,8),gold,0,headY+1.03,0);
+  if(v.accessory==='headphones')for(const side of [-1,1])sphere(black,side*.68,headY+.15,0,.16,.29,.25);
+  if(v.piercing==='nose')sphere(gold,.12,headY-.22,front+.09,.045,.045,.04);
+  if(v.piercing==='brow')sphere(gold,.31,headY+.33,front+.05,.05,.035,.035);
+  if(v.piercing==='earrings'||v.piercing==='hoops')for(const side of [-1,1]){
+   if(v.piercing==='hoops')part(avatar,new THREE.TorusGeometry(.095,.025,8,18),gold,side*.77,headY-.26,.08);
+   else sphere(gold,side*.77,headY-.25,.14,.065,.065,.05);
+  }
+  if(v.detail==='freckles')for(const side of [-1,1])for(let i=0;i<3;i++)sphere(black,side*(.24+i*.07),headY-.22+(i%2)*.045,front+.015,.018,.018,.009);
+  if(v.detail==='blush')for(const side of [-1,1])sphere(mat('#ed849a'),side*.44,headY-.25,front-.05,.15,.07,.018);
+  if(v.detail==='scar'){const scar=part(avatar,new THREE.BoxGeometry(.025,.23,.015),mat('#ad5261'),.37,headY-.15,front+.04);scar.rotation.z=.4}
+  if(v.tattoo&&v.tattoo!=='none'){
+   const ink=mat(v.tattoo==='heart'?'#c42b62':'#1a1638');
+   sphere(ink,.79,1.68,.16,.042,.14,.09);
+  }
+ }
+ if(v.outfit==='hoodie'||equipped==='hoodie'){
+  sphere(shirt,0,2.44,-.25,.47,.32,.31);
+  sphere(white,0,1.49,.43,.32,.12,.045);
+ }
+ if(v.outfit==='armor'||equipped==='legendary'){
+  sphere(gold,0,1.95,.46,.30,.25,.07);
+  for(const side of [-1,1])sphere(gold,side*.65,2.25,0,.23,.13,.31);
+ }
+ if(v.outfit==='jacket'||equipped==='jacket')for(const side of [-1,1])sphere(black,side*.38,1.89,.35,.17,.53,.09);
+}
+
 // Distinct construction paths for each stylized character family.
 function buildCategory(model,v,equipped){
  const skin=mat(model==='simpsons'?(v.skin==='#f2b989'?'#f5d43b':v.skin):v.skin||'#f2b989');
@@ -51,6 +102,7 @@ function buildCategory(model,v,equipped){
   }
   b(black,0,2.83,.57,.23,.045,.035);
   b(mat('#e2c9ff'),0,1.18,.46,.38,.09,.07);
+  categoryDetails(model,v,equipped,skin,hair,mat(v.hairAccent||'#ed79ff'),shirt,iris,black,white);
   return true;
  }
  if(model==='simpsons'){
@@ -70,6 +122,7 @@ function buildCategory(model,v,equipped){
   }
   b(black,0,2.91,.58,.20,.035,.026);
   for(let i=-2;i<=2;i++)part(avatar,new THREE.ConeGeometry(.18,.40,7),hair,i*.22,4.19,.02);
+  categoryDetails(model,v,equipped,skin,hair,mat(v.hairAccent||'#ed79ff'),shirt,iris,black,white);
   return true;
  }
  if(model==='chibi'){
@@ -89,6 +142,7 @@ function buildCategory(model,v,equipped){
   }
   b(mat('#e980a0'),0,2.90,.68,.22,.06,.03);
   if(v.style==='spikes')for(let i=-2;i<=2;i++)part(avatar,new THREE.ConeGeometry(.23,.46,8),hair,i*.33,4.22,.0);
+  categoryDetails(model,v,equipped,skin,hair,mat(v.hairAccent||'#ed79ff'),shirt,iris,black,white);
   return true;
  }
  if(model==='classic'){
@@ -107,11 +161,12 @@ function buildCategory(model,v,equipped){
    b(shoes,side*.30,.20,.20,.26,.16,.49);
   }
   b(black,0,2.97,.48,.26,.065,.035);
+  categoryDetails(model,v,equipped,skin,hair,mat(v.hairAccent||'#ed79ff'),shirt,iris,black,white);
   return true;
  }
  return false;
 }
-function build(){avatar.clear();const v=Object.fromEntries(new FormData(form).entries());const equipped=window.ctoonEquippedClothing||null;const model=['anime','classic','chibi','hero','robot','southpark','simpsons'].includes(v.model)?v.model:'anime';if(buildCategory(model,v,equipped))return;avatar.scale.setScalar(model==='chibi'?.88:model==='hero'?1.04:model==='southpark'?.83:1);const skin=mat(model==='simpsons'&&v.skin==='#f2b989'?'#f5d33c':v.skin||'#f2b989'),hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),cloth=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[equipped])||v.shirt||'#6545d7'),dark=mat('#181a36'),gold=mat('#ffdc68',.6),eye=mat(v.eyes||'#36d5ed');
+function build(){avatar.traverse(obj=>{if(obj.isMesh){obj.geometry.dispose();if(Array.isArray(obj.material))obj.material.forEach(m=>m.dispose());else obj.material.dispose()}});avatar.clear();const v=Object.fromEntries(new FormData(form).entries());const equipped=window.ctoonEquippedClothing||null;const model=['anime','classic','chibi','hero','robot','southpark','simpsons'].includes(v.model)?v.model:'anime';if(buildCategory(model,v,equipped))return;avatar.scale.setScalar(model==='chibi'?.88:model==='hero'?1.04:model==='southpark'?.83:1);const skin=mat(model==='simpsons'&&v.skin==='#f2b989'?'#f5d33c':v.skin||'#f2b989'),hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),cloth=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[equipped])||v.shirt||'#6545d7'),dark=mat('#181a36'),gold=mat('#ffdc68',.6),eye=mat(v.eyes||'#36d5ed');
 part(avatar,ball,model==='robot'?mat('#7784bd'):cloth,0,1.82,0,model==='hero'?.82:model==='chibi'?.62:.69,model==='chibi'?.68:model==='southpark'?.62:.88,.36);part(avatar,ball,skin,0,2.74,0,.17,.24,.16);part(avatar,ball,model==='robot'?mat('#b3b8d3'):skin,0,3.38,0,model==='chibi'?.77:model==='southpark'?.83:model==='simpsons'?.67:model==='hero'?.51:model==='classic'?.55:.64,model==='chibi'?.81:model==='southpark'?.66:model==='simpsons'?.72:model==='hero'?.61:.74,model==='robot'?.44:.49);
 for(const side of [-1,1]){part(avatar,ball,skin,side*.54,3.35,0,.12,.19,.13);part(avatar,ball,THREE.MeshStandardMaterial?mat('#ffffff'):eye,side*.245,3.47,.44,model==='classic'?.14:model==='hero'?.12:.195,model==='classic'?.17:model==='hero'?.14:.245,.072);part(avatar,ball,eye,side*.245,3.45,.51,model==='classic'?.075:model==='hero'?.065:.115,model==='classic'?.105:model==='hero'?.085:.17,.028);part(avatar,ball,dark,side*.245,3.46,.537,.057,.102,.012);
 limb(avatar,[side*.65,2.28,0],[side*.82,1.45,0],.19,v.outfit==='armor'?gold:cloth);part(avatar,ball,skin,side*.84,1.35,0,.17,.19,.16);
