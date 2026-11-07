@@ -493,6 +493,15 @@ function buildCleanAvatar(){
   avatar.remove(mesh);mesh.position.y-=headPivot.position.y;headPivot.add(mesh);
  }
  avatarRig.head=headPivot;
+ // Keep every style in the camera frame, including oversized chibi hair and robot antennae.
+ avatar.updateMatrixWorld(true);
+ const bounds=new THREE.Box3().setFromObject(avatar);
+ if(!bounds.isEmpty()){
+  const center=bounds.getCenter(new THREE.Vector3());
+  const size=bounds.getSize(new THREE.Vector3());
+  camera.userData.avatarCenterY=THREE.MathUtils.clamp(center.y,1.65,2.35);
+  camera.userData.avatarHeight=Math.max(3.7,size.y);
+ }
 }
 
 function sculptCategoryIdentity(){
@@ -651,9 +660,10 @@ function addCategoryDetails(){
 }
 
 let rotation=.15,drag=false,last=0;let animationEnabled=true;const animationClock=new THREE.Clock();renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointercancel',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-last)*.012;last=e.clientX}});renderer.domElement.style.touchAction='pan-y';
-function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{try{
+function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.lookAt(0,camera.userData.avatarCenterY||2.05,0);camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{try{
  buildCleanAvatar();
  if(avatar.children.length===0)throw new Error('No avatar meshes were created');
+ camera.lookAt(0,camera.userData.avatarCenterY||2.05,0);
  host.dataset.previewStatus='ready';
  const warning=host.querySelector('[data-avatar-error]');if(warning)warning.remove();
 }catch(error){
@@ -672,4 +682,14 @@ if(avatarRig.head){
 const blinkPhase=t%5.7;
 const blink=animationEnabled&&blinkPhase<.19?Math.max(.10,Math.abs(blinkPhase-.095)/.095):1;
 for(const eye of avatarRig.eyes){eye.scale.y=eye.userData.openEyeHeight*blink;eye.position.y=eye.userData.eyeCenterY+eye.userData.eyeOffsetY*blink;}
-renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
+try{renderer.render(scene,camera)}catch(error){
+ console.error('Avatar render error:',error);
+ host.dataset.previewStatus='error';
+ if(!host.querySelector('[data-avatar-error]')){
+  const warning=document.createElement('div');warning.dataset.avatarError='';
+  warning.textContent='3D rendering stopped: '+(error?.message||'unknown error');
+  warning.style.cssText='position:absolute;inset:8px;display:grid;place-items:center;padding:12px;background:#20163de8;color:#fff;text-align:center;z-index:3';
+  host.style.position='relative';host.appendChild(warning);
+ }
+ running=false;return;
+}requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
