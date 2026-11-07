@@ -557,11 +557,14 @@ function buildCleanAvatar(){
     avatarRig.skinnedLimbs.push({bone:armSkin.lowerBone,side,type:'arm'});
     // Exposed wrist bridges the sleeve to the hand without a floating gap.
     const wrist=loftBody(armPivot,skin,[
-     [-.965,.085,.074,side*.16],
-     [-.91,.092,.080,side*.16],
-     [-.845,.082,.075,side*.155],
-     [-.80,.078,.073,side*.15]
+     [-.915,.077,.068,0],
+     [-.88,.081,.072,0],
+     [-.835,.079,.073,0],
+     [-.805,.076,.071,0]
     ],24);
+    // The wrist and hand share the arm's actual lateral centerline.
+    // Previously the wrist profile's fourth coordinate shifted it in Z.
+    wrist.position.x=side*.16;
     const animeHand=buildDetailedHand(armPivot,skin,side,-.86,side*.16,.112,.078,1.12);
     // Parent both wrist and hand to the forearm bone, preserving their
     // existing positions in shoulder-pivot space.
