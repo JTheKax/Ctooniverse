@@ -418,7 +418,7 @@ function buildCleanAvatar(){
     ballAt(dark,x,headY+.08,eyeZ+.101,style.eye*.25,style.eye*.43,.012)];
    for(const mesh of eyeParts){
     mesh.userData.openEyeHeight=mesh.scale.y;
-    mesh.userData.eyeCenterY=.24;
+    mesh.userData.eyeCenterY=headY+.10;
     mesh.userData.eyeOffsetY=mesh.position.y-(headY+.10);
     avatarRig.eyes.push(mesh);
    }
