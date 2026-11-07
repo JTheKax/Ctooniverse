@@ -556,16 +556,18 @@ function buildCleanAvatar(){
     ],-.53,32);
     avatarRig.skinnedLimbs.push({bone:armSkin.lowerBone,side,type:'arm'});
     // Exposed wrist bridges the sleeve to the hand without a floating gap.
-    loftBody(armPivot,skin,[
+    const wrist=loftBody(armPivot,skin,[
      [-.965,.085,.074,side*.16],
      [-.91,.092,.080,side*.16],
      [-.845,.082,.075,side*.155],
      [-.80,.078,.073,side*.15]
     ],24);
     const animeHand=buildDetailedHand(armPivot,skin,side,-.86,side*.16,.112,.078,1.12);
-    // Keep the hand connected to the forearm in idle poses.
-    // The elbow skin is held neutral until the hand can share its bone rig.
-    animeHand.position.y=0;
+    // Parent both wrist and hand to the forearm bone, preserving their
+    // existing positions in shoulder-pivot space.
+    armSkin.lowerBone.add(wrist,animeHand);
+    wrist.position.y-=armSkin.lowerBone.position.y;
+    animeHand.position.y-=armSkin.lowerBone.position.y;
    }else{
     // A tapered sleeve with a rounded shoulder and a fitted cuff.
     const armReach=model==='chibi'?.66:model==='southpark'?.69:.78;
@@ -605,10 +607,13 @@ function buildCleanAvatar(){
     ],-.54,32);
     avatarRig.skinnedLimbs.push({bone:legSkin.lowerBone,side,type:'leg'});
     // Shoe shell, toe box and outsole remain separate for recoloring.
-    part(legPivot,ball,shoe,side*.02,-1.075,.22,.27,.16,.40);
-    part(legPivot,ball,white,side*.02,-1.185,.26,.275,.045,.41);
+    const foot=new THREE.Group();
+    legSkin.lowerBone.add(foot);
+    foot.position.y=-legSkin.lowerBone.position.y;
+    part(foot,ball,shoe,side*.02,-1.075,.22,.27,.16,.40);
+    part(foot,ball,white,side*.02,-1.185,.26,.275,.045,.41);
     for(let i=0;i<3;i++)
-     part(legPivot,new THREE.CapsuleGeometry(.011,.15,3,8),white,
+     part(foot,new THREE.CapsuleGeometry(.011,.15,3,8),white,
       side*.02,-1.005-i*.048,.45-i*.018);
    }else{
     // One continuous trouser silhouette with knee and ankle taper.
@@ -1066,8 +1071,8 @@ function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientH
 for(const {bone,side,type} of avatarRig.skinnedLimbs){
  // Do not bend a skinned forearm independently of its hand: doing so
  // visibly detaches the wrist. Shoulder sway still animates the whole arm.
- bone.rotation.z=animationEnabled&&type==='leg'?side*.015*Math.sin(t*1.3):0;
- bone.rotation.x=animationEnabled&&type==='leg'?.045*Math.max(0,Math.sin(t*1.4+side*Math.PI)):0;
+ bone.rotation.z=animationEnabled?(type==='arm'?side*.035*Math.sin(t*1.5):side*.015*Math.sin(t*1.3)):0;
+ bone.rotation.x=animationEnabled?(type==='arm'?.075*Math.max(0,Math.sin(t*1.3+side)):.045*Math.max(0,Math.sin(t*1.4+side*Math.PI))):0;
 }
 if(avatarRig.head){
  avatarRig.head.rotation.y=animationEnabled?Math.sin(t*.72)*.055:0;
