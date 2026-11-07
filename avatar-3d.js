@@ -15,6 +15,28 @@ function mat(color,metalness=0){return new THREE.MeshStandardMaterial({color,met
 function part(group,geometry,material,x,y,z,sx=1,sy=1,sz=1){const mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);mesh.scale.set(sx,sy,sz);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);return mesh}
 const ball=new THREE.SphereGeometry(1,28,20),cylinder=new THREE.CylinderGeometry(1,1,1,20);
 
+// A continuous ring-loft surface for fitted character anatomy.
+// Unlike overlapping primitives, it has one welded, smoothly shaded skin.
+function loftBody(group,material,profiles,segments=40){
+ const vertices=[],indices=[],uv=[];
+ for(let j=0;j<profiles.length;j++){
+  const [y,rx,rz,shiftZ]=profiles[j];
+  for(let i=0;i<=segments;i++){
+   const a=i/segments*Math.PI*2;
+   vertices.push(Math.cos(a)*rx,y,Math.sin(a)*rz+(shiftZ||0));
+   uv.push(i/segments,j/(profiles.length-1));
+  }
+ }
+ for(let j=0;j<profiles.length-1;j++)for(let i=0;i<segments;i++){
+  const a=j*(segments+1)+i,b=a+segments+1;
+  indices.push(a,b,a+1,b,b+1,a+1);
+ }
+ const geometry=new THREE.BufferGeometry();
+ geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+ geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+ geometry.setIndex(indices);geometry.computeVertexNormals();
+ return part(group,geometry,material,0,0,0);
+}
 function sculptTorso(group,material,y=1.83,width=.68,height=1.75,depth=.43){
  const profile=[
   [0,-.52],[.37,-.51],[.49,-.40],[.46,-.16],[.51,.09],
@@ -327,7 +349,14 @@ function buildCleanAvatar(){
   boxAt(iris,0,1.97,.482,.43,.18,.04);
   boxAt(metal,0,2.65,0,.29,.22,.30);
  }else{
-  sculptTorso(avatar,shirt,1.89,style.body[0],style.body[1],style.body[2]);
+  if(model==='anime'){
+   // Sculpted upper body: shoulders, pectorals, ribcage and tapered waist.
+   loftBody(avatar,shirt,[
+    [1.31,.34,.26],[1.39,.39,.29],[1.58,.37,.30],
+    [1.77,.39,.31],[1.98,.49,.35],[2.19,.56,.36],
+    [2.36,.58,.34],[2.49,.45,.29],[2.57,.25,.22],[2.60,.14,.15]
+   ]);
+  }else sculptTorso(avatar,shirt,1.89,style.body[0],style.body[1],style.body[2]);
   ballAt(skin,0,2.69,0,.17,.24,.17);
   if(model==='anime'){
    // Custom tapered facial mesh: cheekbones, jaw and chin are sculpted into
