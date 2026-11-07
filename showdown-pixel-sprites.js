@@ -122,14 +122,18 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
  if(playback.pose!==pose){playback.pose=pose;playback.start=time;spritePlayback.set(f,playback)}
  const fps=pose==='idle'?4:pose==='walk'?10:pose==='ko'?5:pose==='special'?9:14;
  const index=Math.floor(Math.max(0,time-playback.start)*fps);
- const frame=['ko','hurt','jump','crouch','block'].includes(pose)?Math.min(2,index):index%3;
+ const frame=['ko','hurt','jump','crouch','block'].includes(pose)?Math.min(2,index):['punch','kick','special'].includes(pose)?Math.min(2,index):index%3;
  const source=sprite(id,pose,frame);
  ctx.save();ctx.imageSmoothingEnabled=false;
  ctx.fillStyle='#07071999';ctx.beginPath();ctx.ellipse(f.x,ground+1,42,9,0,0,Math.PI*2);ctx.fill();
  ctx.translate(Math.round(f.x),Math.round(f.y));
  ctx.scale(f.face===-1?-1:1,1);
  // 96x112 arcade sprite, displayed at crisp native 2x resolution.
- if(!atlasFrame(ctx,id,pose,frame,-96,-224,192,224))ctx.drawImage(source,-96,-224,192,224);
+ // Keep the fighter's feet anchored to the arena even as the atlas changes pose.
+ // Smooth illustrated PNGs at display resolution; preserve hard pixels for procedural fallback.
+ const illustrated=atlases.get(id)?.ready===true;
+ ctx.imageSmoothingEnabled=illustrated;
+ if(!atlasFrame(ctx,id,pose,frame,-96,-224,192,224)){ctx.imageSmoothingEnabled=false;ctx.drawImage(source,-96,-224,192,224)}
  if(pose==='special'){
   const pulse=7+frame*4;ctx.strokeStyle=id==='jack-skellington'?'#a99cff':'#ffe67b';ctx.lineWidth=3;
   ctx.strokeRect(64,-181-pulse/2,18+pulse,18+pulse);
@@ -140,7 +144,20 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
 export function mountPixelPreview(container,id){
  const canvas=document.createElement('canvas');canvas.width=192;canvas.height=224;canvas.className='pixel-fighter-preview';
  container.replaceChildren(canvas);loadFighterSprites(id);const ctx=canvas.getContext('2d');let live=true,raf=0;
- function tick(t){if(!live)return;ctx.clearRect(0,0,192,224);ctx.imageSmoothingEnabled=false;const sequence=['idle','idle','walk','walk','punch','kick','block','special'];const phase=Math.floor(t/700)%sequence.length;
- const pose=sequence[phase],frame=Math.floor(t/110)%3;if(!atlasFrame(ctx,id,pose,frame,0,0,192,224))ctx.drawImage(sprite(id,pose,frame),0,0,192,224);raf=requestAnimationFrame(tick)}
+ const sequence=[{pose:'idle',duration:1200,fps:4},{pose:'walk',duration:850,fps:10},{pose:'punch',duration:450,fps:12},{pose:'kick',duration:500,fps:12},{pose:'block',duration:650,fps:6},{pose:'jump',duration:650,fps:6},{pose:'special',duration:650,fps:9},{pose:'hurt',duration:450,fps:7},{pose:'ko',duration:950,fps:5}];
+ const cycle=sequence.reduce((sum,part)=>sum+part.duration,0);
+ function tick(t){
+  if(!live)return;
+  ctx.clearRect(0,0,192,224);
+  let elapsed=t%cycle,part=sequence[0];
+  for(const item of sequence){part=item;if(elapsed<item.duration)break;elapsed-=item.duration}
+  const rawFrame=Math.floor(elapsed*part.fps/1000);
+  const frame=['ko','hurt','jump','block'].includes(part.pose)?Math.min(2,rawFrame):rawFrame%3;
+  ctx.imageSmoothingEnabled=atlases.get(id)?.ready===true;
+  if(!atlasFrame(ctx,id,part.pose,frame,0,0,192,224)){
+   ctx.imageSmoothingEnabled=false;ctx.drawImage(sprite(id,part.pose,frame),0,0,192,224);
+  }
+  raf=requestAnimationFrame(tick);
+ }
  raf=requestAnimationFrame(tick);return()=>{live=false;cancelAnimationFrame(raf);canvas.remove()};
 }
