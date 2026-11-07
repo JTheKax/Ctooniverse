@@ -71,3 +71,6 @@ body.fighters-page{background:radial-gradient(ellipse at top,#292169,#090d23 75%
 
 /* Keep WebGL exactly aligned with the 960×540 fighting canvas at all screen sizes. */
 .stage{isolation:isolate}.stage>canvas#fight{aspect-ratio:16/9}.stage .showdown-webgl{inset:0 auto auto 0;aspect-ratio:16/9;max-width:100%;height:auto!important;z-index:1}.preview-portrait{position:relative;overflow:hidden}#fighter-3d-preview{min-height:100%;width:100%}#fighter-3d-preview canvas{width:100%!important;height:100%!important;object-fit:contain}
+
+/* Pixel-art is the default fighter rendering style; do not smooth sprite edges. */
+#fight,.pixel-fighter-preview{image-rendering:pixelated;image-rendering:crisp-edges}.pixel-fighter-preview{display:block;width:100%;height:100%;object-fit:contain}#fighter-3d-preview canvas.pixel-fighter-preview{image-rendering:pixelated!important;object-fit:contain}
