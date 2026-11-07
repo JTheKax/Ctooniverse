@@ -6,6 +6,33 @@ const avatar=new THREE.Group();scene.add(avatar);const floor=new THREE.Mesh(new 
 function mat(color,metalness=0){return new THREE.MeshStandardMaterial({color,metalness,roughness:metalness > 0 ? 0.32 : 0.78})}
 function part(group,geometry,material,x,y,z,sx=1,sy=1,sz=1){const mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);mesh.scale.set(sx,sy,sz);mesh.castShadow=true;mesh.receiveShadow=true;group.add(mesh);return mesh}
 const ball=new THREE.SphereGeometry(1,28,20),cylinder=new THREE.CylinderGeometry(1,1,1,20);
+
+function sculptTorso(group,material,y=1.83,width=.68,height=1.75,depth=.43){
+ const profile=[
+  [0,-.52],[.37,-.51],[.49,-.40],[.46,-.16],[.51,.09],
+  [.66,.32],[.72,.43],[.58,.50],[.31,.53],[0,.54]
+ ];
+ const points=profile.map(([r,h])=>new THREE.Vector2(r,h));
+ const mesh=part(group,new THREE.LatheGeometry(points,32),material,0,y,0,width/.72,height,depth/.72);
+ return mesh;
+}
+function sculptLimb(group,start,end,radius,material){
+ const a=new THREE.Vector3(...start),b=new THREE.Vector3(...end),length=a.distanceTo(b);
+ const geometry=new THREE.CylinderGeometry(radius*.73,radius*1.06,length,18,5);
+ const position=a.clone().add(b).multiplyScalar(.5);
+ const mesh=part(group,geometry,material,...position.toArray());
+ mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b.sub(a).normalize());
+ return mesh;
+}
+function sculptHandsAndFeet(model,skin,shoe){
+ for(const side of [-1,1]){
+  const hand=part(avatar,new THREE.SphereGeometry(1,20,14),skin,side*.84,1.32,.08,.16,.22,.12);
+  const thumb=part(avatar,new THREE.SphereGeometry(1,12,10),skin,side*.70,1.36,.17,.075,.12,.08);
+  const boot=part(avatar,new THREE.SphereGeometry(1,24,16),shoe,side*.33,.20,.24,.28,.17,.47);
+  boot.rotation.y=side*.06;
+ }
+}
+
 function limb(group,a,b,r,material){const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b);const mesh=part(group,new THREE.CylinderGeometry(r*.85,r,start.distanceTo(end),14),material,...start.clone().add(end).multiplyScalar(.5).toArray());mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),end.sub(start).normalize());return mesh}
 
 
@@ -88,7 +115,7 @@ function buildCategory(model,v,equipped){
  if(model==='southpark'){
   avatar.scale.setScalar(.94);
   // Short, stout paper-cutout-inspired silhouette with oversized circular head.
-  b(shirt,0,1.48,0,.78,.78,.47);
+  sculptTorso(avatar,shirt,1.48,.82,1.25,.54);
   b(skin,0,3.22,0,.95,.85,.62);
   b(shirt,0,3.93,-.04,.96,.26,.64);
   b(mat(v.hairAccent||'#ed79ff'),0,4.14,0,.16,.15,.16);
@@ -108,7 +135,7 @@ function buildCategory(model,v,equipped){
  if(model==='simpsons'){
   avatar.scale.setScalar(1);
   // Yellow cartoon family: long muzzle, round bulging eyes, tall head and simple hair spikes.
-  b(shirt,0,1.77,0,.70,.85,.39);
+  sculptTorso(avatar,shirt,1.77,.73,1.58,.46);
   b(skin,0,3.34,0,.65,.86,.50);
   b(skin,0,3.03,.48,.36,.21,.22);
   for(const side of [-1,1]){
@@ -128,7 +155,7 @@ function buildCategory(model,v,equipped){
  if(model==='chibi'){
   avatar.scale.setScalar(.95);
   // Super-deformed anime: massive head, tiny torso and short limbs.
-  b(shirt,0,1.39,0,.54,.53,.37);
+  sculptTorso(avatar,shirt,1.39,.57,.99,.41);
   b(skin,0,3.18,0,.94,1.0,.70);
   b(hair,0,3.92,-.13,.93,.40,.62);
   for(const side of [-1,1]){
@@ -148,7 +175,7 @@ function buildCategory(model,v,equipped){
  if(model==='classic'){
   avatar.scale.setScalar(1);
   // Vintage rubber-hose animation: round head, huge eyes, narrow torso, long curved limbs.
-  b(shirt,0,1.78,0,.52,.70,.36);
+  sculptTorso(avatar,shirt,1.78,.56,1.32,.39);
   b(skin,0,3.29,0,.72,.76,.52);
   b(hair,0,3.86,-.13,.68,.26,.43);
   for(const side of [-1,1]){
@@ -167,10 +194,10 @@ function buildCategory(model,v,equipped){
  return false;
 }
 function build(){avatar.traverse(obj=>{if(obj.isMesh){obj.geometry.dispose();if(Array.isArray(obj.material))obj.material.forEach(m=>m.dispose());else obj.material.dispose()}});avatar.clear();const v=Object.fromEntries(new FormData(form).entries());const equipped=window.ctoonEquippedClothing||null;const model=['anime','classic','chibi','hero','robot','southpark','simpsons'].includes(v.model)?v.model:'anime';if(buildCategory(model,v,equipped))return;avatar.scale.setScalar(model==='chibi'?.88:model==='hero'?1.04:model==='southpark'?.83:1);const skin=mat(model==='simpsons'&&v.skin==='#f2b989'?'#f5d33c':v.skin||'#f2b989'),hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),cloth=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[equipped])||v.shirt||'#6545d7'),dark=mat('#181a36'),gold=mat('#ffdc68',.6),eye=mat(v.eyes||'#36d5ed');
-part(avatar,ball,model==='robot'?mat('#7784bd'):cloth,0,1.82,0,model==='hero'?.82:model==='chibi'?.62:.69,model==='chibi'?.68:model==='southpark'?.62:.88,.36);part(avatar,ball,skin,0,2.74,0,.17,.24,.16);part(avatar,ball,model==='robot'?mat('#b3b8d3'):skin,0,3.38,0,model==='chibi'?.77:model==='southpark'?.83:model==='simpsons'?.67:model==='hero'?.51:model==='classic'?.55:.64,model==='chibi'?.81:model==='southpark'?.66:model==='simpsons'?.72:model==='hero'?.61:.74,model==='robot'?.44:.49);
+sculptTorso(avatar,cloth,1.82,model==='hero'?.88:.70,1.72,.43);part(avatar,ball,skin,0,2.74,0,.17,.24,.16);part(avatar,ball,model==='robot'?mat('#b3b8d3'):skin,0,3.38,0,model==='chibi'?.77:model==='southpark'?.83:model==='simpsons'?.67:model==='hero'?.51:model==='classic'?.55:.64,model==='chibi'?.81:model==='southpark'?.66:model==='simpsons'?.72:model==='hero'?.61:.74,model==='robot'?.44:.49);
 for(const side of [-1,1]){part(avatar,ball,skin,side*.54,3.35,0,.12,.19,.13);part(avatar,ball,THREE.MeshStandardMaterial?mat('#ffffff'):eye,side*.245,3.47,.44,model==='classic'?.14:model==='hero'?.12:.195,model==='classic'?.17:model==='hero'?.14:.245,.072);part(avatar,ball,eye,side*.245,3.45,.51,model==='classic'?.075:model==='hero'?.065:.115,model==='classic'?.105:model==='hero'?.085:.17,.028);part(avatar,ball,dark,side*.245,3.46,.537,.057,.102,.012);
-limb(avatar,[side*.65,2.28,0],[side*.82,1.45,0],.19,v.outfit==='armor'?gold:cloth);part(avatar,ball,skin,side*.84,1.35,0,.17,.19,.16);
-limb(avatar,[side*.32,1.28,0],[side*.33,.4,0],.24,equipped==='jeans'?mat('#3566a7'):equipped==='outfit'?mat('#272e5c'):equipped==='legendary'?mat('#492a88'):dark);part(avatar,ball,equipped==='sneakers'?mat('#ff53a8'):equipped==='legendary'?gold:dark,side*.33,.19,.16,.26,.16,.43);
+sculptLimb(avatar,[side*.65,2.28,0],[side*.82,1.45,0],.19,v.outfit==='armor'?gold:cloth);part(avatar,ball,skin,side*.84,1.35,0,.17,.19,.16);
+sculptLimb(avatar,[side*.32,1.28,0],[side*.33,.4,0],.24,equipped==='jeans'?mat('#3566a7'):equipped==='outfit'?mat('#272e5c'):equipped==='legendary'?mat('#492a88'):dark);part(avatar,ball,equipped==='sneakers'?mat('#ff53a8'):equipped==='legendary'?gold:dark,side*.33,.19,.16,.26,.16,.43);
 if(v.piercing==='earrings'||v.piercing==='hoops')part(avatar,new THREE.TorusGeometry(.09,.023,8,20),gold,side*.59,3.22,.08);
 }
 part(avatar,ball,skin,0,3.25,.49,.075,.055,.06);part(avatar,ball,mat('#a64a72'),0,3.05,.468,.17,.035,.024);
