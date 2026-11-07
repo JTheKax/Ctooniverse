@@ -523,6 +523,39 @@ function buildCleanAvatar(){
   if(outfit==='jacket')boxAt(gold,0,1.92,.40,.035,.54,.03);
   if(outfit==='legendary'||v.outfit==='armor'||model==='hero')ballAt(gold,0,2.11,.43,.26,.19,.06);
  }
+ // Anime realism pass: soft fabric folds, layered hair strands and detailed footwear.
+ if(model==='anime'){
+  const fabricShadow=mat('#3c4382'),stitch=mat('#c3a9ee'),sole=mat('#e9e8f0');
+  for(const side of [-1,1]){
+   // Thin, angled fabric folds follow the shirt instead of floating across it.
+   for(let i=0;i<3;i++){
+    const fold=part(avatar,new THREE.CapsuleGeometry(.012,.16+i*.035,3,8),
+      i===1?stitch:fabricShadow,side*(.18+i*.085),1.78+i*.13,.365-i*.016);
+    fold.rotation.z=side*(.32+i*.12);
+   }
+   // Hair grows in tapered swept clumps with individual smaller strands.
+   if(v.style!=='bald'){
+    for(let i=0;i<5;i++){
+     const angle=(i/4-.5)*1.55;
+     const strand=part(avatar,new THREE.ConeGeometry(.062,.34+i*.025,12),
+       i===2?accent:hair,side*(.13+i*.075),headY+.57-i*.035,.31);
+     strand.rotation.z=side*(.38+angle*.25);
+     strand.rotation.x=-.18;
+    }
+   }
+   // A wristband and cuff give the arm a believable sleeve transition.
+   const wrist=part(avatar,new THREE.TorusGeometry(.125,.033,8,24),stitch,
+     side*(style.body[0]*.95+.16),1.39,.055);
+   wrist.rotation.x=Math.PI/2;
+  }
+  // Neckline seam and a central zipper-like stitch.
+  const neckline=part(avatar,new THREE.TorusGeometry(.19,.024,8,32,Math.PI),stitch,0,2.58,.24);
+  neckline.rotation.x=Math.PI*.13;
+  const zip=part(avatar,new THREE.CapsuleGeometry(.012,.29,3,8),stitch,0,2.14,.39);
+  // Subtle cheek shading made of translucent materials.
+  const blush=new THREE.MeshStandardMaterial({color:'#ce7d88',transparent:true,opacity:.26,roughness:1,depthWrite:false});
+  for(const side of [-1,1])ballAt(blush,side*.36,headY-.20,.438,.15,.07,.014);
+ }
  // Distinctive sculpted accessories and silhouettes for every model family.
  // These meshes are built into the active preview, not legacy unused builders.
  if(model==='anime'){
