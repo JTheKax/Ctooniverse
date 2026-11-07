@@ -10,8 +10,8 @@ export const PALETTES={
 // Illustrated atlas contract: 3 columns and one row per animation, transparent PNG.
 // Missing assets safely fall back to procedural art until production sheets are uploaded.
 export const FIGHTER_SPRITES={
- 'disney-hercules':{url:'/images/showdown/hercules-showdown-animated-v7.png',frameWidth:192,frameHeight:224},
- 'jack-skellington':{url:'/images/showdown/jack-showdown-rebuilt-v23.png',frameWidth:192,frameHeight:224}
+ 'disney-hercules':{url:'/public/images/showdown/hercules-showdown-animated-v7.png',frameWidth:192,frameHeight:224},
+ 'jack-skellington':{url:'/public/images/showdown/jack-showdown-rebuilt-v23.png',frameWidth:192,frameHeight:224}
 };
 export const ANIMATIONS=['idle','walk','run','punch','kick','block','jump','crouch','special','hurt','ko'];
 const atlases=new Map();
