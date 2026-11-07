@@ -626,16 +626,21 @@ function buildCleanAvatar(){
    }else{
     // One continuous trouser silhouette with knee and ankle taper.
     const thigh=style.leg*(model==='hero'?1.18:1.12);
-    loftBody(legPivot,pants,[
+    const legSkin=skinnedLoft(legPivot,pants,[
      [-.97,style.leg*.76,style.leg*.75,0],
      [-.82,style.leg*.83,style.leg*.83,0],
      [-.57,style.leg*.96,style.leg*.91,0],
      [-.35,thigh,style.leg,0],
      [-.08,thigh*1.13,style.leg*1.06,0],
      [.08,style.leg*.98,style.leg*.95,0]
-    ],28);
-    part(legPivot,ball,shoe,0,-1.07,.19,style.leg*1.22,.15,.35);
-    part(legPivot,ball,white,0,-1.18,.23,style.leg*1.23,.035,.37);
+    ],-.55,28);
+    avatarRig.skinnedLimbs.push({bone:legSkin.lowerBone,side,type:'leg'});
+    // Shoes inherit the shin transform instead of floating when the knee bends.
+    const foot=new THREE.Group();
+    legSkin.lowerBone.add(foot);
+    foot.position.y=-legSkin.lowerBone.position.y;
+    part(foot,ball,shoe,0,-1.07,.19,style.leg*1.22,.15,.35);
+    part(foot,ball,white,0,-1.18,.23,style.leg*1.23,.035,.37);
    }
    avatarRig.legs.push({joint:legPivot,side});
   }
