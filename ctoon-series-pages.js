@@ -28,7 +28,10 @@ const logoFiles={
 if(grid&&category){
  const {data,error}=await db.from('ctoon_series').select('name,slug').eq('category',category).order('name');
  if(error){const msg=document.createElement('p');msg.textContent='Unable to refresh sets. Showing saved page links.';grid.before(msg)}
- else{
+ else if(!data?.length){
+  // Keep the server-rendered series links when the catalog is empty or not yet seeded.
+  console.info('No database CToon series returned; preserving saved set links.');
+ }else{
   const fragment=document.createDocumentFragment();
   for(const set of data||[]){
    const card=document.createElement('a');
