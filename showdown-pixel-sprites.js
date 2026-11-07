@@ -117,7 +117,7 @@ function sprite(id,pose,step){
  x.restore();cache.set(key,c);return c;
 }
 export function drawPixelFighter(ctx,f,id,time=0,ground=445){
- const pose=f.hp<=0?'ko':f.guard?'block':f.crouch?'crouch':f.y<ground-3?'jump':f.attack>0?(ANIMATIONS.includes(f.kind)?f.kind:'punch'):Math.abs(f.vx)>2.5?'run':Math.abs(f.vx)>.1?'walk':'idle';
+ const pose=f.hp<=0?'ko':f.stun>0?'hurt':f.guard?'block':f.crouch?'crouch':f.y<ground-3?'jump':f.attack>0?(ANIMATIONS.includes(f.kind)?f.kind:'punch'):Math.abs(f.vx)>.8?'run':Math.abs(f.vx)>.1?'walk':'idle';
  const playback=spritePlayback.get(f)||{pose:'',start:time};
  if(playback.pose!==pose){playback.pose=pose;playback.start=time;spritePlayback.set(f,playback)}
  const fps=pose==='idle'?4:pose==='walk'?10:pose==='run'?13:pose==='ko'?5:pose==='special'?9:14;
