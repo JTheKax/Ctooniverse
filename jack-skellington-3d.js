@@ -17,10 +17,12 @@ export function buildJack(){
  const arms=[],legs=[];
  for(const side of [-1,1]){
   const arm=new THREE.Group();arm.position.set(side*.36,2.75,0);body.add(arm);
-  bar(arm,suit,side*.08,-.52,0,.14,1.06,.16);
+  bar(arm,suit,side*.08,-.43,0,.14,.84,.16);
+  orb(arm,suit,side*.08,-.86,0,.085,.09,.09);
+  bar(arm,suit,side*.08,-.99,0,.115,.28,.13);
   for(let i=0;i<5;i++)bar(arm,stripe,side*.08,-.15-i*.17,.086,.12,.013,.012);
-  orb(arm,bone,side*.08,-1.1,0,.12,.15,.11);
-  for(let j=-2;j<=2;j++)bar(arm,bone,side*.08+j*.043,-1.27,.03,.028,.22,.035);
+  orb(arm,bone,side*.08,-1.17,0,.105,.12,.09);
+  for(let j=-2;j<=2;j++){const finger=bar(arm,bone,side*.08+j*.044,-1.32+Math.abs(j)*.022,.035,.025,.19-Math.abs(j)*.018,.028);finger.rotation.z=j*.08;}
   arms.push(arm);
   const leg=new THREE.Group();leg.position.set(side*.14,1.83,0);body.add(leg);
   bar(leg,suit,0,-.73,0,.17,1.45,.19);
@@ -30,7 +32,7 @@ export function buildJack(){
  return {root,body,arms,legs,phase:0,cape:null};
 }
 export function mountJack(container){
- const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(36,1,.1,100);camera.position.set(0,2.1,8.3);camera.lookAt(0,2,0);
+ const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(36,1,.1,100);camera.position.set(0,2.1,7.3);camera.lookAt(0,2,0);
  const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=THREE.SRGBColorSpace;container.replaceChildren(renderer.domElement);
  scene.add(new THREE.HemisphereLight(0xdfe6ff,0x45345d,3));const lamp=new THREE.DirectionalLight(0xffffff,2);lamp.position.set(-3,6,4);scene.add(lamp);
  const model=buildJack();scene.add(model.root);let active=true,frame=0;
