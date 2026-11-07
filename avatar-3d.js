@@ -563,7 +563,8 @@ function buildCleanAvatar(){
      [-.80,.078,.073,side*.15]
     ],24);
     const animeHand=buildDetailedHand(armPivot,skin,side,-.86,side*.16,.112,.078,1.12);
-    // Hands follow the lower-arm bone when the elbow bends.
+    // Keep the hand connected to the forearm in idle poses.
+    // The elbow skin is held neutral until the hand can share its bone rig.
     animeHand.position.y=0;
    }else{
     // A tapered sleeve with a rounded shoulder and a fitted cuff.
@@ -1063,8 +1064,10 @@ function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientH
  warning.textContent='3D preview failed: '+(error?.message||'unknown error')+'. Try reloading this page.';
 }};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;for(const {joint,side} of avatarRig.arms){joint.rotation.z=animationEnabled?side*(.045+Math.sin(t*1.4+side)*.055):0;joint.rotation.x=animationEnabled?Math.sin(t*1.3+side)*.045:0}for(const {joint,side} of avatarRig.legs){joint.rotation.x=animationEnabled?Math.sin(t*1.4+side*Math.PI)*.035:0}
 for(const {bone,side,type} of avatarRig.skinnedLimbs){
- bone.rotation.z=animationEnabled?(type==='arm'?side*.035*Math.sin(t*1.5):side*.015*Math.sin(t*1.3)):0;
- bone.rotation.x=animationEnabled?(type==='arm'?.09*Math.max(0,Math.sin(t*1.3+side)):.045*Math.max(0,Math.sin(t*1.4+side*Math.PI))):0;
+ // Do not bend a skinned forearm independently of its hand: doing so
+ // visibly detaches the wrist. Shoulder sway still animates the whole arm.
+ bone.rotation.z=animationEnabled&&type==='leg'?side*.015*Math.sin(t*1.3):0;
+ bone.rotation.x=animationEnabled&&type==='leg'?.045*Math.max(0,Math.sin(t*1.4+side*Math.PI)):0;
 }
 if(avatarRig.head){
  avatarRig.head.rotation.y=animationEnabled?Math.sin(t*.72)*.055:0;
