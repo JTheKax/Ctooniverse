@@ -350,12 +350,23 @@ function buildCleanAvatar(){
   }else{
    // Shoulder and hip pivot groups form an articulated procedural rig.
    const armPivot=new THREE.Group();armPivot.position.set(side*shoulder,2.28,0);avatar.add(armPivot);
-   sculptLimb(armPivot,[0,0,0],[side*.16,-.85,.02],style.arm,shirt);
-   part(armPivot,ball,skin,side*.16,-.99,.04,style.arm*.92,.20,style.arm*.88);
+   // Rounded shoulder, shaped sleeve, wrist cuff and articulated-looking palm.
+   part(armPivot,ball,shirt,0,-.08,0,style.arm*1.42,style.arm*1.35,style.arm*1.30);
+   sculptLimb(armPivot,[0,-.10,0],[side*.16,-.78,.02],style.arm,shirt);
+   part(armPivot,ball,shirt,side*.16,-.77,.02,style.arm*1.08,.14,style.arm*1.05);
+   part(armPivot,ball,skin,side*.16,-.98,.055,style.arm*.90,.19,style.arm*.82);
+   part(armPivot,ball,skin,side*.16-side*.115,-.95,.16,.065,.12,.075);
+   for(let finger=0;finger<3;finger++)
+     part(armPivot,ball,skin,side*.16+(finger-1)*.075,-1.105,.095,.042,.10,.055);
    avatarRig.arms.push({joint:armPivot,side});
    const legPivot=new THREE.Group();legPivot.position.set(side*.32,1.27,0);avatar.add(legPivot);
-   sculptLimb(legPivot,[0,0,0],[side*.02,-.82,0],style.leg,pants);
-   part(legPivot,ball,shoe,side*.02,-1.05,.22,style.leg*1.22,.17,.40);
+   part(legPivot,ball,pants,0,-.08,0,style.leg*1.26,.22,style.leg*1.22);
+   sculptLimb(legPivot,[0,-.12,0],[side*.02,-.77,0],style.leg,pants);
+   part(legPivot,ball,pants,side*.02,-.79,0,style.leg*1.04,.13,style.leg*1.04);
+   // Separate heel, toe box and outsole give the shoe a readable 3D profile.
+   part(legPivot,ball,shoe,side*.02,-1.045,.11,style.leg*1.20,.17,.28);
+   part(legPivot,ball,shoe,side*.02,-1.075,.35,style.leg*1.30,.145,.30);
+   part(legPivot,ball,white,side*.02,-1.195,.27,style.leg*1.31,.038,.39);
    avatarRig.legs.push({joint:legPivot,side});
   }
  }
