@@ -3,7 +3,7 @@ const canvas=document.getElementById('fight');
 const ctx=canvas.getContext('2d');
 // Reserved slots only: no characters, avatars, or opponents are loaded.
 const roster=Array.from({length:120},(_,i)=>({slot:i+1,character:null}));
-let db=null,viewer=null,disposePreview=null,previewSlot=null,combatReady=false;
+let db=null,viewer=null,disposePreview=null,previewSlot=null,combatReady=false,combatController=null;
 const grid=document.getElementById('fighter-roster');
 const search=document.getElementById('roster-search'),group=document.getElementById('roster-group');
 const sort=document.getElementById('roster-sort'),seriesFilter=document.getElementById('roster-series');
@@ -23,11 +23,11 @@ function selectSlot(n){
  selectedSlot=n;const item=roster.find(entry=>entry.slot===n),character=item.character,rule=unlockRule(item),state=unlockState(item);
  const preview=document.getElementById('fighter-3d-preview');
  if(previewSlot!==n){disposePreview?.();disposePreview=null;preview.replaceChildren();previewSlot=n;preview.hidden=true;
- if(character?.id==='disney-hercules'&&state==='unlocked'){
-  preview.hidden=false;import('./hercules-3d.js').then(mod=>{if(selectedSlot===n)disposePreview=mod.mountHercules(preview)}).catch(error=>{console.warn('3D preview unavailable',error);preview.hidden=true});
+ if(['disney-hercules','jack-skellington'].includes(character?.id)&&state==='unlocked'){
+  preview.hidden=false;import(character.id==='jack-skellington'?'./jack-skellington-3d.js':'./hercules-3d.js').then(mod=>{if(selectedSlot===n)disposePreview=character.id==='jack-skellington'?mod.mountJack(preview):mod.mountHercules(preview)}).catch(error=>{console.warn('3D preview unavailable',error);preview.hidden=true});
  }}
  document.getElementById('selected-fighter').textContent=character?.name||slotLabel(n);
- document.getElementById('preview-symbol').textContent=character?.id==='disney-hercules'&&state==='unlocked'?'':state==='locked'?'🔒':character?.name?.slice(0,1).toUpperCase()||String(n).padStart(3,'0');
+ document.getElementById('preview-symbol').textContent=['disney-hercules','jack-skellington'].includes(character?.id)&&state==='unlocked'?'':state==='locked'?'🔒':character?.name?.slice(0,1).toUpperCase()||String(n).padStart(3,'0');
  document.getElementById('preview-description').textContent=character?(character.series||'Uncategorized')+' · '+(state==='unlocked'?'Ready to select':'Not yet unlocked'):'Empty fighter position '+n+' of '+roster.length+'. Ready for a future character.';
  document.getElementById('preview-unlock-status').textContent=state==='empty'?'EMPTY SLOT':state==='unlocked'?'✓ UNLOCKED':'🔒 LOCKED';
  const action=document.getElementById('unlock-fighter'),help=document.getElementById('unlock-help');
@@ -94,8 +94,8 @@ async function loadFighterCatalog(){
   const count=Math.max(120,catalog.length);while(roster.length<count)roster.push({slot:roster.length+1,character:null});
   (catalog||[]).forEach((row,i)=>{roster[i].character={id:row.id,name:row.name,series:row.series,portrait:row.portrait,unlock:{type:row.unlock_type,cost:row.coin_cost,description:row.achievement_key?'Achievement: '+row.achievement_key:''}}});
   document.getElementById('roster-count').textContent=catalog.length+' / '+roster.length;
- if((catalog||[]).some(f=>f.id==='disney-hercules'&&f.unlock_type==='free')){
-  try{const {createShowdown}=await import('./showdown-combat.js');createShowdown({canvas,start:startButton,pause:pauseButton,status:document.getElementById('fight-status'),message:document.getElementById('fight-message'),health:[document.getElementById('p1-health'),document.getElementById('p2-health')],meter:document.getElementById('p1-meter'),timer:document.getElementById('timer'),rounds:document.getElementById('rounds'),touch:document.querySelectorAll('[data-key]')});combatReady=true}catch(err){console.error('Combat module failed',err)}
+ if((catalog||[]).some(f=>['disney-hercules','jack-skellington'].includes(f.id)&&f.unlock_type==='free')){
+  try{const {createShowdown}=await import('./showdown-combat.js');combatController=createShowdown({canvas,start:startButton,pause:pauseButton,status:document.getElementById('fight-status'),message:document.getElementById('fight-message'),health:[document.getElementById('p1-health'),document.getElementById('p2-health')],meter:document.getElementById('p1-meter'),timer:document.getElementById('timer'),rounds:document.getElementById('rounds'),touch:document.querySelectorAll('[data-key]')});combatReady=true}catch(err){console.error('Combat module failed',err)}
  }
   renderRoster();selectSlot(selectedSlot);
  }catch(error){console.warn('Fighter catalog unavailable',error);document.getElementById('fight-status').textContent='Fighter catalog could not be loaded. Try refreshing.'}
