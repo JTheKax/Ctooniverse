@@ -659,6 +659,50 @@ function buildCleanAvatar(){
   }
   if(outfit==='legendary'||v.outfit==='armor'||model==='hero')ballAt(gold,0,2.11,.43,.20,.15,.045);
  }
+ // Garment-specific shells follow each family's existing body proportions.
+ // Keep details shallow to avoid hiding the face or intersecting animated limbs.
+ if(!robot){
+  const chestWidth=style.body[0],chestDepth=style.body[2];
+  const front=chestDepth*.72+.09;
+  const compact=model==='chibi'||model==='southpark';
+  if(outfit==='hoodie'){
+   const pocketWidth=chestWidth*(compact?.64:.76);
+   const pocket=boxAt(shirt,0,1.77,front,pocketWidth,.24,.055);
+   pocket.scale.x=1;
+   for(const side of [-1,1]){
+    const seam=boxAt(dark,side*pocketWidth*.33,1.77,front+.031,.025,.13,.012);
+    seam.rotation.z=side*.28;
+   }
+   const rib=part(avatar,new THREE.CylinderGeometry(chestWidth*.66,chestWidth*.69,.105,24),dark,0,1.44,0);
+   rib.scale.z=.68;
+  }else if(outfit==='jacket'){
+   for(const side of [-1,1]){
+    const edge=boxAt(dark,side*chestWidth*.19,2.04,front,.055,.70,.05);
+    edge.rotation.z=side*.10;
+    const pocket=boxAt(gold,side*chestWidth*.44,1.78,front+.01,.14,.035,.025);
+    pocket.rotation.z=side*.08;
+   }
+  }else if(outfit==='jeans'){
+   for(const side of [-1,1]){
+    const pocket=boxAt(dark,side*.27,1.20,.32,.17,.13,.025);
+    pocket.rotation.z=side*.14;
+   }
+  }else if(outfit==='sneakers'){
+   for(const side of [-1,1]){
+    for(let i=0;i<2;i++)boxAt(white,side*.32,.24+i*.045,.48-i*.02,.17,.014,.025);
+   }
+  }else if(outfit==='legendary'||outfit==='outfit'){
+   const chest=ballAt(outfit==='legendary'?metal:gold,0,2.04,front,.34,.22,.045);
+   for(const side of [-1,1]){
+    const trim=boxAt(gold,side*chestWidth*.49,2.08,front-.03,.065,.31,.045);
+    trim.rotation.z=side*.16;
+   }
+  }
+ }else if(outfit==='hoodie'||outfit==='jacket'||outfit==='legendary'){
+  // Mechanical avatars wear fitted panels instead of human fabric shells.
+  const panel=boxAt(outfit==='legendary'?gold:shirt,0,1.91,.53,.91,.54,.07);
+  for(const side of [-1,1])boxAt(dark,side*.38,1.91,.58,.035,.47,.018);
+ }
  // Restrained fabric details: avoid decorative strips floating over the torso.
  if(model==='anime'){
   const stitch=mat('#c3a9ee');
