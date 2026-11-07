@@ -7,7 +7,111 @@ function mat(color,metalness=0){return new THREE.MeshToonMaterial({color})}
 function part(group,geometry,material,x,y,z,sx=1,sy=1,sz=1){const mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);mesh.scale.set(sx,sy,sz);group.add(mesh);return mesh}
 const ball=new THREE.SphereGeometry(1,28,20),cylinder=new THREE.CylinderGeometry(1,1,1,20);
 function limb(group,a,b,r,material){const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b);const mesh=part(group,new THREE.CylinderGeometry(r*.85,r,start.distanceTo(end),14),material,...start.clone().add(end).multiplyScalar(.5).toArray());mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),end.sub(start).normalize());return mesh}
-function build(){avatar.clear();const v=Object.fromEntries(new FormData(form).entries());const equipped=window.ctoonEquippedClothing||null;const model=['anime','classic','chibi','hero','robot','southpark','simpsons'].includes(v.model)?v.model:'anime';avatar.scale.setScalar(model==='chibi'?.88:model==='hero'?1.04:model==='southpark'?.83:1);const skin=mat(model==='simpsons'&&v.skin==='#f2b989'?'#f5d33c':v.skin||'#f2b989'),hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),cloth=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[equipped])||v.shirt||'#6545d7'),dark=mat('#181a36'),gold=mat('#ffdc68',.6),eye=mat(v.eyes||'#36d5ed');
+
+// Distinct construction paths for each stylized character family.
+function buildCategory(model,v,equipped){
+ const skin=mat(model==='simpsons'?(v.skin==='#f2b989'?'#f5d43b':v.skin):v.skin||'#f2b989');
+ const shirt=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[equipped])||v.shirt||'#6545d7');
+ const hair=mat(v.hair||'#30204d'),white=mat('#ffffff'),black=mat('#211b35'),iris=mat(v.eyes||'#36d5ed');
+ const pants=mat(equipped==='jeans'?'#3566a7':'#2c325f'),shoes=mat(equipped==='sneakers'?'#ff53a8':'#1e203a');
+ const b=(m,x,y,z,sx,sy,sz)=>part(avatar,ball,m,x,y,z,sx,sy,sz);
+ const cube=(m,x,y,z,sx,sy,sz)=>part(avatar,new THREE.BoxGeometry(sx,sy,sz),m,x,y,z);
+ if(model==='robot'){
+  avatar.scale.setScalar(1);
+  cube(mat('#7e89b8'),0,1.85,0,1.35,1.35,.72);
+  cube(mat('#a9b9da'),0,3.30,0,1.18,.92,.72);
+  cube(black,0,3.38,.38,.94,.32,.09);
+  for(const side of [-1,1]){
+   cube(iris,side*.25,3.38,.44,.24,.12,.04);
+   cube(mat('#6476a0'),side*.85,2.12,0,.38,.40,.48);
+   cube(mat('#aebcda'),side*.91,1.55,0,.28,.82,.30);
+   b(mat('#d9e6fa'),side*.91,1.05,0,.18,.19,.18);
+   cube(mat('#7789ae'),side*.36,.76,0,.46,.95,.52);
+   cube(shoes,side*.36,.19,.18,.52,.25,.78);
+  }
+  b(iris,0,1.91,.39,.18,.18,.06);
+  part(avatar,new THREE.CylinderGeometry(.08,.08,.33,12),mat('#bacaf1'),0,3.96,0);
+  b(iris,0,4.17,0,.15,.15,.15);
+  return true;
+ }
+ if(model==='southpark'){
+  avatar.scale.setScalar(.94);
+  // Short, stout paper-cutout-inspired silhouette with oversized circular head.
+  b(shirt,0,1.48,0,.78,.78,.47);
+  b(skin,0,3.22,0,.95,.85,.62);
+  b(shirt,0,3.93,-.04,.96,.26,.64);
+  b(mat(v.hairAccent||'#ed79ff'),0,4.14,0,.16,.15,.16);
+  for(const side of [-1,1]){
+   b(white,side*.29,3.34,.56,.30,.38,.10);
+   b(black,side*.29,3.31,.66,.075,.105,.025);
+   b(shirt,side*.77,1.52,0,.26,.51,.35);
+   b(skin,side*.83,1.12,.07,.19,.20,.18);
+   cube(pants,side*.31,.66,0,.55,.43,.55);
+   b(shoes,side*.32,.34,.16,.34,.18,.42);
+  }
+  b(black,0,2.83,.57,.23,.045,.035);
+  b(mat('#e2c9ff'),0,1.18,.46,.38,.09,.07);
+  return true;
+ }
+ if(model==='simpsons'){
+  avatar.scale.setScalar(1);
+  // Yellow cartoon family: long muzzle, round bulging eyes, tall head and simple hair spikes.
+  b(shirt,0,1.77,0,.70,.85,.39);
+  b(skin,0,3.34,0,.65,.86,.50);
+  b(skin,0,3.03,.48,.36,.21,.22);
+  for(const side of [-1,1]){
+   b(white,side*.25,3.48,.47,.28,.32,.17);
+   b(black,side*.25,3.46,.64,.075,.095,.028);
+   b(skin,side*.66,3.23,0,.15,.24,.16);
+   limb(avatar,[side*.65,2.20,0],[side*.79,1.46,0],.18,shirt);
+   b(skin,side*.80,1.34,0,.16,.19,.15);
+   limb(avatar,[side*.30,1.19,0],[side*.32,.43,0],.24,pants);
+   b(shoes,side*.32,.22,.15,.29,.17,.43);
+  }
+  b(black,0,2.91,.58,.20,.035,.026);
+  for(let i=-2;i<=2;i++)part(avatar,new THREE.ConeGeometry(.18,.40,7),hair,i*.22,4.19,.02);
+  return true;
+ }
+ if(model==='chibi'){
+  avatar.scale.setScalar(.95);
+  // Super-deformed anime: massive head, tiny torso and short limbs.
+  b(shirt,0,1.39,0,.54,.53,.37);
+  b(skin,0,3.18,0,.94,1.0,.70);
+  b(hair,0,3.92,-.13,.93,.40,.62);
+  for(const side of [-1,1]){
+   b(white,side*.34,3.28,.62,.28,.35,.10);
+   b(iris,side*.34,3.25,.72,.16,.23,.04);
+   b(white,side*.30,3.36,.76,.06,.08,.02);
+   b(shirt,side*.59,1.43,0,.21,.35,.23);
+   b(skin,side*.65,1.13,.02,.16,.16,.15);
+   b(pants,side*.20,.78,0,.22,.30,.25);
+   b(shoes,side*.20,.39,.15,.25,.16,.34);
+  }
+  b(mat('#e980a0'),0,2.90,.68,.22,.06,.03);
+  if(v.style==='spikes')for(let i=-2;i<=2;i++)part(avatar,new THREE.ConeGeometry(.23,.46,8),hair,i*.33,4.22,.0);
+  return true;
+ }
+ if(model==='classic'){
+  avatar.scale.setScalar(1);
+  // Vintage rubber-hose animation: round head, huge eyes, narrow torso, long curved limbs.
+  b(shirt,0,1.78,0,.52,.70,.36);
+  b(skin,0,3.29,0,.72,.76,.52);
+  b(hair,0,3.86,-.13,.68,.26,.43);
+  for(const side of [-1,1]){
+   b(white,side*.27,3.43,.48,.24,.35,.10);
+   b(black,side*.27,3.39,.58,.10,.17,.03);
+   limb(avatar,[side*.50,2.20,0],[side*.78,1.46,.05],.105,shirt);
+   limb(avatar,[side*.78,1.46,.05],[side*.84,1.10,.12],.095,black);
+   b(white,side*.84,1.04,.13,.24,.23,.19);
+   limb(avatar,[side*.22,1.20,0],[side*.30,.42,0],.14,pants);
+   b(shoes,side*.30,.20,.20,.26,.16,.49);
+  }
+  b(black,0,2.97,.48,.26,.065,.035);
+  return true;
+ }
+ return false;
+}
+function build(){avatar.clear();const v=Object.fromEntries(new FormData(form).entries());const equipped=window.ctoonEquippedClothing||null;const model=['anime','classic','chibi','hero','robot','southpark','simpsons'].includes(v.model)?v.model:'anime';if(buildCategory(model,v,equipped))return;avatar.scale.setScalar(model==='chibi'?.88:model==='hero'?1.04:model==='southpark'?.83:1);const skin=mat(model==='simpsons'&&v.skin==='#f2b989'?'#f5d33c':v.skin||'#f2b989'),hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),cloth=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[equipped])||v.shirt||'#6545d7'),dark=mat('#181a36'),gold=mat('#ffdc68',.6),eye=mat(v.eyes||'#36d5ed');
 part(avatar,ball,model==='robot'?mat('#7784bd'):cloth,0,1.82,0,model==='hero'?.82:model==='chibi'?.62:.69,model==='chibi'?.68:model==='southpark'?.62:.88,.36);part(avatar,ball,skin,0,2.74,0,.17,.24,.16);part(avatar,ball,model==='robot'?mat('#b3b8d3'):skin,0,3.38,0,model==='chibi'?.77:model==='southpark'?.83:model==='simpsons'?.67:model==='hero'?.51:model==='classic'?.55:.64,model==='chibi'?.81:model==='southpark'?.66:model==='simpsons'?.72:model==='hero'?.61:.74,model==='robot'?.44:.49);
 for(const side of [-1,1]){part(avatar,ball,skin,side*.54,3.35,0,.12,.19,.13);part(avatar,ball,THREE.MeshStandardMaterial?mat('#ffffff'):eye,side*.245,3.47,.44,model==='classic'?.14:model==='hero'?.12:.195,model==='classic'?.17:model==='hero'?.14:.245,.072);part(avatar,ball,eye,side*.245,3.45,.51,model==='classic'?.075:model==='hero'?.065:.115,model==='classic'?.105:model==='hero'?.085:.17,.028);part(avatar,ball,dark,side*.245,3.46,.537,.057,.102,.012);
 limb(avatar,[side*.65,2.28,0],[side*.82,1.45,0],.19,v.outfit==='armor'?gold:cloth);part(avatar,ball,skin,side*.84,1.35,0,.17,.19,.16);
