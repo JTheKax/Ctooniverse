@@ -11,7 +11,7 @@ export const PALETTES={
 // Missing assets safely fall back to procedural art until production sheets are uploaded.
 export const FIGHTER_SPRITES={
  'disney-hercules':{url:'/images/showdown/hercules-cleaned-atlas.png',frameWidth:192,frameHeight:224},
- 'jack-skellington':{url:'/images/showdown/jack-cleaned-atlas.png',frameWidth:192,frameHeight:224}
+ 'jack-skellington':{url:'/images/showdown/jack-showdown-rebuilt-v23.png',frameWidth:192,frameHeight:224}
 };
 export const ANIMATIONS=['idle','walk','run','punch','kick','block','jump','crouch','special','hurt','ko'];
 const atlases=new Map();
@@ -19,7 +19,7 @@ export function loadFighterSprites(id){
  const asset=FIGHTER_SPRITES[id];if(!asset)return Promise.resolve(false);
  if(atlases.has(id))return atlases.get(id).promise;
  const state={image:null,ready:false,source:null,frameWidth:asset.frameWidth,frameHeight:asset.frameHeight,promise:null};atlases.set(id,state);
- const candidates=[asset.url,id==='jack-skellington'?'/images/showdown/jack-skellington-atlas.svg':'/images/showdown/hercules-atlas.svg'];
+ const candidates=id==='jack-skellington'?[asset.url,'/images/showdown/jack-cleaned-atlas.png','/images/showdown/jack-skellington-atlas.svg']:[asset.url,'/images/showdown/hercules-atlas.svg'];
  state.promise=new Promise(resolve=>{
   function tryNext(index){
    if(index>=candidates.length){resolve(false);return}
