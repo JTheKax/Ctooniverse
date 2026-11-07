@@ -2155,3 +2155,23 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 .player-directory-card .player-owner-icon{color:#ffd44f!important;font-size:2rem!important;text-shadow:0 0 8px #ffcf48,2px 2px 0 #4a2600;line-height:1}
 .player-directory-card .player-owner-name{color:#ffd44f!important;font-weight:900!important;text-shadow:0 1px 0 #5e3700,0 0 10px #e7b83a88;font-size:1.12rem}
 .player-directory-card .player-owner-badge{border-color:#ffd44f!important;background:#5c390b!important;color:#ffe58b!important}
+
+
+/* Community global chat */
+.global-chat{max-width:900px;margin:1.5rem auto;padding:18px;border:4px solid #1a123d;border-radius:19px;background:linear-gradient(145deg,#20155a,#44258e);box-shadow:5px 6px 0 #e6b940;color:white;text-align:left}
+.global-chat h2{margin:0 0 6px;color:#fff}
+.global-chat-messages{height:340px;overflow-y:auto;overscroll-behavior:contain;background:#100d30;border:3px solid #7965dc;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.global-chat-message{max-width:100%;padding:9px 11px;background:#302365;border:1px solid #6353ac;border-radius:12px;overflow-wrap:anywhere}
+.global-chat-message.is-owner{border-color:#e8bd44;background:#3b285d}
+.global-chat-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.85rem}
+.global-chat-meta strong{color:#c9d9ff}
+.global-chat-message.is-owner .global-chat-meta strong{color:#ffd54f}
+.global-chat-meta time{font-size:.7rem;color:#d1c7ef;white-space:nowrap}
+.global-chat-message p{margin:5px 0 0;white-space:pre-wrap;color:#fff}
+.global-chat form{margin-top:12px}
+.global-chat form label{display:block;font-weight:800;margin-bottom:6px}
+.global-chat-compose{display:flex;gap:8px}
+.global-chat-compose input{flex:1;min-width:0;padding:12px;border:2px solid #e8bd44;border-radius:10px;background:#fff;color:#1a123d;font-size:1rem}
+.global-chat-compose button{flex:0 0 auto}
+#global-chat-status{min-height:1.4em;font-size:.85rem;color:#f4df99}
+@media(max-width:440px){.global-chat{padding:10px}.global-chat-messages{height:300px}.global-chat-compose button{padding:9px 12px}}
