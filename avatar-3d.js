@@ -283,6 +283,110 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 
 
 
+
+function buildCleanAvatar(){
+ const geometries=new Set(),materials=new Set();
+ avatar.traverse(o=>{if(o.isMesh){if(o.geometry!==ball&&o.geometry!==cylinder)geometries.add(o.geometry);(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m))}});
+ avatar.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());
+ const v=Object.fromEntries(new FormData(form).entries()),model=['anime','hero','classic','chibi','robot','southpark','simpsons'].includes(v.model)?v.model:'anime';
+ const outfit=window.ctoonEquippedClothing||v.outfit||'tee';
+ const skin=mat(model==='simpsons'&&(!v.skin||v.skin==='#f2b989')?'#f5d43b':v.skin||'#f2b989');
+ const shirt=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[outfit])||v.shirt||'#6545d7');
+ const pants=mat(outfit==='jeans'?'#3566a7':'#29365d'),shoe=mat(outfit==='sneakers'?'#ff53a8':'#20233f');
+ const hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),white=mat('#ffffff'),dark=mat('#242039'),iris=mat(v.eyes||'#36d5ed');
+ const metal=mat('#a6b5d5',.55),gold=mat('#f6cf63',.5);
+ const ballAt=(m,x,y,z,sx,sy,sz)=>part(avatar,ball,m,x,y,z,sx,sy,sz);
+ const boxAt=(m,x,y,z,w,h,d)=>part(avatar,new THREE.BoxGeometry(w,h,d),m,x,y,z);
+ const style={
+  anime:{head:[.59,.72,.48],body:[.68,1.42,.43],arm:.19,leg:.23,eye:.17},
+  hero:{head:[.52,.62,.46],body:[.87,1.62,.49],arm:.26,leg:.28,eye:.13},
+  classic:{head:[.74,.75,.53],body:[.53,1.32,.38],arm:.13,leg:.16,eye:.24},
+  chibi:{head:[.96,.98,.68],body:[.53,.92,.39],arm:.17,leg:.20,eye:.30},
+  southpark:{head:[.94,.82,.61],body:[.79,1.02,.53],arm:.24,leg:.24,eye:.30},
+  simpsons:{head:[.66,.85,.52],body:[.70,1.46,.44],arm:.19,leg:.23,eye:.25},
+  robot:{head:[.64,.57,.43],body:[.78,1.36,.48],arm:.25,leg:.27,eye:.18}
+ }[model];
+ avatar.scale.setScalar(model==='chibi'?.93:1);
+ const robot=model==='robot',headY=model==='chibi'?3.23:3.36;
+ if(robot){
+  boxAt(metal,0,1.91,0,1.42,1.29,.83);
+  boxAt(metal,0,headY,0,1.23,1.03,.77);
+  boxAt(dark,0,headY+.05,.408,1.03,.41,.06);
+  for(const side of [-1,1])boxAt(iris,side*.25,headY+.06,.45,.24,.15,.04);
+  boxAt(dark,0,1.94,.445,.88,.60,.055);
+  boxAt(iris,0,1.97,.482,.43,.18,.04);
+  boxAt(metal,0,2.65,0,.29,.22,.30);
+ }else{
+  sculptTorso(avatar,shirt,1.89,style.body[0],style.body[1],style.body[2]);
+  ballAt(skin,0,2.69,0,.17,.24,.17);
+  ballAt(skin,0,headY,0,...style.head);
+  if(model==='simpsons'){
+   ballAt(skin,0,headY-.35,.43,.36,.23,.29);
+   ballAt(skin,0,headY-.46,.53,.29,.11,.19);
+  }else if(model==='classic'){
+   ballAt(skin,0,headY-.30,.35,.42,.26,.25);
+  }
+  for(const side of [-1,1]){
+   const x=side*(model==='southpark'?.29:model==='chibi'?.34:.24);
+   const eyeZ=style.head[2]*.84;
+   ballAt(white,x,headY+.10,eyeZ,style.eye,style.eye*1.28,.085);
+   ballAt(iris,x,headY+.08,eyeZ+.079,style.eye*.49,style.eye*.71,.023);
+   ballAt(dark,x,headY+.08,eyeZ+.101,style.eye*.25,style.eye*.43,.012);
+   ballAt(skin,side*(style.head[0]+.035),headY-.10,0,.13,.19,.13);
+  }
+  ballAt(skin,0,headY-.15,style.head[2]*.99,.09,.10,.09);
+  ballAt(dark,0,headY-.37,style.head[2]*.91,.17,.025,.025);
+ }
+ const shoulder=style.body[0]*.95;
+ for(const side of [-1,1]){
+  if(robot){
+   boxAt(metal,side*(shoulder+.16),2.18,0,.42,.42,.46);
+   boxAt(metal,side*(shoulder+.18),1.59,0,.31,.82,.34);
+   ballAt(iris,side*(shoulder+.18),1.20,.19,.10,.11,.04);
+   boxAt(metal,side*.34,.79,0,.48,.95,.51);
+   boxAt(shoe,side*.34,.20,.20,.52,.26,.72);
+  }else{
+   sculptLimb(avatar,[side*shoulder,2.28,0],[side*(shoulder+.16),1.43,.02],style.arm,shirt);
+   ballAt(skin,side*(shoulder+.16),1.29,.04,style.arm*.92,.20,style.arm*.88);
+   sculptLimb(avatar,[side*.32,1.27,0],[side*.34,.45,0],style.leg,pants);
+   ballAt(shoe,side*.34,.22,.22,style.leg*1.22,.17,.40);
+  }
+ }
+ if(robot){
+  boxAt(gold,0,4.07,0,.11,.33,.12);
+  ballAt(iris,0,4.27,0,.14,.14,.14);
+ }else{
+  // A single coherent hair system: no duplicate caps or intersecting extra face layers.
+  if(v.style!=='bald'){
+   ballAt(hair,0,headY+style.head[1]*.69,-.09,style.head[0]*1.02,.25,style.head[2]*.91);
+   const count=v.style==='locs'?9:7;
+   for(let i=0;i<count;i++){
+    const t=(i/(count-1)-.5)*2.2;
+    const x=Math.sin(t)*style.head[0]*.80;
+    const z=Math.cos(t)*style.head[2]*.70;
+    const length=v.style==='bob'?.53:v.style==='locs'?.62:v.style==='curls'?.38:.30;
+    const lock=part(avatar,new THREE.ConeGeometry(v.style==='locs'?.085:.14,length,10),i%4===0?accent:hair,x,headY+style.head[1]*.82-length*.35,z);
+    lock.rotation.z=-t*.18;
+   }
+   if(v.style==='spikes'||v.style==='mohawk')for(let i=-2;i<=2;i++)part(avatar,new THREE.ConeGeometry(.17,.44,9),hair,i*.20,headY+style.head[1]+.25,0);
+   if(v.style==='ponytail')ballAt(hair,0,headY+.18,-style.head[2]-.23,.22,.42,.22);
+  }
+  if(v.accessory==='glasses')for(const side of [-1,1])part(avatar,new THREE.TorusGeometry(style.eye*1.22,.026,8,28),gold,side*(model==='chibi'?.34:.25),headY+.10,style.head[2]*.84+.11);
+  if(v.accessory==='crown')part(avatar,new THREE.CylinderGeometry(.35,.43,.27,8),gold,0,headY+style.head[1]+.27,0);
+  if(v.accessory==='headphones')for(const side of [-1,1])ballAt(dark,side*(style.head[0]+.06),headY+.1,0,.15,.26,.24);
+  if(v.piercing==='nose')ballAt(gold,.12,headY-.16,style.head[2]+.10,.045,.045,.035);
+  if(v.piercing==='brow')ballAt(gold,.25,headY+.32,style.head[2]*.85,.04,.04,.03);
+  if(v.piercing==='earrings'||v.piercing==='hoops')for(const side of [-1,1])part(avatar,new THREE.TorusGeometry(v.piercing==='hoops'?.10:.05,.02,8,20),gold,side*(style.head[0]+.06),headY-.28,0);
+  if(v.detail==='freckles')for(const side of [-1,1])for(let i=0;i<3;i++)ballAt(dark,side*(.19+i*.07),headY-.19,style.head[2]*.95,.018,.018,.012);
+  if(v.detail==='blush')for(const side of [-1,1])ballAt(mat('#df8090'),side*.39,headY-.22,style.head[2]*.78,.13,.06,.022);
+  if(v.detail==='scar')boxAt(dark,.34,headY-.13,style.head[2]*.92,.025,.24,.025);
+  if(v.tattoo&&v.tattoo!=='none')ballAt(mat(v.tattoo==='heart'?'#b32157':'#171332'),shoulder+.10,1.75,.12,.05,.13,.06);
+  if(outfit==='hoodie')ballAt(shirt,0,2.49,-.25,.39,.25,.24);
+  if(outfit==='jacket')boxAt(gold,0,1.92,.40,.035,.54,.03);
+  if(outfit==='legendary'||v.outfit==='armor'||model==='hero')ballAt(gold,0,2.11,.43,.26,.19,.06);
+ }
+}
+
 function sculptCategoryIdentity(){
  const v=Object.fromEntries(new FormData(form).entries());
  const model=v.model||'anime',skin=mat(model==='simpsons'&&(!v.skin||v.skin==='#f2b989')?'#f5d43b':v.skin||'#f2b989');
@@ -439,4 +543,4 @@ function addCategoryDetails(){
 }
 
 let rotation=.15,drag=false,last=0;let animationEnabled=true;const animationClock=new THREE.Clock();renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointercancel',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-last)*.012;last=e.clientX}});renderer.domElement.style.touchAction='pan-y';
-function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{build();sculptCategoryIdentity();addCategoryDetails();sculptFeatures()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
+function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{buildCleanAvatar()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
