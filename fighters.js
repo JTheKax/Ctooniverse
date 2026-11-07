@@ -25,7 +25,7 @@ function selectSlot(n){
  const preview=document.getElementById('fighter-3d-preview');
  if(previewSlot!==n){const generation=++previewGeneration;disposePreview?.();disposePreview=null;preview.replaceChildren();previewSlot=n;preview.hidden=true;
  if(['disney-hercules','jack-skellington'].includes(character?.id)&&state==='unlocked'){
-  preview.hidden=false;import(character.id==='jack-skellington'?'./jack-skellington-3d.js':'./hercules-3d.js').then(mod=>{if(selectedSlot===n&&generation===previewGeneration)disposePreview=character.id==='jack-skellington'?mod.mountJack(preview):mod.mountHercules(preview)}).catch(error=>{console.warn('3D preview unavailable',error);if(generation===previewGeneration)preview.hidden=true});
+  preview.hidden=false;import('./showdown-pixel-sprites.js').then(mod=>{if(selectedSlot===n&&generation===previewGeneration)disposePreview=mod.mountPixelPreview(preview,character.id)}).catch(error=>{console.warn('Pixel sprite preview unavailable',error);if(generation===previewGeneration)preview.hidden=true});
  }}
  document.getElementById('selected-fighter').textContent=character?.name||slotLabel(n);
  document.getElementById('preview-symbol').textContent=['disney-hercules','jack-skellington'].includes(character?.id)&&state==='unlocked'?'':state==='locked'?'🔒':character?.name?.slice(0,1).toUpperCase()||String(n).padStart(3,'0');
