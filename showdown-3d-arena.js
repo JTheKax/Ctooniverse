@@ -55,16 +55,18 @@ export function createArena3D(canvas){
  let active=true;
  function resize(){const w=canvas.clientWidth||host.clientWidth||960,h=canvas.clientHeight||w*540/960;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
  const observer=new ResizeObserver(resize);observer.observe(canvas);resize();
- function pose(model,f,t){model.root.position.set((f.x-480)/95,Math.max(0,(445-f.y)/105),0);model.root.rotation.y=f.face===1?Math.PI/3:-Math.PI/3;model.phase+=t;
+ function pose(model,f,t){model.root.position.set((f.x-480)/95,Math.max(0,(445-f.y)/105),0);model.root.rotation.y=f.face===1?.38:-.38;model.phase+=t;
  const walking=Math.abs(f.vx)>.1?Math.sin(model.phase*13)*.36:Math.sin(model.phase*2)*.035;
  model.legs[0].rotation.set(0,0,walking);model.legs[1].rotation.set(0,0,-walking);
  model.arms[0].rotation.set(0,0,-walking*.35);model.arms[1].rotation.set(0,0,walking*.35);
- model.body.position.y=f.crouch?-.48:Math.sin(model.phase*3)*.025;
- if(f.guard){model.arms[0].rotation.x=-1.1;model.arms[1].rotation.x=-1.1}
- else if(f.attack>0){const progress=f.attack/(f.kind==='special'?.48:f.kind==='kick'?.33:.24);const impulse=Math.sin(Math.PI*Math.min(1,1-progress));
-  model.arms[1].rotation.x=-1.65*impulse;
-  if(f.kind==='kick')model.legs[1].rotation.x=-1.3*impulse;
-  if(f.kind==='special'){model.arms[0].rotation.x=-1.5*impulse;model.arms[1].rotation.x=-1.8*impulse}
+ model.body.position.y=f.crouch?-.48:Math.sin(model.phase*3)*.025;model.body.rotation.z=0;
+ if(f.guard){model.arms[0].rotation.z=-.95;model.arms[1].rotation.z=.95;model.arms[0].rotation.x=-.45;model.arms[1].rotation.x=-.45}
+ else if(f.attack>0){const duration=f.kind==='special'?.48:f.kind==='kick'?.33:.24;
+  const progress=1-Math.min(1,f.attack/duration),impulse=Math.sin(Math.PI*progress);
+  const forward=f.face===1?1:-1,arm=forward===1?model.arms[1]:model.arms[0],leg=forward===1?model.legs[1]:model.legs[0];
+  arm.rotation.z=forward*1.55*impulse;arm.rotation.x=-.3*impulse;
+  if(f.kind==='kick'){arm.rotation.z=forward*.35;leg.rotation.z=forward*1.1*impulse;leg.rotation.x=-.4*impulse}
+  if(f.kind==='special'){model.arms[0].rotation.z=-1.4*impulse;model.arms[1].rotation.z=1.4*impulse;model.body.rotation.z=forward*.14*impulse}
  }
  if(model.cape)model.cape.rotation.y=Math.sin(model.phase*4)*.08;
  }
