@@ -348,17 +348,19 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 // Anatomical five-digit hand: a tapered palm, four separated fingers and an opposable thumb.
 // All pieces are parented to the shoulder pivot, so avatar poses keep the hands attached.
 function buildDetailedHand(parent,material,side,wristY,centerX,width,depth,scale=1){
- const palmY=wristY-.145*scale;
+ // Keep the top of the palm tucked just below the sleeve cuff.
+ // The previous .145 offset left an excessive gap on shorter avatar arms.
+ const palmY=wristY-.105*scale;
  // loftBody's fourth profile coordinate is Z, not X: position the palm
  // with a group so the palm, knuckles and fingers share the same origin.
  const hand=new THREE.Group();
  hand.position.x=centerX;
  parent.add(hand);
  loftBody(hand,material,[
-  [palmY-.105*scale,width*.80,depth*.75,0],
-  [palmY-.075*scale,width,depth,0],
-  [palmY+.035*scale,width*.94,depth*.96,0],
-  [palmY+.12*scale,width*.68,depth*.77,0]
+  [palmY-.12*scale,width*.77,depth*.72,0],
+  [palmY-.075*scale,width*.96,depth*.94,0],
+  [palmY+.035*scale,width*.90,depth*.92,0],
+  [palmY+.125*scale,width*.65,depth*.72,0]
  ],24);
  const lengths=[.088,.118,.108,.079].map(n=>n*scale);
  for(let i=0;i<4;i++){
@@ -592,8 +594,8 @@ function buildCleanAvatar(){
     const glove=model==='classic'||model==='chibi';
     const mitten=model==='southpark';
     const handMaterial=glove?white:mitten?shirt:skin;
-    const handWidth=style.arm*(model==='hero'?.72:model==='simpsons'?.70:.82);
-    const palmY=-armReach-.145;
+    const handWidth=style.arm*(model==='hero'?.72:model==='simpsons'?.70:model==='classic'?.90:.82);
+    const palmY=-armReach-.105;
     if(mitten){
      part(armPivot,ball,handMaterial,side*.13,palmY-.04,.055,handWidth,.16,style.arm*.70);
      part(armPivot,ball,handMaterial,side*.13-side*handWidth*.70,palmY+.02,.13,handWidth*.40,.09,handWidth*.40);
