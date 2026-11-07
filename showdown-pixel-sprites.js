@@ -98,7 +98,6 @@ function sprite(id,pose,step){
   px('#ffffff',35,16+jump,5,3);px(p.eyes,38,16+jump,2,3);px('#6b3929',33,14+jump,8,1);
   px(p.shade,33,24+jump,7,2);px('#713a2b',35,27+jump,5,1);
  }
- if(f.stun>0&&f.hp>0){ctx.globalAlpha=.88;}
  if(pose==='special'){px(jack?'#b7d5ff':'#f7ec88',55,19,6,6);px('#ffffff',57,21,2,2);px(jack?'#8b73d8':'#b26aff',59,15,4,4)}
  // Distinctive shaded outlines, muscle/suit highlights and secondary motion.
  if(jack){
@@ -131,6 +130,7 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
  // Generate the procedural fallback only when the illustrated atlas is unavailable.
  const illustrated=atlases.get(id)?.ready===true;
  ctx.save();ctx.imageSmoothingEnabled=false;
+ if(f.stun>0&&f.hp>0)ctx.globalAlpha=.88;
  ctx.fillStyle='#07071999';ctx.beginPath();ctx.ellipse(f.x,ground+1,42,9,0,0,Math.PI*2);ctx.fill();
  ctx.translate(Math.round(f.x),Math.round(f.y));
  ctx.scale(f.face===-1?-1:1,1);
