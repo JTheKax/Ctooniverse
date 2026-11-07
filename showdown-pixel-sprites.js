@@ -26,7 +26,7 @@ export function loadFighterSprites(id){
    const image=new Image();image.decoding='async';
    image.onload=()=>{
     if(image.naturalWidth%3===0&&image.naturalHeight%ANIMATIONS.length===0&&image.naturalWidth/3>=32&&image.naturalHeight/ANIMATIONS.length>=32){
-     state.image=image;state.source=candidates[index];state.frameWidth=image.naturalWidth/3;state.frameHeight=image.naturalHeight/ANIMATIONS.length;state.ready=true;state.loading=false;resolve(true);
+     state.image=image;state.source=candidates[index];state.frameWidth=image.naturalWidth/3;state.frameHeight=image.naturalHeight/ANIMATIONS.length;state.ready=true;state.loading=false;console.info('Showdown sprite atlas loaded:',id,state.source,image.naturalWidth+'x'+image.naturalHeight);resolve(true);
     }else{state.attempts.push(candidates[index]+' ('+image.naturalWidth+'x'+image.naturalHeight+', invalid atlas dimensions)');tryNext(index+1);}
    };
    image.onerror=()=>{state.attempts.push(candidates[index]+' (failed to load)');tryNext(index+1)};
