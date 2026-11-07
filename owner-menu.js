@@ -8,6 +8,7 @@ const ownerLinks=[
  ['Music Management','owner-music-management.html'],
  ['Upload Game','emulator.html#emu-owner'],
  ['CToon Maker & Editor','owner-ctoon-maker.html'],
+ ['Clash Card Maker','owner-clash-card-maker.html'],
  ['CToon Pack Manager','owner-ctoon-packs.html']
 ]; 
 ownerLinks.sort((a,b)=>a[0].localeCompare(b[0]));
