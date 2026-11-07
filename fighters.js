@@ -3,7 +3,7 @@ const canvas=document.getElementById('fight');
 const ctx=canvas.getContext('2d');
 // Reserved slots only: no characters, avatars, or opponents are loaded.
 const roster=Array.from({length:120},(_,i)=>({slot:i+1,character:null}));
-let db=null,viewer=null,disposePreview=null,previewSlot=null;
+let db=null,viewer=null,disposePreview=null,previewSlot=null,combatReady=false;
 const grid=document.getElementById('fighter-roster');
 const search=document.getElementById('roster-search'),group=document.getElementById('roster-group');
 const sort=document.getElementById('roster-sort'),seriesFilter=document.getElementById('roster-series');
@@ -94,10 +94,12 @@ async function loadFighterCatalog(){
   const count=Math.max(120,catalog.length);while(roster.length<count)roster.push({slot:roster.length+1,character:null});
   (catalog||[]).forEach((row,i)=>{roster[i].character={id:row.id,name:row.name,series:row.series,portrait:row.portrait,unlock:{type:row.unlock_type,cost:row.coin_cost,description:row.achievement_key?'Achievement: '+row.achievement_key:''}}});
   document.getElementById('roster-count').textContent=catalog.length+' / '+roster.length;
+ if((catalog||[]).some(f=>f.id==='disney-hercules'&&f.unlock_type==='free')){
+  try{const {createShowdown}=await import('./showdown-combat.js');createShowdown({canvas,start:startButton,pause:pauseButton,status:document.getElementById('fight-status'),message:document.getElementById('fight-message'),health:[document.getElementById('p1-health'),document.getElementById('p2-health')],meter:document.getElementById('p1-meter'),timer:document.getElementById('timer'),rounds:document.getElementById('rounds'),touch:document.querySelectorAll('[data-key]')});combatReady=true}catch(err){console.error('Combat module failed',err)}
+ }
   renderRoster();selectSlot(selectedSlot);
  }catch(error){console.warn('Fighter catalog unavailable',error);document.getElementById('fight-status').textContent='Fighter catalog could not be loaded. Try refreshing.'}
 }
-loadFighterCatalog();
 document.getElementById('fight-message').textContent='NO FIGHTERS YET';
 document.getElementById('fight-status').textContent='All characters have been removed. The arena is ready for future fighters.';
 const startButton=document.getElementById('start'),pauseButton=document.getElementById('pause');
@@ -108,3 +110,4 @@ const ground=445;
 function draw(){const sky=ctx.createLinearGradient(0,0,0,540);sky.addColorStop(0,'#11144e');sky.addColorStop(.75,'#593a96');sky.addColorStop(1,'#172654');ctx.fillStyle=sky;ctx.fillRect(0,0,960,540);ctx.fillStyle='#8d5aff';for(let i=0;i<12;i++){const h=100+(i*41)%150;ctx.fillRect(i*88,ground-h,70,h);ctx.fillStyle='#70dfff';for(let y=ground-h+15;y<ground-12;y+=25)ctx.fillRect(i*88+15,y,10,8);ctx.fillStyle='#8d5aff'}ctx.fillStyle='#24204d';ctx.fillRect(0,ground,960,95);ctx.strokeStyle='#ff5bd5';ctx.lineWidth=3;for(let i=0;i<11;i++){ctx.beginPath();ctx.moveTo(480,ground);ctx.lineTo(i*130-180,540);ctx.stroke()}for(let y=ground+25;y<540;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(960,y);ctx.stroke()}}
 
 draw();
+loadFighterCatalog();
