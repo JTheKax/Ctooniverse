@@ -20,10 +20,10 @@ const ball=new THREE.SphereGeometry(1,28,20),cylinder=new THREE.CylinderGeometry
 function loftBody(group,material,profiles,segments=40){
  const vertices=[],indices=[],uv=[];
  for(let j=0;j<profiles.length;j++){
-  const [y,rx,rz,shiftZ]=profiles[j];
+  const [y,rx,rz,shiftX]=profiles[j];
   for(let i=0;i<=segments;i++){
    const a=i/segments*Math.PI*2;
-   vertices.push(Math.cos(a)*rx,y,Math.sin(a)*rz+(shiftZ||0));
+   vertices.push(Math.cos(a)*rx+(shiftX||0),y,Math.sin(a)*rz);
    uv.push(i/segments,j/(profiles.length-1));
   }
  }
@@ -1072,8 +1072,8 @@ function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientH
  warning.textContent='3D preview failed: '+(error?.message||'unknown error')+'. Try reloading this page.';
 }};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;for(const {joint,side} of avatarRig.arms){joint.rotation.z=animationEnabled?side*(.045+Math.sin(t*1.4+side)*.055):0;joint.rotation.x=animationEnabled?Math.sin(t*1.3+side)*.045:0}for(const {joint,side} of avatarRig.legs){joint.rotation.x=animationEnabled?Math.sin(t*1.4+side*Math.PI)*.035:0}
 for(const {bone,side,type} of avatarRig.skinnedLimbs){
- // Do not bend a skinned forearm independently of its hand: doing so
- // visibly detaches the wrist. Shoulder sway still animates the whole arm.
+ // Hands and shoes are parented to their lower bones so joint movement
+ // preserves the wrist and ankle connections.
  bone.rotation.z=animationEnabled?(type==='arm'?side*.035*Math.sin(t*1.5):side*.015*Math.sin(t*1.3)):0;
  bone.rotation.x=animationEnabled?(type==='arm'?.075*Math.max(0,Math.sin(t*1.3+side)):.045*Math.max(0,Math.sin(t*1.4+side*Math.PI))):0;
 }
