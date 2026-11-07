@@ -3,6 +3,7 @@ const canvas=document.getElementById('fight');
 const ctx=canvas.getContext('2d');
 // Reserved slots only: no characters, avatars, or opponents are loaded.
 const roster=Array.from({length:120},(_,i)=>({slot:i+1,character:null}));
+let db=null,viewer=null;
 const grid=document.getElementById('fighter-roster');
 const search=document.getElementById('roster-search'),group=document.getElementById('roster-group');
 const sort=document.getElementById('roster-sort'),seriesFilter=document.getElementById('roster-series');
@@ -25,8 +26,8 @@ function selectSlot(n){
  document.getElementById('preview-description').textContent=character?(character.series||'Uncategorized')+' · '+(state==='unlocked'?'Ready to select':'Not yet unlocked'):'Empty fighter position '+n+' of '+roster.length+'. Ready for a future character.';
  document.getElementById('preview-unlock-status').textContent=state==='empty'?'EMPTY SLOT':state==='unlocked'?'✓ UNLOCKED':'🔒 LOCKED';
  const action=document.getElementById('unlock-fighter'),help=document.getElementById('unlock-help');
- action.hidden=state!=='locked';action.disabled=true;
- if(state==='locked'&&rule.type==='coins'){action.textContent='Unlock · '+Number(rule.cost||0).toLocaleString()+' coins';help.textContent='Coin purchase will be available after secure account integration.'}
+ action.hidden=state!=='locked';action.disabled=!(viewer&&db&&rule.type==='coins');
+ if(state==='locked'&&rule.type==='coins'){action.textContent='Unlock · '+Number(rule.cost||0).toLocaleString()+' coins';help.textContent=viewer?'Unlock permanently using your CTooniverse wallet.':'Sign in to purchase this fighter.'}
  else if(state==='locked'){action.textContent='Achievement unlock';help.textContent=rule.description||'Complete the required challenge to unlock this fighter.'}
  else help.textContent=state==='empty'?'Unlock requirements will appear when fighters are added.':'This fighter is available.';
  grid.querySelectorAll('button[data-slot]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.slot)===n)));
@@ -59,6 +60,39 @@ unlockFilter.addEventListener('change',()=>{page=0;renderRoster()});
 document.getElementById('roster-prev').onclick=()=>{page--;renderRoster()};
 document.getElementById('roster-next').onclick=()=>{page++;renderRoster()};
 renderRoster();selectSlot(1);
+const unlockButton=document.getElementById('unlock-fighter');
+unlockButton.onclick=async()=>{
+ const item=roster.find(entry=>entry.slot===selectedSlot);
+ if(!db||!viewer||!item?.character||unlockRule(item).type!=='coins'||isUnlocked(item))return;
+ const cost=Number(unlockRule(item).cost);
+ if(!confirm('Spend '+cost.toLocaleString()+' coins to permanently unlock '+item.character.name+'?'))return;
+ unlockButton.disabled=true;
+ try{
+  const {error}=await db.rpc('purchase_fighter',{p_fighter_id:String(item.character.id)});
+  if(error)throw error;
+  ownedFighterIds.add(String(item.character.id));renderRoster();selectSlot(item.slot);
+  document.getElementById('fight-status').textContent=item.character.name+' unlocked permanently!';
+ }catch(error){document.getElementById('fight-status').textContent='Unlock failed: '+error.message;selectSlot(item.slot)}
+};
+async function loadFighterCatalog(){
+ try{
+  const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
+  db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
+  const {data:{user},error:userError}=await db.auth.getUser();if(userError)throw userError;viewer=user;
+  const {data:catalog,error}=await db.from('fighter_catalog').select('id,name,series,portrait,unlock_type,coin_cost,achievement_key').eq('enabled',true).order('name').limit(5000);
+  if(error)throw error;
+  if(viewer){
+   const {data:owned,error:ownedError}=await db.from('player_fighter_unlocks').select('fighter_id').eq('user_id',viewer.id);
+   if(ownedError)throw ownedError;
+   for(const row of owned||[])ownedFighterIds.add(String(row.fighter_id));
+  }
+  const count=Math.max(120,catalog.length);while(roster.length<count)roster.push({slot:roster.length+1,character:null});
+  (catalog||[]).forEach((row,i)=>{roster[i].character={id:row.id,name:row.name,series:row.series,portrait:row.portrait,unlock:{type:row.unlock_type,cost:row.coin_cost,description:row.achievement_key?'Achievement: '+row.achievement_key:''}}});
+  document.getElementById('roster-count').textContent=catalog.length+' / '+roster.length;
+  renderRoster();selectSlot(selectedSlot);
+ }catch(error){console.warn('Fighter catalog unavailable',error);document.getElementById('fight-status').textContent='Fighter catalog could not be loaded. Try refreshing.'}
+}
+loadFighterCatalog();
 document.getElementById('fight-message').textContent='NO FIGHTERS YET';
 document.getElementById('fight-status').textContent='All characters have been removed. The arena is ready for future fighters.';
 const startButton=document.getElementById('start'),pauseButton=document.getElementById('pause');
