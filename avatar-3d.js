@@ -284,7 +284,7 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 
 
 
-let avatarRig={arms:[],legs:[]};
+let avatarRig={arms:[],legs:[],eyes:[],head:null};
 function buildCleanAvatar(){
  avatarRig={arms:[],legs:[]};
  const geometries=new Set(),materials=new Set();
@@ -331,7 +331,9 @@ function buildCleanAvatar(){
   for(const side of [-1,1]){
    const x=side*(model==='southpark'?.29:model==='chibi'?.34:.24);
    const eyeZ=style.head[2]*.84;
-   ballAt(white,x,headY+.10,eyeZ,style.eye,style.eye*1.28,.085);
+   const eyeball=ballAt(white,x,headY+.10,eyeZ,style.eye,style.eye*1.28,.085);
+   eyeball.userData.openEyeHeight=eyeball.scale.y;
+   avatarRig.eyes.push(eyeball);
    ballAt(iris,x,headY+.08,eyeZ+.079,style.eye*.49,style.eye*.71,.023);
    ballAt(dark,x,headY+.08,eyeZ+.101,style.eye*.25,style.eye*.43,.012);
    ballAt(skin,side*(style.head[0]+.035),headY-.10,0,.13,.19,.13);
@@ -470,6 +472,13 @@ function buildCleanAvatar(){
   if(outfit==='jacket')boxAt(gold,0,1.92,.40,.035,.54,.03);
   if(outfit==='legendary'||v.outfit==='armor'||model==='hero')ballAt(gold,0,2.11,.43,.26,.19,.06);
  }
+ // Attach all completed face and hair meshes to a head pivot for idle movement.
+ const headPivot=new THREE.Group();headPivot.position.set(0,headY-.14,0);avatar.add(headPivot);
+ for(const mesh of [...avatar.children]){
+  if(!mesh.isMesh||mesh.position.y<headY-.65)continue;
+  avatar.remove(mesh);mesh.position.y-=headPivot.position.y;headPivot.add(mesh);
+ }
+ avatarRig.head=headPivot;
 }
 
 function sculptCategoryIdentity(){
@@ -628,4 +637,14 @@ function addCategoryDetails(){
 }
 
 let rotation=.15,drag=false,last=0;let animationEnabled=true;const animationClock=new THREE.Clock();renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointercancel',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-last)*.012;last=e.clientX}});renderer.domElement.style.touchAction='pan-y';
-function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{buildCleanAvatar()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;for(const {joint,side} of avatarRig.arms){joint.rotation.z=animationEnabled?side*(.045+Math.sin(t*1.4+side)*.055):0;joint.rotation.x=animationEnabled?Math.sin(t*1.3+side)*.045:0}for(const {joint,side} of avatarRig.legs){joint.rotation.x=animationEnabled?Math.sin(t*1.4+side*Math.PI)*.035:0}renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
+function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{buildCleanAvatar()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;for(const {joint,side} of avatarRig.arms){joint.rotation.z=animationEnabled?side*(.045+Math.sin(t*1.4+side)*.055):0;joint.rotation.x=animationEnabled?Math.sin(t*1.3+side)*.045:0}for(const {joint,side} of avatarRig.legs){joint.rotation.x=animationEnabled?Math.sin(t*1.4+side*Math.PI)*.035:0}
+if(avatarRig.head){
+ avatarRig.head.rotation.y=animationEnabled?Math.sin(t*.72)*.055:0;
+ avatarRig.head.rotation.z=animationEnabled?Math.sin(t*.83)*.027:0;
+ avatarRig.head.rotation.x=animationEnabled?Math.sin(t*.62)*.024:0;
+}
+// Two short natural blinks per cycle, with a long resting interval.
+const blinkPhase=t%5.7;
+const blink=animationEnabled&&blinkPhase<.19?Math.max(.10,Math.abs(blinkPhase-.095)/.095):1;
+for(const eye of avatarRig.eyes)eye.scale.y=eye.userData.openEyeHeight*blink;
+renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
