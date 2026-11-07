@@ -51,9 +51,12 @@ if(grid&&category){
     const img=document.createElement('img');
     img.src='public/images/ctoon-set-logos/'+logo;
     img.alt=name+' CToon Set logo';
+    // Append the image immediately: browsers defer detached lazy-loaded images,
+    // so waiting for their load event before insertion leaves only the fallback.
     img.loading='lazy';
     img.style.cssText='display:block;width:100%;height:100%;object-fit:contain';
-    img.addEventListener('load',()=>artwork.replaceChildren(img));
+    img.addEventListener('error',()=>artwork.replaceChildren(fallback),{once:true});
+    artwork.replaceChildren(img);
    }
    const title=document.createElement('h3');title.textContent=name+' CToon Set';
    const tag=document.createElement('span');tag.className='coming-tag';tag.textContent='VIEW SET';
