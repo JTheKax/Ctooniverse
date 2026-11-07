@@ -486,6 +486,63 @@ function buildCleanAvatar(){
   if(outfit==='jacket')boxAt(gold,0,1.92,.40,.035,.54,.03);
   if(outfit==='legendary'||v.outfit==='armor'||model==='hero')ballAt(gold,0,2.11,.43,.26,.19,.06);
  }
+ // Distinctive sculpted accessories and silhouettes for every model family.
+ // These meshes are built into the active preview, not legacy unused builders.
+ if(model==='anime'){
+  const trim=mat('#f0c5ff');
+  for(const side of [-1,1]){
+   const sash=boxAt(trim,side*.33,1.66,.35,.085,.42,.07);sash.rotation.z=side*.16;
+   ballAt(gold,side*.57,2.32,.18,.12,.11,.12);
+  }
+  boxAt(trim,0,1.50,.39,.62,.075,.06);
+ }else if(model==='hero'){
+  for(const side of [-1,1]){
+   const pauldron=ballAt(metal,side*.86,2.43,.02,.35,.19,.42);
+   pauldron.rotation.z=side*.23;
+   boxAt(dark,side*.83,2.34,.36,.30,.10,.09);
+   boxAt(gold,side*.33,.79,.27,.14,.36,.07);
+  }
+  boxAt(metal,0,2.05,.49,.53,.28,.10);
+  boxAt(gold,0,2.07,.56,.19,.16,.07);
+ }else if(model==='chibi'){
+  for(const side of [-1,1]){
+   ballAt(shirt,side*.52,2.16,.12,.25,.24,.26);
+   ballAt(gold,side*.36,1.56,.38,.11,.11,.06);
+  }
+  ballAt(shirt,0,1.74,.35,.42,.23,.18);
+ }else if(model==='classic'){
+  // Rounded white cartoon gloves and oversized contrasting shoe caps.
+  for(const side of [-1,1]){
+   ballAt(white,side*.79,1.31,.12,.20,.21,.19);
+   ballAt(white,side*.34,.19,.49,.29,.13,.24);
+  }
+  ballAt(gold,0,1.53,.40,.13,.13,.08);
+ }else if(model==='southpark'){
+  // Puffy winter coat, central zipper and knitted cap with pompom.
+  ballAt(shirt,0,2.01,.18,.71,.43,.43);
+  boxAt(dark,0,1.98,.59,.045,.66,.04);
+  for(const side of [-1,1])ballAt(gold,side*.17,2.38,.49,.13,.10,.10);
+  if(v.style!=='bald'){
+   ballAt(hair,0,4.03,0,.68,.16,.52);
+   ballAt(accent,0,4.23,0,.14,.14,.14);
+  }
+ }else if(model==='simpsons'){
+  // Projecting jawline and simple collar distinguish this family from anime.
+  ballAt(skin,0,headY-.48,.48,.35,.14,.25);
+  for(const side of [-1,1]){
+   const collar=boxAt(white,side*.20,2.49,.35,.28,.12,.16);
+   collar.rotation.z=side*.35;
+  }
+  ballAt(dark,0,1.52,.40,.12,.10,.06);
+ }else if(model==='robot'){
+  // Recessed illuminated torso and articulated armor on the feet.
+  boxAt(dark,0,1.94,.51,.75,.56,.07);
+  for(let i=-1;i<=1;i++)boxAt(iris,i*.20,1.96,.56,.11,.32,.04);
+  for(const side of [-1,1]){
+   boxAt(gold,side*.87,2.16,.27,.34,.13,.09);
+   boxAt(dark,side*.34,.22,.59,.44,.13,.07);
+  }
+ }
  // Attach all completed face and hair meshes to a head pivot for idle movement.
  const headPivot=new THREE.Group();headPivot.position.set(0,headY-.14,0);avatar.add(headPivot);
  for(const mesh of [...avatar.children]){
