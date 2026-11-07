@@ -193,7 +193,7 @@ function buildCategory(model,v,equipped){
  }
  return false;
 }
-function build(){avatar.traverse(obj=>{if(obj.isMesh){obj.geometry.dispose();if(Array.isArray(obj.material))obj.material.forEach(m=>m.dispose());else obj.material.dispose()}});avatar.clear();const v=Object.fromEntries(new FormData(form).entries());const equipped=window.ctoonEquippedClothing||null;const model=['anime','classic','chibi','hero','robot','southpark','simpsons'].includes(v.model)?v.model:'anime';if(buildCategory(model,v,equipped))return;avatar.scale.setScalar(model==='chibi'?.88:model==='hero'?1.04:model==='southpark'?.83:1);const skin=mat(model==='simpsons'&&v.skin==='#f2b989'?'#f5d33c':v.skin||'#f2b989'),hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),cloth=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[equipped])||v.shirt||'#6545d7'),dark=mat('#181a36'),gold=mat('#ffdc68',.6),eye=mat(v.eyes||'#36d5ed');
+function build(){const geometries=new Set(),materials=new Set();avatar.traverse(obj=>{if(obj.isMesh){if(obj.geometry!==ball&&obj.geometry!==cylinder)geometries.add(obj.geometry);for(const m of (Array.isArray(obj.material)?obj.material:[obj.material]))materials.add(m)}});avatar.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());const v=Object.fromEntries(new FormData(form).entries());const equipped=window.ctoonEquippedClothing||null;const model=['anime','classic','chibi','hero','robot','southpark','simpsons'].includes(v.model)?v.model:'anime';if(buildCategory(model,v,equipped))return;avatar.scale.setScalar(model==='chibi'?.88:model==='hero'?1.04:model==='southpark'?.83:1);const skin=mat(model==='simpsons'&&v.skin==='#f2b989'?'#f5d33c':v.skin||'#f2b989'),hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),cloth=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[equipped])||v.shirt||'#6545d7'),dark=mat('#181a36'),gold=mat('#ffdc68',.6),eye=mat(v.eyes||'#36d5ed');
 sculptTorso(avatar,cloth,1.82,model==='hero'?.88:.70,1.72,.43);part(avatar,ball,skin,0,2.74,0,.17,.24,.16);part(avatar,ball,model==='robot'?mat('#b3b8d3'):skin,0,3.38,0,model==='chibi'?.77:model==='southpark'?.83:model==='simpsons'?.67:model==='hero'?.51:model==='classic'?.55:.64,model==='chibi'?.81:model==='southpark'?.66:model==='simpsons'?.72:model==='hero'?.61:.74,model==='robot'?.44:.49);
 for(const side of [-1,1]){part(avatar,ball,skin,side*.54,3.35,0,.12,.19,.13);part(avatar,ball,THREE.MeshStandardMaterial?mat('#ffffff'):eye,side*.245,3.47,.44,model==='classic'?.14:model==='hero'?.12:.195,model==='classic'?.17:model==='hero'?.14:.245,.072);part(avatar,ball,eye,side*.245,3.45,.51,model==='classic'?.075:model==='hero'?.065:.115,model==='classic'?.105:model==='hero'?.085:.17,.028);part(avatar,ball,dark,side*.245,3.46,.537,.057,.102,.012);
 sculptLimb(avatar,[side*.65,2.28,0],[side*.82,1.45,0],.19,v.outfit==='armor'?gold:cloth);part(avatar,ball,skin,side*.84,1.35,0,.17,.19,.16);
@@ -282,6 +282,89 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 }
 
 
+
+function sculptCategoryIdentity(){
+ const v=Object.fromEntries(new FormData(form).entries());
+ const model=v.model||'anime',skin=mat(model==='simpsons'&&(!v.skin||v.skin==='#f2b989')?'#f5d43b':v.skin||'#f2b989');
+ const fabric=mat(({tee:'#36cfff',hoodie:'#8b50e9',jacket:'#d047a8',outfit:'#f3bb43',legendary:'#ffd65c'}[window.ctoonEquippedClothing])||v.shirt||'#6545d7');
+ const metal=mat('#aab8d7',.65),glow=new THREE.MeshStandardMaterial({color:v.eyes||'#36d5ed',emissive:v.eyes||'#36d5ed',emissiveIntensity:.7,roughness:.3});
+ const ink=mat('#25213d'),hair=mat(v.hair||'#30204d');
+ const ell=(m,x,y,z,a,b,c)=>part(avatar,new THREE.SphereGeometry(1,32,24),m,x,y,z,a,b,c);
+ const cylinder=(m,x,y,z,r1,r2,h)=>part(avatar,new THREE.CylinderGeometry(r1,r2,h,24),m,x,y,z);
+ const badge=(m,x,y,z,w,h,d)=>part(avatar,new THREE.BoxGeometry(w,h,d),m,x,y,z);
+ if(model==='robot'){
+  // Distinct articulated mechanical silhouette, armor panels, recessed joints and visor.
+  for(const side of [-1,1]){
+   const shoulder=ell(metal,side*.88,2.30,0,.32,.30,.35);
+   ell(ink,side*.91,1.68,0,.19,.20,.20);
+   badge(metal,side*.91,1.57,.23,.23,.43,.11);
+   ell(glow,side*.35,.81,.28,.09,.16,.04);
+   badge(ink,side*.36,.24,.50,.38,.10,.08);
+  }
+  badge(ink,0,1.91,.405,.77,.59,.075);
+  badge(glow,0,1.96,.45,.48,.15,.045);
+  for(let i=-1;i<=1;i++)badge(metal,i*.18,1.57,.48,.08,.15,.055);
+  badge(ink,0,3.43,.425,.89,.39,.07);
+  for(const side of [-1,1])ell(glow,side*.23,3.43,.47,.16,.105,.035);
+  cylinder(metal,0,3.99,0,.06,.09,.34);
+  return;
+ }
+ if(model==='southpark'){
+  // Compact stylized figure with mitten hands, prominent jacket collar and short boots.
+  ell(fabric,0,1.91,.43,.48,.13,.12);
+  for(const side of [-1,1]){
+   ell(fabric,side*.75,1.47,.04,.26,.39,.29);
+   ell(skin,side*.85,1.08,.13,.23,.20,.22);
+   ell(ink,side*.31,.32,.23,.35,.15,.45);
+  }
+  ell(skin,0,3.06,.45,.65,.40,.25);
+  return;
+ }
+ if(model==='simpsons'){
+  // Tall cartoon head, projecting muzzle and curved lower jaw.
+  ell(skin,0,3.06,.45,.38,.26,.32);
+  ell(skin,0,2.93,.52,.34,.13,.24);
+  for(const side of [-1,1])ell(skin,side*.64,3.23,.04,.16,.24,.18);
+  return;
+ }
+ if(model==='chibi'){
+  // Rounded oversized head, small shoulders and compact boots.
+  ell(fabric,0,2.11,0,.59,.42,.38);
+  for(const side of [-1,1]){
+   ell(fabric,side*.54,2.02,.02,.23,.30,.25);
+   ell(ink,side*.29,.27,.23,.30,.18,.40);
+  }
+  return;
+ }
+ if(model==='classic'){
+  // Elastic cartoon silhouette: tapered gloves, oval shoes and emphasized cheek volume.
+  for(const side of [-1,1]){
+   ell(skin,side*.81,1.27,.08,.20,.24,.19);
+   ell(ink,side*.32,.22,.28,.34,.16,.49);
+   ell(skin,side*.41,3.16,.22,.26,.23,.23);
+  }
+  return;
+ }
+ if(model==='hero'){
+  // Athletic shoulder armor, chest plate and angular gauntlets.
+  ell(fabric,0,2.17,.29,.68,.49,.31);
+  for(const side of [-1,1]){
+   ell(metal,side*.76,2.37,0,.35,.21,.43);
+   badge(metal,side*.83,1.62,.25,.28,.39,.13);
+   ell(ink,side*.33,.23,.30,.31,.22,.46);
+  }
+  ell(glow,0,2.13,.56,.18,.18,.045);
+  return;
+ }
+ // Anime: shaped collar, separated chest panel and slimmer layered shoulders.
+ ell(fabric,0,2.15,.23,.51,.34,.27);
+ for(const side of [-1,1]){
+  ell(fabric,side*.65,2.30,0,.25,.25,.32);
+  const collar=badge(ink,side*.17,2.46,.36,.23,.08,.14);
+  collar.rotation.z=side*.42;
+ }
+}
+
 function sculptFeatures(){
  const v=Object.fromEntries(new FormData(form).entries()),model=v.model||'anime';
  if(model==='robot')return;
@@ -356,4 +439,4 @@ function addCategoryDetails(){
 }
 
 let rotation=.15,drag=false,last=0;let animationEnabled=true;const animationClock=new THREE.Clock();renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointercancel',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-last)*.012;last=e.clientX}});renderer.domElement.style.touchAction='pan-y';
-function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{build();addCategoryDetails();sculptFeatures()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
+function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{build();sculptCategoryIdentity();addCategoryDetails();sculptFeatures()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
