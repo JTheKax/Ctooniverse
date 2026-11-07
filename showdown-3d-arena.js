@@ -1,5 +1,6 @@
 // WebGL 3D combat overlay. Uses the same coordinate/state system as the 2D training simulation.
 import * as THREE from 'https://esm.sh/three@0.170.0';
+import {buildJack} from './jack-skellington-3d.js';
 export function createArena3D(canvas){
  const host=canvas.parentElement;
  const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});
@@ -46,7 +47,7 @@ export function createArena3D(canvas){
   if(hercules){const shape=new THREE.Shape();shape.moveTo(-.45,2.72);shape.lineTo(.45,2.72);shape.lineTo(.75,.55);shape.quadraticCurveTo(0,.35,-.75,.55);shape.closePath();cape=new THREE.Mesh(new THREE.ShapeGeometry(shape),new THREE.MeshStandardMaterial({color:0xab2940,side:THREE.DoubleSide,roughness:.9}));cape.position.z=-.38;body.add(cape)}
   return {root,body,arms,legs,cape,phase:0};
  }
- const hercules=build(true),rival=build(false);
+ const hercules=build(true),jack=buildJack(),rival=build(false);scene.add(jack.root);
  const platform=new THREE.Mesh(new THREE.PlaneGeometry(15,4),new THREE.MeshStandardMaterial({color:0x302655,roughness:.8}));platform.rotation.x=-Math.PI/2;platform.position.y=-.06;scene.add(platform);
  const rings=new THREE.GridHelper(15,15,0xb95bea,0x473f7d);rings.position.y=-.04;scene.add(rings);
  const geometry=new THREE.TorusGeometry(.35,.045,8,28);const aura=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:0xffdb63,transparent:true,opacity:.85}));aura.visible=false;scene.add(aura);
@@ -66,7 +67,7 @@ export function createArena3D(canvas){
  }
  if(model.cape)model.cape.rotation.y=Math.sin(model.phase*4)*.08;
  }
- function render(hero,cpu,dt){if(!active)return;pose(hercules,hero,dt);pose(rival,cpu,dt);aura.visible=hero.attack>0&&hero.kind==='special';if(aura.visible){aura.position.set(hercules.root.position.x+hero.face*.85,2.1+hercules.root.position.y,0);aura.rotation.y=Math.PI/2;aura.scale.setScalar(1+Math.sin(performance.now()*.025)*.2)}renderer.render(scene,camera)}
+ function render(hero,cpu,dt,selected='disney-hercules'){if(!active)return;const useJack=selected==='jack-skellington';hercules.root.visible=!useJack;jack.root.visible=useJack;pose(useJack?jack:hercules,hero,dt);pose(rival,cpu,dt);aura.visible=hero.attack>0&&hero.kind==='special';if(aura.visible){aura.position.set((useJack?jack:hercules).root.position.x+hero.face*.85,2.1+(useJack?jack:hercules).root.position.y,0);aura.rotation.y=Math.PI/2;aura.scale.setScalar(1+Math.sin(performance.now()*.025)*.2)}renderer.render(scene,camera)}
  function destroy(){active=false;observer.disconnect();renderer.dispose();scene.traverse(o=>{o.geometry?.dispose();if(o.material){for(const m of Array.isArray(o.material)?o.material:[o.material])m.dispose()}});renderer.domElement.remove()}
  return {render,destroy};
 }
