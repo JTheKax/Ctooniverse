@@ -383,7 +383,23 @@ function buildCleanAvatar(){
     [1.77,.40,.31],[1.98,.48,.35],[2.19,.54,.36],
     [2.36,.55,.34],[2.49,.43,.29],[2.57,.25,.22],[2.60,.14,.15]
    ]);
-  }else sculptTorso(avatar,shirt,1.89,style.body[0],style.body[1],style.body[2]);
+  }else{
+   // Family-specific closed-looking torso silhouette: rounded shoulders,
+   // shaped waist and depth, rather than a uniformly stretched lathe.
+   const w=style.body[0],d=style.body[2];
+   const shoulderScale=model==='hero'?1.10:model==='southpark'?1.04:model==='chibi'?.92:1;
+   const waistScale=model==='hero'?.68:model==='simpsons'?.88:model==='southpark'?.97:.79;
+   loftBody(avatar,shirt,[
+    [1.29,w*waistScale*.56,d*.66],
+    [1.39,w*waistScale*.75,d*.79],
+    [1.60,w*waistScale*.91,d*.91],
+    [1.83,w*.88,d],
+    [2.08,w*shoulderScale,d*1.02],
+    [2.29,w*shoulderScale*.98,d*.96],
+    [2.45,w*.70,d*.75],
+    [2.56,w*.28,d*.40]
+   ],36);
+  }
   ballAt(skin,0,2.69,0,.17,.24,.17);
   if(model==='anime'){
    // Custom tapered facial mesh: cheekbones, jaw and chin are sculpted into
@@ -515,8 +531,15 @@ function buildCleanAvatar(){
     // A tapered sleeve with a rounded shoulder and a fitted cuff.
     const armReach=model==='chibi'?.66:model==='southpark'?.69:.78;
     part(armPivot,ball,shirt,0,-.08,0,style.arm*1.20,style.arm*1.25,style.arm*1.16);
-    sculptLimb(armPivot,[0,-.12,0],[side*.13,-armReach,.015],style.arm*.94,shirt);
-    part(armPivot,ball,shirt,side*.13,-armReach,.015,style.arm*.96,.10,style.arm*.96);
+    loftBody(armPivot,shirt,[
+     [-armReach,style.arm*.70,style.arm*.73,side*.13],
+     [-armReach+.10,style.arm*.77,style.arm*.79,side*.12],
+     [-armReach*.65,style.arm*.89,style.arm*.88,side*.09],
+     [-.24,style.arm*1.06,style.arm*1.04,side*.025],
+     [-.10,style.arm*1.13,style.arm*1.12,0],
+     [-.015,style.arm*.85,style.arm*.90,0]
+    ],24);
+    part(armPivot,ball,shirt,side*.13,-armReach,.015,style.arm*.77,.075,style.arm*.79);
     const palmY=-armReach-.19;
     part(armPivot,ball,skin,side*.13,palmY,.045,style.arm*.76,.15,style.arm*.66);
     if(model!=='southpark'){
