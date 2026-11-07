@@ -253,5 +253,33 @@ if(model==='southpark'){
 }
 if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'),.8,1.65,.15,.035,.15,.11);
 }
+
+function addCategoryDetails(){
+ const v=Object.fromEntries(new FormData(form).entries()),model=v.model;
+ if(!['southpark','simpsons','chibi','classic','robot'].includes(model))return;
+ const hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),gold=mat('#ffdc68'),dark=mat('#231a35');
+ const b=(m,x,y,z,sx,sy,sz)=>part(avatar,ball,m,x,y,z,sx,sy,sz);
+ const y=model==='southpark'?3.22:model==='robot'?3.30:3.34;
+ if(model!=='robot'){
+  if(v.style==='bald'){/* preserve bare head */}else{
+   if(model==='southpark')b(hair,0,y+.65,-.12,.77,.20,.49);
+   if(v.style==='spikes'||v.style==='mohawk')for(let i=-2;i<=2;i++)part(avatar,new THREE.ConeGeometry(.17,.38,9),i%2?accent:hair,i*.21,y+.89,0);
+   if(v.style==='bob'||v.style==='locs'||v.style==='curls')for(const side of [-1,1])b(hair,side*.62,y+.06,-.14,.18,.46,.29);
+   if(v.style==='ponytail')b(hair,0,y+.15,-.61,.22,.47,.23);
+   if(v.style==='swoop'||v.style==='undercut')b(hair,-.15,y+.65,.26,.43,.16,.22);
+  }
+  if(v.detail==='freckles')for(const side of [-1,1])for(let i=0;i<3;i++)b(dark,side*(.26+i*.05),y-.16,.57,.017,.018,.012);
+  if(v.detail==='blush')for(const side of [-1,1])b(mat('#df8090'),side*.43,y-.18,.48,.12,.055,.02);
+  if(v.detail==='scar')part(avatar,new THREE.BoxGeometry(.025,.24,.025),dark,.35,y-.10,.54).rotation.z=.45;
+  if(v.piercing==='earrings'||v.piercing==='hoops')for(const side of [-1,1])part(avatar,new THREE.TorusGeometry(v.piercing==='hoops'?.10:.05,.02,8,20),gold,side*.72,y-.24,.08);
+  if(v.piercing==='nose')b(gold,.11,y-.22,.62,.04,.04,.03);
+  if(v.piercing==='brow')b(gold,.26,y+.27,.54,.04,.03,.03);
+  if(v.accessory==='glasses')for(const side of [-1,1])part(avatar,new THREE.TorusGeometry(.19,.025,8,28),gold,side*.26,y+.12,.59);
+  if(v.accessory==='crown')part(avatar,new THREE.CylinderGeometry(.36,.44,.26,7),gold,0,y+.98,0);
+  if(v.accessory==='headphones')for(const side of [-1,1])b(dark,side*.73,y+.08,0,.15,.28,.24);
+  if(v.tattoo!=='none')b(mat(v.tattoo==='heart'?'#bb2862':'#231a35'),.78,1.65,.17,.06,.12,.035);
+ }
+}
+
 let rotation=.15,drag=false,last=0;let animationEnabled=true;const animationClock=new THREE.Clock();renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-last)*.012;last=e.clientX}});renderer.domElement.style.touchAction='pan-y';
-function resize(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();form.addEventListener('input',build);form.addEventListener('change',build);window.addEventListener('avatar-loaded',build);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;build()});build();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
+function resize(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{build();addCategoryDetails()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
