@@ -1,5 +1,5 @@
 // Ctoon Showdown: 2D pixel-art fighting mode. Local-only CPU sparring.
-import {drawPixelFighter,loadFighterSprites} from './showdown-pixel-sprites.js?v=showdown-gg-style-20261107';
+import {drawPixelFighter,loadFighterSprites} from './showdown-pixel-sprites.js?v=showdown-atlas-fix-20261107b';
 export function createShowdown({canvas,start,pause,status,message,health,meter,timer,rounds,touch}){
  const ctx=canvas.getContext('2d'),ground=445,keys=new Set(),pressed=new Set(),touchHandlers=[];
  let running=false,paused=false,last=0,elapsed=60,raf=0,ended=false,selected='disney-hercules',round=1,playerWins=0,cpuWins=0,draws=0,hitFlash=0;
