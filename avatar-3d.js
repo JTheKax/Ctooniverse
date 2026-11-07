@@ -339,6 +339,32 @@ function buildCleanAvatar(){
   ballAt(skin,0,headY-.15,style.head[2]*.99,.09,.10,.09);
   ballAt(dark,0,headY-.37,style.head[2]*.91,.17,.025,.025);
  }
+ // Layered waist and clothing panels provide a continuous body silhouette.
+ if(!robot){
+  const waist=part(avatar,new THREE.CylinderGeometry(model==='hero'?.46:model==='anime'?.39:.43,model==='hero'?.51:.46,.34,28),pants,0,1.27,0);
+  waist.scale.z=model==='hero'?.90:.80;
+  const belt=part(avatar,new THREE.CylinderGeometry(model==='hero'?.51:.46,model==='hero'?.51:.46,.085,28),dark,0,1.43,0);
+  belt.scale.z=.82;
+  boxAt(gold,0,1.43,.41,.15,.105,.055);
+  if(model==='anime'||model==='hero'){
+   const seam=mat(model==='hero'?'#7185aa':'#d4b5ef');
+   // A tapered chest overlay, fitted side panels and raised garment seams.
+   const chest=part(avatar,new THREE.CylinderGeometry(model==='hero'?.67:.52,model==='hero'?.42:.36,.85,8),shirt,0,2.04,.035);
+   chest.scale.z=model==='hero'?.72:.66;
+   for(const side of [-1,1]){
+    const panel=part(avatar,new THREE.BoxGeometry(.095,.69,.055),seam,side*(model==='hero'?.51:.40),2.03,.29);
+    panel.rotation.z=side*(model==='hero'?.18:.11);
+    const lapel=part(avatar,new THREE.BoxGeometry(.15,.39,.075),dark,side*.17,2.46,.34);
+    lapel.rotation.z=side*.42;
+   }
+   if(model==='hero'){
+    boxAt(dark,0,1.84,.46,.55,.16,.07);
+    boxAt(gold,0,2.23,.47,.16,.13,.07);
+   }else{
+    boxAt(seam,0,1.86,.34,.055,.54,.06);
+   }
+  }
+ }
  const shoulder=style.body[0]*.95;
  for(const side of [-1,1]){
   if(robot){
@@ -361,7 +387,10 @@ function buildCleanAvatar(){
    avatarRig.arms.push({joint:armPivot,side});
    const legPivot=new THREE.Group();legPivot.position.set(side*.32,1.27,0);avatar.add(legPivot);
    part(legPivot,ball,pants,0,-.08,0,style.leg*1.26,.22,style.leg*1.22);
-   sculptLimb(legPivot,[0,-.12,0],[side*.02,-.77,0],style.leg,pants);
+   // Upper thigh tapers toward the knee; calf is a separate fitted volume.
+   part(legPivot,new THREE.CylinderGeometry(style.leg*1.32,style.leg*.98,.43,20),pants,0,-.30,0);
+   part(legPivot,ball,pants,side*.01,-.54,0,style.leg*1.03,.17,style.leg*1.01);
+   sculptLimb(legPivot,[side*.01,-.55,0],[side*.02,-.88,0],style.leg*.83,pants);
    part(legPivot,ball,pants,side*.02,-.79,0,style.leg*1.04,.13,style.leg*1.04);
    // Separate heel, toe box and outsole give the shoe a readable 3D profile.
    part(legPivot,ball,shoe,side*.02,-1.045,.11,style.leg*1.20,.17,.28);
