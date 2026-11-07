@@ -198,3 +198,51 @@ if (year) year.textContent = String(new Date().getFullYear());
  group.style.cssText='display:inline-flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:.35rem;vertical-align:middle';
  footer.insertBefore(group,donation);group.append(donation,discord);
 })();
+
+
+/* Automatically cross-link matching Cartoon & Anime / Video Games CToon sets.
+   Read the two category pages at runtime so newly added cards are discovered
+   without maintaining a second list or duplicating collectibles. */
+(() => {
+  const current = location.pathname.split('/').pop().toLowerCase();
+  const categories = {'cartoons.html':'video-games.html','video-games.html':'cartoons.html'};
+  const counterpart = categories[current];
+  if (!counterpart) return;
+  const normalize = value => String(value || '')
+    .replace(/\b(?:ctoons?|sets?|collection|series)\b/gi, '')
+    .replace(/[^a-z0-9]+/gi, '')
+    .toLowerCase();
+  const cards = grid => [...grid.children].filter(card => card.matches('a,article'));
+  const label = card => card.querySelector('h3,h2')?.textContent?.trim() || '';
+  const href = card => card.matches('a[href]') ? card.getAttribute('href') : null;
+  const localCards = document.querySelector('.ctoon-subseries-grid');
+  if (!localCards) return;
+  fetch(counterpart, {cache:'no-cache'})
+    .then(response => {if (!response.ok) throw new Error('Unable to load related sets');return response.text()})
+    .then(html => {
+      const remote = new DOMParser().parseFromString(html, 'text/html');
+      const remoteGrid = remote.querySelector('.ctoon-subseries-grid');
+      if (!remoteGrid) return;
+      const lookup = new Map();
+      for (const card of cards(remoteGrid)) {
+        const key = normalize(label(card));
+        if (key && !lookup.has(key)) lookup.set(key, card);
+      }
+      for (const card of cards(localCards)) {
+        const key = normalize(label(card));
+        const match = lookup.get(key);
+        if (!match || card.querySelector('[data-linked-series]')) continue;
+        const target = href(match) || counterpart + '#' + encodeURIComponent(match.id);
+        const link = document.createElement('a');
+        link.href = new URL(target, new URL(counterpart, location.href)).href;
+        link.dataset.linkedSeries = 'true';
+        link.textContent = current === 'cartoons.html' ? '🎮 View Video Game CToons ↗' : '📺 View Cartoon & Anime CToons ↗';
+        link.setAttribute('aria-label', link.textContent + ' for ' + label(card));
+        link.style.cssText = 'display:block;margin:.6rem .2rem .2rem;padding:.55rem .35rem;border:1px solid #81dfff;border-radius:10px;background:rgba(27,42,112,.85);color:#d7f7ff;font-size:.78rem;font-weight:800;text-align:center;text-decoration:none';
+        // A card may already be a link: never nest anchors inside anchors.
+        if (card.matches('a')) card.insertAdjacentElement('afterend', link);
+        else card.appendChild(link);
+      }
+    })
+    .catch(error => console.warn('CToon linked-series discovery:', error.message));
+})();
