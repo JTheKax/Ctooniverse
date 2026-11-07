@@ -2145,3 +2145,7 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 .players-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:12px;margin-top:15px}
 .player-directory-card{display:flex;align-items:center;gap:10px;min-width:0;padding:13px;border:3px solid #161039;border-radius:12px 16px 11px 15px;background:#dce7ff;color:#211546;box-shadow:3px 4px 0 #f2c746;overflow-wrap:anywhere}
 .player-directory-card span{color:#6b38c6;font-size:1.4rem}
+
+/* Owner pinned at the front of the player directory. */
+.player-directory-card.is-owner{grid-column:1/-1;order:-1;background:linear-gradient(110deg,#fce9a6,#e9d5ff);border-color:#5e359c;box-shadow:4px 5px 0 #f4ca42}
+.player-owner-badge{margin-left:auto;padding:3px 8px;border:2px solid #4e2782;border-radius:9px;background:#6c35b0;color:#fff!important;font-size:.8rem!important;font-weight:900;white-space:nowrap}
