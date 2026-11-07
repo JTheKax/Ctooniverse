@@ -2201,3 +2201,15 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
  .global-chat-compose input{font-size:16px!important;padding:10px 8px!important}
  .global-chat-compose button{font-size:13px!important;padding:9px 10px!important}
 }
+
+
+/* Persistent compact chat dock on site pages */
+.site-chat-dock{position:fixed;right:16px;bottom:16px;z-index:9000;width:min(360px,calc(100vw - 24px));pointer-events:none}
+.site-chat-dock>*{pointer-events:auto}
+.site-chat-toggle{display:block;margin-left:auto;padding:11px 17px;border:3px solid #ffd34e;border-radius:16px;background:linear-gradient(135deg,#4d269e,#182e85);color:#fff;font:800 14px Arial,sans-serif;box-shadow:0 4px 14px #0008;cursor:pointer}
+.site-chat-dock .site-chat-panel{box-sizing:border-box!important;width:100%!important;max-width:100%!important;margin:0 0 10px!important;padding:12px!important;box-shadow:0 8px 28px #0009!important}
+.site-chat-dock .site-chat-panel[hidden]{display:none!important}
+.site-chat-dock .global-chat-messages{height:min(300px,42vh)!important;max-height:min(300px,42vh)!important}
+.site-chat-dock .global-chat-compose input{font-size:16px!important}
+.site-chat-dock .global-chat-compose button{padding:8px 10px!important}
+@media(max-width:600px){.site-chat-dock{right:8px;bottom:8px;width:min(350px,calc(100vw - 16px))}.site-chat-dock .global-chat-messages{height:min(240px,38vh)!important;max-height:min(240px,38vh)!important}}
