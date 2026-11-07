@@ -54,3 +54,11 @@ body.fighters-page{background:radial-gradient(ellipse at top,#292169,#090d23 75%
 @media(max-width:900px){.preview-stats{display:none}.roster-banner-center{display:none}}
 @media(max-width:520px){.fighter-roster{gap:4px}.roster-banner{font-size:.62rem;padding:7px}.fighter-roster .roster-slot{border-radius:4px}.fighter-roster .roster-slot .slot-number{font-size:.57rem}.select-heading h2{font-size:clamp(1.3rem,6vw,2rem)}}
 @media(prefers-reduced-motion:reduce){.fighter-roster .roster-slot{transition:none}}
+
+/* Future fighter unlock presentation */
+.preview-unlock-status{display:inline-block;align-self:center;margin:10px 0 0;padding:6px 14px;border:1px solid #a59aff;border-radius:99px;background:#141337;color:#ffe67d;font-weight:900;font-size:.78rem;letter-spacing:.12em}
+.roster-slot[data-unlock="locked"]{filter:saturate(.55);background:linear-gradient(140deg,#292b43,#0e1327);border-color:#6c668d}
+.roster-slot[data-unlock="locked"] .slot-symbol{font-size:clamp(1rem,2vw,1.7rem);color:#d8c7ff}
+.roster-slot[data-unlock="unlocked"]{border-color:#62e9c1;background:linear-gradient(145deg,#205d68,#182448)}
+#unlock-fighter{margin:8px 0;background:linear-gradient(120deg,#6040c4,#a14cae);border-color:#ffdc78}
+#unlock-fighter[hidden]{display:none}
