@@ -51,14 +51,14 @@ function sprite(id,pose,step){
  const polygon=(color,points)=>{x.fillStyle=color;x.beginPath();points.forEach(([a,b],i)=>i?x.lineTo(a,b):x.moveTo(a,b));x.closePath();x.fill()};const walking=['walk','run'].includes(pose)?(step===0?-5:step===1?0:5):0,low=pose==='crouch'?9:0,jump=pose==='jump'?-4:0;
 
  const attacking=['punch','kick','special'].includes(pose),kick=pose==='kick',guard=pose==='block';
- const attackReach=step===0?3:step===1?9:15;
+ const attackReach=step===0?0:step===1?19:7;
  // Arcade sprites are composed at a consistent native resolution with hard pixel edges.
  x.save();x.translate(15,5);x.scale(1.02,1.24);
  // Character shadow is rendered in the arena, not in the sprite.
  if(p.cape){polygon(outline,[[20,27+low],[43,28+low],[51,64],[36,60],[18,72],[15,51]]);polygon(p.cape,[[21,29+low],[42,30+low],[48,61],[35,57],[19,68],[18,50]]);polygon('#d44859',[[20,32+low],[24,34+low],[21,62],[18,65]])}
  // Legs, sandals and boots.
  const legs=[{x:24,offset:walking},{x:36,offset:-walking}];
- for(let i=0;i<2;i++){const leg=legs[i];const extended=kick&&i===1;
+ for(let i=0;i<2;i++){const leg=legs[i];const extended=kick&&i===1&&step===1;
   const legTop=47+low+leg.offset,legLength=pose==='crouch'?14:21;
   if(!extended){px(outline,leg.x-5,legTop,11,legLength+2);px(p.pants,leg.x-3,legTop+1,7,legLength-1)}
   if(extended){px(outline,36,50+low,20,9);px(p.pants,38,51+low,15,6);px(outline,52,51+low,10,9);px(p.trim,54,53+low,6,4)}
@@ -104,7 +104,7 @@ function sprite(id,pose,step){
  if(jack){
   px('#53505d',29,35+low,2,13);px('#eeeeed',27,9+jump,3,3);
   px('#5c5967',25,54+low,2,12);px('#5c5967',37,54+low,2,12);
-  if(pose==='walk'){px('#a5a1a8',25,30+low,1,15);px('#a5a1a8',38,30+low,1,15)}
+  if(pose==='walk'||pose==='run'){px('#a5a1a8',25,30+low,1,15);px('#a5a1a8',38,30+low,1,15)}
  }else{
   px('#f4c08b',25,14+jump,4,8);px('#f5d56e',21,33+low,3,13);
   px('#e4b65d',41,33+low,3,12);px('#763a24',23,7+jump,4,4);
@@ -114,11 +114,12 @@ function sprite(id,pose,step){
  // Additional attack anticipation and recovery frames to avoid frozen-looking strikes.
  if(pose==='punch'&&step===0){px(outline,41,30+low,11,9);px(p.skin,43,32+low,7,5)}
  if(pose==='kick'&&step===0){px(outline,39,48+low,13,9);px(p.pants,40,50+low,10,5)}
+ if(pose==='kick'&&step===2){px(outline,34,53+low,13,9);px(p.pants,36,55+low,9,5)}
  if(pose==='idle'&&step===2){px(p.trim,31,45+low,3,2)}
  x.restore();cache.set(key,c);return c;
 }
 export function drawPixelFighter(ctx,f,id,time=0,ground=445){
- const pose=f.hp<=0?'ko':f.stun>0?'hurt':f.guard?'block':f.crouch?'crouch':f.y<ground-3?'jump':f.attack>0?(ANIMATIONS.includes(f.kind)?f.kind:'punch'):Math.abs(f.vx)>.8?'run':Math.abs(f.vx)>.1?'walk':'idle';
+ const pose=f.hp<=0?'ko':f.stun>0?'hurt':f.guard?'block':f.attack>0?(ANIMATIONS.includes(f.kind)?f.kind:'punch'):f.crouch?'crouch':f.y<ground-3?'jump':Math.abs(f.vx)>.8?'run':Math.abs(f.vx)>.1?'walk':'idle';
  const playback=spritePlayback.get(f)||{pose:'',start:time};
  if(playback.pose!==pose){playback.pose=pose;playback.start=time;spritePlayback.set(f,playback)}
  const fps=pose==='idle'?4:pose==='walk'?10:pose==='run'?13:pose==='ko'?5:pose==='special'?9:14;
