@@ -15,10 +15,10 @@ function renderRoster(){
  const pages=Math.max(1,Math.ceil(filtered.length/pageSize));page=Math.min(page,pages-1);
  grid.replaceChildren();
  for(const item of filtered.slice(page*pageSize,(page+1)*pageSize)){
-  const button=document.createElement('button');button.type='button';button.className='roster-slot';button.dataset.slot=item.slot;button.setAttribute('aria-label',slotLabel(item.slot)+' — empty');button.setAttribute('aria-pressed',String(item.slot===selectedSlot));
-  const symbol=document.createElement('span');symbol.className='slot-symbol';symbol.textContent='?';
+  const button=document.createElement('button');button.type='button';button.className='roster-slot';button.style.setProperty('--slot-hue',String((item.slot*37)%360));button.dataset.slot=item.slot;button.setAttribute('aria-label',slotLabel(item.slot)+' — empty');button.setAttribute('aria-pressed',String(item.slot===selectedSlot));
+  const symbol=document.createElement('span');symbol.className='slot-symbol';symbol.textContent='+';
   const number=document.createElement('span');number.className='slot-number';number.textContent=String(item.slot).padStart(3,'0');
-  button.append(symbol,number);button.onclick=()=>selectSlot(item.slot);grid.append(button);
+  const gloss=document.createElement('span');gloss.className='slot-gloss';gloss.setAttribute('aria-hidden','true');button.append(gloss,symbol,number);button.onclick=()=>selectSlot(item.slot);button.onkeydown=e=>{if(!['ArrowRight','ArrowLeft','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();const step=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:e.key==='ArrowDown'?10:-10;const next=item.slot+step;if(next<1||next>roster.length)return;const nextPage=Math.floor((next-1)/pageSize);if(group.value!=='all')group.value='all';search.value='';page=nextPage;renderRoster();selectSlot(next);grid.querySelector('[data-slot="'+next+'"]').focus();};grid.append(button);
  }
  if(!filtered.length){const empty=document.createElement('p');empty.textContent='No matching slots.';grid.append(empty)}
  document.getElementById('roster-page').textContent='Page '+(page+1)+' / '+pages;
