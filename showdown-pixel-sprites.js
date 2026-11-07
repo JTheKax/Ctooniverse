@@ -18,18 +18,18 @@ const atlases=new Map();
 export function loadFighterSprites(id){
  const asset=FIGHTER_SPRITES[id];if(!asset)return Promise.resolve(false);
  if(atlases.has(id)){const existing=atlases.get(id);if(existing.ready||existing.loading)return existing.promise;atlases.delete(id)}
- const state={image:null,ready:false,source:null,frameWidth:asset.frameWidth,frameHeight:asset.frameHeight,promise:null,loading:true};atlases.set(id,state);
+ const state={image:null,ready:false,source:null,frameWidth:asset.frameWidth,frameHeight:asset.frameHeight,promise:null,loading:true,attempts:[]};atlases.set(id,state);
  const candidates=id==='jack-skellington'?[asset.url,'/images/showdown/jack-cleaned-atlas.png','/images/showdown/jack-skellington-atlas.svg']:[asset.url,'/images/showdown/hercules-atlas.svg'];
  state.promise=new Promise(resolve=>{
   function tryNext(index){
-   if(index>=candidates.length){state.loading=false;resolve(false);return}
+   if(index>=candidates.length){state.loading=false;console.warn('Showdown: no compatible 3-column x 11-row sprite atlas for',id,state.attempts);resolve(false);return}
    const image=new Image();image.decoding='async';
    image.onload=()=>{
     if(image.naturalWidth%3===0&&image.naturalHeight%ANIMATIONS.length===0&&image.naturalWidth/3>=32&&image.naturalHeight/ANIMATIONS.length>=32){
      state.image=image;state.source=candidates[index];state.frameWidth=image.naturalWidth/3;state.frameHeight=image.naturalHeight/ANIMATIONS.length;state.ready=true;state.loading=false;resolve(true);
-    }else tryNext(index+1);
+    }else{state.attempts.push(candidates[index]+' ('+image.naturalWidth+'x'+image.naturalHeight+', invalid atlas dimensions)');tryNext(index+1);}
    };
-   image.onerror=()=>tryNext(index+1);
+   image.onerror=()=>{state.attempts.push(candidates[index]+' (failed to load)');tryNext(index+1)};
    image.src=candidates[index];
   }
   tryNext(0);
@@ -155,7 +155,7 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
 }
 export function getFighterSpriteStatus(id){
  const state=atlases.get(id);
- return {loaded:!!state?.ready,source:state?.source||null,frameWidth:state?.frameWidth||0,frameHeight:state?.frameHeight||0};
+ return {loaded:!!state?.ready,loading:!!state?.loading,source:state?.source||null,frameWidth:state?.frameWidth||0,frameHeight:state?.frameHeight||0,attempts:state?.attempts||[]};
 }
 export function mountPixelPreview(container,id){
  const canvas=document.createElement('canvas');canvas.width=192;canvas.height=224;canvas.className='pixel-fighter-preview';
