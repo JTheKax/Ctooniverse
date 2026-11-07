@@ -10,23 +10,23 @@ export const PALETTES={
 // Illustrated atlas contract: 3 columns and one row per animation, transparent PNG.
 // Missing assets safely fall back to procedural art until production sheets are uploaded.
 export const FIGHTER_SPRITES={
- 'disney-hercules':{url:'./images/showdown/hercules-cleaned-atlas.png',frameWidth:192,frameHeight:224},
- 'jack-skellington':{url:'./images/showdown/jack-cleaned-atlas.png',frameWidth:192,frameHeight:224}
+ 'disney-hercules':{url:'/images/showdown/hercules-cleaned-atlas.png',frameWidth:192,frameHeight:224},
+ 'jack-skellington':{url:'/images/showdown/jack-cleaned-atlas.png',frameWidth:192,frameHeight:224}
 };
 export const ANIMATIONS=['idle','walk','run','punch','kick','block','jump','crouch','special','hurt','ko'];
 const atlases=new Map();
 export function loadFighterSprites(id){
  const asset=FIGHTER_SPRITES[id];if(!asset)return Promise.resolve(false);
  if(atlases.has(id))return atlases.get(id).promise;
- const state={image:null,ready:false,promise:null};atlases.set(id,state);
- const candidates=[asset.url,asset.url.replace('-cleaned-atlas.png','-atlas.svg')];
+ const state={image:null,ready:false,frameWidth:asset.frameWidth,frameHeight:asset.frameHeight,promise:null};atlases.set(id,state);
+ const candidates=[asset.url,id==='jack-skellington'?'/images/showdown/jack-skellington-atlas.svg':'/images/showdown/hercules-atlas.svg'];
  state.promise=new Promise(resolve=>{
   function tryNext(index){
    if(index>=candidates.length){resolve(false);return}
    const image=new Image();image.decoding='async';
    image.onload=()=>{
-    if(image.naturalWidth>=asset.frameWidth*3&&image.naturalHeight>=asset.frameHeight*ANIMATIONS.length){
-     state.image=image;state.ready=true;resolve(true);
+    if(image.naturalWidth%3===0&&image.naturalHeight%ANIMATIONS.length===0&&image.naturalWidth/3>=32&&image.naturalHeight/ANIMATIONS.length>=32){
+     state.image=image;state.frameWidth=image.naturalWidth/3;state.frameHeight=image.naturalHeight/ANIMATIONS.length;state.ready=true;resolve(true);
     }else tryNext(index+1);
    };
    image.onerror=()=>tryNext(index+1);
@@ -38,7 +38,7 @@ export function loadFighterSprites(id){
 function atlasFrame(ctx,id,pose,step,x,y,width,height){
  const state=atlases.get(id),config=FIGHTER_SPRITES[id];if(!state?.ready||!config)return false;
  const row=ANIMATIONS.indexOf(pose);if(row<0)return false;
- ctx.drawImage(state.image,(step%3)*config.frameWidth,row*config.frameHeight,config.frameWidth,config.frameHeight,x,y,width,height);return true;
+ ctx.drawImage(state.image,(step%3)*state.frameWidth,row*state.frameHeight,state.frameWidth,state.frameHeight,x,y,width,height);return true;
 }
 const cache=new Map();
 const spritePlayback=new WeakMap();
