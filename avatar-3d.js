@@ -294,7 +294,7 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 
 let avatarRig={arms:[],legs:[],eyes:[],head:null};
 function buildCleanAvatar(){
- avatarRig={arms:[],legs:[]};
+ avatarRig={arms:[],legs:[],eyes:[],head:null};
  const geometries=new Set(),materials=new Set();
  avatar.traverse(o=>{if(o.isMesh){if(o.geometry!==ball&&o.geometry!==cylinder)geometries.add(o.geometry);(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m))}});
  avatar.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());
