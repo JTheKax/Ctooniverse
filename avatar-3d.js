@@ -614,6 +614,24 @@ function buildCleanAvatar(){
    }
    if(hairstyle==='ponytail')strand(hair,[[0,headY+.48,-style.head[2]*.65],[0,headY+.22,-style.head[2]-.23],[0,headY-.22,-style.head[2]-.23]],.16);
    if(hairstyle==='undercut')scalp.scale.y=.15;
+   // Anime hair has a layered crown and face-framing side locks.
+   // Keep these anchored to the head so they follow the idle head motion.
+   if(model==='anime'){
+    for(const side of [-1,1]){
+     const sideX=side*style.head[0]*.84;
+     if(hairstyle==='bob'||hairstyle==='locs'||hairstyle==='ponytail'){
+      strand(hair,[[sideX*.80,headY+.48,-.10],[sideX,headY+.16,.07],[sideX*.98,headY-.26,.11]],.09);
+     }else if(hairstyle!=='mohawk'&&hairstyle!=='undercut'){
+      strand(hair,[[sideX*.62,headY+.55,-.07],[sideX*.90,headY+.30,.24],[sideX*.82,headY+.02,.29]],.085);
+     }
+    }
+    if(hairstyle==='swoop'){
+     for(let i=0;i<4;i++){
+      const x=-.28+i*.17;
+      strand(i===2?accent:hair,[[x,headY+.66,.10],[x+.10,headY+.47,.30],[x+.17,headY+.31,.34]],.067);
+     }
+    }
+   }
   }
   if(v.accessory==='glasses')for(const side of [-1,1])part(avatar,new THREE.TorusGeometry(style.eye*1.22,.026,8,28),gold,side*(model==='chibi'?.34:.25),headY+.10,style.head[2]*.84+.11);
   if(v.accessory==='crown')part(avatar,new THREE.CylinderGeometry(.35,.43,.27,8),gold,0,headY+style.head[1]+.27,0);
@@ -625,9 +643,21 @@ function buildCleanAvatar(){
   if(v.detail==='blush')for(const side of [-1,1])ballAt(mat('#df8090'),side*.39,headY-.22,style.head[2]*.78,.13,.06,.022);
   if(v.detail==='scar')boxAt(dark,.34,headY-.13,style.head[2]*.92,.025,.24,.025);
   if(v.tattoo&&v.tattoo!=='none')ballAt(mat(v.tattoo==='heart'?'#b32157':'#171332'),shoulder+.10,1.75,.12,.05,.13,.06);
-  if(outfit==='hoodie')ballAt(shirt,0,2.49,-.25,.39,.25,.24);
-  if(outfit==='jacket')boxAt(gold,0,1.92,.40,.035,.54,.03);
-  if(outfit==='legendary'||v.outfit==='armor'||model==='hero')ballAt(gold,0,2.11,.43,.26,.19,.06);
+  if(outfit==='hoodie'){
+   // Hood sits behind the neck instead of floating above the shoulders.
+   ballAt(shirt,0,2.48,-.26,.33,.22,.20);
+   for(const side of [-1,1]){
+    const drawstring=part(avatar,new THREE.CapsuleGeometry(.012,.22,4,8),white,side*.13,2.28,.355);
+    drawstring.rotation.z=side*.07;
+   }
+  }
+  if(outfit==='jacket'){
+   for(const side of [-1,1]){
+    const lapel=boxAt(gold,side*.16,2.28,.35,.085,.36,.045);
+    lapel.rotation.z=side*.26;
+   }
+  }
+  if(outfit==='legendary'||v.outfit==='armor'||model==='hero')ballAt(gold,0,2.11,.43,.20,.15,.045);
  }
  // Restrained fabric details: avoid decorative strips floating over the torso.
  if(model==='anime'){
