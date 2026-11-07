@@ -1,6 +1,14 @@
-import * as THREE from 'https://esm.sh/three@0.170.0';
+// Try two independent CDNs so a blocked module host does not blank the preview.
+const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js')
+ .catch(()=>import('https://esm.sh/three@0.170.0'));
 const host=document.getElementById('avatar-3d');const form=document.getElementById('avatar-form');const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(35,1,.1,100);camera.position.set(0,2.75,7.6);camera.lookAt(0,2.05,0);
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;host.appendChild(renderer.domElement);
+let renderer;
+try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});}
+catch(error){
+ host.textContent='3D preview could not start. Please enable hardware acceleration or try another browser.';
+ host.style.cssText+=';display:grid;place-items:center;text-align:center;padding:12px;color:#fff';
+ throw error;
+}renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;host.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xb8edff,0x32144e,1.55));const key=new THREE.DirectionalLight(0xfff1db,3.3);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-5;key.shadow.camera.right=5;key.shadow.camera.top=8;key.shadow.camera.bottom=-5;key.shadow.bias=-0.0003;scene.add(key);const rim=new THREE.PointLight(0x9b60ff,65,14);rim.position.set(3,4,-3);scene.add(rim);
 const avatar=new THREE.Group();scene.add(avatar);const floor=new THREE.Mesh(new THREE.CylinderGeometry(1.65,1.85,.18,64),new THREE.MeshStandardMaterial({color:0x332279,metalness:.55,roughness:.3}));floor.position.y=-.1;floor.receiveShadow=true;scene.add(floor);
 function mat(color,metalness=0){return new THREE.MeshStandardMaterial({color,metalness,roughness:metalness > 0 ? 0.32 : 0.78})}
@@ -643,7 +651,18 @@ function addCategoryDetails(){
 }
 
 let rotation=.15,drag=false,last=0;let animationEnabled=true;const animationClock=new THREE.Clock();renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointercancel',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-last)*.012;last=e.clientX}});renderer.domElement.style.touchAction='pan-y';
-function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{buildCleanAvatar()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;for(const {joint,side} of avatarRig.arms){joint.rotation.z=animationEnabled?side*(.045+Math.sin(t*1.4+side)*.055):0;joint.rotation.x=animationEnabled?Math.sin(t*1.3+side)*.045:0}for(const {joint,side} of avatarRig.legs){joint.rotation.x=animationEnabled?Math.sin(t*1.4+side*Math.PI)*.035:0}
+function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{try{
+ buildCleanAvatar();
+ if(avatar.children.length===0)throw new Error('No avatar meshes were created');
+ host.dataset.previewStatus='ready';
+ const warning=host.querySelector('[data-avatar-error]');if(warning)warning.remove();
+}catch(error){
+ console.error('CTooniverse 3D preview:',error);
+ host.dataset.previewStatus='error';
+ let warning=host.querySelector('[data-avatar-error]');
+ if(!warning){warning=document.createElement('div');warning.dataset.avatarError='';warning.style.cssText='position:absolute;inset:8px;display:grid;place-items:center;padding:16px;background:#20163ddc;color:white;text-align:center;border-radius:12px;z-index:2';host.style.position='relative';host.appendChild(warning)}
+ warning.textContent='3D preview failed: '+(error?.message||'unknown error')+'. Try reloading this page.';
+}};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;for(const {joint,side} of avatarRig.arms){joint.rotation.z=animationEnabled?side*(.045+Math.sin(t*1.4+side)*.055):0;joint.rotation.x=animationEnabled?Math.sin(t*1.3+side)*.045:0}for(const {joint,side} of avatarRig.legs){joint.rotation.x=animationEnabled?Math.sin(t*1.4+side*Math.PI)*.035:0}
 if(avatarRig.head){
  avatarRig.head.rotation.y=animationEnabled?Math.sin(t*.72)*.055:0;
  avatarRig.head.rotation.z=animationEnabled?Math.sin(t*.83)*.027:0;
