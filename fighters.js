@@ -21,6 +21,7 @@ function refreshSeries(){const previous=seriesFilter.value;const names=[...new S
 const slotLabel=n=>'SLOT '+String(n).padStart(3,'0');
 function selectSlot(n){
  selectedSlot=n;const item=roster.find(entry=>entry.slot===n),character=item.character,rule=unlockRule(item),state=unlockState(item);
+ if(state==='unlocked'&&['disney-hercules','jack-skellington'].includes(character?.id))combatController?.selectFighter(character.id);
  const preview=document.getElementById('fighter-3d-preview');
  if(previewSlot!==n){disposePreview?.();disposePreview=null;preview.replaceChildren();previewSlot=n;preview.hidden=true;
  if(['disney-hercules','jack-skellington'].includes(character?.id)&&state==='unlocked'){
@@ -95,7 +96,7 @@ async function loadFighterCatalog(){
   (catalog||[]).forEach((row,i)=>{roster[i].character={id:row.id,name:row.name,series:row.series,portrait:row.portrait,unlock:{type:row.unlock_type,cost:row.coin_cost,description:row.achievement_key?'Achievement: '+row.achievement_key:''}}});
   document.getElementById('roster-count').textContent=catalog.length+' / '+roster.length;
  if((catalog||[]).some(f=>['disney-hercules','jack-skellington'].includes(f.id)&&f.unlock_type==='free')){
-  try{const {createShowdown}=await import('./showdown-combat.js');combatController=createShowdown({canvas,start:startButton,pause:pauseButton,status:document.getElementById('fight-status'),message:document.getElementById('fight-message'),health:[document.getElementById('p1-health'),document.getElementById('p2-health')],meter:document.getElementById('p1-meter'),timer:document.getElementById('timer'),rounds:document.getElementById('rounds'),touch:document.querySelectorAll('[data-key]')});combatReady=true}catch(err){console.error('Combat module failed',err)}
+  try{const {createShowdown}=await import('./showdown-combat.js');combatController=createShowdown({canvas,start:startButton,pause:pauseButton,status:document.getElementById('fight-status'),message:document.getElementById('fight-message'),health:[document.getElementById('p1-health'),document.getElementById('p2-health')],meter:document.getElementById('p1-meter'),timer:document.getElementById('timer'),rounds:document.getElementById('rounds'),touch:document.querySelectorAll('[data-key]')});combatReady=true;const chosen=roster.find(f=>f.slot===selectedSlot);if(chosen&&isUnlocked(chosen))combatController?.selectFighter(chosen.character.id)}catch(err){console.error('Combat module failed',err)}
  }
   renderRoster();selectSlot(selectedSlot);
  }catch(error){console.warn('Fighter catalog unavailable',error);document.getElementById('fight-status').textContent='Fighter catalog could not be loaded. Try refreshing.'}
