@@ -357,7 +357,7 @@ function buildCleanAvatar(){
  const ballAt=(m,x,y,z,sx,sy,sz)=>part(avatar,ball,m,x,y,z,sx,sy,sz);
  const boxAt=(m,x,y,z,w,h,d)=>part(avatar,new THREE.BoxGeometry(w,h,d),m,x,y,z);
  const style={
-  anime:{head:[.59,.72,.48],body:[.68,1.42,.43],arm:.19,leg:.23,eye:.17},
+  anime:{head:[.57,.70,.47],body:[.68,1.42,.43],arm:.19,leg:.23,eye:.145},
   hero:{head:[.52,.62,.46],body:[.87,1.62,.49],arm:.26,leg:.28,eye:.13},
   classic:{head:[.74,.75,.53],body:[.53,1.32,.38],arm:.13,leg:.16,eye:.24},
   chibi:{head:[.96,.98,.68],body:[.53,.92,.39],arm:.17,leg:.20,eye:.30},
@@ -380,8 +380,8 @@ function buildCleanAvatar(){
    // Sculpted upper body: shoulders, pectorals, ribcage and tapered waist.
    loftBody(avatar,shirt,[
     [1.31,.34,.26],[1.39,.39,.29],[1.58,.37,.30],
-    [1.77,.39,.31],[1.98,.49,.35],[2.19,.56,.36],
-    [2.36,.58,.34],[2.49,.45,.29],[2.57,.25,.22],[2.60,.14,.15]
+    [1.77,.40,.31],[1.98,.48,.35],[2.19,.54,.36],
+    [2.36,.55,.34],[2.49,.43,.29],[2.57,.25,.22],[2.60,.14,.15]
    ]);
   }else sculptTorso(avatar,shirt,1.89,style.body[0],style.body[1],style.body[2]);
   ballAt(skin,0,2.69,0,.17,.24,.17);
@@ -392,10 +392,11 @@ function buildCleanAvatar(){
    const pos=faceGeometry.attributes.position;
    for(let i=0;i<pos.count;i++){
     const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
-    const lower=THREE.MathUtils.smoothstep(-y,.02,.90);
-    const cheek=1+.075*Math.exp(-Math.pow((y+.10)/.22,2));
-    const jaw=1-lower*.27;
-    pos.setXYZ(i,x*jaw*cheek,y,z*(1-lower*.10));
+    const lower=THREE.MathUtils.smoothstep(-y,.03,.88);
+    const cheek=1+.055*Math.exp(-Math.pow((y+.12)/.25,2));
+    const jaw=1-lower*.23;
+    const chin=1-.075*Math.exp(-Math.pow((y+.82)/.16,2));
+    pos.setXYZ(i,x*jaw*cheek*chin,y,z*(1-lower*.075));
    }
    pos.needsUpdate=true;faceGeometry.computeVertexNormals();
    part(avatar,faceGeometry,skin,0,headY,0,...style.head);
@@ -432,9 +433,9 @@ function buildCleanAvatar(){
   const browMaterial=hair;
   const lip=mat('#b66c78');
   for(const side of [-1,1]){
-   const brow=part(avatar,new THREE.CapsuleGeometry(.033,.18,5,10),browMaterial,side*.245,headY+.33,.446);
+   const brow=part(avatar,new THREE.CapsuleGeometry(.026,.15,5,10),browMaterial,side*.235,headY+.30,.444);
    brow.rotation.z=side*.18;
-   const lid=part(avatar,new THREE.TorusGeometry(.158,.022,7,32,Math.PI),skin,side*.24,headY+.10,.492);
+   const lid=part(avatar,new THREE.TorusGeometry(.14,.014,7,32,Math.PI),skin,side*.24,headY+.10,.479);
    lid.rotation.z=Math.PI;
    const earRim=ballAt(skin,side*.615,headY-.12,.005,.105,.17,.105);
    ballAt(lip,side*.625,headY-.12,.095,.035,.075,.014);
