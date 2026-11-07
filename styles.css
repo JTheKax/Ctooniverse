@@ -2096,3 +2096,42 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 @media(prefers-reduced-motion:reduce){
   :is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card{transition:none}
 }
+
+
+/* Comic-window layout repair: keep original 182x282 card footprint and readable controls. */
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card{
+ box-sizing:border-box!important;width:182px!important;min-width:182px!important;max-width:182px!important;
+ height:282px!important;min-height:282px!important;max-height:282px!important;
+ display:flex!important;flex-direction:column!important;gap:5px!important;padding:6px!important;
+ margin:0!important;overflow:hidden!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-art{
+ box-sizing:border-box!important;flex:0 0 157px!important;width:100%!important;
+ height:157px!important;min-height:157px!important;max-height:157px!important;
+ aspect-ratio:auto!important;clip-path:none!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-art img{
+ max-width:100%!important;max-height:100%!important;width:100%!important;height:100%!important;
+ object-fit:contain!important;object-position:center!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-details{
+ box-sizing:border-box!important;flex:1 1 auto!important;min-height:0!important;
+ width:100%!important;padding:4px 5px!important;display:flex!important;
+ flex-direction:column!important;justify-content:space-between!important;gap:2px!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-name{
+ font-size:11px!important;line-height:1.15!important;min-height:0!important;
+ white-space:normal!important;overflow:hidden!important;display:-webkit-box!important;
+ -webkit-line-clamp:2;-webkit-box-orient:vertical;text-overflow:ellipsis!important;
+}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-purchase{margin:0!important;gap:3px!important;flex-wrap:nowrap!important}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-buy{font-size:10px!important;padding:3px 5px!important;min-height:24px!important}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-price{font-size:10px!important}
+:is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-price strong{color:#34205e!important;font-size:11px!important}
+:is(.ctoons-featured-grid,.collection-grid) :is(.ctoon-shop-status,.collection-series,.collection-quantity){font-size:9px!important;line-height:1.1!important;margin:0!important}
+.collection-grid{grid-template-columns:repeat(auto-fill,minmax(182px,1fr))!important;gap:18px!important}
+.ctoons-featured-grid{flex-wrap:wrap!important;gap:18px!important}
+@media(max-width:420px){
+ .collection-grid{grid-template-columns:repeat(auto-fit,minmax(182px,1fr))!important}
+ :is(.ctoons-featured-grid,.collection-grid) .ctoon-shop-card{width:182px!important;min-width:182px!important;max-width:182px!important}
+}
