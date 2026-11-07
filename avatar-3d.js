@@ -284,7 +284,9 @@ if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'
 
 
 
+let avatarRig={arms:[],legs:[]};
 function buildCleanAvatar(){
+ avatarRig={arms:[],legs:[]};
  const geometries=new Set(),materials=new Set();
  avatar.traverse(o=>{if(o.isMesh){if(o.geometry!==ball&&o.geometry!==cylinder)geometries.add(o.geometry);(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m))}});
  avatar.clear();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());
@@ -346,10 +348,15 @@ function buildCleanAvatar(){
    boxAt(metal,side*.34,.79,0,.48,.95,.51);
    boxAt(shoe,side*.34,.20,.20,.52,.26,.72);
   }else{
-   sculptLimb(avatar,[side*shoulder,2.28,0],[side*(shoulder+.16),1.43,.02],style.arm,shirt);
-   ballAt(skin,side*(shoulder+.16),1.29,.04,style.arm*.92,.20,style.arm*.88);
-   sculptLimb(avatar,[side*.32,1.27,0],[side*.34,.45,0],style.leg,pants);
-   ballAt(shoe,side*.34,.22,.22,style.leg*1.22,.17,.40);
+   // Shoulder and hip pivot groups form an articulated procedural rig.
+   const armPivot=new THREE.Group();armPivot.position.set(side*shoulder,2.28,0);avatar.add(armPivot);
+   sculptLimb(armPivot,[0,0,0],[side*.16,-.85,.02],style.arm,shirt);
+   part(armPivot,ball,skin,side*.16,-.99,.04,style.arm*.92,.20,style.arm*.88);
+   avatarRig.arms.push({joint:armPivot,side});
+   const legPivot=new THREE.Group();legPivot.position.set(side*.32,1.27,0);avatar.add(legPivot);
+   sculptLimb(legPivot,[0,0,0],[side*.02,-.82,0],style.leg,pants);
+   part(legPivot,ball,shoe,side*.02,-1.05,.22,style.leg*1.22,.17,.40);
+   avatarRig.legs.push({joint:legPivot,side});
   }
  }
  if(robot){
@@ -543,4 +550,4 @@ function addCategoryDetails(){
 }
 
 let rotation=.15,drag=false,last=0;let animationEnabled=true;const animationClock=new THREE.Clock();renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointercancel',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-last)*.012;last=e.clientX}});renderer.domElement.style.touchAction='pan-y';
-function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{buildCleanAvatar()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
+function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{buildCleanAvatar()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;for(const {joint,side} of avatarRig.arms){joint.rotation.z=animationEnabled?side*(.045+Math.sin(t*1.4+side)*.055):0;joint.rotation.x=animationEnabled?Math.sin(t*1.3+side)*.045:0}for(const {joint,side} of avatarRig.legs){joint.rotation.x=animationEnabled?Math.sin(t*1.4+side*Math.PI)*.035:0}renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
