@@ -64,3 +64,5 @@ body.fighters-page{background:radial-gradient(ellipse at top,#292169,#090d23 75%
 #unlock-fighter[hidden]{display:none}
 
 .owner-fighter-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:20px 0}.owner-fighter-form label{display:flex;flex-direction:column;gap:7px;font-weight:700}.owner-fighter-form input,.owner-fighter-form select{padding:12px;background:#101535;color:white;border:2px solid #7d6ac8;border-radius:8px;max-width:100%}.owner-fighter-form input[type="checkbox"]{width:20px;height:20px}.owner-fighter-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #61549a}
+
+#fighter-3d-preview{position:absolute;inset:0;z-index:1;pointer-events:none}#fighter-3d-preview[hidden]{display:none}#fighter-3d-preview canvas{display:block;width:100%;height:100%}.preview-portrait:has(#fighter-3d-preview:not([hidden])) #preview-symbol{display:none}
