@@ -76,10 +76,14 @@ unlockButton.onclick=async()=>{
  try{
   const {error}=await db.rpc('purchase_fighter',{p_fighter_id:String(item.character.id)});
   if(error)throw error;
-  ownedFighterIds.add(String(item.character.id));renderRoster();selectSlot(item.slot);
+  ownedFighterIds.add(String(item.character.id));renderRoster();selectSlot(item.slot);if(['disney-hercules','jack-skellington'].includes(item.character.id)&&!combatReady){await initializeCombat();}
   document.getElementById('fight-status').textContent=item.character.name+' unlocked permanently!';
  }catch(error){document.getElementById('fight-status').textContent='Unlock failed: '+error.message;selectSlot(item.slot)}
 };
+async function initializeCombat(){
+ if(combatReady)return;
+ try{const {createShowdown}=await import('./showdown-combat.js');combatController=createShowdown({canvas,start:startButton,pause:pauseButton,status:document.getElementById('fight-status'),message:document.getElementById('fight-message'),health:[document.getElementById('p1-health'),document.getElementById('p2-health')],meter:document.getElementById('p1-meter'),timer:document.getElementById('timer'),rounds:document.getElementById('rounds'),touch:document.querySelectorAll('[data-key]')});combatReady=true;const chosen=roster.find(f=>f.slot===selectedSlot);if(chosen&&isUnlocked(chosen)&&['disney-hercules','jack-skellington'].includes(chosen.character.id))combatController.selectFighter(chosen.character.id);else{const first=roster.find(item=>isUnlocked(item)&&['disney-hercules','jack-skellington'].includes(item.character.id));if(first){selectedSlot=first.slot;combatController.selectFighter(first.character.id)}}}catch(err){console.error('Combat module failed',err);document.getElementById('fight-status').textContent='Combat could not start. Please reload the page.'}
+}
 async function loadFighterCatalog(){
  try{
   const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
@@ -95,8 +99,8 @@ async function loadFighterCatalog(){
   const count=Math.max(120,catalog.length);while(roster.length<count)roster.push({slot:roster.length+1,character:null});
   (catalog||[]).forEach((row,i)=>{roster[i].character={id:row.id,name:row.name,series:row.series,portrait:row.portrait,unlock:{type:row.unlock_type,cost:row.coin_cost,description:row.achievement_key?'Achievement: '+row.achievement_key:''}}});
   document.getElementById('roster-count').textContent=catalog.length+' / '+roster.length;
- if((catalog||[]).some(f=>['disney-hercules','jack-skellington'].includes(f.id)&&f.unlock_type==='free')){
-  try{const {createShowdown}=await import('./showdown-combat.js');combatController=createShowdown({canvas,start:startButton,pause:pauseButton,status:document.getElementById('fight-status'),message:document.getElementById('fight-message'),health:[document.getElementById('p1-health'),document.getElementById('p2-health')],meter:document.getElementById('p1-meter'),timer:document.getElementById('timer'),rounds:document.getElementById('rounds'),touch:document.querySelectorAll('[data-key]')});combatReady=true;const chosen=roster.find(f=>f.slot===selectedSlot);if(chosen&&isUnlocked(chosen))combatController?.selectFighter(chosen.character.id)}catch(err){console.error('Combat module failed',err)}
+ if((catalog||[]).some(f=>['disney-hercules','jack-skellington'].includes(f.id)&&(f.unlock_type==='free'||ownedFighterIds.has(String(f.id))))){
+  await initializeCombat();
  }
   previewSlot=null;renderRoster();selectSlot(selectedSlot);
  }catch(error){console.warn('Fighter catalog unavailable',error);document.getElementById('fight-status').textContent='Fighter catalog could not be loaded. Try refreshing.'}
