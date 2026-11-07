@@ -515,18 +515,21 @@ function buildCleanAvatar(){
      [-.02,style.arm*1.12,style.arm*1.15,0]
     ],-.53,32);
     avatarRig.skinnedLimbs.push({bone:armSkin.lowerBone,side,type:'arm'});
+    // Palm is one tapered volume; four fingers graduate in length.
     loftBody(armPivot,skin,[
-     [-1.10,.075,.062,side*.16],[-1.04,.11,.075,side*.16],
-     [-.95,.13,.085,side*.16],[-.85,.095,.084,side*.15]
-    ],24);
-    // Individually shaped fingers and opposing thumb.
+     [-1.105,.062,.050,side*.16],[-1.06,.105,.072,side*.16],
+     [-.99,.119,.079,side*.16],[-.90,.102,.078,side*.15],
+     [-.835,.083,.075,side*.15]
+    ],28);
+    const fingerLengths=[.085,.115,.108,.078];
     for(let finger=0;finger<4;finger++){
-     const x=side*.16+(finger-1.5)*.052;
-     const fingerMesh=part(armPivot,new THREE.CapsuleGeometry(.027,.085-(finger===3?.02:0),4,8),skin,x,-1.145,.09);
-     fingerMesh.rotation.z=(finger-1.5)*.10;
+     const x=side*.16+(finger-1.5)*.051;
+     const length=fingerLengths[finger];
+     const digit=part(armPivot,new THREE.CapsuleGeometry(.021,length,5,10),skin,x,-1.12-length*.42,.092);
+     digit.rotation.z=(finger-1.5)*.065;
     }
-    const thumb=part(armPivot,new THREE.CapsuleGeometry(.041,.09,4,8),skin,side*.045,-1.00,.15);
-    thumb.rotation.z=side*.62;
+    const thumb=part(armPivot,new THREE.CapsuleGeometry(.032,.082,5,10),skin,side*.065,-1.008,.155);
+    thumb.rotation.z=side*.55;
    }else{
     // A tapered sleeve with a rounded shoulder and a fitted cuff.
     const armReach=model==='chibi'?.66:model==='southpark'?.69:.78;
@@ -540,16 +543,27 @@ function buildCleanAvatar(){
      [-.015,style.arm*.85,style.arm*.90,0]
     ],24);
     part(armPivot,ball,shirt,side*.13,-armReach,.015,style.arm*.77,.075,style.arm*.79);
-    const palmY=-armReach-.19;
-    part(armPivot,ball,skin,side*.13,palmY,.045,style.arm*.76,.15,style.arm*.66);
-    if(model!=='southpark'){
+    const glove=model==='classic'||model==='chibi';
+    const mitten=model==='southpark';
+    const handMaterial=glove?white:mitten?shirt:skin;
+    const handWidth=style.arm*(model==='hero'?.72:model==='simpsons'?.70:.82);
+    const palmY=-armReach-.145;
+    // Hand follows its arm pivot and uses one palm, not overlapping spheres.
+    const palm=part(armPivot,ball,handMaterial,side*.13,palmY,.052,handWidth,.125,style.arm*.67);
+    palm.rotation.z=side*.045;
+    if(mitten){
+     part(armPivot,ball,handMaterial,side*.13,palmY-.105,.065,handWidth*.92,.12,style.arm*.66);
+    }else{
+     const lengths=model==='chibi'?[.055,.068,.063,.05]:[.075,.105,.095,.067];
      for(let finger=0;finger<4;finger++){
-      const fingerX=side*.13+(finger-1.5)*style.arm*.34;
-      part(armPivot,new THREE.CapsuleGeometry(style.arm*.17,.075,4,8),skin,fingerX,palmY-.15,.085);
+      const fingerX=side*.13+(finger-1.5)*handWidth*.43;
+      const length=lengths[finger];
+      const digit=part(armPivot,new THREE.CapsuleGeometry(handWidth*.18,length,4,8),handMaterial,fingerX,palmY-.125-length*.42,.092);
+      digit.rotation.z=(finger-1.5)*.07;
      }
-     const thumb=part(armPivot,new THREE.CapsuleGeometry(style.arm*.24,.08,4,8),skin,side*.13-side*.13,palmY+.035,.13);
-     thumb.rotation.z=side*.55;
     }
+    const thumb=part(armPivot,new THREE.CapsuleGeometry(handWidth*.25,mitten?.06:.075,4,8),handMaterial,side*.13-side*handWidth*.73,palmY+.01,.14);
+    thumb.rotation.z=side*.55;
    }
    avatarRig.arms.push({joint:armPivot,side});
    const legPivot=new THREE.Group();legPivot.position.set(side*.32,1.27,0);avatar.add(legPivot);
