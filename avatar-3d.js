@@ -61,7 +61,11 @@ function skinnedLoft(group,material,profiles,bendY,segments=32){
  const skinned=new THREE.SkinnedMesh(geometry,material);
  skinned.castShadow=true;skinned.receiveShadow=true;
  group.add(skinned);
+ // Bone inverse matrices must be captured after both the shoulder/hip
+ // group and the bone hierarchy have valid world transforms.
+ group.updateMatrixWorld(true);
  skinned.bind(new THREE.Skeleton([root,lowerBone]));
+ skinned.normalizeSkinWeights();
  return {mesh:skinned,lowerBone};
 }
 function sculptTorso(group,material,y=1.83,width=.68,height=1.75,depth=.43){
@@ -563,7 +567,6 @@ function buildCleanAvatar(){
      [-.805,.076,.071,0]
     ],24);
     // The wrist and hand share the arm's actual lateral centerline.
-    // Previously the wrist profile's fourth coordinate shifted it in Z.
     wrist.position.x=side*.16;
     const animeHand=buildDetailedHand(armPivot,skin,side,-.86,side*.16,.112,.078,1.12);
     // Parent both wrist and hand to the forearm bone, preserving their
