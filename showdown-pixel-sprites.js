@@ -1,5 +1,6 @@
 // Ctoon Showdown standard: crisp 2D pixel-art character sprites.
-// Every fighter uses the same 64x80 sprite canvas and pose API.
+// M.U.G.E.N.-inspired arcade proportions, expressive silhouettes and pose API.
+// Original procedural artwork; no third-party game sprite sheets.
 // Add future fighters to PALETTES and/or draw their custom silhouette here.
 export const PALETTES={
  'disney-hercules':{skin:'#e9aa77',shade:'#b96d50',hair:'#a34a20',body:'#bd8740',trim:'#f5d56e',pants:'#2855a0',cape:'#a52743',eyes:'#24243b'},
@@ -10,11 +11,13 @@ const cache=new Map();
 function sprite(id,pose,step){
  const key=id+':'+pose+':'+step;if(cache.has(key))return cache.get(key);
  const p=PALETTES[id]||PALETTES['training-rival'],jack=id==='jack-skellington';
- const c=document.createElement('canvas');c.width=64;c.height=80;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
+ const c=document.createElement('canvas');c.width=96;c.height=112;const x=c.getContext('2d');x.imageSmoothingEnabled=false;
  const px=(color,a,b,w,h)=>{x.fillStyle=color;x.fillRect(Math.round(a),Math.round(b),Math.round(w),Math.round(h))};
  const outline='#14111d';const walking=pose==='walk'?(step?3:-3):0,low=pose==='crouch'?9:0,jump=pose==='jump'?-4:0;
 
  const attacking=['punch','kick','special'].includes(pose),kick=pose==='kick',guard=pose==='block';
+ // Arcade sprites are composed at a consistent native resolution with hard pixel edges.
+ x.save();x.translate(15,5);x.scale(1.02,1.24);
  // Character shadow is rendered in the arena, not in the sprite.
  if(p.cape){px(outline,15,27+low,34,38-low);px(p.cape,17,29+low,29,34-low);px('#db4b59',19,32+low,3,25-low)}
  // Legs, sandals and boots.
@@ -55,7 +58,18 @@ function sprite(id,pose,step){
   px(p.shade,34,23+jump,7,2);
  }
  if(pose==='special'){px(jack?'#b7d5ff':'#f7ec88',55,19,6,6);px('#ffffff',57,21,2,2);px(jack?'#8b73d8':'#b26aff',59,15,4,4)}
- cache.set(key,c);return c;
+ // Distinctive shaded outlines, muscle/suit highlights and secondary motion.
+ if(jack){
+  px('#53505d',29,35+low,2,13);px('#eeeeed',27,9+jump,3,3);
+  px('#5c5967',25,54+low,2,12);px('#5c5967',37,54+low,2,12);
+  if(pose==='walk'){px('#a5a1a8',25,30+low,1,15);px('#a5a1a8',38,30+low,1,15)}
+ }else{
+  px('#f4c08b',25,14+jump,4,8);px('#f5d56e',21,33+low,3,13);
+  px('#e4b65d',41,33+low,3,12);px('#763a24',23,7+jump,4,4);
+  px('#6d3a79',29,48+low,10,2);
+ }
+ if(pose==='hurt'){px('#fff6c8',40,16+jump,3,3);px('#ff7878',44,14+jump,4,2)}
+ x.restore();cache.set(key,c);return c;
 }
 export function drawPixelFighter(ctx,f,id,time=0,ground=445){
  const pose=f.hp<=0?'hurt':f.guard?'block':f.crouch?'crouch':f.y<ground-3?'jump':f.attack>0?(f.kind||'punch'):Math.abs(f.vx)>.1?'walk':'idle';
@@ -64,14 +78,14 @@ export function drawPixelFighter(ctx,f,id,time=0,ground=445){
  ctx.fillStyle='#07071999';ctx.beginPath();ctx.ellipse(f.x,ground+1,42,9,0,0,Math.PI*2);ctx.fill();
  ctx.translate(Math.round(f.x),Math.round(f.y));
  ctx.scale(f.face===-1?-1:1,1);
- // 64x80 sprite, drawn at exactly 3x resolution.
- ctx.drawImage(source,-96,-240,192,240);
- if(f.hit&&f.attack>0){ctx.strokeStyle='#f4f0a3';ctx.lineWidth=4;ctx.strokeRect(-96,-240,192,240)}
+ // 96x112 arcade sprite, displayed at crisp native 2x resolution.
+ ctx.drawImage(source,-96,-224,192,224);
+ if(f.hit&&f.attack>0){ctx.strokeStyle='#f4f0a3';ctx.lineWidth=4;ctx.strokeRect(-96,-224,192,224)}
  ctx.restore();
 }
 export function mountPixelPreview(container,id){
- const canvas=document.createElement('canvas');canvas.width=192;canvas.height=240;canvas.className='pixel-fighter-preview';
+ const canvas=document.createElement('canvas');canvas.width=192;canvas.height=224;canvas.className='pixel-fighter-preview';
  container.replaceChildren(canvas);const ctx=canvas.getContext('2d');let live=true,raf=0;
- function tick(t){if(!live)return;ctx.clearRect(0,0,192,240);ctx.imageSmoothingEnabled=false;const frame=Math.floor(t/240)%2;ctx.drawImage(sprite(id,frame?'walk':'idle',frame),0,0,192,240);raf=requestAnimationFrame(tick)}
+ function tick(t){if(!live)return;ctx.clearRect(0,0,192,224);ctx.imageSmoothingEnabled=false;const frame=Math.floor(t/240)%2;ctx.drawImage(sprite(id,frame?'walk':'idle',frame),0,0,192,224);raf=requestAnimationFrame(tick)}
  raf=requestAnimationFrame(tick);return()=>{live=false;cancelAnimationFrame(raf);canvas.remove()};
 }
