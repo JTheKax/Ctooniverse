@@ -374,19 +374,57 @@ function buildCleanAvatar(){
   boxAt(gold,0,4.07,0,.11,.33,.12);
   ballAt(iris,0,4.27,0,.14,.14,.14);
  }else{
+  // Family-specific facial sculpting, placed relative to each head's actual depth.
+  const faceZ=style.head[2];
+  if(model==='anime'||model==='hero'){
+   ballAt(skin,0,headY-.29,faceZ*.60,.31,.24,.22);
+   for(const side of [-1,1]){
+    const brow=part(avatar,new THREE.BoxGeometry(model==='hero'?.23:.19,.045,.045),hair,side*.25,headY+.32,faceZ*.90);
+    brow.rotation.z=side*(model==='hero'?.20:.09);
+    ballAt(skin,side*.38,headY-.20,faceZ*.55,.19,.15,.16);
+   }
+   ballAt(skin,0,headY-.11,faceZ+.035,.09,.17,.12);
+   ballAt(skin,0,headY-.40,faceZ*.58,.22,.12,.18);
+  }else if(model==='chibi'){
+   for(const side of [-1,1])ballAt(skin,side*.49,headY-.25,faceZ*.64,.24,.17,.17);
+   ballAt(skin,0,headY-.42,faceZ*.58,.30,.16,.19);
+  }else if(model==='southpark'){
+   // A flattened face and shallow button nose keep this family deliberately graphic.
+   ballAt(skin,0,headY-.31,faceZ*.62,.56,.19,.15);
+   ballAt(skin,0,headY-.12,faceZ+.015,.075,.075,.045);
+  }else if(model==='simpsons'){
+   ballAt(skin,0,headY-.28,faceZ+.15,.23,.18,.21);
+   ballAt(skin,0,headY-.49,faceZ+.17,.30,.10,.17);
+  }else if(model==='classic'){
+   for(const side of [-1,1])ballAt(skin,side*.36,headY-.29,faceZ*.68,.24,.22,.21);
+   ballAt(skin,0,headY-.20,faceZ+.06,.16,.16,.16);
+  }
   // A single coherent hair system: no duplicate caps or intersecting extra face layers.
   if(v.style!=='bald'){
    ballAt(hair,0,headY+style.head[1]*.69,-.09,style.head[0]*1.02,.25,style.head[2]*.91);
-   const count=v.style==='locs'?9:7;
+   const hairstyle=v.style||'swoop';
+   const count=hairstyle==='locs'?12:hairstyle==='curls'?12:hairstyle==='mohawk'?5:9;
    for(let i=0;i<count;i++){
-    const t=(i/(count-1)-.5)*2.2;
-    const x=Math.sin(t)*style.head[0]*.80;
-    const z=Math.cos(t)*style.head[2]*.70;
-    const length=v.style==='bob'?.53:v.style==='locs'?.62:v.style==='curls'?.38:.30;
-    const lock=part(avatar,new THREE.ConeGeometry(v.style==='locs'?.085:.14,length,10),i%4===0?accent:hair,x,headY+style.head[1]*.82-length*.35,z);
-    lock.rotation.z=-t*.18;
+    const t=(i/(count-1)-.5)*2.25;
+    const x=Math.sin(t)*style.head[0]*.83;
+    const z=Math.cos(t)*style.head[2]*.78;
+    if(hairstyle==='mohawk'&&Math.abs(x)>.24)continue;
+    const length=hairstyle==='bob'?.57:hairstyle==='locs'?.67:hairstyle==='curls'?.34:hairstyle==='spikes'?.48:.29;
+    if(hairstyle==='curls'){
+     ballAt(i%4===0?accent:hair,x,headY+style.head[1]*.78-length*.22,z,.17,.17,.17);
+     ballAt(hair,x,headY+style.head[1]*.58-length*.40,z+.06,.14,.14,.14);
+    }else{
+     const lock=part(avatar,new THREE.ConeGeometry(hairstyle==='locs'?.085:.13,length,10),i%4===0?accent:hair,x,headY+style.head[1]*.82-length*.32,z);
+     lock.rotation.z=-t*(hairstyle==='swoop'?.36:.16);
+    }
    }
-   if(v.style==='spikes'||v.style==='mohawk')for(let i=-2;i<=2;i++)part(avatar,new THREE.ConeGeometry(.17,.44,9),hair,i*.20,headY+style.head[1]+.25,0);
+   if(hairstyle==='undercut'){
+    ballAt(accent,0,headY+style.head[1]*.84,.03,style.head[0]*.76,.085,style.head[2]*.70);
+   }
+   if(hairstyle==='spikes'||hairstyle==='mohawk')for(let i=-2;i<=2;i++){
+    const spike=part(avatar,new THREE.ConeGeometry(.16,.47,9),i%2?accent:hair,i*(hairstyle==='mohawk'?.085:.20),headY+style.head[1]+.20,0);
+    spike.rotation.z=i*.13;
+   }
    if(v.style==='ponytail')ballAt(hair,0,headY+.18,-style.head[2]-.23,.22,.42,.22);
   }
   if(v.accessory==='glasses')for(const side of [-1,1])part(avatar,new THREE.TorusGeometry(style.eye*1.22,.026,8,28),gold,side*(model==='chibi'?.34:.25),headY+.10,style.head[2]*.84+.11);
