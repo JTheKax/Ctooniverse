@@ -9,8 +9,15 @@ function render(){
  for(const n of found){
   const card=document.createElement('div');card.className='player-directory-card';
   const icon=document.createElement('span');icon.textContent='★';icon.setAttribute('aria-hidden','true');
-  const title=document.createElement('strong');title.textContent=n.player_name;\n  if(n.is_owner){card.classList.add('is-owner');const crown=document.createElement('span');crown.textContent='♛ Owner';crown.className='player-owner-badge';card.append(crown);}
-  card.append(icon,title);list.append(card);
+  const title=document.createElement('strong');title.textContent=n.player_name;
+  if(n.is_owner){
+   card.classList.add('is-owner');
+   icon.textContent='♛';icon.className='player-owner-icon';icon.setAttribute('aria-label','Verified owner');icon.removeAttribute('aria-hidden');
+   title.classList.add('player-owner-name');
+   const badge=document.createElement('span');badge.textContent='OWNER';badge.className='player-owner-badge';
+   card.append(icon,title,badge);
+  }else{card.append(icon,title);}
+  list.append(card);
  }
  status.textContent=found.length+' of '+names.length+' players'+(q?' matching your search':'');
 }
