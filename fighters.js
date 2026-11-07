@@ -71,6 +71,7 @@ unlockButton.onclick=async()=>{
  const item=roster.find(entry=>entry.slot===selectedSlot);
  if(!db||!viewer||!item?.character||unlockRule(item).type!=='coins'||isUnlocked(item))return;
  const cost=Number(unlockRule(item).cost);
+ if(!Number.isSafeInteger(cost)||cost<0){document.getElementById('fight-status').textContent='Invalid fighter unlock cost. Contact the owner.';return;}
  if(!confirm('Spend '+cost.toLocaleString()+' coins to permanently unlock '+item.character.name+'?'))return;
  unlockButton.disabled=true;
  try{
@@ -93,8 +94,7 @@ async function loadFighterCatalog(){
   if(error)throw error;
   if(viewer){
    const {data:owned,error:ownedError}=await db.from('player_fighter_unlocks').select('fighter_id').eq('user_id',viewer.id);
-   if(ownedError)throw ownedError;
-   for(const row of owned||[])ownedFighterIds.add(String(row.fighter_id));
+   if(ownedError){console.warn('Fighter unlock ledger unavailable',ownedError);document.getElementById('fight-status').textContent='Unable to verify owned fighters. Locked characters will remain locked until verification succeeds.';}else for(const row of owned||[])ownedFighterIds.add(String(row.fighter_id));
   }
   const count=Math.max(120,catalog.length);while(roster.length<count)roster.push({slot:roster.length+1,character:null});
   (catalog||[]).forEach((row,i)=>{roster[i].character={id:row.id,name:row.name,series:row.series,portrait:row.portrait,unlock:{type:row.unlock_type,cost:row.coin_cost,description:row.achievement_key?'Achievement: '+row.achievement_key:''}}});
@@ -103,6 +103,7 @@ async function loadFighterCatalog(){
   await initializeCombat();
  }
   previewSlot=null;renderRoster();selectSlot(selectedSlot);
+  if(!combatReady){document.getElementById('fight-message').textContent=catalog.length?'SELECT AN UNLOCKED FIGHTER':'NO FIGHTERS YET';document.getElementById('fight-status').textContent=catalog.length?'The roster loaded, but no playable fighter is currently unlocked.':'No fighters are currently published in the catalog.';}
  }catch(error){console.warn('Fighter catalog unavailable',error);document.getElementById('fight-status').textContent='Fighter catalog could not be loaded. Try refreshing.'}
 }
 document.getElementById('fight-message').textContent='NO FIGHTERS YET';
