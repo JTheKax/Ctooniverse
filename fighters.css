@@ -62,3 +62,5 @@ body.fighters-page{background:radial-gradient(ellipse at top,#292169,#090d23 75%
 .roster-slot[data-unlock="unlocked"]{border-color:#62e9c1;background:linear-gradient(145deg,#205d68,#182448)}
 #unlock-fighter{margin:8px 0;background:linear-gradient(120deg,#6040c4,#a14cae);border-color:#ffdc78}
 #unlock-fighter[hidden]{display:none}
+
+.owner-fighter-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:20px 0}.owner-fighter-form label{display:flex;flex-direction:column;gap:7px;font-weight:700}.owner-fighter-form input,.owner-fighter-form select{padding:12px;background:#101535;color:white;border:2px solid #7d6ac8;border-radius:8px;max-width:100%}.owner-fighter-form input[type="checkbox"]{width:20px;height:20px}.owner-fighter-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px;border-bottom:1px solid #61549a}
