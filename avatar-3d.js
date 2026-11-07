@@ -281,6 +281,53 @@ if(model==='southpark'){
 if(v.tattoo!=='none')part(avatar,ball,mat(v.tattoo==='heart'?'#b32157':'#171332'),.8,1.65,.15,.035,.15,.11);
 }
 
+
+function sculptFeatures(){
+ const v=Object.fromEntries(new FormData(form).entries()),model=v.model||'anime';
+ if(model==='robot')return;
+ const skin=mat(model==='simpsons'&&v.skin==='#f2b989'?'#f5d43b':v.skin||'#f2b989');
+ const hair=mat(v.hair||'#30204d'),accent=mat(v.hairAccent||'#ed79ff'),shoe=mat('#1c2140'),lip=mat('#a9506a');
+ const isShort=model==='southpark',isChibi=model==='chibi',isClassic=model==='classic';
+ const y=isShort?3.22:isChibi?3.18:3.34;
+ const width=isShort?.91:isChibi?.91:model==='simpsons'?.65:.62;
+ const b=(m,x,yy,z,sx,sy,sz)=>part(avatar,ball,m,x,yy,z,sx,sy,sz);
+ // Facial volume: nose bridge, cheekbones, chin and ears are actual 3D meshes.
+ b(skin,0,y-.28,.27,width*.63,.27,.36);
+ for(const side of [-1,1]){
+  b(skin,side*width*.64,y-.19,.24,.20,.21,.24);
+  b(skin,side*(width+.035),y-.10,-.01,.13,.21,.13);
+ }
+ b(skin,0,y-.08,.52,.12,.19,.12);
+ b(skin,0,y-.18,.61,.15,.09,.14);
+ b(lip,0,y-.38,.51,.20,.035,.035);
+ // Shaped eyelids make eyes sit in the face rather than floating in front.
+ const lid=mat(model==='simpsons'?'#b69a32':'#493048');
+ for(const side of [-1,1]){
+  const upper=part(avatar,new THREE.TorusGeometry(isShort?.28:.18,.018,7,24,Math.PI),lid,side*(isShort?.29:.245),y+.18,isShort?.68:.54);
+  upper.rotation.z=Math.PI;
+ }
+ // Layered hair locks have tapered curved geometry, not just spherical caps.
+ if(v.style!=='bald'){
+  const lockCount=v.style==='locs'?9:v.style==='curls'?11:7;
+  for(let i=0;i<lockCount;i++){
+   const t=(i/(lockCount-1)-.5)*Math.PI*.85;
+   const x=Math.sin(t)*width*.92;
+   const z=Math.cos(t)*.39;
+   const length=v.style==='bob'?.55:v.style==='locs'?.64:v.style==='curls'?.37:.27;
+   const lock=part(avatar,new THREE.ConeGeometry(v.style==='locs'?.09:.13,length,9),i%4===0?accent:hair,x,y+.59-length*.23,z);
+   lock.rotation.z=-t*.22;
+   if(v.style==='curls')b(hair,x,y+.52-length,z,.15,.15,.15);
+  }
+ }
+ // Defined palms and thumb shapes, with boots having a distinct toe box.
+ const hands=model==='southpark'?.84:model==='chibi'?.65:.84;
+ for(const side of [-1,1]){
+  b(skin,side*hands,1.31,.07,.14,.19,.13);
+  b(skin,side*(hands-.12),1.32,.17,.07,.11,.08);
+  b(shoe,side*.33,.18,.33,.25,.13,.33);
+ }
+}
+
 function addCategoryDetails(){
  const v=Object.fromEntries(new FormData(form).entries()),model=v.model;
  if(!['southpark','simpsons','chibi','classic','robot'].includes(model))return;
@@ -309,4 +356,4 @@ function addCategoryDetails(){
 }
 
 let rotation=.15,drag=false,last=0;let animationEnabled=true;const animationClock=new THREE.Clock();renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointercancel',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){rotation+=(e.clientX-last)*.012;last=e.clientX}});renderer.domElement.style.touchAction='pan-y';
-function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{build();addCategoryDetails()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
+function resize(){const w=Math.max(1,host.clientWidth),h=Math.max(1,host.clientHeight);renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=w<330?9.2:7.6;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();const rebuild=()=>{build();addCategoryDetails();sculptFeatures()};form.addEventListener('input',rebuild);form.addEventListener('change',rebuild);window.addEventListener('avatar-loaded',rebuild);window.addEventListener('avatar-clothing-changed',()=>{window.ctoonEquippedClothing=window.ctoonEquippedClothing||null;rebuild()});rebuild();let running=true;function animate(){if(!running)return;if(document.hidden){requestAnimationFrame(animate);return}avatar.rotation.y=rotation;const t=animationClock.getElapsedTime();avatar.position.y=animationEnabled?Math.sin(t*1.8)*.025:0;avatar.rotation.z=animationEnabled?Math.sin(t*1.2)*.008:0;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
