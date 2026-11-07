@@ -332,10 +332,16 @@ function buildCleanAvatar(){
    const x=side*(model==='southpark'?.29:model==='chibi'?.34:.24);
    const eyeZ=style.head[2]*.84;
    const eyeball=ballAt(white,x,headY+.10,eyeZ,style.eye,style.eye*1.28,.085);
-   eyeball.userData.openEyeHeight=eyeball.scale.y;
-   avatarRig.eyes.push(eyeball);
-   ballAt(iris,x,headY+.08,eyeZ+.079,style.eye*.49,style.eye*.71,.023);
-   ballAt(dark,x,headY+.08,eyeZ+.101,style.eye*.25,style.eye*.43,.012);
+   // Blink the whole eye (sclera, iris and pupil) about the same center.
+   const eyeParts=[eyeball,
+    ballAt(iris,x,headY+.08,eyeZ+.079,style.eye*.49,style.eye*.71,.023),
+    ballAt(dark,x,headY+.08,eyeZ+.101,style.eye*.25,style.eye*.43,.012)];
+   for(const mesh of eyeParts){
+    mesh.userData.openEyeHeight=mesh.scale.y;
+    mesh.userData.eyeCenterY=headY+.10;
+    mesh.userData.eyeOffsetY=mesh.position.y-(headY+.10);
+    avatarRig.eyes.push(mesh);
+   }
    ballAt(skin,side*(style.head[0]+.035),headY-.10,0,.13,.19,.13);
   }
   ballAt(skin,0,headY-.15,style.head[2]*.99,.09,.10,.09);
@@ -646,5 +652,5 @@ if(avatarRig.head){
 // Two short natural blinks per cycle, with a long resting interval.
 const blinkPhase=t%5.7;
 const blink=animationEnabled&&blinkPhase<.19?Math.max(.10,Math.abs(blinkPhase-.095)/.095):1;
-for(const eye of avatarRig.eyes)eye.scale.y=eye.userData.openEyeHeight*blink;
+for(const eye of avatarRig.eyes){eye.scale.y=eye.userData.openEyeHeight*blink;eye.position.y=eye.userData.eyeCenterY+eye.userData.eyeOffsetY*blink;}
 renderer.render(scene,camera);requestAnimationFrame(animate)}animate();window.addEventListener('pagehide',()=>{running=false;renderer.dispose()});document.addEventListener('visibilitychange',()=>{animationEnabled=!document.hidden});
