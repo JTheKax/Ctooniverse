@@ -431,8 +431,10 @@ function buildCleanAvatar(){
   if(model==='anime'||model==='hero'){
    const seam=mat(model==='hero'?'#7185aa':'#d4b5ef');
    // A tapered chest overlay, fitted side panels and raised garment seams.
-   const chest=part(avatar,new THREE.CylinderGeometry(model==='hero'?.67:.52,model==='hero'?.42:.36,.85,8),shirt,0,2.04,.035);
-   chest.scale.z=model==='hero'?.72:.66;
+   if(model==='hero'){
+    const chest=part(avatar,new THREE.CylinderGeometry(.67,.42,.85,16),shirt,0,2.04,.035);
+    chest.scale.z=.72;
+   }
    for(const side of [-1,1]){
     const panel=part(avatar,new THREE.BoxGeometry(.095,.69,.055),seam,side*(model==='hero'?.51:.40),2.03,.29);
     panel.rotation.z=side*(model==='hero'?.18:.11);
