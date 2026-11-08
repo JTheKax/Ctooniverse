@@ -1,6 +1,6 @@
 // CToon Showdown V2 — roster, account integration and animated selection screen.
-import {createShowdownV2} from './showdown-v2-engine.js?v=2';
-import {ACTIONS,PLAYABLE_IDS,hasAnimation,drawFighter,preloadSprites,spriteStatus} from './showdown-v2-sprites.js?v=2';
+import {createShowdownV2} from './showdown-v2-engine.js?v=3';
+import {ACTIONS,PLAYABLE_IDS,hasAnimation,drawFighter,preloadSprites,spriteStatus} from './showdown-v2-sprites.js?v=3';
 const SUPABASE_URL='https://hsxdyxdazsdmpucyhqly.supabase.co';
 const SUPABASE_KEY='sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS';
 const $=id=>document.getElementById(id);
@@ -138,9 +138,11 @@ function updatePreview(t){
    const frame=['block','jump','crouch','hurt','ko'].includes(previewPose)?Math.min(2,index):index%3;
    drawFighter(ctx,f.id,previewPose,frame,{x:120,ground:256,height:f.id==='jack-skellington'?239:216});
    const statusData=spriteStatus(f.id);
-   $('preview-artwork').textContent=statusData.ready?
-     (statusData.source?.includes('illustrated')?'ILLUSTRATED ANIMATIONS':'LEGACY ATLAS FALLBACK'):
-     statusData.failed?'PROCEDURAL FALLBACK':'LOADING SPRITE...';
+   const artStatus=$('preview-artwork');
+   artStatus.textContent=statusData.ready?
+     (statusData.source?.includes('illustrated')?'ILLUSTRATED ATLAS LOADED':'LEGACY ATLAS FALLBACK'):
+     statusData.failed?'PROCEDURAL FALLBACK — CHECK IMAGE PATHS':'LOADING SPRITE...';
+   artStatus.title=statusData.source||'No atlas has loaded';
  }else{
    ctx.fillStyle='#c6b6e5';ctx.font='bold 78px system-ui';ctx.textAlign='center';
    ctx.fillText(f?'?':'+',120,164);
