@@ -483,7 +483,9 @@ async function loadRoster(){
   if(!Array.isArray(fighters))throw new Error('Unexpected catalog format');
   selection.fighters=new Map(fighters.filter(f=>Number.isSafeInteger(f.slot)&&f.slot>0).map(f=>{
     const ready=f.fighter_id==='johnny-bravo'
-      ?{...f,portrait:demoHero.portrait,preview_sheet:demoHero.preview_sheet,preview_columns:6,preview_rows:11}:f;
+      ?{...f,portrait:demoHero.portrait,preview_sheet:demoHero.preview_sheet,preview_columns:6,preview_rows:11}
+      :f.fighter_id==='samurai-jack'
+      ?{...f,portrait:samuraiJack.portrait,preview_sheet:samuraiJack.preview_sheet,preview_columns:3,preview_rows:11}:f;
     return [ready.slot,ready];
    }));
    // Preserve owner-defined slots while adding the built-in fighters.
@@ -563,6 +565,7 @@ function beginFight(){
 function startMatch(profile){
  if(!ctx){$('showdown-status').textContent='Your browser does not support the battle canvas.';return}
  game.heroProfile=profile;game.cpuProfile=profile.fighter_id==='samurai-jack'?demoHero:samuraiJack;
+  spriteAtlas(game.heroProfile);spriteAtlas(game.cpuProfile); // Preload before the fight begins.
  game.round=1;game.wins=[0,0];game.paused=false;
  battleAudio.prepare();
  resetRound();restartBtn.disabled=false;pauseBtn.disabled=false;pauseBtn.textContent='Pause';
