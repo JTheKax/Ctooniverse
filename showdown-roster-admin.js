@@ -6,11 +6,48 @@ const form=$('fighter-form'),status=$('owner-status'),list=$('manager-roster');
 let roster=[],editingSlot=null;
 const label=text=>{status.textContent=text};
 const filled=()=>new Set(roster.map(f=>f.slot));
+const uploadExtensions={'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/gif':'gif'};
+async function uploadArt(inputId,folder){
+ const file=$(inputId).files?.[0];
+ if(!file)return null;
+ if(!(file.type in uploadExtensions))throw new Error('Upload PNG, JPG, WebP or GIF artwork.');
+ if(file.size>10*1024*1024)throw new Error('Image is over the 10 MB upload limit.');
+ const path=folder+'/'+crypto.randomUUID()+'.'+uploadExtensions[file.type];
+ const {error}=await db.storage.from('showdown-media').upload(path,file,{
+   contentType:file.type,cacheControl:'3600',upsert:false
+ });
+ if(error)throw error;
+ const {data}=db.storage.from('showdown-media').getPublicUrl(path);
+ if(!data?.publicUrl)throw new Error('Could not read uploaded art URL.');
+ return data.publicUrl;
+}
+function syncUnlockFields(){
+ const isLocked=$('fighter-unlockable').checked;
+ const method=$('fighter-unlock-method').value;
+ $('fighter-unlock-method').disabled=!isLocked;
+ $('fighter-unlock-cost').disabled=!isLocked||method!=='coins';
+ $('fighter-unlock-cost').required=isLocked&&method==='coins';
+ $('fighter-unlock-hint').disabled=!isLocked;
+ if(!isLocked){$('fighter-unlock-cost').value='';$('fighter-unlock-hint').value='';}
+}
+function fillGrantFighters(){
+ const select=$('grant-fighter-id'),previous=select.value;
+ select.replaceChildren();
+ const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='Select fighter';select.append(placeholder);
+ for(const f of roster.filter(item=>item.unlockable&&item.enabled).sort((a,b)=>a.name.localeCompare(b.name))){
+  const opt=document.createElement('option');opt.value=f.fighter_id;opt.textContent=f.name+' (slot '+f.slot+')';select.append(opt);
+ }
+ if([...select.options].some(opt=>opt.value===previous))select.value=previous;
+}
 const nextSlot=()=>{const taken=filled();let slot=1;while(taken.has(slot))slot++;return slot};
 function clearForm(){
  editingSlot=null;form.reset();$('fighter-slot').readOnly=false;$('fighter-slot').value=String(nextSlot());
  $('fighter-enabled').checked=true;$('fighter-accent').value='#69d8ff';
- $('fighter-unlockable').checked=false;$('fighter-unlock-hint').value='';$('fighter-unlock-hint').disabled=true;
+ $('fighter-unlockable').checked=false;$('fighter-unlock-hint').value='';
+ $('fighter-unlock-method').value='owner';$('fighter-unlock-cost').value='';
+ $('fighter-preview-sheet').value='';$('fighter-preview-columns').value='3';$('fighter-preview-rows').value='1';
+ $('fighter-portrait-file').value='';$('fighter-preview-file').value='';
+ syncUnlockFields();
  $('editor-title').textContent='Add a New Fighter';$('save-fighter').textContent='Publish Fighter';
 }
 function editFighter(f){
@@ -21,7 +58,13 @@ function editFighter(f){
  $('fighter-accent').value=f.accent||'#69d8ff';$('fighter-enabled').checked=!!f.enabled;
  $('fighter-unlockable').checked=!!f.unlockable;
  $('fighter-unlock-hint').value=f.unlock_hint||'';
- $('fighter-unlock-hint').disabled=!f.unlockable;
+ $('fighter-unlock-method').value=f.unlock_method||'owner';
+ $('fighter-unlock-cost').value=f.unlock_cost??'';
+ $('fighter-preview-sheet').value=f.preview_sheet||'';
+ $('fighter-preview-columns').value=f.preview_columns??3;
+ $('fighter-preview-rows').value=f.preview_rows??1;
+ $('fighter-portrait-file').value='';$('fighter-preview-file').value='';
+ syncUnlockFields();
  $('editor-title').textContent='Edit Fighter — Slot '+String(f.slot).padStart(3,'0');
  $('save-fighter').textContent='Save Changes';
  form.scrollIntoView({behavior:'smooth',block:'start'});
@@ -47,10 +90,11 @@ function render(){
  list.append(frag);
 }
 async function refresh(){
- const {data,error}=await db.from(TABLE).select('slot,fighter_id,name,series,portrait,accent,enabled,unlockable,unlock_hint').order('slot',{ascending:true});
+ const {data,error}=await db.from(TABLE).select('slot,fighter_id,name,series,portrait,accent,enabled,unlockable,unlock_hint,unlock_method,unlock_cost,preview_sheet,preview_columns,preview_rows').order('slot',{ascending:true});
  if(error)throw error;
  roster=Array.isArray(data)?data:[];
- render();if(editingSlot===null)$('fighter-slot').value=String(nextSlot());
+ render();fillGrantFighters();
+ if(editingSlot===null)$('fighter-slot').value=String(nextSlot());
 }
 async function removeFighter(f){
  if(!window.confirm('Remove '+f.name+' from slot '+f.slot+'? This deletes only this reboot roster entry.'))return;
@@ -62,11 +106,8 @@ async function removeFighter(f){
   await refresh();label('Slot '+f.slot+' is empty again.');
  }catch(err){label('Could not remove fighter: '+err.message)}
 }
-$('fighter-unlockable').addEventListener('change',()=>{
- const marked=$('fighter-unlockable').checked;
- $('fighter-unlock-hint').disabled=!marked;
- if(!marked)$('fighter-unlock-hint').value='';
-});
+$('fighter-unlockable').addEventListener('change',syncUnlockFields);
+$('fighter-unlock-method').addEventListener('change',syncUnlockFields);
 $('fighter-name').addEventListener('input',()=>{
  if(editingSlot!==null||$('fighter-id').value.trim())return;
  $('fighter-id').value=$('fighter-name').value.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);
@@ -78,14 +119,28 @@ form.addEventListener('submit',async event=>{
  if(!/^[a-z0-9][a-z0-9_-]{0,79}$/.test(id)){label('Fighter ID must use lowercase letters, numbers, underscores or hyphens.');return}
  const name=$('fighter-name').value.trim(),series=$('fighter-series').value.trim();
  if(!name||!series){label('Character name and series are required.');return}
+ const columns=Number($('fighter-preview-columns').value),rows=Number($('fighter-preview-rows').value);
+ if(!Number.isInteger(columns)||columns<1||columns>12||!Number.isInteger(rows)||rows<1||rows>32){
+  label('Animation columns must be 1–12 and rows must be 1–32.');return;
+ }
+ const locked=$('fighter-unlockable').checked,method=$('fighter-unlock-method').value;
+ const price=$('fighter-unlock-cost').value?Number($('fighter-unlock-cost').value):null;
+ if(locked&&method==='coins'&&(!Number.isInteger(price)||price<1||price>1000000)){
+  label('Set a coin cost between 1 and 1,000,000.');return;
+ }
  const other=roster.find(f=>f.slot===slot&&f.slot!==editingSlot);
  if(other){label('Slot '+slot+' already belongs to '+other.name+'. Choose an empty slot.');return}
  $('save-fighter').disabled=true;label('Saving fighter…');
  try{
-  const row={slot,fighter_id:id,name,series,portrait:$('fighter-portrait').value.trim()||null,
+  const portraitUpload=await uploadArt('fighter-portrait-file','portraits');
+  const idleUpload=await uploadArt('fighter-preview-file','idle');
+  const row={slot,fighter_id:id,name,series,portrait:portraitUpload||$('fighter-portrait').value.trim()||null,
    accent:$('fighter-accent').value,enabled:$('fighter-enabled').checked,
-   unlockable:$('fighter-unlockable').checked,
-   unlock_hint:$('fighter-unlockable').checked?$('fighter-unlock-hint').value.trim()||null:null,
+   unlockable:locked,unlock_method:locked?method:'owner',
+   unlock_cost:locked&&method==='coins'?price:null,
+   unlock_hint:locked?$('fighter-unlock-hint').value.trim()||null:null,
+   preview_sheet:idleUpload||$('fighter-preview-sheet').value.trim()||null,
+   preview_columns:columns,preview_rows:rows,
    updated_at:new Date().toISOString()};
   const {error}=await db.from(TABLE).upsert(row,{onConflict:'slot'});
   if(error)throw error;
@@ -99,6 +154,21 @@ form.addEventListener('submit',async event=>{
 $('clear-fighter').addEventListener('click',clearForm);
 $('refresh-fighters').addEventListener('click',async()=>{try{await refresh();label('Roster list refreshed.')}catch(err){label('Refresh failed: '+err.message)}});
 $('owner-search').addEventListener('input',render);
+$('grant-fighter-form').addEventListener('submit',async event=>{
+ event.preventDefault();
+ const player=$('grant-player-name').value.trim(),id=$('grant-fighter-id').value;
+ if(!player||!id){label('Choose a player and an unlockable fighter.');return;}
+ const fighter=roster.find(f=>f.fighter_id===id);
+ if(!fighter?.unlockable){label('Select an unlockable fighter.');return;}
+ if(!confirm('Grant '+fighter.name+' permanently to player '+player+'?'))return;
+ const btn=$('grant-button');btn.disabled=true;label('Granting fighter…');
+ try{
+   const {error}=await db.rpc('showdown_reboot_grant_name',{p_player_name:player,p_fighter_id:id});
+   if(error)throw error;
+   label(fighter.name+' granted to '+player+'. It will appear unlocked when they log in.');
+ }catch(error){label('Grant failed: '+error.message);}
+ finally{btn.disabled=false;}
+});
 async function init(){
  try{
   const auth=await db.auth.getUser();
