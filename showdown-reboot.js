@@ -22,12 +22,24 @@ function announceFight(label,phase=''){
  fightAnnouncement.textContent=label;
  fightAnnouncement.dataset.phase=phase;
 }
-// Until additional licensed/cartoon fighters are published, training is a Johnny Bravo mirror match.
-// Johnny Bravo is the first fighter. Other full 3x11 atlases use the same pose mapping.
+// Built-in fighters are available even when the catalog is offline.
+// Johnny is fighter 001; Samurai Jack uses the same full 3x11 action mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
  portrait:'/images/showdown/johnny-bravo-user-model.svg',
  preview_sheet:'/images/showdown/johnny-bravo-limbs-v3.svg',preview_columns:6,preview_rows:11};
+const samuraiJack={slot:2,fighter_id:'samurai-jack',name:'Samurai Jack',series:'Samurai Jack',accent:'#a9e5ee',
+ portrait:'/images/showdown/samurai-jack-portrait.svg',
+ preview_sheet:'/images/showdown/samurai-jack-atlas.svg',preview_columns:3,preview_rows:11,
+ enabled:true,unlockable:false,unlock_method:'free'};
 const demoCPU={...demoHero};
+function addBuiltInFighters(){
+ for(const fighter of [demoHero,samuraiJack]){
+  if([...selection.fighters.values()].some(item=>item.fighter_id===fighter.fighter_id))continue;
+  let slot=fighter.slot;
+  while(selection.fighters.has(slot))slot++;
+  selection.fighters.set(slot,{...fighter,slot});
+ }
+}
 const johnnyArt={mode:'approved',testSheet:'/images/showdown/johnny-bravo-mugen-atlas.png'};
 const johnnyArtMenu=$('johnny-art-mode');
 const johnnyArtControl=$('johnny-art-control'),johnnyArtNotice=$('johnny-art-notice');
@@ -122,7 +134,7 @@ function spritePose(f,t,columns){
  else if(f.stun>.02){row=9;frame=Math.min(columns-1,Math.floor(Math.max(0,t-(f.hurtAt??t))*20));}
  else if(f.attack>0){
   row=f.attackType==='kick'?4:f.attackType==='special'?8:3;
-  const duration=ATTACK_MOVES[f.attackType]?.duration||.3;
+  const duration=moveFor(f,f.attackType)?.duration||.3;
   frame=Math.min(columns-1,Math.floor(Math.max(0,1-f.attack/duration)*columns));
  }
  else if(f.block){row=5;frame=Math.floor(t*6)%columns;}
@@ -393,6 +405,7 @@ function selectSlot(slot){
  const fighter=currentFighter();
  const locked=isLocked(fighter);
  const testingJohnny=fighter?.fighter_id==='johnny-bravo';
+ $('preview-idle-canvas').style.imageRendering=testingJohnny?'pixelated':'auto';
  if(johnnyArtControl)johnnyArtControl.hidden=!testingJohnny;
  if(johnnyArtNotice)johnnyArtNotice.hidden=!testingJohnny||johnnyArt.mode!=='classic';
  const avatar=$('preview-avatar');avatar.replaceChildren();
@@ -415,7 +428,7 @@ function selectSlot(slot){
  $('preview-series').textContent=fighter?fighter.series:'This place is reserved for a future fighter.';
  $('preview-detail').textContent=locked?
    'Unlock this character for your account before entering the arena.':
-   fighter?(testingJohnny?'Preview the PUNCH and KICK poses, then use J and K (or the mobile P and K buttons) to strike your opponent.':'Choose any of the 11 combat poses, then test the moves in the arena.'):
+   fighter?(testingJohnny?'Preview the PUNCH and KICK poses, then use J and K (or the mobile P and K buttons) to strike your opponent.':fighter.fighter_id==='samurai-jack'?'Katana fighter: J performs a sword strike, K kicks, and U unleashes a charged sword slash. Preview all 11 animations.':'Choose any of the 11 combat poses, then test the moves in the arena.'):
    'Start a Practice Mode match while new fighters are being created.';
  const note=$('preview-unlock-note');
  note.hidden=!locked;
@@ -473,10 +486,8 @@ async function loadRoster(){
       ?{...f,portrait:demoHero.portrait,preview_sheet:demoHero.preview_sheet,preview_columns:6,preview_rows:11}:f;
     return [ready.slot,ready];
    }));
-   // Keep fighter #001 available without mutating Supabase or replacing owner-published slots.
-   if(![...selection.fighters.values()].some(f=>f.fighter_id==='johnny-bravo')&&!selection.fighters.has(1)){
-    selection.fighters.set(1,{...demoHero,enabled:true,unlockable:false,unlock_method:'free'});
-   }
+   // Preserve owner-defined slots while adding the built-in fighters.
+   addBuiltInFighters();
   const maxSlot=selection.fighters.size?Math.max(...selection.fighters.keys()):0;
   selection.slots=Math.max(START_SLOTS,Math.ceil(maxSlot/PAGE_SIZE)*PAGE_SIZE);
   updateSeries();renderRoster();selectSlot(selection.slot);
@@ -485,9 +496,9 @@ async function loadRoster(){
     'Fresh start: all 200 slots are open. No old fighters have been imported. Try Practice Mode while you build your roster.';
  }catch(err){
   console.warn('CToon Showdown roster unavailable:',err);
-  if(!selection.fighters.has(1))selection.fighters.set(1,{...demoHero,enabled:true,unlockable:false,unlock_method:'free'});
+  addBuiltInFighters();
    updateSeries();
-   banner.textContent='Online catalog unavailable. Johnny Bravo is playable locally; purchases and locked characters need the catalog connection.';
+   banner.textContent='Online catalog unavailable. Johnny Bravo and Samurai Jack are playable locally; locked fighters need the catalog connection.';
   renderRoster();selectSlot(selection.slot);
  }
 }
@@ -551,7 +562,7 @@ function beginFight(){
 }
 function startMatch(profile){
  if(!ctx){$('showdown-status').textContent='Your browser does not support the battle canvas.';return}
- game.heroProfile=profile;game.cpuProfile=demoCPU;
+ game.heroProfile=profile;game.cpuProfile=profile.fighter_id==='samurai-jack'?demoHero:samuraiJack;
  game.round=1;game.wins=[0,0];game.paused=false;
  battleAudio.prepare();
  resetRound();restartBtn.disabled=false;pauseBtn.disabled=false;pauseBtn.textContent='Pause';
@@ -579,9 +590,17 @@ const ATTACK_MOVES=Object.freeze({
  kick:{duration:.48,damage:13,reach:131,push:16,impactStart:.35,impactEnd:.73},
  special:{duration:.72,damage:23,reach:166,push:27,impactStart:.36,impactEnd:.74}
 });
+const JACK_ATTACK_MOVES=Object.freeze({
+ punch:{duration:.34,damage:9,reach:127,push:12,impactStart:.32,impactEnd:.72},
+ kick:{duration:.46,damage:12,reach:132,push:15,impactStart:.35,impactEnd:.72},
+ special:{duration:.74,damage:25,reach:187,push:28,impactStart:.34,impactEnd:.75}
+});
+function moveFor(fighter,type){
+ return fighter?.profile?.fighter_id==='samurai-jack'?JACK_ATTACK_MOVES[type]:ATTACK_MOVES[type];
+}
 function attack(attacker,type){
  if(attacker.cooldown>0||attacker.stun>0||attacker.hp<=0||attacker.attack>0)return;
- const move=ATTACK_MOVES[type];
+ const move=moveFor(attacker,type);
  if(!move||(type==='special'&&attacker.meter<40))return;
  if(type==='special')attacker.meter-=40;
  attacker.attack=move.duration;attacker.cooldown=move.duration+.1;
@@ -590,7 +609,7 @@ function attack(attacker,type){
 }
 function resolveAttack(attacker,defender){
  if(attacker.attack<=0||attacker.attackHit||attacker.stun>0||attacker.hp<=0)return;
- const move=ATTACK_MOVES[attacker.attackType];if(!move)return;
+ const move=moveFor(attacker,attacker.attackType);if(!move)return;
  const progress=1-attacker.attack/move.duration;
  if(progress<move.impactStart||progress>move.impactEnd)return;
  // Check for contact throughout the active frames; a whiff does not consume the hitbox.
@@ -608,7 +627,7 @@ function resolveAttack(attacker,defender){
   x:clamp(attacker.x+attacker.face*Math.min(move.reach*.65,86),LEFT,RIGHT),
   y:GROUND-attacker.y-(foot?80:special?137:142),
   life:.26,maximum:.26,size:foot?27:special?43:21,
-  color:blocked?'#9de8ff':foot?'#ffe289':special?'#ffb2fa':'#d5f8ff'
+  color:blocked?'#9de8ff':special&&attacker.profile.fighter_id==='samurai-jack'?'#b7f8ff':foot?'#ffe289':special?'#ffb2fa':'#d5f8ff'
  });
  defender.x=clamp(defender.x+attacker.face*(blocked?8:move.push),LEFT,RIGHT);
  attacker.meter=clamp(attacker.meter+(blocked?6:13),0,100);
@@ -725,7 +744,7 @@ function drawBody(f,t){
   ctx.imageSmoothingEnabled=!isJohnny&&/\.svg(?:$|[?#])/i.test(atlas.currentSrc||atlas.src);
   if(ctx.imageSmoothingEnabled)ctx.imageSmoothingQuality='high';
   // Standing Johnny no longer bobs off the floor between idle frames.
-  const bounce=isJohnny?0:(f.y===0&&pose.row===0?Math.sin(t*6)*1.5:0);
+  const bounce=0; // Character soles remain anchored.
   if(polished){
    // Use the visible sole on each frame, not the padded cell boundary.
    const size=390,anchorX=52,anchorY=atlasEntry.footAnchors?.[pose.row]?.[pose.frame]??82;
@@ -734,14 +753,15 @@ function drawBody(f,t){
   }else{
    // Retain the original scale for all old 3-column sprite sheets.
    const spriteHeight=248,spriteWidth=Math.min(236,Math.round(spriteHeight*frameWidth/frameHeight));
+   const top=f.profile.fighter_id==='samurai-jack'?-Math.round(spriteHeight*248/frameHeight):-253;
    ctx.drawImage(atlas,pose.frame*frameWidth,pose.row*frameHeight,frameWidth,frameHeight,
-    -spriteWidth/2,-253+bounce,spriteWidth,spriteHeight);
+    -spriteWidth/2,top+bounce,spriteWidth,spriteHeight);
   }
-  const move=ATTACK_MOVES[f.attackType];
+  const move=moveFor(f,f.attackType);
   const impactProgress=move?1-f.attack/move.duration:0;
   // Effects share the same facing transform as the fighter, so hits stay in front.
   if(f.attack>0&&move&&impactProgress>=move.impactStart&&impactProgress<=move.impactEnd){
-   const effect=f.attackType==='special'?'#ffe17c':'#f4f9ff';
+   const effect=f.profile.fighter_id==='samurai-jack'?'#b7f1ff':f.attackType==='special'?'#ffe17c':'#f4f9ff';
    ctx.save();
    ctx.strokeStyle=effect;ctx.lineWidth=f.attackType==='special'?11:5;
    ctx.globalAlpha=.73;ctx.shadowColor=effect;ctx.shadowBlur=17;
@@ -756,9 +776,9 @@ function drawBody(f,t){
  }
 
  // Never present generic geometry as Johnny's character art when his atlas is loading.
- if(f.profile.fighter_id==='johnny-bravo'){
+ if(['johnny-bravo','samurai-jack'].includes(f.profile.fighter_id)){
   ctx.save();ctx.textAlign='center';ctx.font='bold 15px system-ui';
-  ctx.fillStyle='#fbe69e';ctx.fillText('Loading Johnny Bravo sprites…',x,GROUND-125);ctx.restore();
+  ctx.fillStyle='#fbe69e';ctx.fillText('Loading '+f.profile.name+' sprites…',x,GROUND-125);ctx.restore();
   return;
  }
  ctx.save();ctx.translate(x,y);ctx.scale(f.face,1);
@@ -830,5 +850,5 @@ async function showOwnerLink(){
   if(!result.error&&result.data)$('owner-fighter-link').hidden=false;
  }catch(_){}
 }
-renderRoster();selectSlot(1);loadRoster();initializePlayer();showOwnerLink();
+addBuiltInFighters();updateSeries();renderRoster();selectSlot(1);loadRoster();initializePlayer();showOwnerLink();
 requestAnimationFrame(tick);
