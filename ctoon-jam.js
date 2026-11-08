@@ -25,6 +25,8 @@
   const AC = window.AudioContext || window.webkitAudioContext;
   let audio = null, master = null, noiseBuffer = null;
   let radioAudio = null, isRadio = false, loadSerial = 0, appliedOffset = 0;
+  // Retain loaded charts in memory so replaying or switching difficulties is instant.
+  const chartRequests = new Map();
   let track = songs.neon, notes = [], state = "ready", startAt = 0;
   let beatNext = 0, raf = 0, score = 0, combo = 0, judged = 0, weighted = 0, health = 75;
   let charge = 0, hypeEnd = 0, feedbackUntil = 0;
@@ -46,6 +48,19 @@
     syncInput.value=enabled?String(readOffset()):"0";
     appliedOffset=Number(syncInput.value)||0;
     syncValue.textContent=(appliedOffset>=0?"+":"")+appliedOffset.toFixed(2)+"s";
+  }
+  function getTrackChart(song) {
+    if(!song || !song.radio)return Promise.resolve(null);
+    const key=song.path;
+    if(!chartRequests.has(key)){
+      const request=loadTrackChart(song).then(result=>{
+        // Missing/failed files may become available later; do not cache failures forever.
+        if(!result)chartRequests.delete(key);
+        return result;
+      });
+      chartRequests.set(key,request);
+    }
+    return chartRequests.get(key);
   }
   async function loadTrackChart(song) {
     const match=/^tracks\/([a-z0-9_-]+)\.(mp3|ogg|wav)$/i.exec(song.path||"");
@@ -88,10 +103,20 @@
     if(!radioList || !radioStatus || !radioCount)return;
     radioStatus.textContent="Loading published songs from CTooniverse Radio…";
     try {
-      const response=await fetch(radioApi,{headers:{apikey:radioKey,Authorization:"Bearer "+radioKey},cache:"no-store"});
-      if(!response.ok)throw new Error("Music library returned "+response.status);
-      const rows=await response.json();
-      if(!Array.isArray(rows))throw new Error("Unexpected radio playlist response");
+      // The catalogue is public. Reuse a recent list immediately on a return visit,
+      // and refresh it after five minutes instead of making every page load wait.
+      let rows=null;
+      try {
+        const cached=JSON.parse(sessionStorage.getItem("ctoon-jam-radio-catalog-v1")||"null");
+        if(cached && Array.isArray(cached.rows) && Date.now()-cached.savedAt<300000)rows=cached.rows;
+      }catch{}
+      if(!rows){
+        const response=await fetch(radioApi,{headers:{apikey:radioKey,Authorization:"Bearer "+radioKey},cache:"no-store"});
+        if(!response.ok)throw new Error("Music library returned "+response.status);
+        rows=await response.json();
+        if(!Array.isArray(rows))throw new Error("Unexpected radio playlist response");
+        try {sessionStorage.setItem("ctoon-jam-radio-catalog-v1",JSON.stringify({savedAt:Date.now(),rows}));}catch{}
+      }
       const group=document.createElement("optgroup");group.label="CTooniverse Radio · Practice Charts";
       const used=new Set();
       const buttons=[];
@@ -113,6 +138,12 @@
         const name=document.createElement("span");name.className="jam-track-title";name.textContent=title;
         const action=document.createElement("span");action.className="jam-track-play";action.textContent="▶ PLAY";
         button.append(name,action);
+        // Warm only the chart the player is interested in; avoid downloading all
+        // chart files at once on a slow cellular connection.
+        const warmChart=()=>{getTrackChart(songs[id]);};
+        button.addEventListener("pointerenter",warmChart);
+        button.addEventListener("pointerdown",warmChart);
+        button.addEventListener("focus",warmChart);
         button.addEventListener("click",()=>{
           songSelect.value=id;
           track=songs[id];
@@ -412,8 +443,8 @@
     activeDifficulty=difficultySelect.value;
     setupOffset();
     if(chartStatus)chartStatus.textContent=isRadio?"Loading the song-specific chart file…":"Playing original arcade chart.";
-    // Download the chart concurrently: audio.play() remains inside the user's click gesture.
-    const chartPromise=isRadio?loadTrackChart(track):Promise.resolve(null);
+    // Fetch the chart in parallel with playback, without delaying the music.
+    const chartPromise=isRadio?getTrackChart(track):Promise.resolve(null);
     state="loading";
     playBtn.disabled=true;pauseBtn.disabled=true;
     songSelect.disabled=true;difficultySelect.disabled=true;
@@ -447,19 +478,33 @@
         if(current!==loadSerial)return;
         const duration=Number.isFinite(media.duration) && media.duration>0?media.duration:180;
         totalTime=duration;
-        const chart=await chartPromise;
-        if(current!==loadSerial)return;
-        if(chart){
-          track.bpm=chart.bpm;
-          notes=notesFromChart(chart,duration);
-          if(chartStatus)chartStatus.textContent="Loaded "+activeDifficulty+" chart · "+track.bpm+" BPM · "+notes.length+" notes · starter timing draft. Adjust radio chart timing if needed.";
-        }else{
-          // A new uploaded radio song without a chart still works using the practice grid.
-          track.bars=Math.max(1,Math.min(240,Math.floor((duration-4*beatSeconds())/(4*beatSeconds()))));
-          notes=makeNotes();
-          if(appliedOffset)for(const note of notes)note.at+=appliedOffset;
-          if(chartStatus)chartStatus.textContent="No chart file for this song yet — using the generated practice grid.";
-        }
+        // Continue immediately once media plays. A slow JSON download must NEVER
+        // hold the loading overlay over an already playing song.
+        track.bars=Math.max(1,Math.min(240,Math.floor((duration-4*beatSeconds())/(4*beatSeconds()))));
+        notes=makeNotes();
+        if(appliedOffset)for(const note of notes)note.at+=appliedOffset;
+        chartPromise.then(chart=>{
+          if(current!==loadSerial || (state!=="playing"&&state!=="paused"&&state!=="loading"))return;
+          if(chart){
+            track.bpm=chart.bpm;
+            const realDuration=Number.isFinite(media.duration)&&media.duration>0?media.duration:duration;
+            const loadedNotes=notesFromChart(chart,realDuration);
+            // If the music was already underway, skip past notes without causing
+            // retroactive misses or resetting the player's score/combo.
+            const now=media.currentTime||0;
+            for(const note of loadedNotes)if(note.at<now-.22)note.judged=true;
+            notes=loadedNotes;
+            if(chartStatus)chartStatus.textContent="Loaded "+activeDifficulty+" chart · "+track.bpm+" BPM · "+notes.length+" notes · starter timing draft. Adjust radio chart timing if needed.";
+          }else if(chartStatus){
+            chartStatus.textContent="Chart unavailable — using the generated practice grid.";
+          }
+          draw();
+        }).catch(error=>{
+          if(current===loadSerial && chartStatus){
+            chartStatus.textContent="Chart failed to load — playing practice notes.";
+            console.warn("CToon Jam chart load:",error);
+          }
+        });
         media.addEventListener("ended",()=>{if(current===loadSerial&&state==="playing")finishSong();});
         media.addEventListener("error",()=>{
           if(current===loadSerial && (state==="playing"||state==="paused")){
