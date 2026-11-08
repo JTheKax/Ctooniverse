@@ -11,8 +11,8 @@
   .site-header nav { display:flex; flex-wrap:wrap; align-items:stretch; justify-content:center; gap:6px; width:100%; min-width:0; overflow:visible!important; }
   .site-header nav > * { min-width:0; }
   .site-header .nav-link { display:flex; align-items:center; justify-content:center; gap:5px; min-height:44px; max-width:100%; white-space:normal; text-align:center; }
-  .site-header .community-dropdown, .site-header .account-dropdown, .site-header .owner-menu { position:static!important; }
-  .site-header .community-dropdown-panel, .site-header .account-dropdown-panel, .site-header .owner-menu-panel {
+  .site-header .community-dropdown, .site-header .account-dropdown, .site-header .owner-menu, .site-header .games-dropdown { position:static!important; }
+  .site-header .community-dropdown-panel, .site-header .account-dropdown-panel, .site-header .owner-menu-panel, .site-header .games-dropdown-panel {
     position:fixed!important; top:auto!important; bottom:max(12px,env(safe-area-inset-bottom))!important;
     left:12px!important; right:12px!important; width:auto!important; min-width:0!important;
     max-height:min(65dvh,520px)!important; overflow-y:auto!important;
@@ -20,7 +20,8 @@
   }
   .site-header .community-dropdown:has([aria-expanded="true"]),
   .site-header .account-dropdown:has([aria-expanded="true"]),
-  .site-header .owner-menu:has([aria-expanded="true"]) { z-index:2147483000!important; }
+  .site-header .owner-menu:has([aria-expanded="true"]),
+  .site-header .games-dropdown:has([aria-expanded="true"]) { z-index:2147483000!important; }
   .home-top, .home-sections, .welcome-panel, .announcement-panel, .home-tiles,
   .jukebox-upcoming-header, .jukebox-upcoming-slots { max-width:100%; min-width:0; }
   .home-top { display:grid; grid-template-columns:minmax(0,1fr); }
