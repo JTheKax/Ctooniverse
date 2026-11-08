@@ -7,7 +7,8 @@ const PUBLIC_KEY='sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS';
 const START_SLOTS=200, PAGE_SIZE=25;
 const $=id=>document.getElementById(id);
 const rosterGrid=$('roster-grid'), banner=$('catalog-banner');
-const search=$('roster-search'),series=$('roster-series'),kind=$('roster-state');
+const search=$('roster-search'),series=$('roster-series'),kind=$('roster-state'),order=$('roster-sort');
+const rosterShortcuts=[...document.querySelectorAll('[data-roster-filter]')];
 const selection={page:0,slot:1,slots:START_SLOTS,fighters:new Map()};
 const account={db:null,user:null,owned:new Set(),balance:null,loading:true,busy:false};
 const SPRITE_POSES=['idle','walk','run','punch','kick','guard','jump','crouch','special','hurt','ko'];
@@ -311,6 +312,15 @@ function pageSlots(){
      (f?.fighter_id||'').toLowerCase().includes(q)|| (slotQuery?Number(slotQuery[1])===n:(!Number.isNaN(Number(q))&&Number(q)===n))))continue;
    matches.push(n);
  }
+ if(order?.value==='name'||order?.value==='series'){
+  const byName=(a,b)=>(a.name||'').localeCompare(b.name||'');
+  const bySeries=(a,b)=>(a.series||'').localeCompare(b.series||'')||byName(a,b);
+  matches.sort((a,b)=>{
+   const x=selection.fighters.get(a),y=selection.fighters.get(b);
+   if(!x||!y)return x?-1:y?1:a-b;
+   return (order.value==='series'?bySeries(x,y):byName(x,y))||a-b;
+  });
+ }
  return matches;
 }
 function updateSeries(){
@@ -329,23 +339,39 @@ function renderRoster(){
  for(const n of matches.slice(selection.page*PAGE_SIZE,(selection.page+1)*PAGE_SIZE)){
   const fighter=selection.fighters.get(n);
   const button=document.createElement('button');button.type='button';
-  button.className='fighter-slot'+(fighter?' occupied':'')+(isLocked(fighter)?' locked':'')+(fighter?.unlockable&&!isLocked(fighter)?' claimed':'');
+  const locked=isLocked(fighter);
+  button.className='fighter-slot'+(fighter?' occupied':'')+(locked?' locked':'')+(fighter?.unlockable&&!locked?' claimed':'');
+  button.dataset.slot=String(n);
   button.style.setProperty('--fighter-accent',validColor(fighter?.accent));
   button.setAttribute('aria-pressed',String(selection.slot===n));
-  button.setAttribute('aria-label',fighter?'Slot '+n+': '+fighter.name+(isLocked(fighter)?', locked':fighter.unlockable?', unlocked':', playable'):'Slot '+n+': empty');
-  text(button,'span','SLOT '+pad(n),'slot-no');
-  const mark=text(button,'span',fighter?fighter.name.slice(0,1).toUpperCase():'◇','slot-symbol');
-  if(isLocked(fighter)){const badge=text(button,'span','🔒','slot-lock');badge.setAttribute('aria-hidden','true');badge.title='Unlockable fighter';}
+  button.setAttribute('aria-label',fighter?'Slot '+n+': '+fighter.name+(locked?', locked':fighter.unlockable?', unlocked':', playable'):'Slot '+n+': future fighter');
+  text(button,'span',pad(n),'slot-no');
+  const art=document.createElement('span');art.className='slot-art';button.append(art);
+  const mark=text(art,'span',fighter?fighter.name.slice(0,1).toUpperCase():'?','slot-symbol');
+  if(locked){const badge=text(button,'span','🔒','slot-lock');badge.setAttribute('aria-hidden','true');badge.title='Unlockable fighter';}
   else if(fighter?.unlockable){const badge=text(button,'span','✓','slot-claimed');badge.setAttribute('aria-hidden','true');badge.title='Unlocked for your account';}
   const img=safeImage(fighter?.portrait);
-  if(img){const portrait=document.createElement('img');portrait.src=img;portrait.alt='';portrait.loading='lazy';portrait.onerror=()=>portrait.replaceWith(mark);mark.replaceWith(portrait)}
-  text(button,'span',fighter?fighter.name:'COMING SOON','slot-label');
+  if(img){
+   const portrait=document.createElement('img');portrait.src=img;portrait.alt='';
+   portrait.loading=n===selection.slot?'eager':'lazy';
+   portrait.onerror=()=>portrait.replaceWith(mark);
+   mark.replaceWith(portrait);
+  }
+  const footer=document.createElement('span');footer.className='slot-footer';button.append(footer);
+  text(footer,'span',fighter?fighter.name:'COMING SOON','slot-label');
+  text(footer,'span',fighter?(locked?'LOCKED':fighter.unlockable?'UNLOCKED':'READY'):'FUTURE','slot-status');
+  text(button,'span','1P','slot-player-indicator').setAttribute('aria-hidden','true');
   button.addEventListener('click',()=>selectSlot(n));
   frame.append(button);
  }
  rosterGrid.append(frame);
  if(!matches.length)text(rosterGrid,'p','No roster slots match those filters.','notice');
- $('roster-page').textContent='PAGE '+(selection.page+1)+' / '+pages+(matches.length?' · '+matches.length+' slots':'');
+ $('roster-page').textContent='PAGE '+(selection.page+1)+' / '+pages;
+ const first=matches.length?selection.page*PAGE_SIZE+1:0;
+ const last=Math.min(matches.length,(selection.page+1)*PAGE_SIZE);
+ $('roster-results').textContent=matches.length?'FIGHTERS '+first+'–'+last+' OF '+matches.length:'NO MATCHING FIGHTERS';
+ $('roster-page-bar').style.width=(((selection.page+1)/pages)*100)+'%';
+ for(const chip of rosterShortcuts)chip.setAttribute('aria-pressed',String(chip.dataset.rosterFilter===kind.value));
  $('roster-prev').disabled=selection.page===0;
  $('roster-next').disabled=selection.page>=pages-1;
  $('roster-tally').textContent=selection.fighters.size+' / '+selection.slots+' published';
@@ -377,6 +403,8 @@ function selectSlot(slot){
  $('preview-tag').classList.toggle('is-ready',!!fighter&&!locked);
  document.querySelector('.preview-card').classList.toggle('is-locked',locked);
  $('preview-title').textContent=fighter?fighter.name:'SLOT '+pad(slot);
+ $('preview-slot').textContent='FIGHTER NO. '+pad(slot);
+ $('preview-status-text').textContent=locked?'LOCKED FIGHTER':fighter?.unlockable?'FIGHTER UNLOCKED':fighter?'READY FOR BATTLE':'FUTURE FIGHTER';
  $('preview-series').textContent=fighter?fighter.series:'This place is reserved for a future fighter.';
  $('preview-detail').textContent=locked?
    'Unlock this character for your account before entering the arena.':
@@ -399,12 +427,31 @@ function selectSlot(slot){
  if(previewPoseMenu)previewPoseMenu.disabled=!fighter||!spriteSources(fighter).length;
  startBtn.disabled=!fighter||locked;
  startBtn.textContent=locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
- renderRoster();
+ // Preserve keyboard focus when switching portraits instead of recreating the wall.
+ for(const tile of rosterGrid.querySelectorAll('.fighter-slot'))
+  tile.setAttribute('aria-pressed',String(Number(tile.dataset.slot)===slot));
 }
 function setPage(delta){selection.page+=delta;renderRoster();rosterGrid.scrollIntoView({behavior:'smooth',block:'nearest'})}
 $('roster-prev').addEventListener('click',()=>setPage(-1));
 $('roster-next').addEventListener('click',()=>setPage(1));
-for(const input of [search,series,kind])input.addEventListener('input',()=>{selection.page=0;renderRoster()});
+for(const input of [search,series,kind,order])input.addEventListener('input',()=>{
+ selection.page=0;renderRoster();
+});
+for(const chip of rosterShortcuts)chip.addEventListener('click',()=>{
+ kind.value=chip.dataset.rosterFilter;
+ selection.page=0;renderRoster();
+});
+rosterGrid.addEventListener('keydown',event=>{
+ if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key))return;
+ const current=event.target.closest('.fighter-slot');
+ if(!current)return;
+ const tiles=[...rosterGrid.querySelectorAll('.fighter-slot')];
+ const index=tiles.indexOf(current);
+ const columns=window.matchMedia('(max-width: 370px)').matches?3:window.matchMedia('(max-width: 650px)').matches?4:5;
+ const offset=event.key==='ArrowLeft'?-1:event.key==='ArrowRight'?1:event.key==='ArrowUp'?-columns:columns;
+ const next=event.key==='Home'?0:event.key==='End'?tiles.length-1:Math.max(0,Math.min(tiles.length-1,index+offset));
+ if(next!==index){event.preventDefault();tiles[next].focus();}
+});
 async function loadRoster(){
  banner.textContent='Loading published fighters…';
  try{
@@ -442,7 +489,7 @@ const down=new Set();
 const oneShots=new Set();
 const buttons=[...document.querySelectorAll('[data-control]')];
 const keyDown=event=>{
- if(event.target?.closest?.('input,textarea,select,[contenteditable="true"]'))return;
+ if(event.target?.closest?.('input,textarea,select,[contenteditable="true"],.roster-grid'))return;
  const key=keyAliases[event.key.toLowerCase()];
  if(!key)return;
  if(['arrowleft','arrowright','arrowup','arrowdown'].includes(event.key.toLowerCase()))event.preventDefault();
