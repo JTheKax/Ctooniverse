@@ -99,19 +99,24 @@
       button.setAttribute("aria-current",String(button.dataset.song===songSelect.value));
     }
   }
-  async function loadRadioSongs() {
+  const lastConfirmedRadioSongs=[{"title":"Golden - Huntr/x","storage_path":"tracks/4c25e71528734dac8763825b46ed23d2.mp3"},{"title":"Soda Pop - Saja Boys","storage_path":"tracks/29698c04d92b40d3808deedf33a19e46.mp3"},{"title":"Gotta Catch Them All - Pokemon Theme","storage_path":"tracks/7d8fa83ed9bc42a58d92194e4bc433f4.mp3"},{"title":"Simple & Clean - Kingdom Hearts","storage_path":"tracks/723945ae07b2435a90019d5b3cf47b23.mp3"},{"title":"Sanctuary - Kingdom Hearts 2","storage_path":"tracks/fe55ca14582244c18286965ab5b0b262.mp3"},{"title":"This Is Halloween - Nightmare Before Christmas","storage_path":"tracks/5f1e0223c775444bacd5249474a32699.mp3"},{"title":"Under The Sea - The Little Mermaid","storage_path":"tracks/65dacd96e38d4d23a76d4a6c9df26c96.mp3"},{"title":"Hawaiian Roller Coaster - Lilo & Stitch","storage_path":"tracks/3c433128a7064b9d81e86b0956de6f1f.mp3"},{"title":"Your Idol - Saja Boys","storage_path":"tracks/b72281aa244b42f3a6680e7a1b937b60.mp3"},{"title":"Hakuna Matata - The Lion King","storage_path":"tracks/3ce2ea233cba49d38ea3882183ecbbe9.mp3"}];
+  let radioOptionsGroup=null;
+  async function loadRadioSongs(rowsOverride=null) {
     if(!radioList || !radioStatus || !radioCount)return;
-    radioStatus.textContent="Loading published songs from CTooniverse Radio…";
+    radioStatus.textContent=rowsOverride?"Showing the last confirmed radio songs.":"Refreshing the radio song list…";
+    let abortTimer;
     try {
       // The catalogue is public. Reuse a recent list immediately on a return visit,
       // and refresh it after five minutes instead of making every page load wait.
-      let rows=null;
-      try {
+      let rows=rowsOverride;
+      if(!rows)try {
         const cached=JSON.parse(sessionStorage.getItem("ctoon-jam-radio-catalog-v1")||"null");
         if(cached && Array.isArray(cached.rows) && Date.now()-cached.savedAt<300000)rows=cached.rows;
       }catch{}
       if(!rows){
-        const response=await fetch(radioApi,{headers:{apikey:radioKey,Authorization:"Bearer "+radioKey},cache:"no-store"});
+        const controller=new AbortController();
+        abortTimer=setTimeout(()=>controller.abort(),6500);
+        const response=await fetch(radioApi,{headers:{apikey:radioKey,Authorization:"Bearer "+radioKey},cache:"no-store",signal:controller.signal});
         if(!response.ok)throw new Error("Music library returned "+response.status);
         rows=await response.json();
         if(!Array.isArray(rows))throw new Error("Unexpected radio playlist response");
@@ -156,8 +161,10 @@
       }
       radioList.replaceChildren(...buttons);
       radioCount.textContent=buttons.length+" SONG"+(buttons.length===1?"":"S");
+      if(radioOptionsGroup){radioOptionsGroup.remove();radioOptionsGroup=null;}
       if(buttons.length){
         songSelect.append(group);
+        radioOptionsGroup=group;
         syncRadioSelection();
         radioStatus.textContent="Choose a song to play its CTooniverse Radio recording.";
         if(state==="ready")status.textContent=buttons.length+" radio songs ready. Select one above to play or choose a track from the Song menu.";
@@ -167,10 +174,15 @@
       }
     }catch(error){
       console.warn("CToon Jam radio playlist:",error);
-      radioCount.textContent="RADIO UNAVAILABLE";
-      radioStatus.textContent="Could not load the radio library. Refresh to retry. Original arcade tracks still work.";
-      if(state==="ready")status.textContent="Radio library is temporarily unavailable. Original arcade tracks are playable.";
-    }
+      // Keep verified song buttons on screen even if Supabase is slow/unreachable.
+      if(radioList.children.length){
+        radioStatus.textContent="Showing saved radio songs. Live updates are temporarily unavailable.";
+        if(state==="ready")status.textContent="Select a saved radio song to play.";
+      }else{
+        radioCount.textContent="RADIO UNAVAILABLE";
+        radioStatus.textContent="Radio is temporarily unavailable. Original arcade tracks still work.";
+      }
+    }finally{clearTimeout(abortTimer);}
   }
   function makeNotes() {
     const result = [], beatLen = beatSeconds();
@@ -613,6 +625,10 @@
     if(document.hidden && state==="playing")togglePause();
   });
   window.addEventListener("resize",draw);
-  refreshBest();updateHud();draw();
+  // Render the last confirmed radio list instantly without waiting for an API call
+  // or the canvas renderer. A live query then reconciles published tracks.
+  loadRadioSongs(lastConfirmedRadioSongs);
   loadRadioSongs();
+  try {refreshBest();updateHud();draw();}
+  catch(error){console.warn("CToon Jam stage initialization failed:",error);status.textContent="Radio songs are ready; the note board may need a reload.";}
 })();
