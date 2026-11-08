@@ -9,6 +9,8 @@ const $=id=>document.getElementById(id);
 const rosterGrid=$('roster-grid'), banner=$('catalog-banner');
 const search=$('roster-search'),series=$('roster-series'),kind=$('roster-state');
 const selection={page:0,slot:1,slots:START_SLOTS,fighters:new Map()};
+const account={db:null,user:null,owned:new Set(),balance:null,loading:true,busy:false};
+const previewAnimation={image:null,token:0,columns:3,rows:1,loaded:false};
 const startBtn=$('start-match'),practiceBtn=$('training-match'),restartBtn=$('restart-match'),pauseBtn=$('pause-match');
 const arena=$('arena'),ctx=arena.getContext('2d');
 const demoHero={slot:0,fighter_id:'practice-rookie',name:'Arcade Rookie',series:'Practice Fighters',accent:'#61e7ff',portrait:null};
@@ -24,7 +26,121 @@ const safeImage=url=>{
   try{const parsed=new URL(url,location.href);return ['https:','http:'].includes(parsed.protocol)?parsed.href:null}
   catch{return null}
 };
+const isLocked=f=>!!f?.unlockable&&!account.owned.has(f.fighter_id);
+const fmtCoins=n=>Number(n).toLocaleString('en-US');
 function currentFighter(){return selection.fighters.get(selection.slot)||null}
+function updateAccountBar(){
+ const label=$('fighter-account-status'),balance=$('fighter-balance'),signin=$('fighter-signin');
+ if(account.loading){label.textContent='Checking player account…';balance.hidden=true;signin.hidden=true;return;}
+ if(!account.user){
+  label.textContent='Guest mode · Free fighters and training are available';
+  balance.hidden=true;signin.hidden=false;return;
+ }
+ label.textContent=account.user.email?'Signed in · Fighter unlocks saved to your account':'Signed in · Fighter unlocks saved';
+ balance.hidden=account.balance===null;
+ if(account.balance!==null)balance.textContent=fmtCoins(account.balance)+' Cartoon Coins';
+ signin.hidden=true;
+}
+async function refreshAccount(){
+ if(!account.db)return;
+ try{
+  const {data:{user},error:authError}=await account.db.auth.getUser();
+  if(authError)throw authError;
+  account.user=user||null;
+  account.owned=new Set();account.balance=null;
+  if(user){
+   const [unlockResult,walletResult]=await Promise.all([
+    account.db.from('showdown_reboot_unlocks').select('fighter_id'),
+    account.db.from('coin_wallets').select('balance').eq('user_id',user.id).maybeSingle()
+   ]);
+   if(unlockResult.error)throw unlockResult.error;
+   if(walletResult.error)throw walletResult.error;
+   account.owned=new Set((unlockResult.data||[]).map(item=>item.fighter_id));
+   account.balance=walletResult.data?.balance??null;
+  }
+ }catch(error){
+  console.warn('Fighter account refresh failed:',error);
+  account.user=null;account.owned=new Set();account.balance=null;
+  $('showdown-status').textContent='Account unlocks could not be loaded. Sign in again or reload to retry.';
+ }finally{
+  account.loading=false;
+  updateAccountBar();renderRoster();selectSlot(selection.slot);
+ }
+}
+async function initializePlayer(){
+ try{
+  const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
+  account.db=createClient(API_URL,PUBLIC_KEY);
+  await refreshAccount();
+  account.db.auth.onAuthStateChange((event)=>{
+   if(['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED'].includes(event))setTimeout(refreshAccount,0);
+  });
+ }catch(error){
+  console.warn('Fighter login unavailable:',error);
+  account.loading=false;updateAccountBar();renderRoster();selectSlot(selection.slot);
+ }
+}
+async function purchaseSelected(){
+ const fighter=currentFighter();
+ if(!fighter||!isLocked(fighter)||fighter.unlock_method!=='coins'||account.busy)return;
+ if(!account.user||!account.db){$('showdown-status').textContent='Sign in to purchase this fighter.';return;}
+ const cost=Number(fighter.unlock_cost);
+ if(!Number.isInteger(cost)||cost<=0){$('showdown-status').textContent='This fighter has no valid coin price.';return;}
+ if(!confirm('Unlock '+fighter.name+' for '+fmtCoins(cost)+' Cartoon Coins?'))return;
+ account.busy=true;selectSlot(selection.slot);$('showdown-status').textContent='Processing fighter unlock…';
+ try{
+  const {data,error}=await account.db.rpc('showdown_reboot_purchase',{p_fighter_id:fighter.fighter_id});
+  if(error)throw error;
+  if(!data?.unlocked)throw new Error('Purchase was not confirmed');
+  account.owned.add(fighter.fighter_id);
+  account.balance=data.balance;
+  await refreshAccount();
+  $('showdown-status').textContent=fighter.name+' unlocked permanently for this account!';
+ }catch(error){
+  $('showdown-status').textContent='Unlock failed: '+error.message;
+ }finally{
+  account.busy=false;updateAccountBar();renderRoster();selectSlot(selection.slot);
+ }
+}
+$('unlock-fighter').addEventListener('click',purchaseSelected);
+function setupPreviewAnimation(fighter){
+ previewAnimation.token++;
+ const token=previewAnimation.token;
+ previewAnimation.image=null;previewAnimation.loaded=false;
+ const canvas=$('preview-idle-canvas'),avatar=$('preview-avatar');
+ canvas.hidden=true;avatar.hidden=false;
+ const source=safeImage(fighter?.preview_sheet);
+ if(!source)return;
+ const img=new Image();
+ img.decoding='async';
+ img.onload=()=>{
+  if(token!==previewAnimation.token)return;
+  if(!img.naturalWidth||!img.naturalHeight)return;
+  previewAnimation.image=img;previewAnimation.loaded=true;
+  previewAnimation.columns=Math.max(1,Math.min(12,Number(fighter.preview_columns)||3));
+  previewAnimation.rows=Math.max(1,Math.min(32,Number(fighter.preview_rows)||1));
+  avatar.hidden=true;canvas.hidden=false;
+ };
+ img.onerror=()=>{if(token===previewAnimation.token){canvas.hidden=true;avatar.hidden=false}};
+ img.src=source;
+}
+function renderPreviewFrame(timestamp){
+ if(!previewAnimation.loaded||!previewAnimation.image)return;
+ const canvas=$('preview-idle-canvas');
+ if(canvas.hidden)return;
+ const p=canvas.getContext('2d'),img=previewAnimation.image;
+ if(!p)return;
+ const cols=previewAnimation.columns,rows=previewAnimation.rows;
+ const fw=img.naturalWidth/cols,fh=img.naturalHeight/rows;
+ if(!fw||!fh)return;
+ const frame=Math.floor(timestamp/200)%cols;
+ const scale=Math.min((canvas.width-25)/fw,(canvas.height-18)/fh);
+ const dw=fw*scale,dh=fh*scale;
+ p.clearRect(0,0,canvas.width,canvas.height);
+ p.save();p.shadowColor='#7fcfff';p.shadowBlur=15;
+ p.drawImage(img,frame*fw,0,fw,fh,(canvas.width-dw)/2,(canvas.height-dh)/2+Math.sin(timestamp/290)*3,dw,dh);
+ p.restore();
+}
 function pageSlots(){
  const q=search.value.trim().toLowerCase().replace(/\s+/g,' ');
  const state=kind.value, group=series.value;
@@ -33,8 +149,9 @@ function pageSlots(){
  for(let n=1;n<=selection.slots;n++){
    const f=selection.fighters.get(n);
    if((state==='ready'&&!f)||(state==='empty'&&f)||
-      (state==='playable'&&(!f||f.unlockable))||
-      (state==='unlockable'&&(!f||!f.unlockable)))continue;
+      (state==='playable'&&(!f||isLocked(f)))||
+      (state==='unlockable'&&(!f||!f.unlockable))||
+      (state==='owned'&&(!f||!account.owned.has(f.fighter_id))))continue;
    if(group!=='all'&&(!f||f.series!==group))continue;
    if(q&&!((f?.name||'').toLowerCase().includes(q)||(f?.series||'').toLowerCase().includes(q)||
      (f?.fighter_id||'').toLowerCase().includes(q)|| (slotQuery?Number(slotQuery[1])===n:(!Number.isNaN(Number(q))&&Number(q)===n))))continue;
@@ -58,13 +175,14 @@ function renderRoster(){
  for(const n of matches.slice(selection.page*PAGE_SIZE,(selection.page+1)*PAGE_SIZE)){
   const fighter=selection.fighters.get(n);
   const button=document.createElement('button');button.type='button';
-  button.className='fighter-slot'+(fighter?' occupied':'')+(fighter?.unlockable?' locked':'');
+  button.className='fighter-slot'+(fighter?' occupied':'')+(isLocked(fighter)?' locked':'')+(fighter?.unlockable&&!isLocked(fighter)?' claimed':'');
   button.style.setProperty('--fighter-accent',validColor(fighter?.accent));
   button.setAttribute('aria-pressed',String(selection.slot===n));
-  button.setAttribute('aria-label',fighter?'Slot '+n+': '+fighter.name+(fighter.unlockable?', unlockable':' , playable'):'Slot '+n+': empty');
+  button.setAttribute('aria-label',fighter?'Slot '+n+': '+fighter.name+(isLocked(fighter)?', locked':fighter.unlockable?', unlocked':', playable'):'Slot '+n+': empty');
   text(button,'span','SLOT '+pad(n),'slot-no');
   const mark=text(button,'span',fighter?fighter.name.slice(0,1).toUpperCase():'◇','slot-symbol');
-  if(fighter?.unlockable){const badge=text(button,'span','🔒','slot-lock');badge.setAttribute('aria-hidden','true');badge.title='Unlockable fighter';}
+  if(isLocked(fighter)){const badge=text(button,'span','🔒','slot-lock');badge.setAttribute('aria-hidden','true');badge.title='Unlockable fighter';}
+  else if(fighter?.unlockable){const badge=text(button,'span','✓','slot-claimed');badge.setAttribute('aria-hidden','true');badge.title='Unlocked for your account';}
   const img=safeImage(fighter?.portrait);
   if(img){const portrait=document.createElement('img');portrait.src=img;portrait.alt='';portrait.loading='lazy';portrait.onerror=()=>portrait.replaceWith(mark);mark.replaceWith(portrait)}
   text(button,'span',fighter?fighter.name:'COMING SOON','slot-label');
@@ -78,7 +196,7 @@ function renderRoster(){
  $('roster-next').disabled=selection.page>=pages-1;
  $('roster-tally').textContent=selection.fighters.size+' / '+selection.slots+' published';
  $('roster-capacity').textContent=String(selection.slots);
- const locked=[...selection.fighters.values()].filter(f=>f.unlockable).length;
+ const locked=[...selection.fighters.values()].filter(f=>isLocked(f)).length;
  $('roster-locked').textContent=String(locked);
  $('roster-ready').textContent=String(selection.fighters.size-locked);
  $('roster-open').textContent=String(selection.slots-selection.fighters.size);
@@ -86,7 +204,7 @@ function renderRoster(){
 function selectSlot(slot){
  selection.slot=slot;
  const fighter=currentFighter();
- const locked=!!fighter?.unlockable;
+ const locked=isLocked(fighter);
  const avatar=$('preview-avatar');avatar.replaceChildren();
  avatar.style.setProperty('--fighter-accent',validColor(fighter?.accent));
  const uri=safeImage(fighter?.portrait);
@@ -97,19 +215,30 @@ function selectSlot(slot){
  }else avatar.textContent=fighter?fighter.name.charAt(0).toUpperCase():'?';
  avatar.classList.toggle('is-empty',!fighter);
  $('preview-lock').hidden=!locked;
- $('preview-tag').textContent=locked?'🔒 UNLOCKABLE':fighter?'READY TO FIGHT':'OPEN SLOT';
+ $('preview-tag').textContent=locked?'🔒 UNLOCKABLE':fighter?.unlockable?'✓ UNLOCKED':fighter?'READY TO FIGHT':'OPEN SLOT';
  $('preview-tag').classList.toggle('is-locked',locked);
  $('preview-tag').classList.toggle('is-ready',!!fighter&&!locked);
  document.querySelector('.preview-card').classList.toggle('is-locked',locked);
  $('preview-title').textContent=fighter?fighter.name:'SLOT '+pad(slot);
  $('preview-series').textContent=fighter?fighter.series:'This place is reserved for a future fighter.';
  $('preview-detail').textContent=locked?
-   'This fighter is marked unlockable and is not yet playable. Unlocking gameplay is still in development.':
+   'Unlock this character for your account before entering the arena.':
    fighter?'Ready for the new 2D practice arena. Character animations can be added later.':
    'Start a Practice Mode match while new fighters are being created.';
  const note=$('preview-unlock-note');
  note.hidden=!locked;
- note.textContent=locked?(fighter.unlock_hint?'Planned requirement: '+fighter.unlock_hint:'Unlock requirement: to be announced'):'';
+ note.textContent=locked?(fighter.unlock_method==='coins'&&fighter.unlock_cost?
+  'Unlock price: '+fmtCoins(fighter.unlock_cost)+' Cartoon Coins'+(fighter.unlock_hint?' · '+fighter.unlock_hint:''):
+  fighter.unlock_hint||'This fighter is awarded by the CTooniverse owner.'):'';
+ const buy=$('unlock-fighter');
+ buy.hidden=!(locked&&fighter?.unlock_method==='coins');
+ if(!buy.hidden){
+  buy.textContent='Unlock for '+fmtCoins(fighter.unlock_cost||0)+' Coins';
+  buy.disabled=account.loading||account.busy||!account.user||account.balance===null||account.balance<Number(fighter.unlock_cost);
+  if(!account.user)note.textContent+=' Sign in to purchase.';
+  else if(account.balance!==null&&account.balance<Number(fighter.unlock_cost))note.textContent+=' Not enough coins.';
+ }
+ setupPreviewAnimation(fighter);
  startBtn.disabled=!fighter||locked;
  startBtn.textContent=locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
  renderRoster();
@@ -121,7 +250,7 @@ for(const input of [search,series,kind])input.addEventListener('input',()=>{sele
 async function loadRoster(){
  banner.textContent='Loading published fighters…';
  try{
-  const response=await fetch(API_URL+'/rest/v1/showdown_reboot_fighters?select=slot,fighter_id,name,series,portrait,accent,enabled,unlockable,unlock_hint&enabled=eq.true&order=slot.asc',{
+  const response=await fetch(API_URL+'/rest/v1/showdown_reboot_fighters?select=slot,fighter_id,name,series,portrait,accent,enabled,unlockable,unlock_hint,unlock_method,unlock_cost,preview_sheet,preview_columns,preview_rows&enabled=eq.true&order=slot.asc',{
    headers:{'apikey':PUBLIC_KEY,'Accept':'application/json'},cache:'no-store'
   });
   if(!response.ok)throw new Error('Catalog HTTP '+response.status);
@@ -194,7 +323,7 @@ function startMatch(profile){
  document.querySelector('.arena-frame').scrollIntoView({behavior:'smooth',block:'center'});
 }
 practiceBtn.addEventListener('click',()=>startMatch(demoHero));
-startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter&&!fighter.unlockable)startMatch(fighter)});
+startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter&&!isLocked(fighter))startMatch(fighter)});
 restartBtn.addEventListener('click',()=>startMatch(game.heroProfile));
 pauseBtn.addEventListener('click',()=>{
  if(!['fighting','between'].includes(game.mode))return;
@@ -306,6 +435,7 @@ function tick(stamp){
  if(game.stamp>stamp){drawArena(stamp);requestAnimationFrame(tick);return}
  if(!game.paused)step(dt);
  drawArena(stamp);
+ renderPreviewFrame(stamp);
  requestAnimationFrame(tick);
 }
 async function showOwnerLink(){
@@ -318,5 +448,5 @@ async function showOwnerLink(){
   if(!result.error&&result.data)$('owner-fighter-link').hidden=false;
  }catch(_){}
 }
-renderRoster();selectSlot(1);loadRoster();showOwnerLink();
+renderRoster();selectSlot(1);loadRoster();initializePlayer();showOwnerLink();
 requestAnimationFrame(tick);
