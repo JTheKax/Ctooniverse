@@ -3,6 +3,7 @@
    the older direct Owner link. Visibility stays controlled by script.js. */
 const ownerLinks=[
  ['Dashboard','owner.html'],
+ ['Website Status','owner.html#site-operating-controls'],
  ['Coin Management','coin-management.html'],
  ['Redeem Codes','owner-redeem-codes.html'],
  ['Music Management','owner-music-management.html'],
