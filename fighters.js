@@ -11,6 +11,7 @@ const unlockFilter=document.getElementById('roster-unlock-filter');
 // Unlock schema for future fighters: character.unlock={type:'free'|'coins'|'achievement',cost?:number,description?:string}.
 // Ownership must be verified by a server-side account ledger; client-side state never awards or spends coins.
 const ownedFighterIds=new Set();
+const fighterPortraitModule=import('./showdown-pixel-sprites.js?v=showdown-portraits-20261108').catch(error=>{console.warn('Fighter portraits unavailable',error);return null});
 const unlockRule=item=>item.character?.unlock||{type:'free'};
 const isUnlocked=item=>!!item.character&&(unlockRule(item).type==='free'||ownedFighterIds.has(String(item.character.id)));
 const unlockState=item=>!item.character?'empty':isUnlocked(item)?'unlocked':'locked';
@@ -27,6 +28,7 @@ function selectSlot(n){
  if(['disney-hercules','jack-skellington'].includes(character?.id)&&state==='unlocked'){
   preview.hidden=false;import('./showdown-pixel-sprites.js?v=showdown-atlas-fix-20261107b').then(mod=>{if(selectedSlot===n&&generation===previewGeneration)disposePreview=mod.mountPixelPreview(preview,character.id)}).catch(error=>{console.warn('Pixel sprite preview unavailable',error);if(generation===previewGeneration)preview.hidden=true});
  }}
+ document.querySelector('.preview-label').textContent=state==='unlocked'?'FIGHTER READY':state==='locked'?'FIGHTER LOCKED':'EMPTY SLOT';
  document.getElementById('selected-fighter').textContent=character?.name||slotLabel(n);
  document.getElementById('preview-symbol').textContent=['disney-hercules','jack-skellington'].includes(character?.id)&&state==='unlocked'?'':state==='locked'?'🔒':character?.name?.slice(0,1).toUpperCase()||String(n).padStart(3,'0');
  document.getElementById('preview-description').textContent=character?(character.series||'Uncategorized')+' · '+(state==='unlocked'?'Ready to select':'Not yet unlocked'):'Empty fighter position '+n+' of '+roster.length+'. Ready for a future character.';
@@ -50,7 +52,10 @@ function renderRoster(){
  grid.replaceChildren();
  for(const item of filtered.slice(page*pageSize,(page+1)*pageSize)){
   const button=document.createElement('button');button.type='button';button.className='roster-slot';button.dataset.unlock=unlockState(item);button.style.setProperty('--slot-hue',String((item.slot*37)%360));button.dataset.slot=item.slot;button.setAttribute('aria-label',item.character?item.character.name+' — '+unlockState(item):slotLabel(item.slot)+' — empty');button.setAttribute('aria-pressed',String(item.slot===selectedSlot));
-  const symbol=document.createElement('span');symbol.className='slot-symbol';symbol.textContent=unlockState(item)==='locked'?'🔒':item.character?.portrait?'':item.character?item.character.name.slice(0,1).toUpperCase():'+';if(item.character?.portrait&&unlockState(item)==='unlocked'){const image=document.createElement('img');image.src=item.character.portrait;image.alt='';image.className='slot-portrait';symbol.append(image)}
+  const symbol=document.createElement('span');symbol.className='slot-symbol';const state=unlockState(item);symbol.textContent=state==='locked'?'🔒':item.character?.portrait?'':item.character?item.character.name.slice(0,1).toUpperCase():'+';
+  const mountPortrait=()=>{if(!['disney-hercules','jack-skellington'].includes(item.character?.id))return;fighterPortraitModule.then(mod=>{if(mod&&symbol.isConnected)mod.mountRosterPortrait(symbol,item.character.id)})};
+  if(item.character?.portrait&&state==='unlocked'){const image=document.createElement('img');image.src=item.character.portrait;image.alt='';image.className='slot-portrait';image.onerror=()=>{image.remove();mountPortrait()};symbol.append(image)}
+  else if(state==='unlocked')mountPortrait();
   const number=document.createElement('span');number.className='slot-number';number.textContent=String(item.slot).padStart(3,'0');
   const gloss=document.createElement('span');gloss.className='slot-gloss';gloss.setAttribute('aria-hidden','true');button.append(gloss,symbol,number);button.onclick=()=>selectSlot(item.slot);button.onkeydown=e=>{if(!['ArrowRight','ArrowLeft','ArrowUp','ArrowDown'].includes(e.key))return;e.preventDefault();const step=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:e.key==='ArrowDown'?10:-10;const next=item.slot+step;if(next<1||next>roster.length)return;const nextPage=Math.floor((next-1)/pageSize);sort.value='slots';seriesFilter.value='all';if(group.value!=='all')group.value='all';search.value='';page=nextPage;renderRoster();selectSlot(next);grid.querySelector('[data-slot="'+next+'"]').focus();};grid.append(button);
  }
@@ -106,8 +111,8 @@ async function loadFighterCatalog(){
   if(!combatReady){document.getElementById('fight-message').textContent=catalog.length?'SELECT AN UNLOCKED FIGHTER':'NO FIGHTERS YET';document.getElementById('fight-status').textContent=catalog.length?'The roster loaded, but no playable fighter is currently unlocked.':'No fighters are currently published in the catalog.';}
  }catch(error){console.warn('Fighter catalog unavailable',error);document.getElementById('fight-status').textContent='Fighter catalog could not be loaded. Try refreshing.'}
 }
-document.getElementById('fight-message').textContent='NO FIGHTERS YET';
-document.getElementById('fight-status').textContent='All characters have been removed. The arena is ready for future fighters.';
+document.getElementById('fight-message').textContent='LOADING FIGHTERS';
+document.getElementById('fight-status').textContent='Checking published fighters and unlocks...';
 const startButton=document.getElementById('start'),pauseButton=document.getElementById('pause');
 startButton.disabled=true;pauseButton.disabled=true;
 startButton.title='Add fighters before starting a match';
