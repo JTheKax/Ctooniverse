@@ -134,9 +134,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   ['CToon Showdown','fighters.html'],
   ['CToon Speedway','speedway.html'],
   ['Video Game Emulator','emulator.html'],
-  ['Pinball','pinball.html'],
-  ['Prize Games','prize-games.html'],
-  ['Prize Wheel','prize-wheel.html']
+  ['Prize Games','prize-games.html']
  ];
  const wrap=document.createElement('div');wrap.className='ctoons-dropdown games-dropdown';
  const btn=document.createElement('button');btn.type='button';btn.className='nav-link ctoons-dropdown-trigger';
@@ -146,7 +144,8 @@ if (year) year.textContent = String(new Date().getFullYear());
  const panel=document.createElement('div');panel.className='ctoons-dropdown-panel games-dropdown-panel';panel.id='games-navigation-panel';
  for(const [label,url] of entries){
   const link=document.createElement('a');link.href=url;link.textContent=label;
-  if(location.pathname.endsWith('/'+url)){link.setAttribute('aria-current','page');btn.classList.add('active')}
+  if(location.pathname.endsWith('/'+url))link.setAttribute('aria-current','page');
+  if(location.pathname.endsWith('/'+url)||(url==='prize-games.html'&&['pinball.html','prize-wheel.html'].some(page=>location.pathname.endsWith('/'+page))))btn.classList.add('active');
   panel.append(link);
  }
  const close=()=>{wrap.classList.remove('is-open');btn.setAttribute('aria-expanded','false')};
