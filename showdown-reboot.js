@@ -10,7 +10,8 @@ const rosterGrid=$('roster-grid'), banner=$('catalog-banner');
 const search=$('roster-search'),series=$('roster-series'),kind=$('roster-state');
 const selection={page:0,slot:1,slots:START_SLOTS,fighters:new Map()};
 const account={db:null,user:null,owned:new Set(),balance:null,loading:true,busy:false};
-const previewAnimation={image:null,token:0,columns:3,rows:1,loaded:false};
+const SPRITE_POSES=['idle','walk','run','punch','kick','guard','jump','crouch','special','hurt','ko'];
+const previewAnimation={image:null,token:0,columns:3,rows:1,loaded:false,pose:'idle',poseStart:0};
 const startBtn=$('start-match'),practiceBtn=$('training-match'),restartBtn=$('restart-match'),pauseBtn=$('pause-match');
 const arena=$('arena'),ctx=arena.getContext('2d');
 // Until additional licensed/cartoon fighters are published, training is a Johnny Bravo mirror match.
@@ -45,16 +46,17 @@ function spriteAtlas(profile){
 }
 function spritePose(f,t,columns){
  let row=0,frame=Math.floor(t*5)%columns;
- if(f.hp<=0){row=10;frame=columns-1}
- else if(f.attack>0){
+ if(f.hp<=0){
+  row=10;frame=Math.min(columns-1,Math.floor(Math.max(0,t-(f.koAt??t))*9));
+ }else if(f.stun>.02){
+  row=9;frame=Math.min(columns-1,Math.floor(Math.max(0,t-(f.hurtAt??t))*12));
+ }else if(f.attack>0){
   row=f.attackType==='kick'?4:f.attackType==='special'?8:3;
-  const duration=f.attackType==='kick'?.48:f.attackType==='special'?.72:.3;
+  const duration=ATTACK_MOVES[f.attackType]?.duration||.3;
   frame=Math.min(columns-1,Math.floor((1-f.attack/duration)*columns));
- }
- else if(f.stun>.02){row=9;frame=Math.floor(t*9)%columns}
- else if(f.block){row=5;frame=Math.floor(t*4)%columns}
- else if(f.y>2){row=6;frame=Math.floor(t*9)%columns}
- else if(f.crouch){row=7;frame=0}
+ }else if(f.block){row=5;frame=1}
+ else if(f.y>2){row=6;frame=Math.min(columns-1,Math.floor(Math.max(0,t-(f.jumpAt??t))*9))}
+ else if(f.crouch){row=7;frame=1}
  else if(Math.abs(f.moveSpeed||0)>160){row=2;frame=Math.floor(t*10)%columns}
  else if(Math.abs(f.moveSpeed||0)>8){row=1;frame=Math.floor(t*7)%columns}
  return {row,frame};
@@ -177,13 +179,26 @@ function renderPreviewFrame(timestamp){
  const cols=previewAnimation.columns,rows=previewAnimation.rows;
  const fw=img.naturalWidth/cols,fh=img.naturalHeight/rows;
  if(!fw||!fh)return;
- const frame=Math.floor(timestamp/200)%cols;
+ const row=Math.max(0,SPRITE_POSES.indexOf(previewAnimation.pose));
+ const age=Math.max(0,timestamp-previewAnimation.poseStart);
+ const isLoop=['idle','walk','run'].includes(previewAnimation.pose);
+ const interval=previewAnimation.pose==='run'?100:previewAnimation.pose==='walk'?145:190;
+ const frame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%1400)/190));
  const scale=Math.min((canvas.width-25)/fw,(canvas.height-18)/fh);
  const dw=fw*scale,dh=fh*scale;
  p.clearRect(0,0,canvas.width,canvas.height);
- p.save();p.shadowColor='#7fcfff';p.shadowBlur=15;
- p.drawImage(img,frame*fw,0,fw,fh,(canvas.width-dw)/2,(canvas.height-dh)/2+Math.sin(timestamp/290)*3,dw,dh);
+ p.save();p.imageSmoothingEnabled=true;p.imageSmoothingQuality='high';p.shadowColor='#7fcfff';p.shadowBlur=15;
+ p.drawImage(img,frame*fw,row*fh,fw,fh,(canvas.width-dw)/2,(canvas.height-dh)/2+Math.sin(timestamp/290)*3,dw,dh);
  p.restore();
+}
+const previewPoseMenu=$('preview-pose');
+if(previewPoseMenu){
+ previewPoseMenu.replaceChildren(...SPRITE_POSES.map(pose=>new Option(pose.toUpperCase(),pose)));
+ previewPoseMenu.value=previewAnimation.pose;
+ previewPoseMenu.addEventListener('change',()=>{
+  previewAnimation.pose=SPRITE_POSES.includes(previewPoseMenu.value)?previewPoseMenu.value:'idle';
+  previewAnimation.poseStart=performance.now();
+ });
 }
 function pageSlots(){
  const q=search.value.trim().toLowerCase().replace(/\s+/g,' ');
@@ -283,6 +298,7 @@ function selectSlot(slot){
   else if(account.balance!==null&&account.balance<Number(fighter.unlock_cost))note.textContent+=' Not enough coins.';
  }
  setupPreviewAnimation(fighter);
+ if(previewPoseMenu)previewPoseMenu.disabled=!fighter;
  startBtn.disabled=!fighter||locked;
  startBtn.textContent=locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
  renderRoster();
@@ -336,9 +352,9 @@ for(const button of buttons){
 }
 const GROUND=445,LEFT=68,RIGHT=892;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,stamp:0,last:0};
+const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,stamp:0,last:0,animClock:0};
 function body(profile,x,face){
- return {profile,x,face,y:0,vy:0,hp:100,meter:0,cooldown:0,attack:0,attackType:'',block:false,crouch:false,stun:0,flash:0,moveSpeed:0};
+ return {profile,x,face,y:0,vy:0,hp:100,meter:0,cooldown:0,attack:0,attackType:'',attackHit:false,block:false,crouch:false,stun:0,flash:0,moveSpeed:0,hurtAt:null,koAt:null,jumpAt:null};
 }
 function updateHud(){
  const p=game.hero,c=game.cpu;
@@ -374,23 +390,37 @@ pauseBtn.addEventListener('click',()=>{
  game.paused=!game.paused;pauseBtn.textContent=game.paused?'Resume':'Pause';
  $('fight-announcement').textContent=game.paused?'PAUSED':'';
 });
-function attack(attacker,defender,type){
- if(attacker.cooldown>0||attacker.stun>0)return;
- const data={punch:[.3,8,103,11],kick:[.48,13,131,16],special:[.72,23,166,27]}[type];
- if(!data||type==='special'&&attacker.meter<40)return;
+// The hit becomes active on the middle attack sprite, not on button-down.
+const ATTACK_MOVES=Object.freeze({
+ punch:{duration:.30,damage:8,reach:103,push:11,impactStart:.34,impactEnd:.70},
+ kick:{duration:.48,damage:13,reach:131,push:16,impactStart:.35,impactEnd:.73},
+ special:{duration:.72,damage:23,reach:166,push:27,impactStart:.36,impactEnd:.74}
+});
+function attack(attacker,type){
+ if(attacker.cooldown>0||attacker.stun>0||attacker.hp<=0||attacker.attack>0)return;
+ const move=ATTACK_MOVES[type];
+ if(!move||(type==='special'&&attacker.meter<40))return;
  if(type==='special')attacker.meter-=40;
- attacker.attack=data[0];attacker.cooldown=data[0]+.1;attacker.attackType=type;
+ attacker.attack=move.duration;attacker.cooldown=move.duration+.1;
+ attacker.attackType=type;attacker.attackHit=false;
  attacker.block=false;attacker.crouch=false;
- const distance=Math.abs(attacker.x-defender.x);
- if(distance>data[2]||Math.abs(attacker.y-defender.y)>80)return;
- const blocked=defender.block&&defender.y===0;
- const damage=blocked?Math.ceil(data[1]*.2):data[1];
+}
+function resolveAttack(attacker,defender){
+ if(attacker.attack<=0||attacker.attackHit||attacker.stun>0||attacker.hp<=0)return;
+ const move=ATTACK_MOVES[attacker.attackType];if(!move)return;
+ const progress=1-attacker.attack/move.duration;
+ if(progress<move.impactStart||progress>move.impactEnd)return;
+ attacker.attackHit=true; // Exactly one contact check per attack; missed swings still finish.
+ const forward=(defender.x-attacker.x)*attacker.face;
+ if(forward<0||forward>move.reach||Math.abs(attacker.y-defender.y)>80)return;
+ const blocked=defender.block&&defender.y===0&&defender.stun===0;
+ const damage=blocked?Math.ceil(move.damage*.2):move.damage;
  defender.hp=clamp(defender.hp-damage,0,100);
  defender.stun=blocked?.08:.25;
- defender.flash=.16;
- defender.x=clamp(defender.x+attacker.face*(blocked?8:data[3]),LEFT,RIGHT);
+ defender.flash=.16;defender.hurtAt=game.animClock;
+ defender.x=clamp(defender.x+attacker.face*(blocked?8:move.push),LEFT,RIGHT);
  attacker.meter=clamp(attacker.meter+(blocked?6:13),0,100);
- if(defender.hp<=0)finishRound();
+ if(defender.hp<=0){defender.koAt=game.animClock;finishRound();}
 }
 function finishRound(){
  if(game.mode!=='fighting')return;
@@ -421,22 +451,25 @@ function step(dt){
  }
  p.face=p.x<c.x?1:-1;c.face=-p.face;
  const direction=(down.has('right')?1:0)-(down.has('left')?1:0);
- p.block=down.has('guard')&&p.y===0&&p.cooldown===0;
- p.crouch=down.has('down')&&p.y===0&&!p.block;
+ p.block=down.has('guard')&&p.y===0&&p.cooldown===0&&p.stun===0;
+ p.crouch=down.has('down')&&p.y===0&&!p.block&&p.stun===0;
  if(p.stun===0&&p.cooldown===0&&!p.block&&!p.crouch)p.x=clamp(p.x+direction*235*dt,LEFT,RIGHT);
- if(oneShots.has('up')&&p.y===0&&p.stun===0)p.vy=510;
- for(const type of ['punch','kick','special'])if(oneShots.has(type))attack(p,c,type);
+ if(oneShots.has('up')&&p.y===0&&p.stun===0){p.vy=510;p.jumpAt=game.animClock;}
+ for(const type of ['punch','kick','special'])if(oneShots.has(type))attack(p,type);
  const dist=Math.abs(c.x-p.x);
- c.block=p.attack>.06&&dist<155&&Math.random()<dt*4;
+ c.block=c.stun===0&&c.cooldown===0&&c.y===0&&p.attack>.06&&dist<155&&Math.random()<dt*4;
  if(c.stun===0&&c.cooldown===0){
   if(dist>103)c.x=clamp(c.x+Math.sign(p.x-c.x)*145*dt,LEFT,RIGHT);
   else if(dist<64)c.x=clamp(c.x-Math.sign(p.x-c.x)*72*dt,LEFT,RIGHT);
-  if(dist<132&&Math.random()<dt*.88)attack(c,p,Math.random()>.7?'kick':'punch');
+  if(dist<132&&Math.random()<dt*.88)attack(c,Math.random()>.7?'kick':'punch');
  }
  if(Math.abs(p.x-c.x)<62){const mid=(p.x+c.x)/2;p.x=clamp(mid-p.face*31,LEFT,RIGHT);c.x=clamp(mid+p.face*31,LEFT,RIGHT)}
+ p.face=p.x<=c.x?1:-1;c.face=-p.face;
  p.moveSpeed=dt>0?(p.x-previousPX)/dt:0;
  c.moveSpeed=dt>0?(c.x-previousCX)/dt:0;
- if(game.timer===0)finishRound();
+ resolveAttack(p,c);
+ if(game.mode==='fighting')resolveAttack(c,p);
+ if(game.timer===0&&game.mode==='fighting')finishRound();
  updateHud();
  oneShots.clear();
 }
@@ -456,10 +489,13 @@ function drawBody(f,t){
   ctx.save();
   ctx.translate(Math.round(x),Math.round(y));
   ctx.scale(f.face,1);
-  ctx.imageSmoothingEnabled=false;
+  ctx.imageSmoothingEnabled=/\.svg(?:$|[?#])/i.test(atlas.currentSrc||atlas.src);
+  if(ctx.imageSmoothingEnabled)ctx.imageSmoothingQuality='high';
   const bounce=f.y===0&&pose.row===0?Math.sin(t*6)*1.7:0;
+  // Preserve each franchise's source proportions instead of widening Johnny's head/body.
+  const spriteHeight=248,spriteWidth=Math.min(236,Math.round(spriteHeight*frameWidth/frameHeight));
   ctx.drawImage(atlas,pose.frame*frameWidth,pose.row*frameHeight,frameWidth,frameHeight,
-   -118,-253+bounce,236,248);
+   -spriteWidth/2,-253+bounce,spriteWidth,spriteHeight);
   if(f.attack>0){
    const effect=f.attackType==='special'?'#ffe17c':'#f4f9ff';
    ctx.strokeStyle=effect;ctx.lineWidth=f.attackType==='special'?11:5;
@@ -497,7 +533,7 @@ function drawBody(f,t){
 }
 function drawArena(now){
  if(!ctx)return;
- const w=arena.width,h=arena.height,t=now/1000;
+ const w=arena.width,h=arena.height,t=game.animClock;
  const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#101b53');g.addColorStop(.62,'#34356c');g.addColorStop(1,'#0d1634');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
  ctx.fillStyle='#d2daff';for(let i=0;i<35;i++){const x=(i*97+53)%w,y=(i*61+37)%278;ctx.globalAlpha=.4+.25*Math.sin(t+i);ctx.fillRect(x,y,2,2)}ctx.globalAlpha=1;
  ctx.fillStyle='#2b2361';ctx.beginPath();ctx.moveTo(0,300);ctx.lineTo(110,210);ctx.lineTo(180,298);ctx.lineTo(300,175);ctx.lineTo(430,300);ctx.lineTo(620,200);ctx.lineTo(750,300);ctx.lineTo(860,195);ctx.lineTo(960,305);ctx.lineTo(960,450);ctx.lineTo(0,450);ctx.fill();
@@ -512,7 +548,7 @@ function drawArena(now){
 function tick(stamp){
  const dt=game.last?clamp((stamp-game.last)/1000,0,.05):0;game.last=stamp;
  if(game.stamp>stamp){drawArena(stamp);requestAnimationFrame(tick);return}
- if(!game.paused)step(dt);
+ if(!game.paused){game.animClock+=dt;step(dt);}
  drawArena(stamp);
  renderPreviewFrame(stamp);
  requestAnimationFrame(tick);
