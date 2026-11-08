@@ -35,7 +35,7 @@ Preferred illustrated assets:
 - `public/images/showdown/hercules-illustrated-atlas.png`
 - `public/images/showdown/jack-illustrated-atlas.png`
 
-The supplied illustrated pose sheets have already been processed into transparent 576 x 2464 PNGs, but **these files must be uploaded to the paths above**. Until then, the engine automatically uses the existing `*-cleaned-atlas.png` assets and built-in procedural fallbacks. Never claim the illustrated PNGs are deployed until GitHub contains them.
+The illustrated 576 x 2464 PNG atlases were uploaded to GitHub `main` on November 8, 2026 (commit `60d2493`). The loader tests both `/images/showdown/` and `/public/images/showdown/` URL prefixes to support different Render publish-directory layouts, then tries the older cleaned and SVG atlases. Blank or incomplete transparent rows are rejected. If all atlas paths fail, a procedural placeholder appears. **Presence on GitHub does not independently prove the live Render deployment has finished or the assets render correctly in a browser.**
 
 ## Controls
 
