@@ -1,1 +1,45 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fighter Manager | CTooniverse</title><link rel="stylesheet" href="fighters.css"></head><body class="fighters-page"><main class="fighters-shell"><a href="owner.html">← Owner Dashboard</a><h1>Fighter Manager</h1><p>Owner-only character catalog. Add fighters and configure how players unlock them.</p><p id="status" role="status">Verifying owner access…</p><section id="manager" class="fighter-select" hidden><h2>Add or Edit Fighter</h2><form id="fighter-form" class="owner-fighter-form"><label>Fighter ID <input id="fighter-id" required pattern="[a-z0-9][a-z0-9_-]*" maxlength="80" placeholder="example_fighter"></label><label>Name <input id="fighter-name" required maxlength="100"></label><label>Series <input id="fighter-series" required maxlength="100"></label><label>Portrait URL (optional) <input id="fighter-portrait" type="text" placeholder="/images/fighters/example.png"></label><label>Unlock method <select id="fighter-method"><option value="free">Free</option><option value="coins">Coins</option><option value="achievement">Achievement</option></select></label><label>Coin cost <input id="fighter-cost" type="number" min="1" max="100000000"></label><label>Achievement key <input id="fighter-achievement" maxlength="100" placeholder="win_10_matches"></label><label><input id="fighter-enabled" type="checkbox" checked> Visible in roster</label><button type="submit">Save Fighter</button></form><h2>Existing Fighters</h2><div id="fighter-list"></div><h2>Grant a Fighter</h2><p>Owner-only manual unlock for a player. Achievement awards are not yet automated.</p><form id="grant-form" class="owner-fighter-form"><label>Player user UUID <input id="grant-user" required></label><label>Fighter ID <input id="grant-fighter" required></label><button type="submit">Grant Unlock</button></form></section></main><script type="module" src="owner-fighters.js"></script></body></html>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151631">
+<title>CToon Showdown Fighter Manager | CTooniverse</title><link rel="stylesheet" href="showdown-reboot.css?v=20261108-1">
+<style>
+.manager-wrap{max-width:1160px;margin:auto;padding:clamp(12px,3vw,28px)}
+.manager-wrap h1{font-family:Impact,system-ui;font-size:clamp(2.5rem,6vw,4.5rem);font-style:italic;color:#fff0bf;margin:18px 0 5px}
+.manager-wrap h2{color:#f1ecff;margin:0 0 16px}
+.fighter-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.fighter-form label{display:flex;flex-direction:column;gap:6px;font-size:.85rem;font-weight:800}
+.fighter-form input,.fighter-form select,.manager-search{min-height:44px;width:100%;border:2px solid #8b80bd;border-radius:9px;background:#10142d;color:white;padding:8px}
+.fighter-form input[type="checkbox"]{width:22px;height:22px;min-height:22px}
+.form-check{flex-direction:row!important;align-items:center;gap:10px}
+.form-actions{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap}
+.manager-roster{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:16px 0}
+.manager-row{padding:14px;border:2px solid #655b99;border-radius:13px;background:#10182e;display:flex;flex-direction:column;gap:7px;min-width:0}
+.manager-row strong{overflow-wrap:anywhere}
+.manager-row span{color:#d5cfe9;font-size:.83rem}
+.manager-row .manager-actions{margin-top:auto;display:flex;flex-wrap:wrap;gap:6px}
+.manager-row .arcade-btn{font-size:.8rem;padding:7px 12px;min-height:38px}
+.manager-row button.delete{background:#6d263f;border-color:#e68a9e}
+.manager-meta{font-size:.93rem;color:#c8c2e6;line-height:1.6}
+@media(max-width:650px){.fighter-form{grid-template-columns:1fr}.manager-roster{grid-template-columns:1fr}}
+</style>
+</head><body><main class="manager-wrap">
+<header class="showdown-top"><a class="back-link" href="owner.html">← OWNER DASHBOARD</a><a class="back-link" href="fighters.html">VIEW SHOWDOWN →</a></header>
+<h1>SHOWDOWN<br>FIGHTER MANAGER</h1>
+<p class="manager-meta">Fresh reboot roster. All 200 launch slots start empty. Add a fighter to any open slot; assigning slot 201 or higher automatically grows the public roster. Previous Showdown fighters were not imported or deleted.</p>
+<p class="notice" id="owner-status" role="status" aria-live="polite">Checking owner access…</p>
+<div id="owner-editor" hidden>
+<section class="showdown-panel" aria-labelledby="editor-title"><div class="panel-header"><div><p class="eyebrow">01 / MANAGE FIGHTERS</p><h2 id="editor-title">Add a New Fighter</h2></div><span class="roster-tally" id="roster-summary">0 published</span></div>
+<form id="fighter-form" class="fighter-form">
+<label>Slot Number <input type="number" id="fighter-slot" min="1" step="1" value="1" required></label>
+<label>Fighter ID <input id="fighter-id" pattern="[a-z0-9][a-z0-9_-]*" maxlength="80" placeholder="unique-fighter-id" required></label>
+<label>Character Name <input id="fighter-name" maxlength="100" required></label>
+<label>Series / Franchise <input id="fighter-series" maxlength="100" required></label>
+<label>Portrait image URL or file path (optional) <input id="fighter-portrait" maxlength="1024" placeholder="images/showdown/your-fighter.png"></label>
+<label>Fighter accent color <input type="color" id="fighter-accent" value="#69d8ff"></label>
+<label class="form-check"><input type="checkbox" id="fighter-enabled" checked> Published and visible to players</label>
+<div class="form-actions"><button type="submit" class="arcade-btn main" id="save-fighter">Publish Fighter</button><button type="button" class="arcade-btn alt" id="clear-fighter">New Fighter / Clear Form</button></div>
+</form></section>
+<section class="showdown-panel" aria-labelledby="existing-title"><div class="panel-header"><div><p class="eyebrow">02 / FRESH ROSTER</p><h2 id="existing-title">Published &amp; Draft Fighters</h2></div><button type="button" class="arcade-btn alt" id="refresh-fighters">Refresh List</button></div>
+<label for="owner-search" class="manager-meta">Search your fighters</label><input id="owner-search" class="manager-search" type="search" placeholder="Slot, name or series">
+<div class="manager-roster" id="manager-roster" aria-live="polite"></div>
+<p class="manager-meta">Future expansion needs no layout changes: publishing slot 201 expands the roster to 225, then slot 226 expands it to 250.</p></section>
+</div></main><script type="module" src="showdown-roster-admin.js?v=20261108-1"></script></body></html>
