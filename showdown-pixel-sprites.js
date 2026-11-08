@@ -180,3 +180,31 @@ export function mountPixelPreview(container,id){
  }
  raf=requestAnimationFrame(tick);return()=>{live=false;cancelAnimationFrame(raf);canvas.remove()};
 }
+
+
+/**
+ * Compact, atlas-backed roster portraits for playable fighters without
+ * uploaded portrait URLs. These are snapshots, not extra animation loops.
+ */
+export function mountRosterPortrait(container,id){
+ if(!FIGHTER_SPRITES[id])return null;
+ const canvas=document.createElement('canvas');
+ canvas.width=96;canvas.height=112;canvas.className='slot-portrait-canvas';
+ canvas.setAttribute('aria-hidden','true');
+ container.replaceChildren(canvas);
+ const ctx=canvas.getContext('2d');
+ if(!ctx)return null;
+ const paint=()=>{
+  ctx.clearRect(0,0,96,112);
+  ctx.imageSmoothingEnabled=true;
+  // Frame 1 of idle. Reframe the illustrated character instead of showing
+  // the large transparent margins from the raw 192x224 sprite cell.
+  if(!atlasFrame(ctx,id,'idle',1,-31,-77,156,198)){
+   ctx.imageSmoothingEnabled=false;
+   ctx.drawImage(sprite(id,'idle',1),0,0,96,112);
+  }
+ };
+ paint();
+ loadFighterSprites(id).then(()=>{if(canvas.isConnected)paint()});
+ return canvas;
+}
