@@ -3,119 +3,92 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#111027">
-  <title>CToon Showdown V2 | CTooniverse</title>
-  <meta name="description" content="CToon Showdown: a rebuilt hand-drawn anime arcade fighting game. Select a fighter and battle the CPU.">
-  <link rel="stylesheet" href="showdown-v2.css?v=20261108">
+  <meta name="theme-color" content="#10122d">
+  <meta name="description" content="CToon Showdown: a fresh 2D fighter with a 200-slot roster that grows as new fighters are published.">
+  <title>CToon Showdown | CTooniverse</title>
+  <link rel="stylesheet" href="showdown-reboot.css?v=20261108-1">
 </head>
 <body>
-  <main class="shell">
-    <header class="topbar">
-      <a class="back-link" href="games.html" aria-label="Back to CTooniverse Games">← CTOONIVERSE / GAMES</a>
-      <span class="version">V2 · 2D ARCADE REBUILD</span>
-    </header>
-    <div class="heading">
-      <div>
-        <h1>CTOON<br>SHOWDOWN</h1>
-        <p>Hand-drawn anime-style fighters. A fresh, responsive 2D battle engine with original effects and an expandable character roster.</p>
-      </div>
-      <div class="mode-tag">1 PLAYER · VS CPU</div>
+<main class="showdown-shell">
+  <header class="showdown-top">
+    <a class="back-link" href="games.html">← CTOONIVERSE / GAMES</a>
+    <span class="release-tag">NEW FOUNDATION · REBOOT</span>
+  </header>
+  <section class="showdown-hero" aria-labelledby="showdown-title">
+    <div>
+      <h1 id="showdown-title">CTOON<br><span>SHOWDOWN</span></h1>
+      <p>We're rebuilding the fight from the ground up. Discover a new selection screen, a fresh 2D practice arena, and a roster designed to grow with CTooniverse.</p>
     </div>
-    <section class="panel" aria-labelledby="character-select-title">
-      <div class="panel-heading">
-        <div><span class="eyebrow">CHOOSE YOUR CHALLENGER</span><h2 class="select-title" id="character-select-title">SELECT YOUR FIGHTER</h2></div>
-        <div class="counter" id="roster-count">0 / 120</div>
-      </div>
-      <div class="catalog-row">
-        <p id="catalog-banner" role="status">Loading published fighters...</p>
-        <button class="game-btn small" id="retry-catalog" hidden type="button">Retry</button>
-      </div>
-      <div class="filters">
-        <label>Search fighters<input id="roster-search" type="search" placeholder="Name, series or slot" autocomplete="off"></label>
-        <label>Sort by<select id="roster-sort">
-          <option value="alphabetical">Alphabetical (A–Z)</option>
-          <option value="series">Series (A–Z)</option>
-          <option value="slots">Slot number</option>
-        </select></label>
-        <label>Series<select id="roster-series"><option value="all">All series</option></select></label>
-        <label>Unlock status<select id="roster-state">
-          <option value="all">All slots</option>
-          <option value="ready">Ready</option>
-          <option value="locked">Locked</option>
-          <option value="artwork">Artwork pending</option>
-          <option value="empty">Empty slots</option>
-        </select></label>
-      </div>
-      <div class="select-layout">
-        <div>
-          <div id="roster-grid" class="roster-grid" role="group" aria-label="Expandable fighter selection roster"></div>
-          <div class="pages">
-            <button id="roster-prev" class="game-btn small" type="button" disabled>◀ PREVIOUS</button>
-            <span id="roster-page">PAGE 1 / 4</span>
-            <button id="roster-next" class="game-btn small" type="button">NEXT ▶</button>
-          </div>
-        </div>
-        <aside class="preview-card" aria-label="Animated character preview">
-          <div class="preview-frame"><canvas id="fighter-preview-canvas" width="240" height="286" aria-label="Selected fighter animation"></canvas></div>
-          <span class="status-chip" id="preview-state" data-state="empty">EMPTY SLOT</span>
-          <h3 id="preview-name">SLOT 001</h3>
-          <p id="preview-series">AVAILABLE FOR A FUTURE FIGHTER</p>
-          <label class="pose-choice">Animation preview<select id="preview-pose" disabled><option value="idle">IDLE</option></select></label>
-          <span class="preview-artwork" id="preview-artwork">NO ANIMATION ATLAS</span>
-          <p id="preview-help">Select a published fighter to begin.</p>
-          <button id="preview-unlock" class="game-btn strong" type="button" hidden>UNLOCK FIGHTER</button>
-        </aside>
-      </div>
-    </section>
-    <section class="panel arena-panel" aria-labelledby="arena-title">
-      <div class="panel-heading">
-        <div><span class="eyebrow">ARENA // ARCADE DUEL</span><h2 id="arena-title" class="stage-title">FIGHT!</h2></div>
-        <span id="round-score">ROUND 1 · 0 — 0</span>
-      </div>
-      <div class="fight-hud" aria-label="Match status">
-        <div class="hud-side"><div class="hud-name" id="player-name">HERCULES</div>
-          <div class="health-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"><div class="health-fill" id="player-health"></div></div>
-          <div class="meter-track" aria-label="Player special meter"><div class="meter-fill" id="player-meter"></div></div>
-        </div>
-        <div class="timer-box"><span>TIME</span><strong id="fight-timer">60</strong></div>
-        <div class="hud-side cpu"><div class="hud-name" id="cpu-name">JACK SKELLINGTON</div>
-          <div class="health-track" role="progressbar" aria-valuemin="0" aria-valuemax="100"><div class="health-fill" id="cpu-health"></div></div>
-          <div class="meter-track" aria-label="CPU special meter"><div class="meter-fill" id="cpu-meter"></div></div>
+    <div class="launch-count"><b id="roster-capacity">200</b><small>Starting roster slots</small></div>
+  </section>
+  <section class="showdown-panel" aria-labelledby="roster-title">
+    <div class="panel-header">
+      <div><p class="eyebrow">01 / BUILD THE ROSTER</p><h2 id="roster-title">Select Your Fighter</h2></div>
+      <span class="roster-tally" id="roster-tally">0 / 200 published</span>
+    </div>
+    <p class="notice" id="catalog-banner" role="status" aria-live="polite">Loading the fresh roster. Empty slots are reserved for future characters.</p>
+    <div class="roster-controls">
+      <label>Search fighter or slot <input id="roster-search" type="search" placeholder="Name, series, or slot 025" autocomplete="off"></label>
+      <label>Series <select id="roster-series"><option value="all">All series</option></select></label>
+      <label>Show <select id="roster-state"><option value="all">All roster slots</option><option value="ready">Published fighters</option><option value="empty">Empty slots</option></select></label>
+    </div>
+    <div class="select-layout">
+      <div>
+        <div id="roster-grid" class="roster-grid" role="group" aria-label="Fighter slots"></div>
+        <div class="roster-pages">
+          <button type="button" class="arcade-btn alt" id="roster-prev">◀ Previous</button>
+          <span class="page-info" id="roster-page">PAGE 1 / 8</span>
+          <button type="button" class="arcade-btn alt" id="roster-next">Next ▶</button>
         </div>
       </div>
-      <div class="arena-wrap">
-        <canvas id="arena" width="960" height="540" aria-label="Two-dimensional battle arena"></canvas>
-        <div id="fight-announcement" aria-live="polite">SELECT A FIGHTER</div>
-      </div>
-      <div class="below-stage">
-        <div class="actions">
-          <button class="game-btn main" id="start-match" type="button" disabled>START MATCH</button>
-          <button class="game-btn" id="pause-match" type="button" disabled>PAUSE</button>
+      <aside class="preview-card" aria-labelledby="preview-title">
+        <div class="preview-frame"><div id="preview-avatar" class="preview-avatar is-empty" aria-hidden="true">?</div></div>
+        <div><span class="tag" id="preview-tag">EMPTY SLOT</span><h3 id="preview-title">SLOT 001</h3><p id="preview-series">This place is reserved for a future fighter.</p></div>
+        <p id="preview-detail">Select a published fighter to prepare a match, or use Practice Mode to test the new battle system now.</p>
+        <div class="preview-actions">
+          <button type="button" class="arcade-btn main" id="start-match" disabled>Choose a fighter first</button>
+          <button type="button" class="arcade-btn alt" id="training-match">Practice Mode (2 test fighters)</button>
         </div>
-        <span class="eyebrow">FIRST TO TWO ROUNDS WINS</span>
+      </aside>
+    </div>
+  </section>
+  <section class="showdown-panel" aria-labelledby="arena-title">
+    <div class="panel-header">
+      <div><p class="eyebrow">02 / THE NEW ARENA</p><h2 id="arena-title">Arcade Battle</h2></div>
+      <span class="roster-tally" id="round-score">TRAINING READY</span>
+    </div>
+    <div class="arena-hud">
+      <div class="hud-side"><div class="hud-name" id="player-name">PLAYER</div><div class="health-rail" aria-label="Player health"><div class="health-fill" id="player-health"></div></div></div>
+      <div class="hud-time" id="fight-timer" aria-label="Time remaining">60</div>
+      <div class="hud-side cpu"><div class="hud-name" id="cpu-name">CPU</div><div class="health-rail cpu" aria-label="CPU health"><div class="health-fill" id="cpu-health"></div></div></div>
+    </div>
+    <div class="arena-frame">
+      <canvas id="arena" width="960" height="540" aria-label="2D fighting arena showing the player and CPU">Canvas is required to play this game.</canvas>
+      <div class="arena-announcement" id="fight-announcement" aria-live="polite">READY TO TRAIN</div>
+    </div>
+    <div class="arena-actions">
+      <div><button type="button" class="arcade-btn" id="restart-match" disabled>Restart Match</button><button type="button" class="arcade-btn alt" id="pause-match" disabled>Pause</button></div>
+      <span class="score" id="match-result">BEST OF THREE · VS CPU</span>
+    </div>
+    <p class="controls-note"><strong>Keyboard:</strong> A/D or ←/→ move · W or ↑ jump · S or ↓ crouch · J punch · K kick · L guard · U special. <strong>Mobile:</strong> use the buttons below.</p>
+    <div class="touch-controls" aria-label="Mobile game controls">
+      <div class="touch-bank" aria-label="Movement controls">
+        <button type="button" data-control="left" aria-label="Move left">◀</button>
+        <button type="button" data-control="up" aria-label="Jump">▲</button>
+        <button type="button" data-control="down" aria-label="Crouch">▼</button>
+        <button type="button" data-control="right" aria-label="Move right">▶</button>
       </div>
-      <p class="instructions"><b>KEYBOARD:</b> A/D or ←/→ to move · W or ↑ to jump · S or ↓ to crouch · J punch · K kick · L guard · U special (40 meter). <b>PHONE:</b> use the buttons below.</p>
-      <div class="touch-controls" aria-label="Mobile combat controls">
-        <div class="touch-bank" aria-label="Movement controls">
-          <button type="button" data-key="a" aria-label="Move left">◀</button>
-          <button type="button" data-key="w" aria-label="Jump">▲</button>
-          <button type="button" data-key="s" aria-label="Crouch">▼</button>
-          <button type="button" data-key="d" aria-label="Move right">▶</button>
-        </div>
-        <div class="touch-bank actions-bank" aria-label="Attack controls">
-          <button type="button" data-key="j" aria-label="Punch">P</button>
-          <button type="button" data-key="k" aria-label="Kick">K</button>
-          <button type="button" data-key="l" aria-label="Guard">GUARD</button>
-          <button type="button" data-key="u" aria-label="Special move">★</button>
-        </div>
+      <div class="touch-bank" aria-label="Attack controls">
+        <button type="button" data-control="punch" aria-label="Punch">P</button>
+        <button type="button" data-control="kick" aria-label="Kick">K</button>
+        <button type="button" data-control="guard" aria-label="Guard">GUARD</button>
+        <button type="button" data-control="special" aria-label="Special attack">★</button>
       </div>
-      <p id="showdown-status" role="status">Loading fighters and animation assets...</p>
-    </section>
-    <footer class="site-footer">
-      <span>CTOON SHOWDOWN · ORIGINAL ARCADE REBUILD</span>
-      <a href="games.html">Return to Games</a>
-    </footer>
-  </main>
-  <script type="module" src="showdown-v2.js?v=20261108-2"></script>
+    </div>
+    <p class="notice" id="showdown-status" role="status" aria-live="polite">Practice mode is available even before any fighters are published.</p>
+  </section>
+  <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
+</main>
+<script type="module" src="showdown-reboot.js?v=20261108-1"></script>
 </body>
 </html>
