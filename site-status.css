@@ -1,0 +1,27 @@
+/* CTooniverse website status: both labels are visible; only the active mode glows. */
+.site-status-strip{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 11px;max-width:1400px;margin:2px auto 8px;padding:9px 14px;border:2px solid #465c91;border-radius:13px;background:linear-gradient(110deg,#101734,#201342);color:#eaf3ff;box-shadow:0 5px 15px #06091e88;font-family:system-ui,-apple-system,Segoe UI,sans-serif;position:relative;z-index:1}
+.site-status-title{font-weight:1000;letter-spacing:1.2px;font-size:.7rem;margin-right:5px;color:#a3c9ff}
+.site-status-button{font:900 .78rem system-ui,-apple-system,Segoe UI,sans-serif;min-height:35px;padding:7px 13px;border-radius:12px;border:2px solid #556182;cursor:pointer;transition:filter .16s,box-shadow .16s,transform .16s;opacity:.6}
+.site-status-button:hover,.site-status-button:focus-visible{opacity:1;filter:brightness(1.12)}
+.site-status-button:focus-visible{outline:3px solid #86d6ff;outline-offset:2px}
+.site-status-button.is-online{background:#153b2f;color:#90ebad;border-color:#40b879}
+.site-status-button.is-maintenance{background:#4a3b12;color:#ffe08a;border-color:#d4a62e}
+.site-status-button[aria-pressed="true"]{opacity:1;box-shadow:0 0 0 2px #f8faff25,0 0 16px currentColor;transform:translateY(-1px)}
+.site-status-summary{font-size:.78rem;font-weight:800;color:#bed6f4}
+.site-status-strip[data-mode="maintenance"]{border-color:#e7b846;background:linear-gradient(110deg,#3d2912,#39252b)}
+.site-status-strip[data-mode="maintenance"] .site-status-summary{color:#ffe9a4}
+.site-status-strip[data-mode="online"] .site-status-summary{color:#9ef0b5}
+.site-status-detail{flex:0 0 100%;margin:0;font-size:.75rem;text-align:center;color:#d8e7ff}
+.site-status-detail[hidden]{display:none}
+.site-under-maintenance .site-status-strip{box-shadow:0 0 20px #e8bd4870}
+.site-operating-controls{margin:20px auto;padding:17px;border:2px solid #7462bc;border-radius:17px;background:#10142d;max-width:650px;text-align:left}
+.site-operating-controls h3{margin:0 0 9px;color:#f0eaff;font-size:1.05rem}
+.site-operating-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.site-operating-actions button{min-height:44px;border-radius:12px;padding:10px 16px;font-weight:900;cursor:pointer;border:2px solid #d3d5de}
+.site-operating-actions .site-set-online{background:#247e4b;color:#fff}
+.site-operating-actions .site-set-maintenance{background:#eac14c;color:#251e05}
+.site-operating-actions button[aria-pressed="true"]{outline:3px solid #eff7ff;outline-offset:2px;box-shadow:0 0 18px #ffffff5c}
+.site-operating-actions button:disabled{opacity:.5;cursor:wait}
+#owner-site-status-message{font-weight:800;color:#c7e5ff}
+@media(max-width:650px){.site-status-strip{margin:4px 8px 8px;padding:9px;gap:5px 7px}.site-status-title{flex:0 0 100%;text-align:center;font-size:.66rem}.site-status-button{font-size:.72rem;padding:7px 9px}.site-status-summary{flex:0 0 100%;text-align:center;font-size:.74rem}.site-operating-controls{padding:11px}}
+@media(prefers-reduced-motion:reduce){.site-status-button{transition:none}}
