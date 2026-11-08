@@ -24,7 +24,7 @@ const villains = [
 {name:"Static Phantom",icon:"👻",hp:205,atk:32,def:6}
 ];
 const copy = o => JSON.parse(JSON.stringify(o));
-const fresh = () => ({credits:1800,wins:0,highestCleared:0,team:starter.slice(),shards:{},roster:Object.fromEntries(starter.map(id=>[id,{level:1,stars:1,rank:0}]))});
+const fresh = () => ({credits:1800,wins:0,highestCleared:0,team:[],lineupVersion:2,shards:{},roster:Object.fromEntries(starter.map(id=>[id,{level:1,stars:1,rank:0}]))});
 function load(){
  try{
   const raw=JSON.parse(localStorage.getItem(SAVE_KEY));
@@ -48,8 +48,8 @@ function load(){
    }
   }
   const team=Array.isArray(raw.team)?raw.team.filter(id=>byId[id]&&s.roster[id]):[];
-  s.team=[...new Set(team)].slice(0,5);
-  if(!s.team.length)s.team=starter.slice();
+  // Clear preexisting beta starter teams once. Preserve heroes, shards and campaign progress.
+  s.team=raw.lineupVersion===2?[...new Set(team)].slice(0,5):[];
   return s;
  }catch(_){return fresh();}
 }
@@ -82,7 +82,7 @@ function renderCampaign(){
   const n=i+1,open=n<=state.highestCleared+1,done=n<=state.highestCleared;
   return '<button type="button" class="hb-mission '+(selectedStage===n?"chosen ":"")+(done?"cleared":"")+'" data-stage="'+n+'" '+(!open?"disabled":"")+'><strong>'+(done?"✓ ":"")+'STAGE '+n+'</strong><small>'+name+'</small><span>'+(done?"CLEARED":open?"AVAILABLE":"🔒 LOCKED")+'</span></button>';
  }).join("");
- $("hb-campaign-team").innerHTML=state.team.map(id=>'<div class="hb-mini"><b>'+byId[id].icon+'</b><span>'+byId[id].name+'</span><small>Lv '+heroState(id).level+'</small></div>').join("");
+ $("hb-campaign-team").innerHTML=state.team.length?state.team.map(id=>'<div class="hb-mini"><b>'+byId[id].icon+'</b><span>'+byId[id].name+'</span><small>Lv '+heroState(id).level+'</small></div>').join(""):'<p class="hb-muted">Your team is empty. Open MY TEAM to choose your heroes.</p>';
  $("hb-start").disabled=!!active||!state.team.length;
 }
 function heroCard(h,teamMode){
@@ -94,6 +94,7 @@ function heroCard(h,teamMode){
 function renderTeam(){
  $("hb-team-slots").innerHTML=Array.from({length:5},(_,i)=>state.team[i]?'<div class="hb-mini"><b>'+byId[state.team[i]].icon+'</b><span>'+byId[state.team[i]].name+'</span><small>'+byId[state.team[i]].role+'</small></div>':'<div class="hb-mini"><b>＋</b><span>EMPTY SLOT</span></div>').join("");
  $("hb-team-roster").innerHTML=heroes.filter(h=>unlocked(h.id)).map(h=>heroCard(h,true)).join("");
+ $("hb-clear-team").disabled=!!active||state.team.length===0;
 }
 function renderDetails(){
  const h=byId[selectedHero],r=heroState(h.id),shards=state.shards[h.id]||0;
@@ -134,7 +135,7 @@ function modifyHero(id,action){
   const chips=starCost(id),cost=200*r.stars;if(r.stars>=5||shards<chips||state.credits<cost)return;
   state.shards[id]-=chips;state.credits-=cost;r.stars++;notice(h.name+" evolved to "+r.stars+" stars!");
  }else if(action==="team"){
-  if(state.team.includes(id)){if(state.team.length===1){notice("Keep at least one hero in your lineup.");return;}state.team=state.team.filter(x=>x!==id);}
+  if(state.team.includes(id)){state.team=state.team.filter(x=>x!==id);}
   else {if(state.team.length>=5){notice("Your team is full. Remove a hero to add another.");return;}state.team.push(id);}
   notice("Lineup updated: "+state.team.length+" / 5 heroes.");
  }
@@ -271,6 +272,11 @@ document.addEventListener("click",e=>{
  }
 });
 $("hb-start").addEventListener("click",beginBattle);
+$("hb-clear-team").addEventListener("click",()=>{
+ if(active){notice("Finish or retreat before clearing your team.");return;}
+ if(!state.team.length){notice("Your team is already empty.");return;}
+ state.team=[];save();render();notice("Team cleared. Select any unlocked hero to rebuild your lineup.");
+});
 $("hb-retreat").addEventListener("click",retreat);
 $("hb-auto").addEventListener("click",()=>{autoSpecials=!autoSpecials;renderBattle();});
 window.addEventListener("pagehide",stop);
