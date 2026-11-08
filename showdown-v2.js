@@ -117,6 +117,7 @@ function selectSlot(n){
  $('preview-pose').disabled=!f||!hasAnimation(f.id);
  $('preview-pose').value=previewPose;
  $('preview-artwork').textContent=f&&hasAnimation(f.id)?'LOADING SPRITE...':'NO ANIMATION ATLAS';
+ game.setEnabled(!!f&&catalogReady&&canPlay(f));
  if(f&&canPlay(f))game.setSelected(f.id);
  rosterRoot.querySelectorAll('[data-slot]').forEach(button=>
    button.setAttribute('aria-pressed',String(Number(button.dataset.slot)===selectedSlot)));
@@ -171,7 +172,7 @@ $('preview-unlock').onclick=async()=>{
 };
 async function loadCatalog(){
  if(catalogLoading)return;
- catalogLoading=true;banner.textContent='Loading published fighters...';
+ catalogLoading=true;catalogReady=false;game.setEnabled(false);banner.textContent='Loading published fighters...';
  $('retry-catalog').hidden=true;
  try{
    if(!client){
