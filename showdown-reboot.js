@@ -52,7 +52,7 @@ function spriteSources(profile){
    const approved=safeImage(demoHero.preview_sheet);
    if(approved){sources.push(approved);addStaticLocations(new URL(approved));}
   }
-  for(const backup of ['/images/showdown/johnny-bravo-mugen-atlas.png','/public/images/showdown/johnny-bravo-mugen-atlas.png','/images/showdown/johnny-bravo-complete-v2.svg','/public/images/showdown/johnny-bravo-complete-v2.svg']){
+  for(const backup of ['/images/showdown/johnny-bravo-polished-atlas.svg','/public/images/showdown/johnny-bravo-polished-atlas.svg','/images/showdown/johnny-bravo-mugen-atlas.png','/public/images/showdown/johnny-bravo-mugen-atlas.png','/images/showdown/johnny-bravo-complete-v2.svg','/public/images/showdown/johnny-bravo-complete-v2.svg']){
    const candidate=safeImage(backup);if(candidate)sources.push(candidate);
   }
  }
@@ -415,7 +415,7 @@ function selectSlot(slot){
  $('preview-series').textContent=fighter?fighter.series:'This place is reserved for a future fighter.';
  $('preview-detail').textContent=locked?
    'Unlock this character for your account before entering the arena.':
-   fighter?'Choose any of the 11 combat poses above, then test the moves in the arena.':
+   fighter?(testingJohnny?'Preview the PUNCH and KICK poses, then use J and K (or the mobile P and K buttons) to strike your opponent.':'Choose any of the 11 combat poses, then test the moves in the arena.'):
    'Start a Practice Mode match while new fighters are being created.';
  const note=$('preview-unlock-note');
  note.hidden=!locked;
