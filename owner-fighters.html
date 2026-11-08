@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151631">
-<title>CToon Showdown Fighter Manager | CTooniverse</title><link rel="stylesheet" href="showdown-reboot.css?v=20261108-1">
+<title>CToon Showdown Fighter Manager | CTooniverse</title><link rel="stylesheet" href="showdown-reboot.css?v=20261108-2">
 <style>
 .manager-wrap{max-width:1160px;margin:auto;padding:clamp(12px,3vw,28px)}
 .manager-wrap h1{font-family:Impact,system-ui;font-size:clamp(2.5rem,6vw,4.5rem);font-style:italic;color:#fff0bf;margin:18px 0 5px}
@@ -36,10 +36,15 @@
 <label>Portrait image URL or file path (optional) <input id="fighter-portrait" maxlength="1024" placeholder="images/showdown/your-fighter.png"></label>
 <label>Fighter accent color <input type="color" id="fighter-accent" value="#69d8ff"></label>
 <label class="form-check"><input type="checkbox" id="fighter-enabled" checked> Published and visible to players</label>
+<label class="form-check"><input type="checkbox" id="fighter-unlockable"> 🔒 Unlockable fighter (show a locked badge)</label>
+<label>Planned unlock requirement (optional)
+ <input id="fighter-unlock-hint" maxlength="160" placeholder="Example: Win 10 battles — planned">
+</label>
+<p class="manager-meta" style="grid-column:1/-1;margin:0">Unlockable fighters appear in the roster with a gold lock icon and cannot be selected for matches yet. This is a visual setup; unlock rewards and conditions are not active.</p>
 <div class="form-actions"><button type="submit" class="arcade-btn main" id="save-fighter">Publish Fighter</button><button type="button" class="arcade-btn alt" id="clear-fighter">New Fighter / Clear Form</button></div>
 </form></section>
 <section class="showdown-panel" aria-labelledby="existing-title"><div class="panel-header"><div><p class="eyebrow">02 / FRESH ROSTER</p><h2 id="existing-title">Published &amp; Draft Fighters</h2></div><button type="button" class="arcade-btn alt" id="refresh-fighters">Refresh List</button></div>
 <label for="owner-search" class="manager-meta">Search your fighters</label><input id="owner-search" class="manager-search" type="search" placeholder="Slot, name or series">
 <div class="manager-roster" id="manager-roster" aria-live="polite"></div>
 <p class="manager-meta">Future expansion needs no layout changes: publishing slot 201 expands the roster to 225, then slot 226 expands it to 250.</p></section>
-</div></main><script type="module" src="showdown-roster-admin.js?v=20261108-1"></script></body></html>
+</div></main><script type="module" src="showdown-roster-admin.js?v=20261108-2"></script></body></html>
