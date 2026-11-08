@@ -119,26 +119,12 @@ if (year) year.textContent = String(new Date().getFullYear());
  wrap.append(btn,panel);original.replaceWith(wrap);
 })();
 
-/* Games dropdown: separate emulator page. */
+/* Games is a direct navigation link; highlight it on individual game pages. */
 (() => {
- const nav=document.querySelector('.site-header nav');
- if(!nav||nav.querySelector('.games-dropdown'))return;
- const original=[...nav.querySelectorAll('a.nav-link')].find(a=>{try{return new URL(a.href,location.href).pathname.endsWith('/games.html')}catch{return false}});
- if(!original)return;
- const wrap=document.createElement('div');wrap.className='ctoons-dropdown games-dropdown';
- const btn=document.createElement('button');btn.type='button';btn.className='nav-link ctoons-dropdown-trigger';
- if(['games.html','emulator.html','prize-wheel.html','pinball.html','prize-games.html','speedway.html','hero-battle.html','fighters.html'].some(p=>location.pathname.endsWith('/'+p)))btn.classList.add('active');
- btn.setAttribute('aria-haspopup','true');btn.setAttribute('aria-expanded','false');
- btn.innerHTML='<span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span><span aria-hidden="true">▾</span>';
- const panel=document.createElement('div');panel.className='ctoons-dropdown-panel';
- for(const [label,url] of [['Games','games.html'],['Video Game Emulator','emulator.html'],['Prize Games','prize-games.html'],['CToon Speedway','speedway.html'],['CToon Heroes: Battle Quest','hero-battle.html'],['CToon Showdown','fighters.html']]){
-  const a=document.createElement('a');a.href=url;a.textContent=label;if(location.pathname.endsWith('/'+url))a.setAttribute('aria-current','page');panel.append(a);
- }
- const close=()=>{wrap.classList.remove('is-open');btn.setAttribute('aria-expanded','false')};
- btn.addEventListener('click',()=>{const open=!wrap.classList.contains('is-open');wrap.classList.toggle('is-open',open);btn.setAttribute('aria-expanded',String(open))});
- wrap.addEventListener('keydown',e=>{if(e.key==='Escape'){close();btn.focus()}});
- document.addEventListener('click',e=>{if(!wrap.contains(e.target))close()});
- wrap.append(btn,panel);original.replaceWith(wrap);
+ const link=document.querySelector('.site-header nav a.nav-link[href="games.html"]');
+ if(!link)return;
+ const gamePages=['games.html','emulator.html','prize-wheel.html','pinball.html','prize-games.html','speedway.html','hero-battle.html','fighters.html'];
+ if(gamePages.some(page=>location.pathname.endsWith('/'+page)))link.classList.add('active');
 })();
 
 /* Dedicated top-level CToon Clash tab on every standard site page. */
