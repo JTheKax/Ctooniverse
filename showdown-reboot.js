@@ -26,7 +26,7 @@ function announceFight(label,phase=''){
 // Johnny Bravo is the first fighter. Other full 3x11 atlases use the same pose mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
  portrait:'/images/showdown/johnny-bravo-user-model.svg',
- preview_sheet:'/images/showdown/johnny-bravo-polished-atlas.svg',preview_columns:6,preview_rows:11};
+ preview_sheet:'/images/showdown/johnny-bravo-limbs-v3.svg',preview_columns:6,preview_rows:11};
 const demoCPU={...demoHero};
 const johnnyArt={mode:'approved',testSheet:'/images/showdown/johnny-bravo-mugen-atlas.png'};
 const johnnyArtMenu=$('johnny-art-mode');
@@ -61,7 +61,7 @@ function spriteSources(profile){
 // Support both Johnny's padded 6x11 rig and the legacy 3x11 backups.
 function spriteLayout(profile,source){
  const johnny=profile?.fighter_id==='johnny-bravo';
- const polished=johnny&&/johnny-bravo-polished-atlas\.svg/i.test(source);
+ const polished=johnny&&/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(source);
  return {columns:polished?6:johnny?3:Math.max(1,Number(profile?.preview_columns)||3),
   rows:johnny?11:Math.max(1,Number(profile?.preview_rows)||11),polished};
 }
@@ -263,7 +263,7 @@ function renderPreviewFrame(timestamp){
  const isLoop=['idle','walk','run','guard','crouch'].includes(previewAnimation.pose);
  const interval=previewAnimation.pose==='run'?85:previewAnimation.pose==='walk'?115:190;
  const frame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%1400)/(1400/cols)));
- const polished=/johnny-bravo-polished-atlas\.svg/i.test(previewAnimation.source||'');
+ const polished=/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(previewAnimation.source||'');
  p.clearRect(0,0,canvas.width,canvas.height);
  p.save();p.imageSmoothingEnabled=!polished;p.imageSmoothingQuality='high';
  if(polished){
@@ -470,7 +470,7 @@ async function loadRoster(){
   if(!Array.isArray(fighters))throw new Error('Unexpected catalog format');
   selection.fighters=new Map(fighters.filter(f=>Number.isSafeInteger(f.slot)&&f.slot>0).map(f=>{
     const ready=f.fighter_id==='johnny-bravo'
-      ?{...f,portrait:demoHero.portrait,preview_sheet:demoHero.preview_sheet,preview_columns:3,preview_rows:11}:f;
+      ?{...f,portrait:demoHero.portrait,preview_sheet:demoHero.preview_sheet,preview_columns:6,preview_rows:11}:f;
     return [ready.slot,ready];
    }));
    // Keep fighter #001 available without mutating Supabase or replacing owner-published slots.
@@ -515,7 +515,7 @@ for(const button of buttons){
 }
 const GROUND=445,LEFT=68,RIGHT=892;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,countdown:3,fightBanner:0,roundMessage:'',last:0,animClock:0};
+const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,countdown:3,fightBanner:0,roundMessage:'',hitEffects:[],last:0,animClock:0};
 function body(profile,x,face){
  return {profile,x,face,y:0,vy:0,hp:100,meter:0,cooldown:0,attack:0,attackType:'',attackHit:false,block:false,crouch:false,stun:0,flash:0,moveSpeed:0,hurtAt:null,koAt:null,jumpAt:null};
 }
@@ -531,6 +531,7 @@ function updateHud(){
 }
 function resetRound(){
  game.hero=body(game.heroProfile,250,1);game.cpu=body(game.cpuProfile,710,-1);
+ game.hitEffects.length=0;
  game.timer=60;game.mode='countdown';game.between=0;game.countdown=3;game.fightBanner=0;
  game.roundMessage='';
  down.clear();oneShots.clear();
@@ -592,14 +593,23 @@ function resolveAttack(attacker,defender){
  const move=ATTACK_MOVES[attacker.attackType];if(!move)return;
  const progress=1-attacker.attack/move.duration;
  if(progress<move.impactStart||progress>move.impactEnd)return;
- attacker.attackHit=true; // Exactly one contact check per attack; missed swings still finish.
+ // Check for contact throughout the active frames; a whiff does not consume the hitbox.
  const forward=(defender.x-attacker.x)*attacker.face;
  if(forward<0||forward>move.reach||Math.abs(attacker.y-defender.y)>80)return;
+ attacker.attackHit=true; // One confirmed hit per punch/kick/special.
  const blocked=defender.block&&defender.y===0&&defender.stun===0;
  const damage=blocked?Math.ceil(move.damage*.2):move.damage;
  defender.hp=clamp(defender.hp-damage,0,100);
  defender.stun=blocked?.08:.25;
  defender.flash=.16;defender.hurtAt=game.animClock;
+ // Match each successful strike to its visible attacking hand or foot.
+ const foot=attacker.attackType==='kick',special=attacker.attackType==='special';
+ game.hitEffects.push({
+  x:clamp(attacker.x+attacker.face*Math.min(move.reach*.65,86),LEFT,RIGHT),
+  y:GROUND-attacker.y-(foot?80:special?137:142),
+  life:.26,maximum:.26,size:foot?27:special?43:21,
+  color:blocked?'#9de8ff':foot?'#ffe289':special?'#ffb2fa':'#d5f8ff'
+ });
  defender.x=clamp(defender.x+attacker.face*(blocked?8:move.push),LEFT,RIGHT);
  attacker.meter=clamp(attacker.meter+(blocked?6:13),0,100);
  if(defender.hp<=0){defender.koAt=game.animClock;finishRound();}
@@ -636,6 +646,7 @@ function settleRoundPoses(dt){
  }
 }
 function step(dt){
+ game.hitEffects=game.hitEffects.filter(effect=>((effect.life-=dt)>0));
  if(game.mode==='countdown'){
   const previous=Math.ceil(game.countdown);
   game.countdown=Math.max(0,game.countdown-dt);
@@ -781,6 +792,22 @@ function drawArena(now){
  ctx.strokeStyle='#2e3f71';ctx.lineWidth=2;for(let i=0;i<14;i++){ctx.beginPath();ctx.moveTo(i*78,GROUND);ctx.lineTo(480+(i-7)*155,h);ctx.stroke()}
  if(!game.hero){drawBody(body(demoHero,255,1),t);drawBody(body(demoCPU,700,-1),t);return}
  const sorted=[game.hero,game.cpu].sort((a,b)=>a.x-b.x);for(const f of sorted)drawBody(f,t);
+ // Short-lived comic impact stars show precisely when a hand or foot connects.
+ for(const e of game.hitEffects){
+  const progress=1-e.life/e.maximum,fade=e.life/e.maximum;
+  ctx.save();ctx.translate(e.x,e.y);ctx.strokeStyle=e.color;ctx.fillStyle=e.color;
+  ctx.lineWidth=Math.max(1,4*fade);ctx.globalAlpha=fade;
+  ctx.shadowColor=e.color;ctx.shadowBlur=17;
+  ctx.beginPath();ctx.arc(0,0,e.size*(.35+progress),0,Math.PI*2);ctx.stroke();
+  for(let ray=0;ray<8;ray++){
+   const angle=ray*Math.PI/4,near=e.size*(.48+progress*.3),far=e.size*(.72+progress);
+   ctx.beginPath();
+   ctx.moveTo(Math.cos(angle)*near,Math.sin(angle)*near);
+   ctx.lineTo(Math.cos(angle)*far,Math.sin(angle)*far);
+   ctx.stroke();
+  }
+  ctx.restore();
+ }
  ctx.textAlign='center';ctx.font='900 14px system-ui';ctx.fillStyle='#f3edff';
  ctx.fillText(game.heroProfile.name,game.hero.x,GROUND-game.hero.y-252);
  ctx.fillText(game.cpuProfile.name,game.cpu.x,GROUND-game.cpu.y-252);
