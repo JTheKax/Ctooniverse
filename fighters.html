@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10122d">
   <meta name="description" content="CToon Showdown: a fresh 2D fighter with a 200-slot roster that grows as new fighters are published.">
   <title>CToon Showdown | CTooniverse</title>
-  <link rel="stylesheet" href="showdown-reboot.css?v=20261108-roster-select-v2">
+  <link rel="stylesheet" href="showdown-reboot.css?v=20261108-battle-music-countdown">
 </head>
 <body>
 <main class="showdown-shell">
@@ -87,6 +87,20 @@
       <div><p class="eyebrow">02 / THE NEW ARENA</p><h2 id="arena-title">Arcade Battle</h2></div>
       <span class="roster-tally" id="round-score">TRAINING READY</span>
     </div>
+    <div class="battle-music-panel" aria-label="Original CToon Showdown battle music">
+      <div class="battle-music-title"><span class="battle-music-note" aria-hidden="true">♫</span><div><strong>SHOWDOWN SOUNDTRACK</strong><small id="battle-music-status">NEON KNOCKOUT · ORIGINAL SHOWDOWN THEME</small></div></div>
+      <label class="battle-audio-select">Battle theme
+        <select id="battle-music-theme" aria-label="Choose battle music">
+          <option value="neon">Neon Knockout</option>
+          <option value="pixel">Pixel Rumble</option>
+          <option value="off">Music Off</option>
+        </select>
+      </label>
+      <label class="battle-audio-volume">Volume <output id="battle-music-volume-value" for="battle-music-volume">55%</output>
+        <input id="battle-music-volume" type="range" min="0" max="100" step="5" value="55" aria-label="Battle music volume">
+      </label>
+    </div>
+    <p class="battle-countdown-hint">Every round starts with <b>3 · 2 · 1 · FIGHT!</b> before controls and the match timer activate.</p>
     <div class="arena-hud">
       <div class="hud-side"><div class="hud-name" id="player-name">PLAYER</div><div class="health-rail" aria-label="Player health"><div class="health-fill" id="player-health"></div></div></div>
       <div class="hud-time" id="fight-timer" aria-label="Time remaining">60</div>
@@ -119,6 +133,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=20261108-roster-select-v2"></script>
+<script type="module" src="showdown-reboot.js?v=20261108-battle-music-countdown"></script>
 </body>
 </html>
