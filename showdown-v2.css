@@ -1,0 +1,67 @@
+/* CToon Showdown V2 — original anime arcade visual language. */
+:root{color-scheme:dark;--ink:#0b0c21;--panel:#171631;--panel2:#222144;--steel:#8e84c4;--pink:#ee5bad;--cyan:#5ce9f2;--gold:#ffe082;--text:#f8f4ff;--muted:#c0b4db}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(ellipse at 50% -8%,#422c79 0%,#111027 48%,#070915 100%);min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button:disabled{opacity:.48;cursor:not-allowed}a{color:var(--cyan)}:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.shell{max-width:1400px;padding:clamp(12px,2.6vw,34px);margin:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:0 0 22px}
+.back-link{text-decoration:none;font-weight:900;letter-spacing:.08em;color:#b2f8ff;font-size:.86rem}.version{border:1px solid #8583dc;border-radius:99px;padding:8px 13px;background:#19183f;box-shadow:inset 0 0 15px #a271d22b;font-size:.72rem;letter-spacing:.12em;font-weight:900}
+.heading{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:22px}
+.heading h1,.select-title,.stage-title{font-family:Impact,"Arial Black",system-ui,sans-serif;font-style:italic;text-transform:uppercase;letter-spacing:.055em}
+.heading h1{font-size:clamp(2.8rem,8vw,6.6rem);line-height:.94;margin:0;color:#fff0b0;text-shadow:4px 5px 0 #653167,9px 10px 0 #15122d,0 0 40px #e25a9a65}
+.heading p{font-size:.94rem;color:var(--muted);margin:17px 0 0;max-width:720px}
+.mode-tag{white-space:nowrap;transform:skew(-8deg);background:linear-gradient(120deg,#28b4c3,#663eae);border:2px solid #9deafa;color:white;padding:13px 19px;font-weight:1000;letter-spacing:.11em}
+.panel{position:relative;border:2px solid #8275c4;background:linear-gradient(128deg,#1b1741,#15152f 65%,#1a1a39);box-shadow:0 14px 36px #0009,inset 0 0 0 2px #ffffff0b;clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%);padding:20px}
+.panel:before{content:"";height:5px;position:absolute;top:0;left:0;right:0;background:linear-gradient(90deg,var(--cyan),var(--pink),var(--gold))}
+.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.panel-heading h2,.stage-title{margin:0;color:#f4e2ff;font-size:clamp(1.25rem,2.2vw,2.1rem)}.eyebrow{display:block;color:var(--cyan);font-size:.7rem;letter-spacing:.2em;font-weight:900;margin-bottom:3px}
+.counter{border:1px solid #8079cd;background:#0d1233;border-radius:8px;padding:8px 12px;white-space:nowrap;color:var(--gold);font-weight:900}
+#catalog-banner{margin:0 0 15px;padding:9px 14px;min-height:39px;color:#cafaff;font-size:.79rem;font-weight:900;letter-spacing:.08em;background:linear-gradient(90deg,#0f4164,#382353);border:1px solid #526fbd;border-left:5px solid var(--cyan)}
+.catalog-row{display:flex;align-items:center;gap:12px}#catalog-banner{flex:1}
+.filters{display:grid;grid-template-columns:2fr repeat(3,minmax(0,1fr));gap:10px;margin:0 0 15px}
+.filters label,.pose-choice{display:flex;flex-direction:column;gap:6px;font-size:.72rem;letter-spacing:.06em;font-weight:900;color:#c5edff}
+.filters input,.filters select,.pose-choice select{background:#080d29;color:#fff;border:1px solid #8074c7;border-radius:6px;padding:10px;min-width:0;width:100%;outline-offset:2px}
+.select-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,300px);gap:14px;align-items:stretch}
+.roster-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;align-content:start}
+.roster-slot{position:relative;min-width:0;min-height:87px;aspect-ratio:.76;border:2px solid #5f639c;border-radius:3px;color:#e7e2ff;padding:4px;display:flex;flex-direction:column;justify-content:space-between;align-items:stretch;background:linear-gradient(160deg,#333c71 0%,#151630 80%);box-shadow:inset 0 0 0 1px #b3a8ee2b,0 3px 0 #08081c;transition:border-color .15s,transform .15s}
+.roster-slot:hover{border-color:var(--cyan);transform:translateY(-2px)}.roster-slot[aria-pressed="true"]{border-color:var(--gold);box-shadow:0 0 0 2px #b4813a,0 0 18px #ffdd6c78;background:linear-gradient(160deg,#4c467e,#1b1b40)}
+.roster-slot[data-state="ready"]{border-color:#58cbaa}.roster-slot[data-state="locked"]{filter:saturate(.62)}.roster-slot[data-state="artwork"]{border-color:#92765b}
+.slot-art{width:100%;height:65%;display:flex;align-items:center;justify-content:center;font:900 clamp(1.25rem,3vw,2.2rem)/1 Impact,sans-serif;color:#9892c5}
+.slot-art canvas,.slot-art img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:auto}
+.slot-caption{display:block;text-align:center;font-size:clamp(.52rem,.67vw,.75rem);font-weight:1000;line-height:1.1;max-width:100%;overflow-wrap:anywhere}
+.slot-indicator{display:block;font-size:.5rem;line-height:1;color:var(--gold);letter-spacing:.05em;text-align:center;min-height:.5rem;font-weight:900}
+.roster-empty{grid-column:1/-1;margin:10px 0;color:var(--muted)}
+.pages{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:13px;color:#fff0b1;font-size:.78rem;letter-spacing:.06em;font-weight:900}
+.game-btn{padding:11px 16px;color:white;border:2px solid #a38ff0;border-radius:4px;background:linear-gradient(125deg,#3d3485,#272158);font-weight:1000;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 3px 0 #0a0a1b}
+.game-btn:not(:disabled):hover{filter:brightness(1.17)}.game-btn:not(:disabled):active{transform:translateY(2px);box-shadow:0 1px 0 #09091c}.game-btn.main{background:linear-gradient(120deg,#ac267e,#683cba);border-color:#f4a9ea}.game-btn.strong{background:linear-gradient(125deg,#cf8f39,#a13a75);border-color:#ffe4a0}
+.game-btn.small{padding:8px 11px;font-size:.69rem}.game-btn[hidden]{display:none}
+.preview-card{padding:13px;border:2px solid #795ab9;background:linear-gradient(150deg,#3a2769,#101634);display:flex;flex-direction:column;gap:9px;box-shadow:inset 0 0 25px #05051a}
+.preview-frame{position:relative;align-self:center;width:min(100%,244px);aspect-ratio:240/286;border:3px solid #a68be6;overflow:hidden;background:#161239;box-shadow:0 0 22px #693ea3}
+.preview-frame canvas{width:100%;height:100%;display:block}.preview-frame:before,.preview-frame:after{content:"";position:absolute;border:4px solid #ffe38b;width:27px;height:27px;pointer-events:none}.preview-frame:before{left:5px;top:5px;border-right:0;border-bottom:0}.preview-frame:after{right:5px;bottom:5px;border-left:0;border-top:0}
+.preview-card h3{margin:0;font:italic 900 clamp(1.5rem,2.3vw,2.15rem)/1.04 Impact,"Arial Black",sans-serif;letter-spacing:.035em;color:var(--gold);text-transform:uppercase}
+#preview-series{font-size:.75rem;color:var(--muted);margin:0;min-height:1.3em}
+.status-chip{display:inline-block;align-self:flex-start;padding:5px 10px;border:1px solid #81dfe9;background:#102f4c;font-weight:1000;font-size:.68rem;letter-spacing:.11em;color:#9bfaff}
+.status-chip[data-state="locked"]{border-color:#ce9adf;color:#ffe1fb;background:#42204c}
+.status-chip[data-state="empty"]{border-color:#555678;color:#b4add4;background:#191932}
+.preview-artwork{min-height:1em;color:#bfaee4;font-size:.68rem;font-weight:800;letter-spacing:.05em}
+#preview-help{margin:0;line-height:1.4;color:#ded3fa;font-size:.8rem;min-height:2.8em}
+#preview-unlock{margin-top:2px}
+.arena-panel{margin-top:21px}.fight-hud{display:grid;grid-template-columns:minmax(0,1fr) 100px minmax(0,1fr);gap:15px;align-items:end;margin:4px 0 10px}
+.hud-side{min-width:0}.hud-side.cpu{text-align:right}.hud-name{font-family:Impact,"Arial Black",sans-serif;letter-spacing:.09em;font-size:clamp(1.1rem,2.3vw,1.8rem);font-style:italic;color:#ffe8a2}
+.health-track{position:relative;width:100%;height:25px;background:#3c2348;overflow:hidden;border:2px solid #e5aad7;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 100%,0 100%)}.health-fill{height:100%;width:100%;background:linear-gradient(90deg,#62e3a1,#d7f779);transition:width .07s linear}.cpu .health-track{transform:scaleX(-1)}
+.meter-track{width:65%;height:8px;border:1px solid #57ccdb;background:#17334b;overflow:hidden;margin-top:5px}.cpu .meter-track{margin-left:auto;transform:scaleX(-1)}.meter-fill{height:100%;width:0;background:linear-gradient(90deg,#72eaff,#cc8aff)}
+.timer-box{text-align:center;align-self:center;background:linear-gradient(#643a7f,#1e163f);border:2px solid #e9b3f4;box-shadow:0 0 18px #ba4aab44;min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer-box span{font-size:.65rem;letter-spacing:.15em;color:var(--cyan);font-weight:900}.timer-box strong{font:900 2.7rem/.92 Impact,sans-serif;color:#fff4b8}
+.arena-wrap{position:relative;border:4px solid #9e72dc;background:#0d1533;overflow:hidden;box-shadow:0 0 0 3px #1a143c,0 0 35px #8747c04a;isolation:isolate}
+#arena{display:block;width:100%;height:auto;aspect-ratio:16/9;touch-action:none}#fight-announcement{position:absolute;top:21%;left:2%;width:96%;text-align:center;pointer-events:none;color:#fff0ab;font:italic 1000 clamp(1.65rem,5.4vw,5.7rem)/1 Impact,"Arial Black",sans-serif;letter-spacing:.1em;text-shadow:4px 5px 0 #653161,8px 10px 0 #100d29,0 0 26px #9d4fa8}
+.below-stage{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-top:13px}.actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}#round-score{color:#e9dbff;letter-spacing:.1em;font-weight:1000;font-size:.8rem}
+.instructions{font-size:.83rem;color:#e3d6fb;line-height:1.5;margin:14px 0 0}.instructions b{color:#ffdf86}
+.touch-controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:17px auto 8px}
+.touch-bank{display:flex;justify-content:flex-start;flex-wrap:wrap;gap:8px}.touch-bank.actions-bank{justify-content:flex-end}
+.touch-bank button{min-width:60px;min-height:64px;padding:9px;background:linear-gradient(135deg,#403583,#261b52);color:#fff;font-weight:1000;border:2px solid #a09ce3;border-radius:8px;touch-action:none;user-select:none;-webkit-user-select:none}
+.touch-bank button[data-key="u"]{background:linear-gradient(125deg,#b8438b,#5b3198);border-color:#ffe18c}
+.touch-bank button:active{transform:scale(.96);background:#aa407f}.touch-bank button:focus{outline-color:#ffdf75}
+#showdown-status{min-height:20px;margin:12px 0 0;color:#c5f4ff;font-size:.85rem;font-weight:700}
+.site-footer{margin:26px 0 8px;padding:18px 0;border-top:1px solid #4c4772;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.77rem;color:#b1a3d1}.site-footer a{font-weight:800;text-decoration:none}
+@media(max-width:970px){.select-layout{grid-template-columns:1fr}.preview-card{display:grid;grid-template-columns:minmax(130px,210px) 1fr;align-items:center}.preview-frame{grid-row:1 / span 6}.preview-card h3{font-size:1.75rem}.roster-grid{grid-template-columns:repeat(10,minmax(0,1fr))}.slot-caption{font-size:.6rem}}
+@media(max-width:720px){.heading{align-items:start;flex-direction:column}.mode-tag{padding:8px 12px;font-size:.74rem}.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filters label:first-child{grid-column:1/-1}.roster-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.roster-slot{min-height:89px}.fight-hud{grid-template-columns:minmax(0,1fr) 72px minmax(0,1fr);gap:6px}.hud-name{font-size:1rem}.timer-box{min-height:61px}.timer-box strong{font-size:2.1rem}.health-track{height:18px}.touch-bank button{min-width:49px;min-height:58px;font-size:.77rem}.touch-bank{gap:5px}.shell{padding:12px}.panel{padding:12px;clip-path:none}.select-title{letter-spacing:.02em}}
+@media(max-width:470px){.preview-card{grid-template-columns:1fr;justify-items:center;text-align:center}.preview-frame{grid-row:auto;width:min(100%,230px)}.preview-card h3{font-size:2rem}.preview-card>*{max-width:100%}.status-chip{justify-self:center}.pages .game-btn{padding:8px 5px;font-size:.61rem}.touch-controls{grid-template-columns:1fr;gap:8px}.touch-bank,.touch-bank.actions-bank{justify-content:center}.slot-art{height:62%}.slot-caption{font-size:.56rem}.heading h1{font-size:3.6rem}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
