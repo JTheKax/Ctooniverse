@@ -1,0 +1,304 @@
+// CToon Showdown Reboot — isolated roster and new 2D practice engine.
+// The roster begins with 200 empty positions and automatically expands
+// to the next page when a fighter is published beyond slot 200.
+'use strict';
+const API_URL='https://hsxdyxdazsdmpucyhqly.supabase.co';
+const PUBLIC_KEY='sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS';
+const START_SLOTS=200, PAGE_SIZE=25;
+const $=id=>document.getElementById(id);
+const rosterGrid=$('roster-grid'), banner=$('catalog-banner');
+const search=$('roster-search'),series=$('roster-series'),kind=$('roster-state');
+const selection={page:0,slot:1,slots:START_SLOTS,fighters:new Map()};
+const startBtn=$('start-match'),practiceBtn=$('training-match'),restartBtn=$('restart-match'),pauseBtn=$('pause-match');
+const arena=$('arena'),ctx=arena.getContext('2d');
+const demoHero={slot:0,fighter_id:'practice-rookie',name:'Arcade Rookie',series:'Practice Fighters',accent:'#61e7ff',portrait:null};
+const demoCPU={slot:0,fighter_id:'practice-rival',name:'Practice Rival',series:'Practice Fighters',accent:'#ff80b4',portrait:null};
+const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
+const pad=n=>String(n).padStart(3,'0');
+const text=(parent,name,value,className)=>{
+  const el=document.createElement(name);if(className)el.className=className;
+  el.textContent=value;parent.appendChild(el);return el;
+};
+const safeImage=url=>{
+  if(typeof url!=='string'||url.length>1024)return null;
+  try{const parsed=new URL(url,location.href);return ['https:','http:'].includes(parsed.protocol)?parsed.href:null}
+  catch{return null}
+};
+function currentFighter(){return selection.fighters.get(selection.slot)||null}
+function pageSlots(){
+ const q=search.value.trim().toLowerCase().replace(/\s+/g,' ');
+ const state=kind.value, group=series.value;
+ const slotQuery=q.match(/^(?:slot\s*#?\s*)(\d+)$/);
+ const matches=[];
+ for(let n=1;n<=selection.slots;n++){
+   const f=selection.fighters.get(n);
+   if(state==='ready'&&!f||state==='empty'&&f)continue;
+   if(group!=='all'&&(!f||f.series!==group))continue;
+   if(q&&!((f?.name||'').toLowerCase().includes(q)||(f?.series||'').toLowerCase().includes(q)||
+     (f?.fighter_id||'').toLowerCase().includes(q)|| (slotQuery?Number(slotQuery[1])===n:(!Number.isNaN(Number(q))&&Number(q)===n))))continue;
+   matches.push(n);
+ }
+ return matches;
+}
+function updateSeries(){
+ const value=series.value;
+ series.replaceChildren();
+ let option=document.createElement('option');option.value='all';option.textContent='All series';series.append(option);
+ const distinct=[...new Set([...selection.fighters.values()].map(f=>f.series))].sort((a,b)=>a.localeCompare(b));
+ for(const item of distinct){option=document.createElement('option');option.value=item;option.textContent=item;series.append(option)}
+ series.value=distinct.includes(value)?value:'all';
+}
+function renderRoster(){
+ const matches=pageSlots(),pages=Math.max(1,Math.ceil(matches.length/PAGE_SIZE));
+ selection.page=Math.min(selection.page,pages-1);
+ rosterGrid.replaceChildren();
+ const frame=document.createDocumentFragment();
+ for(const n of matches.slice(selection.page*PAGE_SIZE,(selection.page+1)*PAGE_SIZE)){
+  const fighter=selection.fighters.get(n);
+  const button=document.createElement('button');button.type='button';
+  button.className='fighter-slot'+(fighter?' occupied':'');
+  button.style.setProperty('--fighter-accent',validColor(fighter?.accent));
+  button.setAttribute('aria-pressed',String(selection.slot===n));
+  button.setAttribute('aria-label',fighter?'Slot '+n+': '+fighter.name:'Slot '+n+': empty');
+  text(button,'span','SLOT '+pad(n),'slot-no');
+  const mark=text(button,'span',fighter?fighter.name.slice(0,1).toUpperCase():'+','slot-symbol');
+  const img=safeImage(fighter?.portrait);
+  if(img){const portrait=document.createElement('img');portrait.src=img;portrait.alt='';portrait.loading='lazy';portrait.onerror=()=>portrait.replaceWith(mark);mark.replaceWith(portrait)}
+  text(button,'span',fighter?fighter.name:'OPEN SLOT','slot-label');
+  button.addEventListener('click',()=>selectSlot(n));
+  frame.append(button);
+ }
+ rosterGrid.append(frame);
+ if(!matches.length)text(rosterGrid,'p','No roster slots match those filters.','notice');
+ $('roster-page').textContent='PAGE '+(selection.page+1)+' / '+pages+(matches.length?' · '+matches.length+' slots':'');
+ $('roster-prev').disabled=selection.page===0;
+ $('roster-next').disabled=selection.page>=pages-1;
+ $('roster-tally').textContent=selection.fighters.size+' / '+selection.slots+' published';
+ $('roster-capacity').textContent=String(selection.slots);
+}
+function selectSlot(slot){
+ selection.slot=slot;
+ const fighter=currentFighter();
+ const avatar=$('preview-avatar');avatar.replaceChildren();
+ avatar.style.setProperty('--fighter-accent',validColor(fighter?.accent));
+ const uri=safeImage(fighter?.portrait);
+ if(fighter&&uri){
+   const img=document.createElement('img');img.src=uri;img.alt='';
+   img.onerror=()=>{avatar.replaceChildren();avatar.textContent=fighter.name.charAt(0).toUpperCase()};
+   avatar.append(img);
+ }else avatar.textContent=fighter?fighter.name.charAt(0).toUpperCase():'?';
+ avatar.classList.toggle('is-empty',!fighter);
+ $('preview-tag').textContent=fighter?'PUBLISHED FIGHTER':'EMPTY SLOT';
+ $('preview-title').textContent=fighter?fighter.name:'SLOT '+pad(slot);
+ $('preview-series').textContent=fighter?fighter.series:'This place is reserved for a future fighter.';
+ $('preview-detail').textContent=fighter?'Ready for the new 2D practice arena. More character animations can be added later.':'Start a Practice Mode match while new fighters are being created.';
+ startBtn.disabled=!fighter;
+ startBtn.textContent=fighter?'Fight as '+fighter.name:'Choose a fighter first';
+ renderRoster();
+}
+function setPage(delta){selection.page+=delta;renderRoster();rosterGrid.scrollIntoView({behavior:'smooth',block:'nearest'})}
+$('roster-prev').addEventListener('click',()=>setPage(-1));
+$('roster-next').addEventListener('click',()=>setPage(1));
+for(const input of [search,series,kind])input.addEventListener('input',()=>{selection.page=0;renderRoster()});
+async function loadRoster(){
+ banner.textContent='Loading published fighters…';
+ try{
+  const response=await fetch(API_URL+'/rest/v1/showdown_reboot_fighters?select=slot,fighter_id,name,series,portrait,accent,enabled&enabled=eq.true&order=slot.asc',{
+   headers:{'apikey':PUBLIC_KEY,'Accept':'application/json'},cache:'no-store'
+  });
+  if(!response.ok)throw new Error('Catalog HTTP '+response.status);
+  const fighters=await response.json();
+  if(!Array.isArray(fighters))throw new Error('Unexpected catalog format');
+  selection.fighters=new Map(fighters.filter(f=>Number.isSafeInteger(f.slot)&&f.slot>0).map(f=>[f.slot,f]));
+  const maxSlot=selection.fighters.size?Math.max(...selection.fighters.keys()):0;
+  selection.slots=Math.max(START_SLOTS,Math.ceil(maxSlot/PAGE_SIZE)*PAGE_SIZE);
+  updateSeries();renderRoster();selectSlot(selection.slot);
+  banner.textContent=selection.fighters.size?
+    'Fresh roster ready! Choose a published fighter. Additional roster pages are added automatically as new slots are filled.':
+    'Fresh start: all 200 slots are open. No old fighters have been imported. Try Practice Mode while you build your roster.';
+ }catch(err){
+  console.warn('CToon Showdown roster unavailable:',err);
+  banner.textContent='The published roster is temporarily unavailable. Practice Mode still works. Reload this page to try again.';
+  renderRoster();selectSlot(selection.slot);
+ }
+}
+const keyAliases={arrowleft:'left',a:'left',arrowright:'right',d:'right',arrowup:'up',w:'up',arrowdown:'down',s:'down',j:'punch',k:'kick',l:'guard',u:'special'};
+const down=new Set();
+const oneShots=new Set();
+const buttons=[...document.querySelectorAll('[data-control]')];
+const keyDown=event=>{
+ const key=keyAliases[event.key.toLowerCase()];
+ if(!key)return;
+ if(['arrowleft','arrowright','arrowup','arrowdown'].includes(event.key.toLowerCase()))event.preventDefault();
+ if(!down.has(key))oneShots.add(key);
+ down.add(key);
+};
+const keyUp=event=>{const key=keyAliases[event.key.toLowerCase()];if(key)down.delete(key)};
+window.addEventListener('keydown',keyDown);
+window.addEventListener('keyup',keyUp);
+window.addEventListener('blur',()=>{down.clear();oneShots.clear();for(const button of buttons)button.classList.remove('pressed')});
+for(const button of buttons){
+ const action=button.dataset.control;
+ button.addEventListener('pointerdown',event=>{event.preventDefault();button.setPointerCapture(event.pointerId);if(!down.has(action))oneShots.add(action);down.add(action);button.classList.add('pressed')});
+ const release=()=>{down.delete(action);button.classList.remove('pressed')};
+ button.addEventListener('pointerup',release);button.addEventListener('pointercancel',release);button.addEventListener('lostpointercapture',release);
+}
+const GROUND=445,LEFT=68,RIGHT=892;
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,stamp:0,last:0};
+function body(profile,x,face){
+ return {profile,x,face,y:0,vy:0,hp:100,meter:0,cooldown:0,attack:0,attackType:'',block:false,crouch:false,stun:0,flash:0};
+}
+function updateHud(){
+ const p=game.hero,c=game.cpu;
+ $('player-name').textContent=game.heroProfile.name;
+ $('cpu-name').textContent=game.cpuProfile.name;
+ $('player-health').style.width=(p?p.hp:100)+'%';
+ $('cpu-health').style.width=(c?c.hp:100)+'%';
+ $('fight-timer').textContent=String(Math.ceil(game.timer));
+ $('round-score').textContent='ROUND '+game.round+' · '+game.wins[0]+' — '+game.wins[1];
+ $('match-result').textContent='FIRST TO TWO WINS';
+}
+function resetRound(){
+ game.hero=body(game.heroProfile,250,1);game.cpu=body(game.cpuProfile,710,-1);
+ game.timer=60;game.mode='fighting';game.between=0;
+ $('fight-announcement').textContent='';
+ updateHud();
+}
+function startMatch(profile){
+ if(!ctx){$('showdown-status').textContent='Your browser does not support the battle canvas.';return}
+ game.heroProfile=profile;game.cpuProfile=demoCPU;
+ game.round=1;game.wins=[0,0];game.paused=false;
+ resetRound();restartBtn.disabled=false;pauseBtn.disabled=false;pauseBtn.textContent='Pause';
+ $('showdown-status').textContent='Battle started. Use keyboard controls or the on-screen buttons.';
+ $('fight-announcement').textContent='FIGHT!';
+ game.stamp=performance.now()+1000;
+ document.querySelector('.arena-frame').scrollIntoView({behavior:'smooth',block:'center'});
+}
+practiceBtn.addEventListener('click',()=>startMatch(demoHero));
+startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter)startMatch(fighter)});
+restartBtn.addEventListener('click',()=>startMatch(game.heroProfile));
+pauseBtn.addEventListener('click',()=>{
+ if(!['fighting','between'].includes(game.mode))return;
+ game.paused=!game.paused;pauseBtn.textContent=game.paused?'Resume':'Pause';
+ $('fight-announcement').textContent=game.paused?'PAUSED':'';
+});
+function attack(attacker,defender,type){
+ if(attacker.cooldown>0||attacker.stun>0)return;
+ const data={punch:[.3,8,103,11],kick:[.48,13,131,16],special:[.72,23,166,27]}[type];
+ if(!data||type==='special'&&attacker.meter<40)return;
+ if(type==='special')attacker.meter-=40;
+ attacker.attack=data[0];attacker.cooldown=data[0]+.1;attacker.attackType=type;
+ attacker.block=false;attacker.crouch=false;
+ const distance=Math.abs(attacker.x-defender.x);
+ if(distance>data[2]||Math.abs(attacker.y-defender.y)>80)return;
+ const blocked=defender.block&&defender.y===0;
+ const damage=blocked?Math.ceil(data[1]*.2):data[1];
+ defender.hp=clamp(defender.hp-damage,0,100);
+ defender.stun=blocked?.08:.25;
+ defender.flash=.16;
+ defender.x=clamp(defender.x+attacker.face*(blocked?8:data[3]),LEFT,RIGHT);
+ attacker.meter=clamp(attacker.meter+(blocked?6:13),0,100);
+ if(defender.hp<=0)finishRound();
+}
+function finishRound(){
+ if(game.mode!=='fighting')return;
+ game.mode='between';game.between=2.2;
+ const winner=game.hero.hp>game.cpu.hp?0:game.cpu.hp>game.hero.hp?1:-1;
+ if(winner>=0)game.wins[winner]++;
+ const message=winner===0?'PLAYER WINS ROUND!':winner===1?'CPU WINS ROUND!':'DRAW ROUND';
+ $('fight-announcement').textContent=message;
+ $('showdown-status').textContent=message;
+ if(Math.max(...game.wins)>=2){
+  game.mode='finished';game.between=0;
+  const result=game.wins[0]>=2?'YOU WIN THE MATCH!':'CPU WINS THE MATCH';
+  $('fight-announcement').textContent=result;
+  $('showdown-status').textContent=result+' Choose Restart Match for another round.';
+  pauseBtn.disabled=true;
+ }
+ updateHud();
+}
+function step(dt){
+ if(game.mode==='between'){game.between-=dt;if(game.between<=0){game.round++;resetRound()}return}
+ if(game.mode!=='fighting'||game.paused)return;
+ game.timer=Math.max(0,game.timer-dt);
+ const p=game.hero,c=game.cpu;
+ for(const f of [p,c]){
+  f.cooldown=Math.max(0,f.cooldown-dt);f.attack=Math.max(0,f.attack-dt);f.stun=Math.max(0,f.stun-dt);f.flash=Math.max(0,f.flash-dt);
+  f.vy-=1200*dt;f.y=Math.max(0,f.y+f.vy*dt);if(f.y===0&&f.vy<0)f.vy=0;
+ }
+ p.face=p.x<c.x?1:-1;c.face=-p.face;
+ const direction=(down.has('right')?1:0)-(down.has('left')?1:0);
+ p.block=down.has('guard')&&p.y===0&&p.cooldown===0;
+ p.crouch=down.has('down')&&p.y===0&&!p.block;
+ if(p.stun===0&&p.cooldown===0&&!p.block&&!p.crouch)p.x=clamp(p.x+direction*235*dt,LEFT,RIGHT);
+ if(oneShots.has('up')&&p.y===0&&p.stun===0)p.vy=510;
+ for(const type of ['punch','kick','special'])if(oneShots.has(type))attack(p,c,type);
+ const dist=Math.abs(c.x-p.x);
+ c.block=p.attack>.06&&dist<155&&Math.random()<dt*4;
+ if(c.stun===0&&c.cooldown===0){
+  if(dist>103)c.x=clamp(c.x+Math.sign(p.x-c.x)*145*dt,LEFT,RIGHT);
+  else if(dist<64)c.x=clamp(c.x-Math.sign(p.x-c.x)*72*dt,LEFT,RIGHT);
+  if(dist<132&&Math.random()<dt*.88)attack(c,p,Math.random()>.7?'kick':'punch');
+ }
+ if(Math.abs(p.x-c.x)<62){const mid=(p.x+c.x)/2;p.x=clamp(mid-p.face*31,LEFT,RIGHT);c.x=clamp(mid+p.face*31,LEFT,RIGHT)}
+ if(game.timer===0)finishRound();
+ updateHud();
+ oneShots.clear();
+}
+function drawBody(f,t){
+ const x=f.x,y=GROUND-f.y,accent=validColor(f.profile.accent);
+ ctx.save();ctx.translate(x,y);ctx.scale(f.face,1);
+ ctx.globalAlpha=.38;ctx.fillStyle='#000';
+ ctx.beginPath();ctx.ellipse(0,f.y?f.y:0,52,11,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+ const bounce=f.y===0&&f.attack===0?Math.sin(t*3+f.x*.01)*2:0;
+ ctx.translate(0,bounce);
+ if(f.flash)ctx.shadowColor='#fff',ctx.shadowBlur=23;
+ ctx.lineJoin='round';ctx.lineCap='round';
+ const skin='#ffdfc7';
+ function line(a,b,c,d,width,color){ctx.strokeStyle='#081126';ctx.lineWidth=width+8;ctx.beginPath();ctx.moveTo(a,b);ctx.lineTo(c,d);ctx.stroke();ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke()}
+ line(-17,-72,-27,-6,19,'#2d356b');line(18,-72,30,-6,19,'#2d356b');
+ ctx.fillStyle=accent;ctx.strokeStyle='#0a1230';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(-35,-157);ctx.lineTo(35,-157);ctx.lineTo(27,-67);ctx.lineTo(-26,-67);ctx.closePath();ctx.fill();ctx.stroke();
+ const attacking=f.attack>0,extension=attacking?(f.attackType==='special'?96:63):30;
+ line(-26,-148,-43,-96,17,accent);
+ line(27,-148,extension,-105+(attacking?-18:0),17,accent);
+ ctx.beginPath();ctx.ellipse(0,-185,29,33,0,0,Math.PI*2);ctx.fillStyle=skin;ctx.fill();ctx.strokeStyle='#0a1230';ctx.lineWidth=5;ctx.stroke();
+ ctx.fillStyle='#131633';ctx.fillRect(6,-189,5,5);ctx.fillRect(19,-189,5,5);
+ ctx.beginPath();ctx.moveTo(-31,-198);ctx.lineTo(-24,-228);ctx.lineTo(9,-216);ctx.lineTo(34,-208);ctx.lineTo(25,-220);ctx.closePath();ctx.fillStyle=accent;ctx.fill();ctx.stroke();
+ if(f.block){ctx.strokeStyle='#b8edff';ctx.lineWidth=7;ctx.beginPath();ctx.arc(35,-125,34,-1.5,1.5);ctx.stroke()}
+ if(attacking){ctx.strokeStyle=f.attackType==='special'?'#ffe189':'#ffffff';ctx.lineWidth=f.attackType==='special'?13:7;ctx.globalAlpha=.75;ctx.beginPath();ctx.arc(extension-4,-125,45,-1.1,1.2);ctx.stroke()}
+ ctx.restore();
+}
+function drawArena(now){
+ if(!ctx)return;
+ const w=arena.width,h=arena.height,t=now/1000;
+ const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#101b53');g.addColorStop(.62,'#34356c');g.addColorStop(1,'#0d1634');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ ctx.fillStyle='#d2daff';for(let i=0;i<35;i++){const x=(i*97+53)%w,y=(i*61+37)%278;ctx.globalAlpha=.4+.25*Math.sin(t+i);ctx.fillRect(x,y,2,2)}ctx.globalAlpha=1;
+ ctx.fillStyle='#2b2361';ctx.beginPath();ctx.moveTo(0,300);ctx.lineTo(110,210);ctx.lineTo(180,298);ctx.lineTo(300,175);ctx.lineTo(430,300);ctx.lineTo(620,200);ctx.lineTo(750,300);ctx.lineTo(860,195);ctx.lineTo(960,305);ctx.lineTo(960,450);ctx.lineTo(0,450);ctx.fill();
+ ctx.fillStyle='#151a3a';ctx.fillRect(0,GROUND,w,h-GROUND);ctx.strokeStyle='#6775c4';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,GROUND);ctx.lineTo(w,GROUND);ctx.stroke();
+ ctx.strokeStyle='#2e3f71';ctx.lineWidth=2;for(let i=0;i<14;i++){ctx.beginPath();ctx.moveTo(i*78,GROUND);ctx.lineTo(480+(i-7)*155,h);ctx.stroke()}
+ if(!game.hero){drawBody(body(demoHero,255,1),t);drawBody(body(demoCPU,700,-1),t);return}
+ const sorted=[game.hero,game.cpu].sort((a,b)=>a.x-b.x);for(const f of sorted)drawBody(f,t);
+ ctx.textAlign='center';ctx.font='900 14px system-ui';ctx.fillStyle='#f3edff';
+ ctx.fillText(game.heroProfile.name,game.hero.x,GROUND-game.hero.y-252);
+ ctx.fillText(game.cpuProfile.name,game.cpu.x,GROUND-game.cpu.y-252);
+}
+function tick(stamp){
+ const dt=game.last?clamp((stamp-game.last)/1000,0,.05):0;game.last=stamp;
+ if(game.stamp>stamp){drawArena(stamp);requestAnimationFrame(tick);return}
+ if(!game.paused)step(dt);
+ drawArena(stamp);
+ requestAnimationFrame(tick);
+}
+async function showOwnerLink(){
+ try{
+  const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
+  const db=createClient(API_URL,PUBLIC_KEY);
+  const {data:{user},error}=await db.auth.getUser();
+  if(error||!user)return;
+  const result=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();
+  if(!result.error&&result.data)$('owner-fighter-link').hidden=false;
+ }catch(_){}
+}
+renderRoster();selectSlot(1);loadRoster();showOwnerLink();
+requestAnimationFrame(tick);
