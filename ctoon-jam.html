@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#090d24">
   <meta name="description" content="CToon Jam: play five-lane guitar-rhythm challenges with original arcade tracks and the CTooniverse Radio library.">
   <title>CToon Jam | CTooniverse</title>
-  <link rel="stylesheet" href="ctoon-jam.css?v=1">
-  <script src="ctoon-jam.js?v=radio-library-20261108" defer></script>
+  <link rel="stylesheet" href="ctoon-jam.css?v=radio-song-list-20261108">
+  <script src="ctoon-jam.js?v=radio-song-list-20261108" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to game</a>
@@ -29,6 +29,15 @@
       <label class="jam-mute"><input id="jam-mute" type="checkbox"> Mute music &amp; effects</label>
       <button id="jam-play" class="jam-button jam-primary" type="button">▶ Start Song</button>
       <button id="jam-pause" class="jam-button" type="button" disabled>Pause</button>
+    </section>
+    <section class="jam-radio" aria-labelledby="jam-radio-title">
+      <div class="jam-radio-heading">
+        <div><p class="jam-eyebrow">PLAY THE MUSIC FROM THE SITE RADIO</p><h2 id="jam-radio-title">♫ CTooniverse Radio Songs</h2></div>
+        <span class="jam-tag" id="jam-radio-count">Checking library…</span>
+      </div>
+      <p class="jam-radio-description">Select a radio song to play its original uploaded recording with a generated practice note chart. The chart uses approximate timing, not a custom beatmap.</p>
+      <p id="jam-radio-status" role="status" aria-live="polite">Loading published songs from the CTooniverse Radio…</p>
+      <div class="jam-radio-tracks" id="jam-radio-tracks" aria-label="CTooniverse Radio track selection"></div>
     </section>
     <section class="jam-stage" aria-label="Rhythm stage">
       <div class="jam-hud">
