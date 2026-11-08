@@ -544,11 +544,11 @@
           :"Audio could not be loaded.";
         audioStatus.textContent=reason+" Press Retry Audio or the player's Play button.";
         status.textContent=reason+" Try a different song if it keeps failing.";
-        if(state==="loading"||state==="buffering"){
+        if(["loading","buffering","playing","paused"].includes(state)){
           state="ready";
           cancelAnimationFrame(raf);
           showOverlay("AUDIO LOAD FAILED",reason+" Use Retry Audio above or select another song.");
-          playBtn.textContent="↻ Retry Start";
+          playBtn.disabled=false;playBtn.textContent="↻ Retry Start";
           pauseBtn.disabled=true;songSelect.disabled=false;difficultySelect.disabled=false;
         }
       };
