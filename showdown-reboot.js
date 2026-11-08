@@ -17,17 +17,17 @@ const arena=$('arena'),ctx=arena.getContext('2d');
 // Until additional licensed/cartoon fighters are published, training is a Johnny Bravo mirror match.
 // Johnny Bravo is the first fighter. Other full 3x11 atlases use the same pose mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
- portrait:'/images/showdown/johnny-bravo-complete-v2-portrait.svg',
- preview_sheet:'/images/showdown/johnny-bravo-complete-v2.svg',preview_columns:3,preview_rows:11};
+ portrait:'/images/showdown/johnny-bravo-show-accurate-v3-portrait.svg',
+ preview_sheet:'/images/showdown/johnny-bravo-show-accurate-v3.svg',preview_columns:3,preview_rows:11};
 const demoCPU={...demoHero};
 const combatSpriteCache=new Map();
 // Sprite atlas rows: idle, walk, run, punch, kick, guard, jump, crouch, special, hurt, KO.
 function spriteAtlas(profile){
  if(!profile||Number(profile.preview_rows)<11||Number(profile.preview_columns)<3)return null;
  const primary=safeImage(profile.preview_sheet);
- // Johnny's previously working sprites remain installed for safe fallback.
+ // Preserve the earlier working atlas as a fallback if the new artwork fails to load.
  const backup=profile.fighter_id==='johnny-bravo'
-   ?safeImage('/images/showdown/johnny-bravo-mugen-atlas.png'):null;
+   ?safeImage('/images/showdown/johnny-bravo-complete-v2.svg'):null;
  for(const source of [primary,backup]){
   if(!source)continue;
   let item=combatSpriteCache.get(source);
