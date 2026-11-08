@@ -18,7 +18,7 @@
   let audio = null, master = null, noiseBuffer = null;
   let track = songs.neon, notes = [], state = "ready", startAt = 0;
   let beatNext = 0, raf = 0, score = 0, combo = 0, judged = 0, weighted = 0, health = 75;
-  let charge = 0, hypeEnd = 0, feedbackUntil = 0, lastResult = "";
+  let charge = 0, hypeEnd = 0, feedbackUntil = 0;
   let totalTime = 0, activeDifficulty = "normal";
   const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
   const beatSeconds = () => 60 / track.bpm;
@@ -120,7 +120,7 @@
   function updateHud() {
     $("jam-score").textContent=fmt(score);
     $("jam-combo").textContent=fmt(combo);
-    const hypeActive=state==="playing" && songTime()<hypeEnd;
+    const hypeActive=state==="playing" && hypeEnd>0 && songTime()<hypeEnd;
     const multiplier=Math.min(4,1+Math.floor(combo/10)) * (hypeActive?2:1);
     $("jam-multiplier").textContent="×"+multiplier;
     $("jam-accuracy").textContent=judged ? Math.round(100*weighted/judged)+"%" : "—";
@@ -157,7 +157,7 @@
     const quality=bestDiff<=.085?"PERFECT":bestDiff<=.15?"GREAT":"GOOD";
     const value=quality==="PERFECT"?1:quality==="GREAT"?.75:.5;
     combo++;judged++;weighted+=value;
-    const hypeActive=t<hypeEnd;
+    const hypeActive=hypeEnd>0 && t<hypeEnd;
     const multiplier=Math.min(4,1+Math.floor(combo/10))*(hypeActive?2:1);
     score+=Math.round(value*100*multiplier);
     health=clamp(health+1.5,0,100);
@@ -167,7 +167,7 @@
     updateHud();
   }
   function activateHype() {
-    if (state!=="playing" || charge<50 || songTime()<hypeEnd) return;
+    if (state!=="playing" || charge<50 || (hypeEnd>0 && songTime()<hypeEnd)) return;
     charge=0;hypeEnd=songTime()+8;
     feedback("HYPE MODE!","#f9c8ff");updateHud();
   }
@@ -255,7 +255,7 @@
       pen.fillStyle=colors[lane];pen.beginPath();pen.ellipse(x,hitY+14,Math.min(18,laneW*.25),8,0,0,2*Math.PI);pen.fill();
       pen.fillStyle="#fff";pen.font="bold "+Math.max(12,Math.min(20,laneW*.21))+"px system-ui";pen.textAlign="center";pen.fillText(keys[lane].toUpperCase(),x,Math.min(h-14,hitY+52));
     }
-    if(state==="playing"&&t<hypeEnd){
+    if(state==="playing"&&hypeEnd>0&&t<hypeEnd){
       pen.fillStyle="#df8cff12";pen.fillRect(left,top,width,h-top);
       pen.strokeStyle="#efbaff";pen.lineWidth=3;pen.strokeRect(left,top,width,h-top);
     }
@@ -331,11 +331,12 @@
       const lane=Number(button.dataset.lane);
       flashButton(lane);hit(lane);
     });
+    button.addEventListener("click",event=>{if(event.detail===0){const lane=Number(button.dataset.lane);flashButton(lane);hit(lane);}});
     button.addEventListener("contextmenu",event=>event.preventDefault());
   }
   document.addEventListener("keydown",event=>{
     const tag=event.target && event.target.tagName;
-    if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA")return;
+    if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA"||(tag==="BUTTON"&&event.code==="Space"))return;
     if(event.code==="Space" && !event.repeat){event.preventDefault();activateHype();return;}
     const lane=keys.indexOf(event.key.toLowerCase());
     if(lane>=0&&!event.repeat){event.preventDefault();flashButton(lane);hit(lane);}
