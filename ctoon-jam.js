@@ -7,6 +7,7 @@
   const songSelect = $("jam-song"), difficultySelect = $("jam-difficulty"), muteInput = $("jam-mute");
   const overlay = $("jam-overlay"), judgement = $("jam-judgement");
   const status = $("jam-message"), best = $("jam-best");
+  const syncInput = $("jam-sync-offset"), syncValue = $("jam-sync-value"), chartStatus = $("jam-chart-status");
   const gameStage = document.querySelector(".jam-stage");
   const radioList = $("jam-radio-tracks"), radioStatus = $("jam-radio-status"), radioCount = $("jam-radio-count");
   const colors = ["#61ea82","#fd6384","#ffe16a","#65bfff","#d99aff"];
@@ -23,7 +24,7 @@
   const radioBase="https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/";
   const AC = window.AudioContext || window.webkitAudioContext;
   let audio = null, master = null, noiseBuffer = null;
-  let radioAudio = null, isRadio = false, loadSerial = 0;
+  let radioAudio = null, isRadio = false, loadSerial = 0, appliedOffset = 0;
   let track = songs.neon, notes = [], state = "ready", startAt = 0;
   let beatNext = 0, raf = 0, score = 0, combo = 0, judged = 0, weighted = 0, health = 75;
   let charge = 0, hypeEnd = 0, feedbackUntil = 0;
@@ -33,6 +34,49 @@
   const songTime = () => isRadio ? (radioAudio ? radioAudio.currentTime : 0) : (audio ? audio.currentTime - startAt : -3);
   const fmt = number => number.toLocaleString("en-US");
   const keyForScore = () => "ctoon-jam-best-v1-" + songSelect.value + "-" + difficultySelect.value;
+  function offsetKey() { return "ctoon-jam-chart-offset-v1:"+songSelect.value; }
+  function readOffset() {
+    let value=0;
+    try {value=Number(localStorage.getItem(offsetKey())||0);}catch{}
+    return Number.isFinite(value)?clamp(Math.round(value*20)/20,-2,2):0;
+  }
+  function setupOffset() {
+    const enabled=!!track.radio;
+    syncInput.disabled=!enabled;
+    syncInput.value=enabled?String(readOffset()):"0";
+    appliedOffset=Number(syncInput.value)||0;
+    syncValue.textContent=(appliedOffset>=0?"+":"")+appliedOffset.toFixed(2)+"s";
+  }
+  async function loadTrackChart(song) {
+    const match=/^tracks\/([a-z0-9_-]+)\.(mp3|ogg|wav)$/i.exec(song.path||"");
+    if(!match)return null;
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),5000);
+    try{
+      const response=await fetch("ctoon-jam-charts/"+match[1]+".json?v=1",{signal:controller.signal,cache:"force-cache"});
+      if(!response.ok)return null;
+      const data=await response.json();
+      if(data.format!=="ctoon-jam-chart"||data.version!==1||data.sourceStoragePath!==song.path||
+         !Number.isFinite(data.bpm)||data.bpm<50||data.bpm>220||!data.difficultyNotes)return null;
+      for(const difficulty of ["easy","normal","hard"]){
+        const rows=data.difficultyNotes[difficulty];
+        if(!Array.isArray(rows)||rows.length===0||rows.length>10000)return null;
+        if(rows.some(row=>!Array.isArray(row)||row.length!==2||!Number.isFinite(row[0])||row[0]<0||row[0]>900||
+           !Number.isInteger(row[1])||row[1]<0||row[1]>4))return null;
+      }
+      return data;
+    }catch(error){
+      console.warn("CToon Jam chart not available:",song.title,error);
+      return null;
+    }finally{clearTimeout(timeout);}
+  }
+  function notesFromChart(chart,duration) {
+    const offset=(Number(chart.offsetSeconds)||0)+appliedOffset;
+    const limit=Number.isFinite(duration)&&duration>0?duration-.2:390;
+    const raw=chart.difficultyNotes[activeDifficulty]||chart.difficultyNotes.normal;
+    return raw.map(([seconds,lane])=>({at:seconds+offset,lane,judged:false}))
+              .filter(note=>note.at>=0&&note.at<limit);
+  }
 
   function syncRadioSelection() {
     if(!radioList)return;
@@ -366,6 +410,10 @@
     syncRadioSelection();
     isRadio=!!track.radio;
     activeDifficulty=difficultySelect.value;
+    setupOffset();
+    if(chartStatus)chartStatus.textContent=isRadio?"Loading the song-specific chart file…":"Playing original arcade chart.";
+    // Download the chart concurrently: audio.play() remains inside the user's click gesture.
+    const chartPromise=isRadio?loadTrackChart(track):Promise.resolve(null);
     state="loading";
     playBtn.disabled=true;pauseBtn.disabled=true;
     songSelect.disabled=true;difficultySelect.disabled=true;
@@ -373,6 +421,7 @@
     // Build and paint the note highway BEFORE waiting on streaming or browser audio permissions.
     // This prevents the stage from appearing empty while mobile browsers buffer a song.
     notes=makeNotes();
+    if(isRadio&&appliedOffset)for(const note of notes)note.at+=appliedOffset;
     totalTime=isRadio?180:(4+track.bars*4)*beatSeconds();
     showOverlay("LOADING SONG",isRadio?"Getting your radio song ready. The note board is loaded below…":"Preparing your original track…");
     judgement.textContent="";
@@ -397,10 +446,20 @@
         } finally {clearTimeout(timeout);}
         if(current!==loadSerial)return;
         const duration=Number.isFinite(media.duration) && media.duration>0?media.duration:180;
-        // Radio metadata has no beatmap/BPM: practice notes remain an approximate 120 BPM grid.
-        track.bars=Math.max(1,Math.min(240,Math.floor((duration-4*beatSeconds())/(4*beatSeconds()))));
         totalTime=duration;
-        notes=makeNotes();
+        const chart=await chartPromise;
+        if(current!==loadSerial)return;
+        if(chart){
+          track.bpm=chart.bpm;
+          notes=notesFromChart(chart,duration);
+          if(chartStatus)chartStatus.textContent="Loaded "+activeDifficulty+" chart · "+track.bpm+" BPM · "+notes.length+" notes · starter timing draft. Adjust radio chart timing if needed.";
+        }else{
+          // A new uploaded radio song without a chart still works using the practice grid.
+          track.bars=Math.max(1,Math.min(240,Math.floor((duration-4*beatSeconds())/(4*beatSeconds()))));
+          notes=makeNotes();
+          if(appliedOffset)for(const note of notes)note.at+=appliedOffset;
+          if(chartStatus)chartStatus.textContent="No chart file for this song yet — using the generated practice grid.";
+        }
         media.addEventListener("ended",()=>{if(current===loadSerial&&state==="playing")finishSong();});
         media.addEventListener("error",()=>{
           if(current===loadSerial && (state==="playing"||state==="paused")){
@@ -471,6 +530,17 @@
   difficultySelect.addEventListener("change",()=>{
     track=songs[songSelect.value]||songs.neon;
     refreshBest();draw();updateHud();
+  });
+  syncInput.addEventListener("input",()=>{
+    const value=Number(syncInput.value)||0;
+    const delta=value-appliedOffset;
+    // Adjust the unjudged notes immediately while the audio continues playing.
+    if(track.radio&&state==="playing"&&delta!==0){
+      for(const note of notes)if(!note.judged)note.at+=delta;
+    }
+    appliedOffset=value;
+    syncValue.textContent=(value>=0?"+":"")+value.toFixed(2)+"s";
+    try{if(track.radio)localStorage.setItem(offsetKey(),String(value));}catch{}
   });
   function flashButton(lane) {
     const button=controls[lane];if(!button)return;
