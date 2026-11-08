@@ -1,19 +1,115 @@
-/* CTooniverse website status: both labels are visible; only the active mode glows. */
-.site-status-strip{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 11px;max-width:1400px;margin:2px auto 8px;padding:9px 14px;border:2px solid #465c91;border-radius:13px;background:linear-gradient(110deg,#101734,#201342);color:#eaf3ff;box-shadow:0 5px 15px #06091e88;font-family:system-ui,-apple-system,Segoe UI,sans-serif;position:relative;z-index:1}
-.site-status-title{font-weight:1000;letter-spacing:1.2px;font-size:.7rem;margin-right:5px;color:#a3c9ff}
-.site-status-button{font:900 .78rem system-ui,-apple-system,Segoe UI,sans-serif;min-height:35px;padding:7px 13px;border-radius:12px;border:2px solid #556182;cursor:pointer;transition:filter .16s,box-shadow .16s,transform .16s;opacity:.6}
-.site-status-button:hover,.site-status-button:focus-visible{opacity:1;filter:brightness(1.12)}
-.site-status-button:focus-visible{outline:3px solid #86d6ff;outline-offset:2px}
-.site-status-button.is-online{background:#153b2f;color:#90ebad;border-color:#40b879}
-.site-status-button.is-maintenance{background:#4a3b12;color:#ffe08a;border-color:#d4a62e}
-.site-status-button[aria-pressed="true"]{opacity:1;box-shadow:0 0 0 2px #f8faff25,0 0 16px currentColor;transform:translateY(-1px)}
-.site-status-summary{font-size:.78rem;font-weight:800;color:#bed6f4}
-.site-status-strip[data-mode="maintenance"]{border-color:#e7b846;background:linear-gradient(110deg,#3d2912,#39252b)}
-.site-status-strip[data-mode="maintenance"] .site-status-summary{color:#ffe9a4}
-.site-status-strip[data-mode="online"] .site-status-summary{color:#9ef0b5}
-.site-status-detail{flex:0 0 100%;margin:0;font-size:.75rem;text-align:center;color:#d8e7ff}
-.site-status-detail[hidden]{display:none}
-.site-under-maintenance .site-status-strip{box-shadow:0 0 20px #e8bd4870}
+/* Site-wide navigation status colors.
+   Owner setting = online (green) or maintenance (yellow).
+   Only navigation changes color; page content and game styles stay intact. */
+.site-status-strip{display:none!important}
+
+body[data-site-mode="online"]{
+  --site-nav-bg:#113222;
+  --site-nav-tab:#1b5a37;
+  --site-nav-tab-hover:#266e43;
+  --site-nav-tab-active:#287146;
+  --site-nav-panel:#123a27;
+  --site-nav-ink:#f2fff7;
+  --site-nav-edge:#7bebaa;
+  --site-nav-hover:#256d43;
+  --site-nav-glow:#34d47b66;
+}
+body[data-site-mode="maintenance"]{
+  --site-nav-bg:#57410b;
+  --site-nav-tab:#ecc34c;
+  --site-nav-tab-hover:#ffe080;
+  --site-nav-tab-active:#ffdf71;
+  --site-nav-panel:#f4d777;
+  --site-nav-ink:#302102;
+  --site-nav-edge:#bd8210;
+  --site-nav-hover:#ffebae;
+  --site-nav-glow:#f0bf3d66;
+}
+
+/* Shared navigation shell: Home, CToons, Shop, Games, Watch,
+   Community, Account, Owner — including all responsive layouts. */
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav{
+  background:var(--site-nav-bg)!important;
+  border-color:var(--site-nav-edge)!important;
+  box-shadow:0 0 0 2px var(--site-nav-bg),0 8px 20px var(--site-nav-glow)!important;
+}
+
+/* Both ordinary link tabs and JS-built dropdown triggers. */
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav .nav-link{
+  background:var(--site-nav-tab)!important;
+  color:var(--site-nav-ink)!important;
+  border-color:var(--site-nav-edge)!important;
+  border-bottom-color:var(--site-nav-edge)!important;
+  text-shadow:none!important;
+  box-shadow:inset 0 1px #ffffff29,0 3px 0 #0004!important;
+}
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav .nav-link .nav-icon{
+  color:var(--site-nav-ink)!important;
+  filter:none!important;
+}
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav .nav-link:is(:hover,:focus-visible,[aria-expanded="true"]){
+  background:var(--site-nav-tab-hover)!important;
+  color:var(--site-nav-ink)!important;
+  border-color:var(--site-nav-edge)!important;
+  box-shadow:0 0 13px var(--site-nav-glow)!important;
+}
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav .nav-link:is(.active,[aria-current="page"]){
+  background:var(--site-nav-tab-active)!important;
+  color:var(--site-nav-ink)!important;
+  border-color:var(--site-nav-edge)!important;
+  box-shadow:inset 0 2px #ffffff4a,0 0 15px var(--site-nav-glow)!important;
+}
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav .nav-link:focus-visible,
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav :is(a,button):focus-visible{
+  outline:3px solid var(--site-nav-edge)!important;
+  outline-offset:2px!important;
+}
+
+/* Drop-down menus: CToons, Shop, Games, Community, Account and Owner.
+   These menus are created and positioned by different existing scripts. */
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav :is(
+  .ctoons-dropdown-panel,.games-dropdown-panel,
+  .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel
+){
+  background:var(--site-nav-panel)!important;
+  color:var(--site-nav-ink)!important;
+  border-color:var(--site-nav-edge)!important;
+  box-shadow:0 10px 26px #0008,0 0 12px var(--site-nav-glow)!important;
+}
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav :is(
+  .ctoons-dropdown-panel,.games-dropdown-panel,
+  .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel
+) :is(a,button){
+  color:var(--site-nav-ink)!important;
+  background:transparent!important;
+  border-color:transparent!important;
+  text-shadow:none!important;
+}
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav :is(
+  .ctoons-dropdown-panel,.games-dropdown-panel,
+  .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel
+) :is(a,button):is(:hover,:focus-visible,[aria-current="page"],.active){
+  background:var(--site-nav-hover)!important;
+  color:var(--site-nav-ink)!important;
+  border-color:var(--site-nav-edge)!important;
+}
+
+/* CToon Jam has a compact independent Back to Games navigation header. */
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .jam-topbar{
+  background:var(--site-nav-bg)!important;
+  border-color:var(--site-nav-edge)!important;
+  color:var(--site-nav-ink)!important;
+}
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .jam-topbar :is(.jam-back,.jam-tag){
+  background:var(--site-nav-tab)!important;
+  border-color:var(--site-nav-edge)!important;
+  color:var(--site-nav-ink)!important;
+}
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .jam-topbar .jam-back:hover{
+  background:var(--site-nav-tab-hover)!important;
+}
+
+/* Keep the owner-only control panel available for changing the status. */
 .site-operating-controls{margin:20px auto;padding:17px;border:2px solid #7462bc;border-radius:17px;background:#10142d;max-width:650px;text-align:left}
 .site-operating-controls h3{margin:0 0 9px;color:#f0eaff;font-size:1.05rem}
 .site-operating-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
