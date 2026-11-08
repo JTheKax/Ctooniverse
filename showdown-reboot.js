@@ -13,8 +13,15 @@ const account={db:null,user:null,owned:new Set(),balance:null,loading:true,busy:
 const previewAnimation={image:null,token:0,columns:3,rows:1,loaded:false};
 const startBtn=$('start-match'),practiceBtn=$('training-match'),restartBtn=$('restart-match'),pauseBtn=$('pause-match');
 const arena=$('arena'),ctx=arena.getContext('2d');
-const demoHero={slot:0,fighter_id:'practice-rookie',name:'Arcade Rookie',series:'Practice Fighters',accent:'#61e7ff',portrait:null};
-const demoCPU={slot:0,fighter_id:'practice-rival',name:'Practice Rival',series:'Practice Fighters',accent:'#ff80b4',portrait:null};
+// Until additional licensed/cartoon fighters are published, training is a Johnny Bravo mirror match.
+const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
+  portrait:'/images/showdown/johnny-bravo-portrait.svg',preview_sheet:'/images/showdown/johnny-bravo-idle.svg'};
+const demoCPU={...demoHero};
+const johnnySheet=new Image();
+let johnnyArtReady=false;
+johnnySheet.onload=()=>{johnnyArtReady=true;};
+johnnySheet.onerror=()=>{console.warn('Johnny Bravo sprite strip unavailable; using fallback renderer.');};
+johnnySheet.src='/images/showdown/johnny-bravo-idle.svg';
 const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
 const pad=n=>String(n).padStart(3,'0');
 const text=(parent,name,value,className)=>{
@@ -395,6 +402,34 @@ function step(dt){
 }
 function drawBody(f,t){
  const x=f.x,y=GROUND-f.y,accent=validColor(f.profile.accent);
+ if(f.profile.fighter_id==='johnny-bravo'&&johnnyArtReady){
+  ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(f.face,1);
+  // Sprite frames animate even when idle, with responsive attack/crouch/guard poses.
+  const action=f.attackType;
+  const attacking=f.attack>0;
+  const col=attacking?(action==='kick'?2:1):Math.floor(t*5)%3;
+  const bounce=f.y===0?Math.sin(t*8)*1.8:0;
+  const lean=attacking?(action==='special'?-0.16:action==='kick'?-0.10:-0.07):0;
+  if(f.crouch)ctx.scale(1,.8);
+  ctx.rotate(lean);
+  ctx.globalAlpha=.33;ctx.fillStyle='#000';
+  ctx.beginPath();ctx.ellipse(0,0,64,11,0,0,Math.PI*2);ctx.fill();
+  ctx.globalAlpha=1;
+  ctx.drawImage(johnnySheet,col*300,0,300,340,-130,-282+bounce,260,282);
+  if(attacking){
+   const isSpecial=action==='special';
+   ctx.strokeStyle=isSpecial?'#ffe677':'#eff9ff';
+   ctx.lineWidth=isSpecial?13:7;
+   ctx.globalAlpha=.82;ctx.shadowBlur=23;ctx.shadowColor=ctx.strokeStyle;
+   ctx.beginPath();ctx.arc(60,-156,48,-1.1,1.25);ctx.stroke();
+   ctx.shadowBlur=0;ctx.globalAlpha=1;
+  }
+  if(f.block){ctx.strokeStyle='#b9ebff';ctx.lineWidth=6;ctx.beginPath();ctx.arc(45,-155,60,-1.5,1.45);ctx.stroke()}
+  if(f.flash){ctx.fillStyle='#fff';ctx.globalAlpha=.17;ctx.fillRect(-130,-282,260,282)}
+  ctx.restore();
+  return;
+ }
+
  ctx.save();ctx.translate(x,y);ctx.scale(f.face,1);
  ctx.globalAlpha=.38;ctx.fillStyle='#000';
  ctx.beginPath();ctx.ellipse(0,f.y?f.y:0,52,11,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
