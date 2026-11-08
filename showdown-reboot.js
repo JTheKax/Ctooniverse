@@ -16,25 +16,32 @@ const arena=$('arena'),ctx=arena.getContext('2d');
 // Until additional licensed/cartoon fighters are published, training is a Johnny Bravo mirror match.
 // Johnny Bravo is the first fighter. Other full 3x11 atlases use the same pose mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
- portrait:'/images/showdown/johnny-bravo-mugen-portrait.webp',
- preview_sheet:'/images/showdown/johnny-bravo-mugen-atlas.png',preview_columns:3,preview_rows:11};
+ portrait:'/images/showdown/johnny-bravo-complete-v2-portrait.svg',
+ preview_sheet:'/images/showdown/johnny-bravo-complete-v2.svg',preview_columns:3,preview_rows:11};
 const demoCPU={...demoHero};
 const combatSpriteCache=new Map();
 // Sprite atlas rows: idle, walk, run, punch, kick, guard, jump, crouch, special, hurt, KO.
 function spriteAtlas(profile){
  if(!profile||Number(profile.preview_rows)<11||Number(profile.preview_columns)<3)return null;
- const source=safeImage(profile.preview_sheet);
- if(!source)return null;
- let item=combatSpriteCache.get(source);
- if(!item){
-  item={image:new Image(),loaded:false,failed:false};
-  const entry=item;
-  item.image.onload=()=>{entry.loaded=entry.image.naturalWidth>0&&entry.image.naturalHeight>0};
-  item.image.onerror=()=>{entry.failed=true;console.warn('Could not load fighter sprite atlas:',source)};
-  item.image.decoding='async';item.image.src=source;
-  combatSpriteCache.set(source,item);
+ const primary=safeImage(profile.preview_sheet);
+ // Johnny's previously working sprites remain installed for safe fallback.
+ const backup=profile.fighter_id==='johnny-bravo'
+   ?safeImage('/images/showdown/johnny-bravo-mugen-atlas.png'):null;
+ for(const source of [primary,backup]){
+  if(!source)continue;
+  let item=combatSpriteCache.get(source);
+  if(!item){
+   item={image:new Image(),loaded:false,failed:false};
+   const entry=item;
+   item.image.onload=()=>{entry.loaded=entry.image.naturalWidth>0&&entry.image.naturalHeight>0};
+   item.image.onerror=()=>{entry.failed=true;console.warn('Could not load fighter sprite atlas:',source)};
+   item.image.decoding='async';item.image.src=source;
+   combatSpriteCache.set(source,item);
+  }
+  if(item.loaded)return item.image;
+  if(!item.failed)return null; // Wait for the approved art before using its fallback.
  }
- return item.loaded?item.image:null;
+ return null;
 }
 function spritePose(f,t,columns){
  let row=0,frame=Math.floor(t*5)%columns;
