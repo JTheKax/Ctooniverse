@@ -221,5 +221,5 @@ async function loadCatalog(){
  }finally{catalogLoading=false;}
 }
 requestAnimationFrame(updatePreview);
-renderRoster();selectSlot(1);loadCatalog();
+renderRoster();selectSlot(1);preloadSprites().then(()=>paintRosterImages()).catch(error=>console.warn('Sprite preload failed',error));loadCatalog();
 window.addEventListener('pagehide',()=>game.destroy(),{once:true});
