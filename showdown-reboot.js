@@ -439,8 +439,25 @@ function finishRound(){
  }
  updateHud();
 }
+// Finish the winning fighter's current pose while the losing KO frames play.
+function settleRoundPoses(dt){
+ for(const f of [game.hero,game.cpu]){
+  if(!f)continue;
+  f.cooldown=Math.max(0,f.cooldown-dt);
+  f.attack=Math.max(0,f.attack-dt);
+  f.stun=Math.max(0,f.stun-dt);
+  f.flash=Math.max(0,f.flash-dt);
+  f.block=false;f.moveSpeed=0;
+ }
+}
 function step(dt){
- if(game.mode==='between'){game.between-=dt;if(game.between<=0){game.round++;resetRound()}return}
+ if(game.mode==='between'){
+  settleRoundPoses(dt);
+  game.between-=dt;
+  if(game.between<=0){oneShots.clear();game.round++;resetRound()}
+  return;
+ }
+ if(game.mode==='finished'){settleRoundPoses(dt);oneShots.clear();return;}
  if(game.mode!=='fighting'||game.paused)return;
  game.timer=Math.max(0,game.timer-dt);
  const p=game.hero,c=game.cpu;
@@ -496,7 +513,9 @@ function drawBody(f,t){
   const spriteHeight=248,spriteWidth=Math.min(236,Math.round(spriteHeight*frameWidth/frameHeight));
   ctx.drawImage(atlas,pose.frame*frameWidth,pose.row*frameHeight,frameWidth,frameHeight,
    -spriteWidth/2,-253+bounce,spriteWidth,spriteHeight);
-  if(f.attack>0){
+  const move=ATTACK_MOVES[f.attackType];
+  const impactProgress=move?1-f.attack/move.duration:0;
+  if(f.attack>0&&move&&impactProgress>=move.impactStart&&impactProgress<=move.impactEnd){
    const effect=f.attackType==='special'?'#ffe17c':'#f4f9ff';
    ctx.strokeStyle=effect;ctx.lineWidth=f.attackType==='special'?11:5;
    ctx.globalAlpha=.73;ctx.shadowColor=effect;ctx.shadowBlur=17;
