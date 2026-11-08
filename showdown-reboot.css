@@ -435,3 +435,91 @@ a{color:var(--sky)}:focus-visible{outline:3px solid var(--gold);outline-offset:3
  .roster-chip,.roster-page-track span{transition:none}
  .roster-wall .fighter-slot[aria-pressed=true]{transform:none}
 }
+
+
+/* CToon Showdown's original arcade battle themes and 3-2-1 round intro. */
+.battle-music-panel{
+ display:grid;grid-template-columns:minmax(175px,1.4fr) minmax(160px,1fr) minmax(165px,.9fr);
+ align-items:center;gap:14px;margin:8px 0 15px;padding:14px 18px;
+ border:2px solid #637cce;border-radius:13px;
+ background:linear-gradient(120deg,#111d48,#2c2054 50%,#132448);
+ box-shadow:inset 0 0 24px #85b7ff12,0 5px 16px #060b2077;
+}
+.battle-music-title{display:flex;gap:13px;align-items:center;min-width:0}
+.battle-music-note{
+ flex:none;display:grid;place-items:center;width:47px;height:47px;
+ border:2px solid #8bcef5;border-radius:11px;
+ background:linear-gradient(140deg,#244b90,#41326a);
+ color:#ffe298;font:900 1.8rem Impact,system-ui,sans-serif;
+ text-shadow:0 0 15px #ffe295aa;
+}
+.battle-music-title div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.battle-music-title strong{
+ font:italic 900 1rem Impact,"Arial Black",sans-serif;
+ letter-spacing:.08em;color:#ffe6a3;
+}
+.battle-music-title small{
+ font-size:.64rem;letter-spacing:.07em;font-weight:800;color:#a4d6ff;
+ line-height:1.4;
+}
+.battle-music-panel label{
+ display:flex;flex-direction:column;gap:5px;color:#dfeaff;
+ font-size:.74rem;font-weight:900;letter-spacing:.07em;text-transform:uppercase;
+}
+.battle-audio-select select{
+ width:100%;min-height:44px;border-radius:8px;padding:7px 11px;
+ color:#fff;background:#0d1737;border:2px solid #7b8fcd;font-size:.88rem;
+ font-weight:850;text-transform:none;
+}
+.battle-audio-volume{display:grid!important;grid-template-columns:1fr auto;align-items:center}
+.battle-audio-volume output{color:#ffe5a0;font-size:.75rem;font-weight:950}
+.battle-audio-volume input{
+ grid-column:1 / -1;width:100%;margin:6px 0;cursor:pointer;accent-color:#ffd579;
+}
+.battle-countdown-hint{
+ font-size:.72rem;letter-spacing:.04em;color:#b9d4f3;text-align:center;
+ margin:0 0 12px;
+}
+.battle-countdown-hint b{color:#ffe6a2}
+.arena-announcement[data-phase="countdown"]{
+ top:25%;font:italic 900 clamp(5rem,17vw,11rem) Impact,"Arial Black",sans-serif;
+ color:#ffefaf;letter-spacing:.05em;
+ -webkit-text-stroke:3px #38205e;
+ text-shadow:5px 8px 0 #241644,0 0 28px #fdd15ca8,0 0 80px #f9b65b8e;
+ animation:showdown-count-zoom .58s ease-out both;
+}
+.arena-announcement[data-phase="fight"]{
+ top:27%;font:italic 900 clamp(3.1rem,9vw,7.5rem) Impact,"Arial Black",sans-serif;
+ color:#ffe06e;letter-spacing:.1em;
+ -webkit-text-stroke:2px #351844;
+ text-shadow:5px 7px 0 #6d2970,0 0 28px #fff3a8,0 0 65px #f1a55b;
+ animation:showdown-fight-zoom .5s cubic-bezier(.18,.74,.25,1) both;
+}
+.arena-announcement[data-phase="paused"]{
+ top:25%;color:#b6e7ff;text-shadow:4px 5px 0 #24104f,0 0 25px #78c6ff;
+}
+@keyframes showdown-count-zoom{
+ from{opacity:.3;transform:scale(1.65)}
+ to{opacity:1;transform:scale(1)}
+}
+@keyframes showdown-fight-zoom{
+ from{opacity:0;transform:scale(2.2)}
+ to{opacity:1;transform:scale(1)}
+}
+@media(max-width:760px){
+ .battle-music-panel{grid-template-columns:1fr 1fr;padding:12px;gap:13px}
+ .battle-music-title{grid-column:1 / -1}
+ .arena-announcement[data-phase="countdown"]{-webkit-text-stroke:1.5px #38205e}
+}
+@media(max-width:440px){
+ .battle-music-panel{grid-template-columns:1fr}
+ .battle-music-title{grid-column:auto}
+ .battle-audio-volume{margin-top:0}
+ .battle-countdown-hint{font-size:.67rem;line-height:1.5}
+ .arena-announcement[data-phase="countdown"]{top:22%}
+ .arena-announcement[data-phase="fight"]{top:27%}
+}
+@media(prefers-reduced-motion:reduce){
+ .arena-announcement[data-phase="countdown"],
+ .arena-announcement[data-phase="fight"]{animation:none}
+}
