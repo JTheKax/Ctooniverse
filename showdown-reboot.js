@@ -22,25 +22,40 @@ const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Joh
 const demoCPU={...demoHero};
 const combatSpriteCache=new Map();
 // Sprite atlas rows: idle, walk, run, punch, kick, guard, jump, crouch, special, hurt, KO.
+// Use the same approved sprite asset in both match and character preview.
+function spriteSources(profile){
+ if(!profile)return [];
+ const chosen=profile.fighter_id==='johnny-bravo'?demoHero.preview_sheet:profile.preview_sheet;
+ const url=safeImage(chosen);if(!url)return [];
+ const sources=[url],u=new URL(url);
+ if(u.origin===location.origin){
+  if(u.pathname.startsWith('/images/'))sources.push(u.origin+'/public'+u.pathname+u.search);
+  else if(u.pathname.startsWith('/public/images/'))sources.push(u.origin+u.pathname.replace('/public/','/')+u.search);
+ }
+ if(profile.fighter_id==='johnny-bravo'){
+  for(const backup of ['/images/showdown/johnny-bravo-complete-v2.svg','/public/images/showdown/johnny-bravo-complete-v2.svg']){
+   const candidate=safeImage(backup);if(candidate)sources.push(candidate);
+  }
+ }
+ return [...new Set(sources)];
+}
+function cachedSprite(source){
+ let entry=combatSpriteCache.get(source);
+ if(!entry){
+  entry={image:new Image(),loaded:false,failed:false};
+  const item=entry;
+  item.image.onload=()=>{item.loaded=item.image.naturalWidth>0&&item.image.naturalHeight>0;item.failed=!item.loaded};
+  item.image.onerror=()=>{item.failed=true;console.warn('Could not load sprite atlas:',source)};
+  item.image.decoding='async';combatSpriteCache.set(source,item);item.image.src=source;
+ }
+ return entry;
+}
 function spriteAtlas(profile){
  if(!profile||Number(profile.preview_rows)<11||Number(profile.preview_columns)<3)return null;
- const primary=safeImage(profile.preview_sheet);
- // Use the earlier sprite set instead of the rejected, simplified v3 vector model.
- const backup=profile.fighter_id==='johnny-bravo'
-   ?safeImage('/images/showdown/johnny-bravo-complete-v2.svg'):null;
- for(const source of [primary,backup]){
-  if(!source)continue;
-  let item=combatSpriteCache.get(source);
-  if(!item){
-   item={image:new Image(),loaded:false,failed:false};
-   const entry=item;
-   item.image.onload=()=>{entry.loaded=entry.image.naturalWidth>0&&entry.image.naturalHeight>0};
-   item.image.onerror=()=>{entry.failed=true;console.warn('Could not load fighter sprite atlas:',source)};
-   item.image.decoding='async';item.image.src=source;
-   combatSpriteCache.set(source,item);
-  }
+ for(const source of spriteSources(profile)){
+  const item=cachedSprite(source);
   if(item.loaded)return item.image;
-  if(!item.failed)return null; // Wait for the approved art before using its fallback.
+  if(!item.failed)return null;
  }
  return null;
 }
@@ -155,20 +170,25 @@ function setupPreviewAnimation(fighter){
  previewAnimation.image=null;previewAnimation.loaded=false;
  const canvas=$('preview-idle-canvas'),avatar=$('preview-avatar');
  canvas.hidden=true;avatar.hidden=false;
- const source=safeImage(fighter?.preview_sheet);
- if(!source)return;
- const img=new Image();
- img.decoding='async';
- img.onload=()=>{
-  if(token!==previewAnimation.token)return;
-  if(!img.naturalWidth||!img.naturalHeight)return;
-  previewAnimation.image=img;previewAnimation.loaded=true;
-  previewAnimation.columns=Math.max(1,Math.min(12,Number(fighter.preview_columns)||3));
-  previewAnimation.rows=Math.max(1,Math.min(32,Number(fighter.preview_rows)||1));
-  avatar.hidden=true;canvas.hidden=false;
- };
- img.onerror=()=>{if(token===previewAnimation.token){canvas.hidden=true;avatar.hidden=false}};
- img.src=source;
+ const sources=spriteSources(fighter);if(!sources.length)return;
+ const columns=Math.max(1,Math.min(12,Number(fighter.preview_columns)||3));
+ const rows=Math.max(1,Math.min(32,Number(fighter.preview_rows)||1));
+ let index=0;
+ function tryNext(){
+  if(token!==previewAnimation.token||index>=sources.length)return;
+  const img=new Image();img.decoding='async';
+  img.onload=()=>{
+   if(token!==previewAnimation.token)return;
+   if(!img.naturalWidth||!img.naturalHeight){tryNext();return;}
+   previewAnimation.image=img;previewAnimation.loaded=true;
+   previewAnimation.columns=columns;previewAnimation.rows=rows;
+   previewAnimation.poseStart=performance.now();
+   avatar.hidden=true;canvas.hidden=false;
+  };
+  img.onerror=()=>{if(token===previewAnimation.token)tryNext()};
+  img.src=sources[index++];
+ }
+ tryNext();
 }
 function renderPreviewFrame(timestamp){
  if(!previewAnimation.loaded||!previewAnimation.image)return;
@@ -183,7 +203,7 @@ function renderPreviewFrame(timestamp){
  const age=Math.max(0,timestamp-previewAnimation.poseStart);
  const isLoop=['idle','walk','run'].includes(previewAnimation.pose);
  const interval=previewAnimation.pose==='run'?100:previewAnimation.pose==='walk'?145:190;
- const frame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%1400)/190));
+ const frame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%950)/190));
  const scale=Math.min((canvas.width-25)/fw,(canvas.height-18)/fh);
  const dw=fw*scale,dh=fh*scale;
  p.clearRect(0,0,canvas.width,canvas.height);
@@ -282,7 +302,7 @@ function selectSlot(slot){
  $('preview-series').textContent=fighter?fighter.series:'This place is reserved for a future fighter.';
  $('preview-detail').textContent=locked?
    'Unlock this character for your account before entering the arena.':
-   fighter?'Ready for the new 2D practice arena. Character animations can be added later.':
+   fighter?'Choose any of the 11 combat poses above, then test the moves in the arena.':
    'Start a Practice Mode match while new fighters are being created.';
  const note=$('preview-unlock-note');
  note.hidden=!locked;
@@ -298,7 +318,7 @@ function selectSlot(slot){
   else if(account.balance!==null&&account.balance<Number(fighter.unlock_cost))note.textContent+=' Not enough coins.';
  }
  setupPreviewAnimation(fighter);
- if(previewPoseMenu)previewPoseMenu.disabled=!fighter;
+ if(previewPoseMenu)previewPoseMenu.disabled=!fighter||!spriteSources(fighter).length;
  startBtn.disabled=!fighter||locked;
  startBtn.textContent=locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
  renderRoster();
@@ -316,7 +336,15 @@ async function loadRoster(){
   if(!response.ok)throw new Error('Catalog HTTP '+response.status);
   const fighters=await response.json();
   if(!Array.isArray(fighters))throw new Error('Unexpected catalog format');
-  selection.fighters=new Map(fighters.filter(f=>Number.isSafeInteger(f.slot)&&f.slot>0).map(f=>[f.slot,f]));
+  selection.fighters=new Map(fighters.filter(f=>Number.isSafeInteger(f.slot)&&f.slot>0).map(f=>{
+    const ready=f.fighter_id==='johnny-bravo'
+      ?{...f,portrait:demoHero.portrait,preview_sheet:demoHero.preview_sheet,preview_columns:3,preview_rows:11}:f;
+    return [ready.slot,ready];
+   }));
+   // Keep fighter #001 available without mutating Supabase or replacing owner-published slots.
+   if(![...selection.fighters.values()].some(f=>f.fighter_id==='johnny-bravo')&&!selection.fighters.has(1)){
+    selection.fighters.set(1,{...demoHero,enabled:true,unlockable:false,unlock_method:'free'});
+   }
   const maxSlot=selection.fighters.size?Math.max(...selection.fighters.keys()):0;
   selection.slots=Math.max(START_SLOTS,Math.ceil(maxSlot/PAGE_SIZE)*PAGE_SIZE);
   updateSeries();renderRoster();selectSlot(selection.slot);
@@ -325,7 +353,9 @@ async function loadRoster(){
     'Fresh start: all 200 slots are open. No old fighters have been imported. Try Practice Mode while you build your roster.';
  }catch(err){
   console.warn('CToon Showdown roster unavailable:',err);
-  banner.textContent='The published roster is temporarily unavailable. Practice Mode still works. Reload this page to try again.';
+  if(!selection.fighters.has(1))selection.fighters.set(1,{...demoHero,enabled:true,unlockable:false,unlock_method:'free'});
+   updateSeries();
+   banner.textContent='Online catalog unavailable. Johnny Bravo is playable locally; purchases and locked characters need the catalog connection.';
   renderRoster();selectSlot(selection.slot);
  }
 }
@@ -334,6 +364,7 @@ const down=new Set();
 const oneShots=new Set();
 const buttons=[...document.querySelectorAll('[data-control]')];
 const keyDown=event=>{
+ if(event.target?.closest?.('input,textarea,select,[contenteditable="true"]'))return;
  const key=keyAliases[event.key.toLowerCase()];
  if(!key)return;
  if(['arrowleft','arrowright','arrowup','arrowdown'].includes(event.key.toLowerCase()))event.preventDefault();
@@ -529,6 +560,12 @@ function drawBody(f,t){
   return;
  }
 
+ // Never present generic geometry as Johnny's character art when his atlas is loading.
+ if(f.profile.fighter_id==='johnny-bravo'){
+  ctx.save();ctx.textAlign='center';ctx.font='bold 15px system-ui';
+  ctx.fillStyle='#fbe69e';ctx.fillText('Loading Johnny Bravo sprites…',x,GROUND-125);ctx.restore();
+  return;
+ }
  ctx.save();ctx.translate(x,y);ctx.scale(f.face,1);
  ctx.globalAlpha=.38;ctx.fillStyle='#000';
  ctx.beginPath();ctx.ellipse(0,f.y?f.y:0,52,11,0,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
