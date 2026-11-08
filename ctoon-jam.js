@@ -7,6 +7,7 @@
   const songSelect = $("jam-song"), difficultySelect = $("jam-difficulty"), muteInput = $("jam-mute");
   const overlay = $("jam-overlay"), judgement = $("jam-judgement");
   const status = $("jam-message"), best = $("jam-best");
+  const gameStage = document.querySelector(".jam-stage");
   const radioList = $("jam-radio-tracks"), radioStatus = $("jam-radio-status"), radioCount = $("jam-radio-count");
   const colors = ["#61ea82","#fd6384","#ffe16a","#65bfff","#d99aff"];
   const keys = ["a","s","d","j","k"];
@@ -74,6 +75,7 @@
           syncRadioSelection();
           refreshBest();
           startSong();
+          gameStage?.scrollIntoView({block:"start",behavior:"smooth"});
         });
         buttons.push(button);
       }
@@ -298,7 +300,8 @@
       pen.strokeStyle=colors[lane]+"77";pen.lineWidth=2;pen.beginPath();pen.moveTo(left+lane*laneW,top);pen.lineTo(left+lane*laneW,h);pen.stroke();
     }
     pen.strokeStyle="#967dffb0";pen.strokeRect(left,top,width,h-top);
-    const speed=1.8;
+    // Show incoming notes from the first frame, including while radio audio buffers.
+    const speed=2.85;
     pen.lineWidth=2;
     for(let beat=0;beat<9;beat++){
       const offset=beat*beatSeconds();
@@ -335,6 +338,11 @@
     }
   }
   function tick() {
+    if(state==="loading"){
+      draw();
+      raf=requestAnimationFrame(tick);
+      return;
+    }
     if(state!=="playing")return;
     const t=songTime();
     if(!isRadio)scheduleMusic();
@@ -344,7 +352,8 @@
     maxCombo=Math.max(maxCombo,combo);
     updateHud();
     draw();
-    if(t>totalTime+.65){finishSong();return;}
+    if(isRadio){if(radioAudio && radioAudio.ended){finishSong();return;}}
+    else if(t>totalTime+.65){finishSong();return;}
     raf=requestAnimationFrame(tick);
   }
   async function startSong() {
@@ -357,30 +366,45 @@
     syncRadioSelection();
     isRadio=!!track.radio;
     activeDifficulty=difficultySelect.value;
-    state="loading";playBtn.disabled=true;pauseBtn.disabled=true;
+    state="loading";
+    playBtn.disabled=true;pauseBtn.disabled=true;
     songSelect.disabled=true;difficultySelect.disabled=true;
-    showOverlay("LOADING SONG",isRadio?"Starting audio from CTooniverse Radio…":"Preparing original arcade track…");
-    status.textContent="Loading "+track.title+"…";
+    score=0;combo=0;maxCombo=0;judged=0;weighted=0;health=75;charge=0;hypeEnd=0;beatNext=0;
+    // Build and paint the note highway BEFORE waiting on streaming or browser audio permissions.
+    // This prevents the stage from appearing empty while mobile browsers buffer a song.
+    notes=makeNotes();
+    totalTime=isRadio?180:(4+track.bars*4)*beatSeconds();
+    showOverlay("LOADING SONG",isRadio?"Getting your radio song ready. The note board is loaded below…":"Preparing your original track…");
+    judgement.textContent="";
+    status.textContent="Preparing "+track.title+"…";
+    draw();updateHud();
+    raf=requestAnimationFrame(tick);
     try{
       if(isRadio){
-        // Use HTMLAudioElement so public radio files stream without downloading/decoding whole tracks.
         const media=new Audio();
         radioAudio=media;
         media.preload="auto";
         media.volume=.75;
         media.muted=muteInput.checked;
         media.src=radioBase+encodeURI(track.path);
-        await media.play();
+        // Avoid an indefinitely blank/stuck stage when a media promise never resolves.
+        let timeout;
+        try {
+          await Promise.race([
+            media.play(),
+            new Promise((_,reject)=>{timeout=setTimeout(()=>reject(new Error("Radio audio timed out. Check your connection, then retry.")),12000);})
+          ]);
+        } finally {clearTimeout(timeout);}
         if(current!==loadSerial)return;
         const duration=Number.isFinite(media.duration) && media.duration>0?media.duration:180;
-        // The source library has no BPM/beatmaps. This is a deliberately approximate
-        // 120 BPM practice chart, not a claim of accurate note transcription.
+        // Radio metadata has no beatmap/BPM: practice notes remain an approximate 120 BPM grid.
         track.bars=Math.max(1,Math.min(240,Math.floor((duration-4*beatSeconds())/(4*beatSeconds()))));
         totalTime=duration;
+        notes=makeNotes();
         media.addEventListener("ended",()=>{if(current===loadSerial&&state==="playing")finishSong();});
         media.addEventListener("error",()=>{
           if(current===loadSerial && (state==="playing"||state==="paused")){
-            status.textContent="Radio audio stopped loading. Please try this song again.";
+            status.textContent="The radio song stopped loading. Choose it again to retry.";
             finishSong(true);
           }
         });
@@ -391,29 +415,30 @@
         makeNoise();
         await audio.resume();
         if(current!==loadSerial)return;
-        totalTime=(4+track.bars*4)*beatSeconds();
         startAt=audio.currentTime+1.3;
       }
     }catch(error){
       if(current!==loadSerial)return;
-      state="ready";
+      state="ready";cancelAnimationFrame(raf);
       if(radioAudio){radioAudio.pause();radioAudio.removeAttribute("src");radioAudio.load();radioAudio=null;}
       if(audio){audio.close().catch(()=>{});audio=null;}
-      status.textContent="Could not play "+track.title+": "+(error.message||"audio unavailable");
-      showOverlay("PLAYBACK UNAVAILABLE","Choose another track or try again.");
+      const message=error && error.message ? error.message : "Audio unavailable";
+      status.textContent="Could not start "+track.title+": "+message;
+      showOverlay("PLAYBACK UNAVAILABLE","The note board is ready, but audio could not play. Tap Start Song to retry or choose a different track.");
       songSelect.disabled=false;difficultySelect.disabled=false;playBtn.disabled=false;
-      playBtn.textContent="▶ Start Song";draw();return;
+      playBtn.textContent="▶ Retry Song";pauseBtn.disabled=true;
+      draw();updateHud();
+      return;
     }
     if(current!==loadSerial)return;
-    notes=makeNotes();
-    score=0;combo=0;maxCombo=0;judged=0;weighted=0;health=75;charge=0;hypeEnd=0;beatNext=0;
     state="playing";songSelect.disabled=true;difficultySelect.disabled=true;
     pauseBtn.disabled=false;pauseBtn.textContent="Pause";playBtn.disabled=false;playBtn.textContent="↻ Restart Song";
-    judgement.textContent="";hideOverlay();
+    hideOverlay();
     status.textContent=isRadio
-      ?"Playing "+track.title+" from CTooniverse Radio · "+activeDifficulty.toUpperCase()+". This practice chart uses an approximate beat grid."
-      :"Playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hit the notes on the glowing fret line!";
-    updateHud();raf=requestAnimationFrame(tick);
+      ?"Now playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Use the five fret buttons or A S D J K."
+      :"Playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hit notes on the fret line!";
+    updateHud();
+    draw();
   }
   async function togglePause() {
     if(!audio&&!radioAudio)return;
@@ -436,12 +461,17 @@
     if(isRadio&&radioAudio)radioAudio.muted=muteInput.checked;
     if(audio && master)master.gain.setTargetAtTime(muteInput.checked?0:.46,audio.currentTime,.02);
   });
-  for(const select of [songSelect,difficultySelect]){
-    select.addEventListener("change",()=>{
-      track=songs[songSelect.value]||songs.neon;
-      notes=[];totalTime=0;syncRadioSelection();refreshBest();draw();updateHud();
-    });
-  }
+  songSelect.addEventListener("change",()=>{
+    track=songs[songSelect.value]||songs.neon;
+    syncRadioSelection();refreshBest();
+    // Choosing a song should begin play, rather than leaving the game waiting on Start.
+    startSong();
+    gameStage?.scrollIntoView({block:"start",behavior:"smooth"});
+  });
+  difficultySelect.addEventListener("change",()=>{
+    track=songs[songSelect.value]||songs.neon;
+    refreshBest();draw();updateHud();
+  });
   function flashButton(lane) {
     const button=controls[lane];if(!button)return;
     button.classList.add("is-pressed");
