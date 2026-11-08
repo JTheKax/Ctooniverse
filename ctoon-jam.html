@@ -9,8 +9,8 @@
   <!-- Open the radio connection early so the first song needs less setup. -->
   <link rel="dns-prefetch" href="//hsxdyxdazsdmpucyhqly.supabase.co">
   <link rel="preconnect" href="https://hsxdyxdazsdmpucyhqly.supabase.co">
-  <link rel="stylesheet" href="ctoon-jam.css?v=radio-charts-20261108a">
-  <script src="ctoon-jam.js?v=radio-library-stuck-fix-20261108c" defer></script>
+  <link rel="stylesheet" href="ctoon-jam.css?v=radio-player-repair-20261108d">
+  <script src="ctoon-jam.js?v=radio-player-repair-20261108d" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to game</a>
@@ -46,6 +46,11 @@
       <div class="jam-radio-tracks" id="jam-radio-tracks" aria-label="CTooniverse Radio track selection"></div>
     </section>
     <section class="jam-stage" aria-label="Rhythm stage">
+      <div id="jam-radio-player-panel" class="jam-radio-player-panel" hidden>
+        <div class="jam-radio-player-heading"><strong>♫ Radio Audio Player</strong><button id="jam-retry-audio" class="jam-button" type="button">↻ Retry Audio</button></div>
+        <audio id="jam-radio-audio" controls preload="none" playsinline aria-label="Selected CTooniverse Radio song"></audio>
+        <p id="jam-audio-status" role="status" aria-live="polite">Select a radio song to play.</p>
+      </div>
       <div class="jam-hud">
         <div><small>SCORE</small><strong id="jam-score">0</strong></div>
         <div><small>COMBO</small><strong id="jam-combo">0</strong></div>
