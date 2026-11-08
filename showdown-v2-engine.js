@@ -18,13 +18,14 @@ export class ShowdownGame{
     this.onRoundEnd=onRoundEnd||(()=>{});
     this.p1='disney-hercules';this.p2='jack-skellington';
     this.hero=fighter(this.p1,250,1);this.cpu=fighter(this.p2,710,-1);
-    this.mode='ready';this.paused=false;this.round=1;this.wins=[0,0];this.draws=0;this.clock=60;
+    this.mode='ready';this.paused=false;this.allowed=false;this.round=1;this.wins=[0,0];this.draws=0;this.clock=60;
     this.keys=new Set();this.presses=new Set();this.particles=[];this.flash=0;this.shake=0;
     this.label='SELECT YOUR FIGHTER';this.labelUntil=0;this.elapsed=0;this.between=0;
     this.last=0;this.accumulator=0;this.lastHUD=0;this.handlers=[];
     this.bindInputs();preloadSprites();
     this.updateHUD(true);this.frame=requestAnimationFrame(t=>this.tick(t));
   }
+  setEnabled(enabled){this.allowed=Boolean(enabled);this.setButtons();}
   setSelected(id){
     if(!NAMES[id]||this.mode==='fight'||this.mode==='between')return false;
     this.p1=id;this.p2=id==='disney-hercules'?'jack-skellington':'disney-hercules';
@@ -35,12 +36,12 @@ export class ShowdownGame{
     this.updateHUD(true);loadSprite(id);loadSprite(this.p2);return true;
   }
   setButtons(){
-    this.ui.start.disabled=this.mode==='fight'||this.mode==='between';
+    this.ui.start.disabled=!this.allowed||this.mode==='fight'||this.mode==='between';
     this.ui.pause.disabled=this.mode!=='fight';
     this.ui.pause.textContent=this.paused?'RESUME':'PAUSE';
   }
   startMatch(){
-    if(this.mode==='fight'||this.mode==='between')return;
+    if(!this.allowed||this.mode==='fight'||this.mode==='between')return;
     this.round=1;this.wins=[0,0];this.draws=0;this.startRound();
   }
   startRound(){
