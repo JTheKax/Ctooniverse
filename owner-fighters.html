@@ -33,6 +33,12 @@
 <header class="showdown-top"><a class="back-link" href="owner.html">← OWNER DASHBOARD</a><a class="back-link" href="fighters.html">VIEW SHOWDOWN →</a></header>
 <h1>SHOWDOWN<br>FIGHTER MANAGER</h1>
 <p class="manager-meta">Fresh reboot roster. All 200 launch slots start empty. Add a fighter to any open slot; assigning slot 201 or higher automatically grows the public roster. Previous Showdown fighters were not imported or deleted.</p>
+<section class="showdown-panel" aria-label="Official fighter art requirements" style="margin:16px 0">
+  <p class="eyebrow">OFFICIAL ART STANDARD · ALL FUTURE FIGHTERS</p>
+  <h2>From Their Own Show or Game</h2>
+  <p class="manager-meta">Match each character's actual series or game appearance: original face, silhouette, proportions, costume, coloring and linework. Use clean transparent 2D M.U.G.E.N.-style animation frames — <strong>not</strong> generic crossover redesigns, fake poster screenshots, or AI-looking 3D artwork. Different franchises should retain their own distinctive visual styles.</p>
+  <p class="manager-meta"><a href="https://github.com/JTheKax/Ctooniverse/blob/main/docs/SHOWDOWN-CHARACTER-ART-STANDARD.md" target="_blank" rel="noopener noreferrer" style="color:#ffe99d">Read the official art and animation checklist</a> before publishing.</p>
+</section>
 <p class="notice" id="owner-status" role="status" aria-live="polite">Checking owner access…</p>
 <div id="owner-editor" hidden>
 <section class="showdown-panel" aria-labelledby="editor-title"><div class="panel-header"><div><p class="eyebrow">01 / MANAGE FIGHTERS</p><h2 id="editor-title">Add a New Fighter</h2></div><span class="roster-tally" id="roster-summary">0 published</span></div>
@@ -56,6 +62,7 @@
  <input id="fighter-unlock-hint" maxlength="160" placeholder="Example: Win 10 battles — planned">
 </label>
 <p class="manager-meta span-all" style="margin:0">Coin unlocks use the player's real Cartoon Coin wallet, save permanently to their account, and prevent double purchases. Owner-awarded fighters can be granted below by player name. No automatic achievement unlocks are active.</p>
+<label class="form-check span-all" style="background:#101f3d;border:1px solid #8e82d2;padding:12px;border-radius:12px;line-height:1.5"><input type="checkbox" id="fighter-art-approved" required> I checked the portrait and transparent sprite sheet against this character's original cartoon, anime or game design and confirmed that the in-game model follows the official CToon Showdown art standard.</label>
 <div class="form-actions"><button type="submit" class="arcade-btn main" id="save-fighter">Publish Fighter</button><button type="button" class="arcade-btn alt" id="clear-fighter">New Fighter / Clear Form</button></div>
 </form></section>
 <section class="showdown-panel" aria-labelledby="existing-title"><div class="panel-header"><div><p class="eyebrow">02 / FRESH ROSTER</p><h2 id="existing-title">Published &amp; Draft Fighters</h2></div><button type="button" class="arcade-btn alt" id="refresh-fighters">Refresh List</button></div>
