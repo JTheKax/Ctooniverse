@@ -32,7 +32,9 @@ function pageSlots(){
  const matches=[];
  for(let n=1;n<=selection.slots;n++){
    const f=selection.fighters.get(n);
-   if(state==='ready'&&!f||state==='empty'&&f)continue;
+   if((state==='ready'&&!f)||(state==='empty'&&f)||
+      (state==='playable'&&(!f||f.unlockable))||
+      (state==='unlockable'&&(!f||!f.unlockable)))continue;
    if(group!=='all'&&(!f||f.series!==group))continue;
    if(q&&!((f?.name||'').toLowerCase().includes(q)||(f?.series||'').toLowerCase().includes(q)||
      (f?.fighter_id||'').toLowerCase().includes(q)|| (slotQuery?Number(slotQuery[1])===n:(!Number.isNaN(Number(q))&&Number(q)===n))))continue;
@@ -56,15 +58,16 @@ function renderRoster(){
  for(const n of matches.slice(selection.page*PAGE_SIZE,(selection.page+1)*PAGE_SIZE)){
   const fighter=selection.fighters.get(n);
   const button=document.createElement('button');button.type='button';
-  button.className='fighter-slot'+(fighter?' occupied':'');
+  button.className='fighter-slot'+(fighter?' occupied':'')+(fighter?.unlockable?' locked':'');
   button.style.setProperty('--fighter-accent',validColor(fighter?.accent));
   button.setAttribute('aria-pressed',String(selection.slot===n));
-  button.setAttribute('aria-label',fighter?'Slot '+n+': '+fighter.name:'Slot '+n+': empty');
+  button.setAttribute('aria-label',fighter?'Slot '+n+': '+fighter.name+(fighter.unlockable?', unlockable':' , playable'):'Slot '+n+': empty');
   text(button,'span','SLOT '+pad(n),'slot-no');
-  const mark=text(button,'span',fighter?fighter.name.slice(0,1).toUpperCase():'+','slot-symbol');
+  const mark=text(button,'span',fighter?fighter.name.slice(0,1).toUpperCase():'◇','slot-symbol');
+  if(fighter?.unlockable){const badge=text(button,'span','🔒','slot-lock');badge.setAttribute('aria-hidden','true');badge.title='Unlockable fighter';}
   const img=safeImage(fighter?.portrait);
   if(img){const portrait=document.createElement('img');portrait.src=img;portrait.alt='';portrait.loading='lazy';portrait.onerror=()=>portrait.replaceWith(mark);mark.replaceWith(portrait)}
-  text(button,'span',fighter?fighter.name:'OPEN SLOT','slot-label');
+  text(button,'span',fighter?fighter.name:'COMING SOON','slot-label');
   button.addEventListener('click',()=>selectSlot(n));
   frame.append(button);
  }
@@ -75,10 +78,15 @@ function renderRoster(){
  $('roster-next').disabled=selection.page>=pages-1;
  $('roster-tally').textContent=selection.fighters.size+' / '+selection.slots+' published';
  $('roster-capacity').textContent=String(selection.slots);
+ const locked=[...selection.fighters.values()].filter(f=>f.unlockable).length;
+ $('roster-locked').textContent=String(locked);
+ $('roster-ready').textContent=String(selection.fighters.size-locked);
+ $('roster-open').textContent=String(selection.slots-selection.fighters.size);
 }
 function selectSlot(slot){
  selection.slot=slot;
  const fighter=currentFighter();
+ const locked=!!fighter?.unlockable;
  const avatar=$('preview-avatar');avatar.replaceChildren();
  avatar.style.setProperty('--fighter-accent',validColor(fighter?.accent));
  const uri=safeImage(fighter?.portrait);
@@ -88,12 +96,22 @@ function selectSlot(slot){
    avatar.append(img);
  }else avatar.textContent=fighter?fighter.name.charAt(0).toUpperCase():'?';
  avatar.classList.toggle('is-empty',!fighter);
- $('preview-tag').textContent=fighter?'PUBLISHED FIGHTER':'EMPTY SLOT';
+ $('preview-lock').hidden=!locked;
+ $('preview-tag').textContent=locked?'🔒 UNLOCKABLE':fighter?'READY TO FIGHT':'OPEN SLOT';
+ $('preview-tag').classList.toggle('is-locked',locked);
+ $('preview-tag').classList.toggle('is-ready',!!fighter&&!locked);
+ document.querySelector('.preview-card').classList.toggle('is-locked',locked);
  $('preview-title').textContent=fighter?fighter.name:'SLOT '+pad(slot);
  $('preview-series').textContent=fighter?fighter.series:'This place is reserved for a future fighter.';
- $('preview-detail').textContent=fighter?'Ready for the new 2D practice arena. More character animations can be added later.':'Start a Practice Mode match while new fighters are being created.';
- startBtn.disabled=!fighter;
- startBtn.textContent=fighter?'Fight as '+fighter.name:'Choose a fighter first';
+ $('preview-detail').textContent=locked?
+   'This fighter is marked unlockable and is not yet playable. Unlocking gameplay is still in development.':
+   fighter?'Ready for the new 2D practice arena. Character animations can be added later.':
+   'Start a Practice Mode match while new fighters are being created.';
+ const note=$('preview-unlock-note');
+ note.hidden=!locked;
+ note.textContent=locked?(fighter.unlock_hint?'Planned requirement: '+fighter.unlock_hint:'Unlock requirement: to be announced'):'';
+ startBtn.disabled=!fighter||locked;
+ startBtn.textContent=locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
  renderRoster();
 }
 function setPage(delta){selection.page+=delta;renderRoster();rosterGrid.scrollIntoView({behavior:'smooth',block:'nearest'})}
@@ -103,7 +121,7 @@ for(const input of [search,series,kind])input.addEventListener('input',()=>{sele
 async function loadRoster(){
  banner.textContent='Loading published fighters…';
  try{
-  const response=await fetch(API_URL+'/rest/v1/showdown_reboot_fighters?select=slot,fighter_id,name,series,portrait,accent,enabled&enabled=eq.true&order=slot.asc',{
+  const response=await fetch(API_URL+'/rest/v1/showdown_reboot_fighters?select=slot,fighter_id,name,series,portrait,accent,enabled,unlockable,unlock_hint&enabled=eq.true&order=slot.asc',{
    headers:{'apikey':PUBLIC_KEY,'Accept':'application/json'},cache:'no-store'
   });
   if(!response.ok)throw new Error('Catalog HTTP '+response.status);
@@ -176,7 +194,7 @@ function startMatch(profile){
  document.querySelector('.arena-frame').scrollIntoView({behavior:'smooth',block:'center'});
 }
 practiceBtn.addEventListener('click',()=>startMatch(demoHero));
-startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter)startMatch(fighter)});
+startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter&&!fighter.unlockable)startMatch(fighter)});
 restartBtn.addEventListener('click',()=>startMatch(game.heroProfile));
 pauseBtn.addEventListener('click',()=>{
  if(!['fighting','between'].includes(game.mode))return;
