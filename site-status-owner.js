@@ -36,7 +36,7 @@ if(panel){
   }
   async function setMode(mode){
     if(busy||!ownerId||!['online','maintenance'].includes(mode)||mode===current)return;
-    if(mode==='maintenance'&&!window.confirm('Mark CTooniverse as under maintenance? Players will see a yellow Maintenance indicator. The website will remain accessible.'))return;
+    if(mode==='maintenance'&&!window.confirm('Mark CTooniverse as under maintenance? Navigation tabs and dropdown menus will turn yellow. The website will remain accessible.'))return;
     busy=true;render(current,'Updating website status…');
     try{
       // Recheck identity on every write. Row Level Security independently restricts UPDATE to site_owners.
@@ -50,8 +50,8 @@ if(panel){
       if(error)throw error;
       if(data.mode!==mode)throw new Error('The change was not confirmed');
       current=mode;
-      message.textContent=mode==='online'?'Online status saved. Players will see the green button.':
-        'Maintenance status saved. Players will see the yellow button.';
+      message.textContent=mode==='online'?'Online status saved. Navigation tabs and dropdown menus will turn green.':
+        'Maintenance status saved. Navigation tabs and dropdown menus will turn yellow.';
       window.dispatchEvent(new Event('site-operational-status-updated'));
       try{localStorage.setItem('ctoon-site-operational-status-updated',String(Date.now()));}catch{}
     }catch(error){
