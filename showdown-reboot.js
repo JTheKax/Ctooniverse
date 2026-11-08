@@ -586,8 +586,8 @@ function drawBody(f,t){
   ctx.save();
   ctx.translate(Math.round(x),Math.round(y));
   const isJohnny=f.profile.fighter_id==='johnny-bravo';
-  // Johnny's uploaded sprite faces left; mirror it toward his opponent.
-  ctx.scale(isJohnny?-f.face:f.face,1);
+  // Keep the original source orientation. The game sets f.face toward the opponent.
+  ctx.scale(f.face,1);
   ctx.imageSmoothingEnabled=!isJohnny&&/\.svg(?:$|[?#])/i.test(atlas.currentSrc||atlas.src);
   if(ctx.imageSmoothingEnabled)ctx.imageSmoothingQuality='high';
   const bounce=f.y===0&&pose.row===0?Math.sin(t*6)*1.5:0;
@@ -604,17 +604,16 @@ function drawBody(f,t){
   }
   const move=ATTACK_MOVES[f.attackType];
   const impactProgress=move?1-f.attack/move.duration:0;
-  // Keep impact and guard effects in front of the character in both directions.
-  const effectFacing=isJohnny?-1:1;
+  // Effects share the same facing transform as the fighter, so hits stay in front.
   if(f.attack>0&&move&&impactProgress>=move.impactStart&&impactProgress<=move.impactEnd){
    const effect=f.attackType==='special'?'#ffe17c':'#f4f9ff';
-   ctx.save();ctx.scale(effectFacing,1);
+   ctx.save();
    ctx.strokeStyle=effect;ctx.lineWidth=f.attackType==='special'?11:5;
    ctx.globalAlpha=.73;ctx.shadowColor=effect;ctx.shadowBlur=17;
    ctx.beginPath();ctx.arc(71,-126,f.attackType==='kick'?53:38,-1.25,1.35);ctx.stroke();
    ctx.restore();
   }
-  if(f.block){ctx.save();ctx.scale(effectFacing,1);ctx.strokeStyle='#9ce9ff';ctx.lineWidth=4;ctx.globalAlpha=.67;
+  if(f.block){ctx.save();ctx.strokeStyle='#9ce9ff';ctx.lineWidth=4;ctx.globalAlpha=.67;
    ctx.beginPath();ctx.arc(51,-137,60,-1.4,1.4);ctx.stroke();ctx.restore();}
   if(f.flash){ctx.fillStyle='#fff';ctx.globalAlpha=.15;ctx.fillRect(-110,-247,220,240)}
   ctx.restore();
