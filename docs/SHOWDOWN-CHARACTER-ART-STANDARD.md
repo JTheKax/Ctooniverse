@@ -36,3 +36,8 @@ For **each** new character, first identify the **specific original show or game 
 ## Owner publishing rule
 
 The Owner Fighter Manager includes an art-reference confirmation checkbox. Checking it means the owner has compared the artwork to the source and confirmed it is usable in the actual game. This checklist is a publishing workflow guardrail; it does not automatically verify image likeness.
+
+
+## Johnny Bravo — 66-frame animation update (November 8, 2026)
+
+The original owner-supplied transparent 64×64 PNG stays unchanged and embedded in both sprite assets. A new `johnny-bravo-polished-atlas.svg` has **6 columns × 11 action rows** (66 frames): idle, walk, run, punch, kick, guard, jump, crouch, special, hurt and KO. Arms and legs are articulated using masked pixel-art transforms. The game now uses correct source-facing mirroring, better pose timing, front-facing effects, and foot anchoring. The previous 3×11 model remains for comparison or loading fallback. These are articulated frames from a single approved picture, not newly hand-drawn poses. Check the production deployment and mobile gameplay after publishing.

@@ -233,3 +233,6 @@ a{color:var(--sky)}:focus-visible{outline:3px solid var(--gold);outline-offset:3
 
 /* Preserve the supplied Johnny Bravo pixel sprite's sharp original edges. */
 .fighter-slot img[src*="johnny-bravo-user-model"],.preview-avatar img[src*="johnny-bravo-user-model"],#preview-idle-canvas{image-rendering:pixelated}
+
+/* Keep the owner's Johnny Bravo pixel model sharp in the roster and preview. */
+#preview-idle-canvas{image-rendering:pixelated}
