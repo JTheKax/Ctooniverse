@@ -38,7 +38,7 @@
   function readOffset() {
     let value=0;
     try {value=Number(localStorage.getItem(offsetKey())||0);}catch{}
-    return Number.isFinite(value)?clamp(Math.round(value*20)/20,-2,2):0;
+    return Number.isFinite(value)?clamp(Math.round(value*20)/20,-12,12):0;
   }
   function setupOffset() {
     const enabled=!!track.radio;
