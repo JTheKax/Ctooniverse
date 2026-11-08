@@ -9,6 +9,8 @@
   const status = $("jam-message"), best = $("jam-best");
   const syncInput = $("jam-sync-offset"), syncValue = $("jam-sync-value"), chartStatus = $("jam-chart-status");
   const gameStage = document.querySelector(".jam-stage");
+  const radioPanel = $("jam-radio-player-panel"), radioControl = $("jam-radio-audio"),
+        audioStatus = $("jam-audio-status"), retryAudio = $("jam-retry-audio");
   const radioList = $("jam-radio-tracks"), radioStatus = $("jam-radio-status"), radioCount = $("jam-radio-count");
   const colors = ["#61ea82","#fd6384","#ffe16a","#65bfff","#d99aff"];
   const keys = ["a","s","d","j","k"];
@@ -443,133 +445,232 @@
     else if(t>totalTime+.65){finishSong();return;}
     raf=requestAnimationFrame(tick);
   }
+  // All radio playback is driven by the browser's native audio element.
+  // The note highway never waits on a dangling media.play() Promise.
   async function startSong() {
     const current=++loadSerial;
     cancelAnimationFrame(raf);
-    if(radioAudio){radioAudio.pause();radioAudio.removeAttribute("src");radioAudio.load();radioAudio=null;}
+    if(radioAudio){
+      const previous=radioAudio;
+      previous.onplaying=null;previous.onpause=null;previous.onwaiting=null;
+      previous.onstalled=null;previous.onerror=null;previous.onended=null;previous.oncanplay=null;
+      previous.pause();previous.removeAttribute("src");previous.load();
+      radioAudio=null;
+    }
     if(audio){audio.close().catch(()=>{});audio=null;}
     master=null;
     track=songs[songSelect.value]||songs.neon;
-    syncRadioSelection();
-    isRadio=!!track.radio;
+    syncRadioSelection();isRadio=!!track.radio;
     activeDifficulty=difficultySelect.value;
     setupOffset();
-    if(chartStatus)chartStatus.textContent=isRadio?"Loading the song-specific chart file…":"Playing original arcade chart.";
-    // Fetch the chart in parallel with playback, without delaying the music.
+    radioPanel.hidden=!isRadio;
+    if(chartStatus)chartStatus.textContent=isRadio?"Loading song chart in parallel…":"Playing original arcade chart.";
     const chartPromise=isRadio?getTrackChart(track):Promise.resolve(null);
     state="loading";
-    playBtn.disabled=true;pauseBtn.disabled=true;
-    songSelect.disabled=true;difficultySelect.disabled=true;
+    // Never lock the restart button while waiting for network audio.
+    playBtn.disabled=false;playBtn.textContent="↻ Retry Start";
+    pauseBtn.disabled=true;songSelect.disabled=false;difficultySelect.disabled=false;
     score=0;combo=0;maxCombo=0;judged=0;weighted=0;health=75;charge=0;hypeEnd=0;beatNext=0;
-    // Build and paint the note highway BEFORE waiting on streaming or browser audio permissions.
-    // This prevents the stage from appearing empty while mobile browsers buffer a song.
     notes=makeNotes();
     if(isRadio&&appliedOffset)for(const note of notes)note.at+=appliedOffset;
     totalTime=isRadio?180:(4+track.bars*4)*beatSeconds();
-    showOverlay("LOADING SONG",isRadio?"Getting your radio song ready. The note board is loaded below…":"Preparing your original track…");
+    showOverlay("GETTING SONG READY",isRadio?"Audio player is available above. You can press its Play button if playback does not begin.":"Preparing original arcade track…");
     judgement.textContent="";
     status.textContent="Preparing "+track.title+"…";
     draw();updateHud();
     raf=requestAnimationFrame(tick);
-    try{
-      if(isRadio){
-        const media=new Audio();
-        radioAudio=media;
-        media.preload="auto";
-        media.volume=.75;
-        media.muted=muteInput.checked;
-        media.src=radioBase+encodeURI(track.path);
-        // Avoid an indefinitely blank/stuck stage when a media promise never resolves.
-        let timeout;
-        try {
-          await Promise.race([
-            media.play(),
-            new Promise((_,reject)=>{timeout=setTimeout(()=>reject(new Error("Radio audio timed out. Check your connection, then retry.")),12000);})
-          ]);
-        } finally {clearTimeout(timeout);}
-        if(current!==loadSerial)return;
-        const duration=Number.isFinite(media.duration) && media.duration>0?media.duration:180;
+    if(isRadio){
+      const media=radioControl;
+      radioAudio=media;
+      media.preload="metadata";
+      media.volume=.75;
+      media.muted=muteInput.checked;
+      media.src=radioBase+encodeURI(track.path);
+      audioStatus.textContent="Connecting to CTooniverse Radio. You can use Play in the player.";
+      let started=false;
+      let loadingTimeout=null;
+      const valid=()=>current===loadSerial && radioAudio===media;
+      const enterPlaying=()=>{
+        if(!valid())return;
+        if(state==="playing")return;
+        if(state==="paused" || state==="buffering"){
+          state="playing";
+          hideOverlay();pauseBtn.disabled=false;pauseBtn.textContent="Pause";
+          status.textContent="Audio resumed. Continue playing!";
+          audioStatus.textContent="Radio audio playing.";
+          cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+          return;
+        }
+        if(state!=="loading" && state!=="ready")return;
+        if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
+        started=true;
+        const duration=Number.isFinite(media.duration)&&media.duration>0?media.duration:180;
         totalTime=duration;
-        // Continue immediately once media plays. A slow JSON download must NEVER
-        // hold the loading overlay over an already playing song.
         track.bars=Math.max(1,Math.min(240,Math.floor((duration-4*beatSeconds())/(4*beatSeconds()))));
         notes=makeNotes();
         if(appliedOffset)for(const note of notes)note.at+=appliedOffset;
+        const now=media.currentTime||0;
+        for(const note of notes)if(note.at<now-.22)note.judged=true;
+        // A slow chart must not block the already-streaming audio.
         chartPromise.then(chart=>{
-          if(current!==loadSerial || (state!=="playing"&&state!=="paused"&&state!=="loading"))return;
+          if(!valid()||!["playing","paused","buffering"].includes(state))return;
           if(chart){
             track.bpm=chart.bpm;
-            const realDuration=Number.isFinite(media.duration)&&media.duration>0?media.duration:duration;
-            const loadedNotes=notesFromChart(chart,realDuration);
-            // If the music was already underway, skip past notes without causing
-            // retroactive misses or resetting the player's score/combo.
-            const now=media.currentTime||0;
-            for(const note of loadedNotes)if(note.at<now-.22)note.judged=true;
+            const actualDuration=Number.isFinite(media.duration)&&media.duration>0?media.duration:duration;
+            const loadedNotes=notesFromChart(chart,actualDuration);
+            const at=media.currentTime||0;
+            for(const note of loadedNotes)if(note.at<at-.22)note.judged=true;
             notes=loadedNotes;
-            if(chartStatus)chartStatus.textContent="Loaded "+activeDifficulty+" chart · "+track.bpm+" BPM · "+notes.length+" notes · starter timing draft. Adjust radio chart timing if needed.";
-          }else if(chartStatus){
-            chartStatus.textContent="Chart unavailable — using the generated practice grid.";
-          }
+            if(chartStatus)chartStatus.textContent="Loaded "+activeDifficulty+" chart · "+track.bpm+" BPM · "+notes.length+" notes · timing draft.";
+          }else if(chartStatus)chartStatus.textContent="Chart unavailable — using practice notes.";
           draw();
         }).catch(error=>{
-          if(current===loadSerial && chartStatus){
-            chartStatus.textContent="Chart failed to load — playing practice notes.";
-            console.warn("CToon Jam chart load:",error);
-          }
+          if(valid()&&chartStatus)chartStatus.textContent="Chart unavailable — using practice notes.";
+          console.warn("CToon Jam chart error:",error);
         });
-        media.addEventListener("ended",()=>{if(current===loadSerial&&state==="playing")finishSong();});
-        media.addEventListener("error",()=>{
-          if(current===loadSerial && (state==="playing"||state==="paused")){
-            status.textContent="The radio song stopped loading. Choose it again to retry.";
-            finishSong(true);
-          }
-        });
-      }else{
-        if(!AC)throw new Error("This browser does not support Web Audio.");
-        audio=new AC();
-        master=audio.createGain();master.gain.value=muteInput.checked?0:.46;master.connect(audio.destination);
-        makeNoise();
-        await audio.resume();
-        if(current!==loadSerial)return;
-        startAt=audio.currentTime+1.3;
+        state="playing";playBtn.disabled=false;playBtn.textContent="↻ Restart Song";
+        pauseBtn.disabled=false;pauseBtn.textContent="Pause";
+        songSelect.disabled=true;difficultySelect.disabled=true;
+        hideOverlay();
+        audioStatus.textContent="Now streaming "+track.title+".";
+        status.textContent="Now playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Use the five fret buttons or A S D J K.";
+        draw();updateHud();
+      };
+      const errorMessage=()=>{
+        const err=media.error;
+        const reason=err&&err.code===4?"The recording format or URL is unsupported."
+          :err&&err.code===3?"The browser could not decode this MP3."
+          :err&&err.code===2?"The network connection interrupted audio loading."
+          :"Audio could not be loaded.";
+        audioStatus.textContent=reason+" Press Retry Audio or the player's Play button.";
+        status.textContent=reason+" Try a different song if it keeps failing.";
+        if(state==="loading"||state==="buffering"){
+          state="ready";
+          cancelAnimationFrame(raf);
+          showOverlay("AUDIO LOAD FAILED",reason+" Use Retry Audio above or select another song.");
+          playBtn.textContent="↻ Retry Start";
+          pauseBtn.disabled=true;songSelect.disabled=false;difficultySelect.disabled=false;
+        }
+      };
+      media.onplaying=enterPlaying;
+      media.oncanplay=()=>{
+        if(valid()&&state==="loading"){
+          audioStatus.textContent="Audio is ready. Press Play in the player if the song has not started.";
+        }
+      };
+      media.onwaiting=()=>{
+        if(!valid())return;
+        audioStatus.textContent="Waiting for more audio to buffer…";
+        if(state==="playing"){
+          state="buffering";cancelAnimationFrame(raf);
+          showOverlay("AUDIO BUFFERING","Playback will resume with the music when enough audio loads.");
+        }
+      };
+      media.onstalled=()=>{
+        if(valid())audioStatus.textContent="Radio connection stalled. Try the Play button or Retry Audio.";
+      };
+      media.onpause=()=>{
+        if(!valid())return;
+        if(state==="playing"||state==="buffering"){
+          state="paused";cancelAnimationFrame(raf);
+          pauseBtn.textContent="Resume";showOverlay("PAUSED","Press Play in the radio player or Resume to continue.");
+          status.textContent="Radio audio paused.";
+        }
+      };
+      media.onerror=()=>{if(valid())errorMessage();};
+      media.onended=()=>{if(valid()&&["playing","paused","buffering"].includes(state))finishSong();};
+      // Show a specific, actionable message if play() takes too long.
+      loadingTimeout=setTimeout(()=>{
+        if(valid()&&state==="loading"&&!started){
+          showOverlay("AUDIO STILL LOADING","Try pressing Play in the visible audio player, or tap Retry Audio. You can also choose another song.");
+          audioStatus.textContent="This recording is taking too long to start. Use the player controls or Retry Audio.";
+          status.textContent="Waiting for "+track.title+" to stream. The song has not begun yet.";
+          playBtn.textContent="↻ Retry Start";
+        }
+      },6000);
+      // This is called directly inside the song selection gesture for mobile support.
+      try{
+        const promise=media.play();
+        if(promise&&typeof promise.then==="function"){
+          promise.then(()=>{
+            if(valid()&&!media.paused)enterPlaying();
+          }).catch(error=>{
+            if(!valid())return;
+            if(error&&error.name==="AbortError")return;
+            const blocked=error&&error.name==="NotAllowedError";
+            audioStatus.textContent=blocked
+              ?"Autoplay was blocked. Tap Play in the radio audio player."
+              :"The browser could not start audio. Tap Play or Retry Audio.";
+            status.textContent=blocked?"Tap the radio player's Play button to begin.":"Try Play in the radio player or select a different song.";
+            showOverlay("TAP PLAY TO START",blocked?"Your browser requires a direct tap on the audio player.":"Use the player above to start this recording.");
+            if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
+          });
+        }
+      }catch(error){
+        if(valid()){
+          audioStatus.textContent="Browser audio error: "+(error.message||"unable to play");
+          showOverlay("TAP PLAY TO START","Use Play in the visible radio player or Retry Audio.");
+          if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
+        }
       }
+      return;
+    }
+    // The original synthesizer tracks still use the existing Web Audio engine.
+    try{
+      if(!AC)throw new Error("This browser does not support Web Audio.");
+      audio=new AC();
+      master=audio.createGain();master.gain.value=muteInput.checked?0:.46;master.connect(audio.destination);
+      makeNoise();await audio.resume();
+      if(current!==loadSerial)return;
+      startAt=audio.currentTime+1.3;
     }catch(error){
       if(current!==loadSerial)return;
       state="ready";cancelAnimationFrame(raf);
-      if(radioAudio){radioAudio.pause();radioAudio.removeAttribute("src");radioAudio.load();radioAudio=null;}
       if(audio){audio.close().catch(()=>{});audio=null;}
-      const message=error && error.message ? error.message : "Audio unavailable";
+      const message=error&&error.message?error.message:"Audio unavailable";
       status.textContent="Could not start "+track.title+": "+message;
-      showOverlay("PLAYBACK UNAVAILABLE","The note board is ready, but audio could not play. Tap Start Song to retry or choose a different track.");
-      songSelect.disabled=false;difficultySelect.disabled=false;playBtn.disabled=false;
-      playBtn.textContent="▶ Retry Song";pauseBtn.disabled=true;
-      draw();updateHud();
-      return;
+      showOverlay("PLAYBACK UNAVAILABLE","Press Retry Start or choose another track.");
+      playBtn.textContent="▶ Retry Start";
+      draw();updateHud();return;
     }
     if(current!==loadSerial)return;
     state="playing";songSelect.disabled=true;difficultySelect.disabled=true;
-    pauseBtn.disabled=false;pauseBtn.textContent="Pause";playBtn.disabled=false;playBtn.textContent="↻ Restart Song";
+    pauseBtn.disabled=false;pauseBtn.textContent="Pause";playBtn.textContent="↻ Restart Song";
     hideOverlay();
-    status.textContent=isRadio
-      ?"Now playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Use the five fret buttons or A S D J K."
-      :"Playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hit notes on the fret line!";
-    updateHud();
-    draw();
+    status.textContent="Playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hit notes on the fret line!";
+    updateHud();draw();
   }
   async function togglePause() {
-    if(!audio&&!radioAudio)return;
+    if(isRadio){
+      if(!radioAudio)return;
+      if(state==="playing"||state==="buffering"){
+        radioAudio.pause();
+      }else if(state==="paused"||state==="loading"||state==="ready"){
+        try{await radioAudio.play();}
+        catch(error){audioStatus.textContent="Could not resume. Tap Play in the audio player.";}
+      }
+      return;
+    }
+    if(!audio)return;
     if(state==="playing"){
       state="paused";cancelAnimationFrame(raf);
-      try{if(isRadio)radioAudio.pause();else await audio.suspend();}catch{}
+      try{await audio.suspend();}catch{}
       pauseBtn.textContent="Resume";showOverlay("PAUSED","Press Resume to continue where you left off.");
       status.textContent="Paused.";updateHud();draw();
     }else if(state==="paused"){
-      try{if(isRadio)await radioAudio.play();else await audio.resume();}
-      catch{status.textContent="Unable to resume audio.";return;}
+      try{await audio.resume();}catch{status.textContent="Unable to resume audio.";return;}
       state="playing";pauseBtn.textContent="Pause";hideOverlay();status.textContent="Back on stage!";
       raf=requestAnimationFrame(tick);
     }
   }
+  retryAudio.addEventListener("click",()=>{
+    if(!isRadio||!radioAudio)return;
+    audioStatus.textContent="Retrying radio stream…";
+    try{
+      const p=radioAudio.play();
+      if(p&&p.catch)p.catch(()=>{audioStatus.textContent="Playback still blocked. Try the native Play control or another song.";});
+    }catch{audioStatus.textContent="Unable to restart the radio stream. Choose the song again.";}
+  });
   playBtn.addEventListener("click",startSong);
   pauseBtn.addEventListener("click",togglePause);
   hypeBtn.addEventListener("click",activateHype);
