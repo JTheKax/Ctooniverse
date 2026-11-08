@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#090d24">
-  <meta name="description" content="CToon Jam: play five-lane guitar-rhythm challenges featuring original arcade tracks.">
+  <meta name="description" content="CToon Jam: play five-lane guitar-rhythm challenges with original arcade tracks and the CTooniverse Radio library.">
   <title>CToon Jam | CTooniverse</title>
   <link rel="stylesheet" href="ctoon-jam.css?v=1">
-  <script src="ctoon-jam.js?v=1" defer></script>
+  <script src="ctoon-jam.js?v=radio-library-20261108" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to game</a>
@@ -20,11 +20,11 @@
   <main id="main">
     <section class="jam-head">
       <div><p class="jam-eyebrow">FIVE LANES. ONE STAGE. ALL RHYTHM.</p><h1>CTOON <span>JAM!</span></h1>
-      <p>Hit the notes as they reach the fret line, build your combo, and ignite Hype Mode. Featuring original arcade music.</p></div>
+      <p>Hit notes as they reach the fret line, build your combo, and ignite Hype Mode. Play original arcade music or songs from the CTooniverse Radio library.</p></div>
       <div class="jam-guitar" aria-hidden="true"><span>★</span><strong>♪</strong><i>⚡</i></div>
     </section>
     <section class="jam-settings" aria-label="Song setup">
-      <label for="jam-song">Song<select id="jam-song"><option value="neon">Neon Rush · 118 BPM</option><option value="pixel">Pixel Thunder · 146 BPM</option><option value="starlight">Starlight Solo · 104 BPM</option></select></label>
+      <label for="jam-song">Song<select id="jam-song"><optgroup label="Original Arcade Tracks"><option value="neon">Neon Rush · 118 BPM</option><option value="pixel">Pixel Thunder · 146 BPM</option><option value="starlight">Starlight Solo · 104 BPM</option></optgroup></select></label>
       <label for="jam-difficulty">Difficulty<select id="jam-difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label>
       <label class="jam-mute"><input id="jam-mute" type="checkbox"> Mute music &amp; effects</label>
       <button id="jam-play" class="jam-button jam-primary" type="button">▶ Start Song</button>
@@ -57,7 +57,7 @@
         <button id="jam-hype" class="jam-button jam-hype-btn" type="button" disabled>★ Activate Hype (Space)</button>
         <div class="jam-progress-track" role="progressbar" aria-label="Song progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="jam-progress"><div id="jam-progress-fill"></div></div>
       </div>
-      <p class="jam-help">Keyboard: <b>A · S · D · J · K</b> to hit the five colored lanes, <b>Space</b> for Hype Mode. On mobile, tap the five buttons. Notes are judged by timing; a missed note lowers the Rock Meter.</p>
+      <p class="jam-help">Keyboard: <b>A · S · D · J · K</b> to hit the five colored lanes, <b>Space</b> for Hype Mode. On mobile, tap the five buttons. Radio songs play their actual recordings with automatically generated practice charts at an approximate tempo; precise song-specific charts have not been authored.</p>
       <p id="jam-message" class="jam-message" role="status" aria-live="polite">Choose your track and difficulty to begin.</p>
     </section>
     <section class="jam-results" aria-label="Song record">
