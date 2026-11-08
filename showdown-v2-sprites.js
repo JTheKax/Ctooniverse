@@ -4,17 +4,23 @@
 // previously published atlases remain fallbacks until new art is uploaded.
 export const ACTIONS=['idle','walk','run','punch','kick','block','jump','crouch','special','hurt','ko'];
 export const PLAYABLE_IDS=['disney-hercules','jack-skellington'];
+// Render deployments may publish either the repository root or the public/
+// directory. Try both URL layouts *before* falling back to older atlases.
+const atlasPaths=names=>names.flatMap(name=>[
+  '/images/showdown/'+name,
+  '/public/images/showdown/'+name
+]);
 const ASSETS={
-  'disney-hercules':[
-    '/images/showdown/hercules-illustrated-atlas.png',
-    '/images/showdown/hercules-cleaned-atlas.png',
-    '/images/showdown/hercules-atlas.svg'
-  ],
-  'jack-skellington':[
-    '/images/showdown/jack-illustrated-atlas.png',
-    '/images/showdown/jack-cleaned-atlas.png',
-    '/images/showdown/jack-skellington-atlas.svg'
-  ]
+  'disney-hercules':atlasPaths([
+    'hercules-illustrated-atlas.png',
+    'hercules-cleaned-atlas.png',
+    'hercules-atlas.svg'
+  ]),
+  'jack-skellington':atlasPaths([
+    'jack-illustrated-atlas.png',
+    'jack-cleaned-atlas.png',
+    'jack-skellington-atlas.svg'
+  ])
 };
 const cache=new Map();
 export const hasAnimation=id=>Object.hasOwn(ASSETS,id);
@@ -34,7 +40,7 @@ function measureRows(image,fw,fh){
         if(x<minX)minX=x;if(y<minY)minY=y;if(x>maxX)maxX=x;if(y>maxY)maxY=y;
       }
     }
-    if(maxX<minX)return {x:0,y:0,w:fw,h:fh};
+    if(maxX<minX)return null;
     const x=Math.max(0,minX-4),y=Math.max(0,minY-4);
     return {x,y,w:Math.min(fw-x,maxX-x+8),h:Math.min(fh-y,maxY-y+8)};
   });
@@ -55,6 +61,10 @@ export async function loadSprite(id){
       if(!Number.isInteger(fw)||!Number.isInteger(fh)||fw<32||fh<32)continue;
       state.image=img;state.source=url;state.fw=fw;state.fh=fh;
       state.rows=measureRows(img,fw,fh);
+      if(state.rows.some(row=>!row)){
+        state.image=null;state.source=null;state.rows=null;
+        continue; // Reject blank/incomplete atlases rather than drawing invisible sprites.
+      }
       return true;
     }
     state.failed=true;
