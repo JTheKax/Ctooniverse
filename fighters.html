@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10122d">
   <meta name="description" content="CToon Showdown: a fresh 2D fighter with a 200-slot roster that grows as new fighters are published.">
   <title>CToon Showdown | CTooniverse</title>
-  <link rel="stylesheet" href="showdown-reboot.css?v=20261108-1">
+  <link rel="stylesheet" href="showdown-reboot.css?v=20261108-2">
 </head>
 <body>
 <main class="showdown-shell">
@@ -21,19 +21,30 @@
     </div>
     <div class="launch-count"><b id="roster-capacity">200</b><small>Starting roster slots</small></div>
   </section>
-  <section class="showdown-panel" aria-labelledby="roster-title">
+  <section class="showdown-panel roster-showcase" aria-labelledby="roster-title">
     <div class="panel-header">
-      <div><p class="eyebrow">01 / BUILD THE ROSTER</p><h2 id="roster-title">Select Your Fighter</h2></div>
+      <div><p class="eyebrow">01 / THE CHARACTER SELECT SCREEN</p><h2 id="roster-title">Choose Your Champion</h2><p class="roster-subtitle">200 starter slots · unlimited future expansion</p></div>
       <span class="roster-tally" id="roster-tally">0 / 200 published</span>
+    </div>
+    <div class="roster-scoreboard" aria-label="Roster progress">
+      <div class="roster-score"><strong id="roster-ready">0</strong><span>Playable</span></div>
+      <div class="roster-score"><strong id="roster-locked">0</strong><span>Unlockable <span aria-hidden="true">🔒</span></span></div>
+      <div class="roster-score"><strong id="roster-open">200</strong><span>Open Slots</span></div>
     </div>
     <p class="notice" id="catalog-banner" role="status" aria-live="polite">Loading the fresh roster. Empty slots are reserved for future characters.</p>
     <div class="roster-controls">
       <label>Search fighter or slot <input id="roster-search" type="search" placeholder="Name, series, or slot 025" autocomplete="off"></label>
       <label>Series <select id="roster-series"><option value="all">All series</option></select></label>
-      <label>Show <select id="roster-state"><option value="all">All roster slots</option><option value="ready">Published fighters</option><option value="empty">Empty slots</option></select></label>
+      <label>Show <select id="roster-state"><option value="all">All roster slots</option><option value="ready">All published</option><option value="playable">Playable now</option><option value="unlockable">🔒 Unlockable fighters</option><option value="empty">Open slots</option></select></label>
+    </div>
+    <div class="roster-legend" aria-label="Roster icon legend">
+      <span><i class="legend-square legend-playable" aria-hidden="true"></i> Playable</span>
+      <span><span class="legend-lock" aria-hidden="true">🔒</span> Unlockable</span>
+      <span><i class="legend-square legend-empty" aria-hidden="true"></i> Future fighter slot</span>
     </div>
     <div class="select-layout">
-      <div>
+      <div class="roster-wall">
+        <div class="roster-wall-heading"><span>SELECT PLAYER 1</span><span>FIGHTER ROSTER · 25 / PAGE</span></div>
         <div id="roster-grid" class="roster-grid" role="group" aria-label="Fighter slots"></div>
         <div class="roster-pages">
           <button type="button" class="arcade-btn alt" id="roster-prev">◀ Previous</button>
@@ -42,9 +53,9 @@
         </div>
       </div>
       <aside class="preview-card" aria-labelledby="preview-title">
-        <div class="preview-frame"><div id="preview-avatar" class="preview-avatar is-empty" aria-hidden="true">?</div></div>
+        <div class="preview-frame"><span class="preview-caption" aria-hidden="true">PLAYER 1 // SPOTLIGHT</span><div id="preview-avatar" class="preview-avatar is-empty" aria-hidden="true">?</div><span id="preview-lock" class="preview-lock" hidden aria-label="Unlockable fighter">🔒</span></div>
         <div><span class="tag" id="preview-tag">EMPTY SLOT</span><h3 id="preview-title">SLOT 001</h3><p id="preview-series">This place is reserved for a future fighter.</p></div>
-        <p id="preview-detail">Select a published fighter to prepare a match, or use Practice Mode to test the new battle system now.</p>
+        <p id="preview-detail">Select a published fighter to prepare a match, or use Practice Mode to test the new battle system now.</p><p id="preview-unlock-note" class="preview-unlock-note" hidden></p>
         <div class="preview-actions">
           <button type="button" class="arcade-btn main" id="start-match" disabled>Choose a fighter first</button>
           <button type="button" class="arcade-btn alt" id="training-match">Practice Mode (2 test fighters)</button>
@@ -89,6 +100,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=20261108-1"></script>
+<script type="module" src="showdown-reboot.js?v=20261108-2"></script>
 </body>
 </html>
