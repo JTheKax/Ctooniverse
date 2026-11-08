@@ -1,5 +1,5 @@
 // CToon Showdown V2 — independent 2D combat engine (no old 3D/WebGL state).
-import {drawFighter,loadSprite,preloadSprites} from './showdown-v2-sprites.js?v=2';
+import {drawFighter,loadSprite,preloadSprites} from './showdown-v2-sprites.js?v=3';
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const NAMES={'disney-hercules':'HERCULES','jack-skellington':'JACK SKELLINGTON'};
 const GROUND=442,LEFT=52,RIGHT=908,STEP=1/60;
@@ -29,7 +29,10 @@ export class ShowdownGame{
   setSelected(id){
     if(!NAMES[id]||this.mode==='fight'||this.mode==='between')return false;
     this.p1=id;this.p2=id==='disney-hercules'?'jack-skellington':'disney-hercules';
-    this.hero.id=this.p1;this.cpu.id=this.p2;
+    // Reset both stage actors when changing fighters after a match; otherwise
+    // hurt/KO frames from the previous fight can remain on the idle stage.
+    this.hero=fighter(this.p1,250,1);this.cpu=fighter(this.p2,710,-1);
+    this.mode='ready';this.paused=false;
     this.ui.start.textContent='START '+NAMES[id];
     this.label='READY TO FIGHT';this.labelUntil=this.elapsed+1.5;
     this.ui.status.textContent=NAMES[id]+' selected. Press Start Match.';
