@@ -7,6 +7,7 @@
   const songSelect = $("jam-song"), difficultySelect = $("jam-difficulty"), muteInput = $("jam-mute");
   const overlay = $("jam-overlay"), judgement = $("jam-judgement");
   const status = $("jam-message"), best = $("jam-best");
+  const radioList = $("jam-radio-tracks"), radioStatus = $("jam-radio-status"), radioCount = $("jam-radio-count");
   const colors = ["#61ea82","#fd6384","#ffe16a","#65bfff","#d99aff"];
   const keys = ["a","s","d","j","k"];
   const songs = {
@@ -32,33 +33,65 @@
   const fmt = number => number.toLocaleString("en-US");
   const keyForScore = () => "ctoon-jam-best-v1-" + songSelect.value + "-" + difficultySelect.value;
 
+  function syncRadioSelection() {
+    if(!radioList)return;
+    for(const button of radioList.querySelectorAll("button[data-song]")){
+      button.setAttribute("aria-current",String(button.dataset.song===songSelect.value));
+    }
+  }
   async function loadRadioSongs() {
+    if(!radioList || !radioStatus || !radioCount)return;
+    radioStatus.textContent="Loading published songs from CTooniverse Radio…";
     try {
       const response=await fetch(radioApi,{headers:{apikey:radioKey,Authorization:"Bearer "+radioKey},cache:"no-store"});
       if(!response.ok)throw new Error("Music library returned "+response.status);
       const rows=await response.json();
       if(!Array.isArray(rows))throw new Error("Unexpected radio playlist response");
-      const group=document.createElement("optgroup");group.label="CTooniverse Radio · Auto-generated practice charts";
+      const group=document.createElement("optgroup");group.label="CTooniverse Radio · Practice Charts";
       const used=new Set();
+      const buttons=[];
       for(const row of rows) {
         if(!row || typeof row.title!=="string" || typeof row.storage_path!=="string" ||
            !/^tracks\/[a-z0-9_-]+\.(mp3|ogg|wav)$/i.test(row.storage_path) || !row.title.trim())continue;
         if(used.has(row.storage_path))continue;
         used.add(row.storage_path);
         const id="radio:"+row.storage_path;
-        songs[id]={title:row.title.trim(),path:row.storage_path,radio:true,bpm:120,bars:90,root:52,seed:used.size%5,
+        const title=row.title.trim();
+        songs[id]={title,path:row.storage_path,radio:true,bpm:120,bars:90,root:52,seed:used.size%5,
                    wave:"triangle",scale:[0,3,5,7,10,12,15,17],progression:[0,5,3,7]};
-        const option=document.createElement("option");option.value=id;option.textContent=row.title.trim();
+        const option=document.createElement("option");option.value=id;option.textContent=title;
         group.append(option);
+        const button=document.createElement("button");button.type="button";
+        button.className="jam-radio-track";
+        button.dataset.song=id;button.setAttribute("aria-label","Play "+title+" in CToon Jam");
+        button.setAttribute("aria-current","false");
+        const name=document.createElement("span");name.className="jam-track-title";name.textContent=title;
+        const action=document.createElement("span");action.className="jam-track-play";action.textContent="▶ PLAY";
+        button.append(name,action);
+        button.addEventListener("click",()=>{
+          songSelect.value=id;
+          track=songs[id];
+          syncRadioSelection();
+          refreshBest();
+          startSong();
+        });
+        buttons.push(button);
       }
-      if(group.children.length){
+      radioList.replaceChildren(...buttons);
+      radioCount.textContent=buttons.length+" SONG"+(buttons.length===1?"":"S");
+      if(buttons.length){
         songSelect.append(group);
-        if(state==="ready")status.textContent=group.children.length+" CTooniverse Radio songs ready. Choose a radio track to hear the recording while playing its practice chart.";
-      } else if(state==="ready") {
-        status.textContent="No published radio songs found. The original CToon Jam tracks are available.";
+        syncRadioSelection();
+        radioStatus.textContent="Choose a song to play its CTooniverse Radio recording.";
+        if(state==="ready")status.textContent=buttons.length+" radio songs ready. Select one above to play or choose a track from the Song menu.";
+      } else {
+        radioStatus.textContent="No enabled radio songs yet. The original CToon Jam tracks are still available.";
+        if(state==="ready")status.textContent="Original CToon Jam tracks are ready.";
       }
     }catch(error){
       console.warn("CToon Jam radio playlist:",error);
+      radioCount.textContent="RADIO UNAVAILABLE";
+      radioStatus.textContent="Could not load the radio library. Refresh to retry. Original arcade tracks still work.";
       if(state==="ready")status.textContent="Radio library is temporarily unavailable. Original arcade tracks are playable.";
     }
   }
@@ -321,6 +354,7 @@
     if(audio){audio.close().catch(()=>{});audio=null;}
     master=null;
     track=songs[songSelect.value]||songs.neon;
+    syncRadioSelection();
     isRadio=!!track.radio;
     activeDifficulty=difficultySelect.value;
     state="loading";playBtn.disabled=true;pauseBtn.disabled=true;
@@ -405,7 +439,7 @@
   for(const select of [songSelect,difficultySelect]){
     select.addEventListener("change",()=>{
       track=songs[songSelect.value]||songs.neon;
-      notes=[];totalTime=0;refreshBest();draw();updateHud();
+      notes=[];totalTime=0;syncRadioSelection();refreshBest();draw();updateHud();
     });
   }
   function flashButton(lane) {
