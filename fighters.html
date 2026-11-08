@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10122d">
   <meta name="description" content="CToon Showdown: a fresh 2D fighter with a 200-slot roster that grows as new fighters are published.">
   <title>CToon Showdown | CTooniverse</title>
-  <link rel="stylesheet" href="showdown-reboot.css?v=20261108-johnny-classic-test">
+  <link rel="stylesheet" href="showdown-reboot.css?v=20261108-johnny-user-model">
 </head>
 <body>
 <main class="showdown-shell">
@@ -61,9 +61,9 @@
           <select id="preview-pose" aria-label="Choose a sprite animation to inspect" disabled><option value="idle">IDLE</option></select>
         </label>
         <label class="preview-pose-control" id="johnny-art-control" for="johnny-art-mode" hidden>Johnny model comparison
-          <select id="johnny-art-mode" aria-label="Johnny Bravo sprite art model"><option value="approved">Existing playable sprites</option><option value="classic">Classic model test (33 frames)</option></select>
+          <select id="johnny-art-mode" aria-label="Johnny Bravo sprite art model"><option value="approved">Uploaded pixel model (33 frames)</option><option value="classic">Previous model</option></select>
         </label>
-        <p class="sprite-comparison-note" id="johnny-art-notice" hidden>Test artwork only. Switching models does not change the published roster or unlocks.</p>
+        <p class="sprite-comparison-note" id="johnny-art-notice" hidden>Artwork comparison only. Your uploaded pixel sprite is the default for battles; the previous model is retained for comparison.</p>
         <div class="preview-actions">
           <button type="button" class="arcade-btn main" id="start-match" disabled>Choose a fighter first</button>
           <button type="button" class="arcade-btn unlock-btn" id="unlock-fighter" hidden>Unlock this fighter</button>
@@ -109,6 +109,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=20261108-johnny-classic-test"></script>
+<script type="module" src="showdown-reboot.js?v=20261108-johnny-user-model"></script>
 </body>
 </html>

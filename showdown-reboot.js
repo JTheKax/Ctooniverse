@@ -17,15 +17,15 @@ const arena=$('arena'),ctx=arena.getContext('2d');
 // Until additional licensed/cartoon fighters are published, training is a Johnny Bravo mirror match.
 // Johnny Bravo is the first fighter. Other full 3x11 atlases use the same pose mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
- portrait:'/images/showdown/johnny-bravo-mugen-portrait.webp',
- preview_sheet:'/images/showdown/johnny-bravo-mugen-atlas.png',preview_columns:3,preview_rows:11};
+ portrait:'/images/showdown/johnny-bravo-user-model.svg',
+ preview_sheet:'/images/showdown/johnny-bravo-user-atlas.svg',preview_columns:3,preview_rows:11};
 const demoCPU={...demoHero};
-const johnnyArt={mode:'approved',testSheet:'/images/showdown/johnny-bravo-classic-test.svg'};
+const johnnyArt={mode:'approved',testSheet:'/images/showdown/johnny-bravo-mugen-atlas.png'};
 const johnnyArtMenu=$('johnny-art-mode');
 const johnnyArtControl=$('johnny-art-control'),johnnyArtNotice=$('johnny-art-notice');
 const combatSpriteCache=new Map();
 // Sprite atlas rows: idle, walk, run, punch, kick, guard, jump, crouch, special, hurt, KO.
-// Use the same approved sprite asset in both match and character preview.
+// Johnny uses the owner's exact uploaded 64x64 model in the roster and a 3x11 derived motion atlas in the arena.
 function spriteSources(profile){
  if(!profile)return [];
  const isJohnny=profile.fighter_id==='johnny-bravo';
@@ -39,12 +39,12 @@ function spriteSources(profile){
  }
  addStaticLocations(u);
  if(isJohnny){
-  // Fail back to the already playable Johnny atlas if the test art is missing.
+  // Preserve the prior Johnny atlas as a fallback if the supplied model is unavailable.
   if(johnnyArt.mode==='classic'){
    const approved=safeImage(demoHero.preview_sheet);
    if(approved){sources.push(approved);addStaticLocations(new URL(approved));}
   }
-  for(const backup of ['/images/showdown/johnny-bravo-complete-v2.svg','/public/images/showdown/johnny-bravo-complete-v2.svg']){
+  for(const backup of ['/images/showdown/johnny-bravo-mugen-atlas.png','/public/images/showdown/johnny-bravo-mugen-atlas.png','/images/showdown/johnny-bravo-complete-v2.svg','/public/images/showdown/johnny-bravo-complete-v2.svg']){
    const candidate=safeImage(backup);if(candidate)sources.push(candidate);
   }
  }
@@ -218,7 +218,7 @@ function renderPreviewFrame(timestamp){
  const scale=Math.min((canvas.width-25)/fw,(canvas.height-18)/fh);
  const dw=fw*scale,dh=fh*scale;
  p.clearRect(0,0,canvas.width,canvas.height);
- p.save();p.imageSmoothingEnabled=true;p.imageSmoothingQuality='high';p.shadowColor='#7fcfff';p.shadowBlur=15;
+ p.save();p.imageSmoothingEnabled=currentFighter()?.fighter_id!=='johnny-bravo';p.imageSmoothingQuality='high';p.shadowColor='#7fcfff';p.shadowBlur=15;
  p.drawImage(img,frame*fw,row*fh,fw,fh,(canvas.width-dw)/2,(canvas.height-dh)/2+Math.sin(timestamp/290)*3,dw,dh);
  p.restore();
 }
@@ -231,8 +231,8 @@ if(johnnyArtMenu){
   else if(!fighter)setupPreviewAnimation(demoHero);
   if(johnnyArtNotice)johnnyArtNotice.hidden=johnnyArt.mode!=='classic'||fighter?.fighter_id!=='johnny-bravo';
   $('showdown-status').textContent=johnnyArt.mode==='classic'
-    ?'Comparing Johnny\'s classic cartoon model test. The existing game artwork can be restored anytime.'
-    :'Johnny\'s existing playable sprite sheet is restored.';
+    ?'Viewing the previous Johnny model. Switch back to Uploaded Pixel Model to use the newly supplied sprite.'
+    :'Using your uploaded Johnny Bravo pixel model for previews and battles.';
  });
 }
 const previewPoseMenu=$('preview-pose');
@@ -564,7 +564,7 @@ function drawBody(f,t){
   ctx.save();
   ctx.translate(Math.round(x),Math.round(y));
   ctx.scale(f.face,1);
-  ctx.imageSmoothingEnabled=f.profile.fighter_id==='johnny-bravo'||/\.svg(?:$|[?#])/i.test(atlas.currentSrc||atlas.src);
+  ctx.imageSmoothingEnabled=f.profile.fighter_id!=='johnny-bravo'&&/\.svg(?:$|[?#])/i.test(atlas.currentSrc||atlas.src);
   if(ctx.imageSmoothingEnabled)ctx.imageSmoothingQuality='high';
   const bounce=f.y===0&&pose.row===0?Math.sin(t*6)*1.7:0;
   // Preserve each franchise's source proportions instead of widening Johnny's head/body.
