@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="900" height="3300" viewBox="0 0 900 3300" role="img" aria-label="Johnny Bravo alternate classic model work in progress. Three frames each for idle, walk, run, punch, kick, guard, jump, crouch, special, hurt and knockout."><title>Johnny Bravo — classic model test atlas, 3 by 11 poses</title><defs>
+<g id="jb-leg-l" stroke="#131313" stroke-width="3.9" stroke-linejoin="round">
+ <path d="M-22 -82 Q-29 -52 -31 -18 L-14 -16 Q-10 -48 -3 -81Z" fill="#457fcb"/>
+ <path d="M-31 -19 L-12 -19 L-10 -9 Q-27 -6 -47 -6 Q-55 -7 -51 -12 L-43 -17 Z" fill="#0d0d10"/>
+ <path d="M-30 -34 L-14 -33" stroke="#2c5aa3" fill="none" stroke-width="2"/>
+</g>
+<g id="jb-leg-r" stroke="#131313" stroke-width="3.9" stroke-linejoin="round">
+ <path d="M2 -81 Q9 -51 15 -18 L33 -20 Q27 -59 24 -82Z" fill="#477ec9"/>
+ <path d="M14 -19 L33 -20 L40 -13 L51 -10 Q53 -5 47 -4 L14 -4Z" fill="#101013"/>
+ <path d="M17 -33 L31 -34" stroke="#2a58a2" stroke-width="2.2" fill="none"/>
+</g>
+<g id="jb-leg-kick" stroke="#111118" stroke-width="4" stroke-linejoin="round">
+ <path d="M3 -78 Q23 -84 37 -91 Q68 -100 111 -112 L117 -97 Q74 -74 41 -64 L25 -64Z" fill="#4c84d0"/>
+ <path d="M108 -113 L122 -109 L139 -115 L145 -112 Q150 -106 143 -100 L116 -91 L109 -96Z" fill="#101016"/>
+</g>
+<g id="jb-arm-left" stroke="#141015" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M-81 -152 Q-104 -139 -104 -119 L-94 -89 Q-89 -77 -77 -86 L-71 -99 Q-82 -117 -76 -138Z" fill="#f9bf91"/>
+ <path d="M-97 -100 Q-111 -92 -106 -81 Q-101 -69 -89 -73 Q-79 -78 -80 -91Z" fill="#f9bf91"/>
+</g>
+<g id="jb-arm-right" stroke="#141015" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M80 -153 Q104 -137 103 -116 L93 -88 Q88 -77 78 -86 L72 -100 Q80 -119 76 -139Z" fill="#f9bf91"/>
+ <path d="M93 -100 Q108 -94 108 -81 Q104 -68 91 -72 Q81 -77 80 -91Z" fill="#f9bf91"/>
+</g>
+<g id="jb-arm-punch" stroke="#171318" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+ <path d="M75 -151 Q91 -151 104 -134 L143 -133 Q155 -128 155 -118 Q153 -108 138 -108 L102 -112 Q80 -106 70 -128Z" fill="#f8bd8c"/>
+ <path d="M142 -134 Q154 -138 164 -133 Q171 -126 167 -116 Q160 -107 147 -110 L139 -117 Z" fill="#fac395"/>
+ <path d="M143 -121 L156 -119" fill="none" stroke="#d59064" stroke-width="2"/>
+</g>
+<g id="jb-arm-flex" stroke="#151116" stroke-width="4.5" stroke-linejoin="round">
+ <path d="M76 -152 Q103 -154 112 -124 L97 -101 L79 -109 L88 -133 L75 -139Z" fill="#f6ba8a"/>
+ <path d="M95 -112 Q97 -128 118 -132 Q134 -128 132 -110 Q130 -95 116 -90 L99 -96Z" fill="#f7bd8a"/>
+ <path d="M116 -93 Q111 -101 118 -107" stroke="#d48f68" stroke-width="2" fill="none"/>
+</g>
+<g id="jb-arm-guard-l" stroke="#171017" stroke-width="4.5" stroke-linejoin="round">
+ <path d="M-80 -152 Q-99 -144 -100 -125 Q-96 -104 -70 -100 L-24 -137 L-33 -152 L-72 -119Z" fill="#f9be90"/>
+ <path d="M-38 -150 Q-26 -153 -22 -144 Q-19 -134 -28 -128 Q-43 -125 -46 -139Z" fill="#fac394"/>
+</g>
+<g id="jb-arm-guard-r" stroke="#171017" stroke-width="4.5" stroke-linejoin="round">
+ <path d="M80 -153 Q100 -145 99 -124 Q97 -105 74 -101 L26 -138 L35 -153 L70 -120Z" fill="#f9bd90"/>
+ <path d="M35 -151 Q25 -154 21 -143 Q20 -133 29 -129 Q44 -126 48 -139Z" fill="#fac495"/>
+</g>
+<g id="jb-shirt" stroke="#0c0d11" stroke-width="4.6" stroke-linejoin="round">
+ <path d="M-29 -171 Q-49 -181 -74 -172 Q-94 -168 -96 -150 Q-96 -131 -78 -122 L-46 -105 Q-34 -99 -27 -81 L-15 -74 Q1 -69 15 -75 L28 -85 Q34 -100 49 -107 L78 -122 Q96 -134 95 -150 Q94 -170 73 -173 Q47 -180 30 -170 Q0 -162 -29 -171Z" fill="#0d0d10"/>
+ <path d="M-94 -147 Q-93 -130 -76 -125 L-71 -131 Q-86 -141 -85 -159Z" fill="#0d0d10" stroke="#0d0d10" stroke-width="2"/>
+ <path d="M95 -146 Q93 -132 76 -126 L71 -131 Q84 -143 84 -158Z" fill="#0d0d10" stroke="#0d0d10" stroke-width="2"/>
+ <path d="M-93 -136 Q-84 -132 -74 -132" fill="none" stroke="#338dd2" stroke-width="3"/>
+ <path d="M74 -133 Q85 -133 94 -136" fill="none" stroke="#338dd2" stroke-width="3"/>
+ <path d="M-25 -165 Q0 -157 24 -164" stroke="#303039" fill="none" stroke-width="2"/>
+</g>
+<g id="jb-hips" stroke="#0e0f13" stroke-width="3.5">
+ <path d="M-28 -85 Q0 -94 27 -85 L24 -74 L-20 -70Z" fill="#487dc8"/>
+ <path d="M-7 -84 L-7 -75" stroke="#2757a4" stroke-width="3"/>
+</g>
+<g id="jb-neck" stroke="#101117" stroke-width="4">
+ <path d="M-16 -182 L-19 -159 Q-8 -150 9 -155 L20 -172 L16 -189Z" fill="#f7bd8f"/>
+</g>
+<g id="jb-head" stroke="#0d0d10" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+ <!-- Squared, narrow jaw and small black shades are essential to the 1996-97 model. -->
+ <path d="M-22 -219 Q-26 -205 -25 -179 L-22 -167 Q-19 -157 -7 -156 L13 -156 Q22 -159 25 -166 L25 -180 L30 -182 L24 -190 L23 -219Z" fill="#fac194"/>
+ <path d="M-25 -196 Q-34 -204 -34 -192 Q-34 -183 -25 -184" fill="#f7ba8c" stroke-width="3"/>
+ <path d="M-23 -209 Q-12 -212 -3 -206 L-4 -190 Q-11 -185 -21 -189Z" fill="#0b0b12" stroke-width="1.5"/>
+ <path d="M2 -207 Q13 -213 23 -209 L23 -190 Q11 -186 3 -191Z" fill="#0b0b12" stroke-width="1.5"/>
+ <path d="M-4 -202 L3 -203" fill="none" stroke="#101015" stroke-width="3"/>
+ <path d="M20 -185 L30 -181 L24 -178" fill="#f9bb8c" stroke-width="2.5"/>
+ <path d="M-13 -168 L12 -168" fill="none" stroke="#6e372b" stroke-width="2.1"/>
+ <!-- Three swept lobes: avoid the banana/helmet hairstyle of prior models. -->
+ <path d="M-25 -216 Q-36 -241 -32 -264 Q-30 -278 -21 -279 Q-8 -277 -8 -257 Q-10 -242 -5 -231 Q-11 -263 -4 -278 Q2 -286 10 -283 Q22 -278 20 -254 Q18 -240 18 -233 Q18 -265 29 -271 Q39 -271 41 -260 Q43 -244 28 -216 L21 -212 L-18 -212Z" fill="#ffd72b" stroke-width="4.9"/>
+ <path d="M-23 -272 Q-22 -250 -15 -228 M5 -278 Q12 -260 10 -229 M31 -262 Q31 -245 23 -224" fill="none" stroke="#171318" stroke-width="2.6"/>
+ <path d="M-24 -218 Q2 -222 24 -215" fill="none" stroke="#141217" stroke-width="3"/>
+</g>
+</defs><g transform="translate(150 287)"><g transform="translate(0 0) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(0 -17 -77)"/><use href="#jb-leg-r" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(0 -80 -149)"/><use href="#jb-arm-right" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 287)"><g transform="translate(0 -2) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(0 -17 -77)"/><use href="#jb-leg-r" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(-4 -80 -149)"/><use href="#jb-arm-right" transform="rotate(3 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 287)"><g transform="translate(0 0) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(0 -17 -77)"/><use href="#jb-leg-r" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(3 -80 -149)"/><use href="#jb-arm-right" transform="rotate(-4 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 587)"><g transform="translate(0 0) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(-18 -17 -77)"/><use href="#jb-leg-r" transform="rotate(20 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(-16 -80 -149)"/><use href="#jb-arm-right" transform="rotate(16 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 587)"><g transform="translate(0 -2) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(0 -17 -77)"/><use href="#jb-leg-r" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(1 -80 -149)"/><use href="#jb-arm-right" transform="rotate(-1 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 587)"><g transform="translate(0 0) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(18 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-20 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(18 -80 -149)"/><use href="#jb-arm-right" transform="rotate(-18 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 887)"><g transform="translate(0 -7) rotate(9 0 -87)"><use href="#jb-leg-l" transform="rotate(-29 -17 -77)"/><use href="#jb-leg-r" transform="rotate(25 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(28 -80 -149)"/><use href="#jb-arm-right" transform="rotate(-32 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 887)"><g transform="translate(0 -4) rotate(12 0 -87)"><use href="#jb-leg-l" transform="rotate(18 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-26 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(-25 -80 -149)"/><use href="#jb-arm-right" transform="rotate(28 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 887)"><g transform="translate(0 -7) rotate(9 0 -87)"><use href="#jb-leg-l" transform="rotate(-26 -17 -77)"/><use href="#jb-leg-r" transform="rotate(28 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(28 -80 -149)"/><use href="#jb-arm-right" transform="rotate(-32 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 1187)"><g transform="translate(0 0) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(5 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-5 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-right" transform="rotate(-10 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 1187)"><g transform="translate(0 0) rotate(6 0 -87)"><use href="#jb-leg-l" transform="rotate(10 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-5 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-punch" transform="rotate(-8 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 1187)"><g transform="translate(0 0) rotate(8 0 -87)"><use href="#jb-leg-l" transform="rotate(7 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-7 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-punch" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 1487)"><g transform="translate(0 0) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(0 -17 -77)"/><use href="#jb-leg-r" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(0 -80 -149)"/><use href="#jb-arm-guard-r" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 1487)"><g transform="translate(0 -13) rotate(-12 0 -87)"><use href="#jb-leg-l" transform="rotate(-8 -17 -77)"/><use href="#jb-leg-kick" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-guard-r" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 1487)"><g transform="translate(0 -10) rotate(-8 0 -87)"><use href="#jb-leg-l" transform="rotate(-4 -17 -77)"/><use href="#jb-leg-kick" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(0 -80 -149)"/><use href="#jb-arm-guard-r" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 1787)"><g transform="translate(0 -4) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(4 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-4 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-guard-r" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 1787)"><g transform="translate(0 -6) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(3 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-3 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-guard-r" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 1787)"><g transform="translate(0 -4) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(4 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-4 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-guard-r" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 2087)"><g transform="translate(0 -25) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(-25 -17 -77)"/><use href="#jb-leg-r" transform="rotate(20 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(20 -80 -149)"/><use href="#jb-arm-right" transform="rotate(-20 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 2087)"><g transform="translate(0 -54) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(29 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-33 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-right" transform="rotate(-25 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 2087)"><g transform="translate(0 -31) rotate(0 0 -87)"><use href="#jb-leg-l" transform="rotate(-15 -17 -77)"/><use href="#jb-leg-r" transform="rotate(10 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(-24 -80 -149)"/><use href="#jb-arm-right" transform="rotate(20 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 2387)"><g transform="translate(0 35) rotate(0 0 -87) scale(1 .8)"><use href="#jb-leg-l" transform="rotate(22 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-24 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-guard-r" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 2387)"><g transform="translate(0 33) rotate(0 0 -87) scale(1 .8)"><use href="#jb-leg-l" transform="rotate(22 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-24 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-guard-r" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 2387)"><g transform="translate(0 35) rotate(0 0 -87) scale(1 .8)"><use href="#jb-leg-l" transform="rotate(17 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-18 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-guard-r" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 2687)"><g transform="translate(0 0) rotate(-6 0 -87)"><use href="#jb-leg-l" transform="rotate(8 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-8 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(0 -80 -149)"/><use href="#jb-arm-flex" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 2687)"><g transform="translate(0 -3) rotate(-9 0 -87)"><use href="#jb-leg-l" transform="rotate(8 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-8 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(0 -80 -149)"/><use href="#jb-arm-flex" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 2687)"><g transform="translate(0 0) rotate(4 0 -87)"><use href="#jb-leg-l" transform="rotate(2 -17 -77)"/><use href="#jb-leg-r" transform="rotate(-2 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(0 -80 -149)"/><use href="#jb-arm-punch" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 2987)"><g transform="translate(0 0) rotate(-9 0 -87)"><use href="#jb-leg-l" transform="rotate(-8 -17 -77)"/><use href="#jb-leg-r" transform="rotate(9 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(-25 -80 -149)"/><use href="#jb-arm-right" transform="rotate(24 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 2987)"><g transform="translate(0 -5) rotate(-16 0 -87)"><use href="#jb-leg-l" transform="rotate(-15 -17 -77)"/><use href="#jb-leg-r" transform="rotate(12 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(-45 -80 -149)"/><use href="#jb-arm-right" transform="rotate(48 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 2987)"><g transform="translate(0 -1) rotate(-5 0 -87)"><use href="#jb-leg-l" transform="rotate(-6 -17 -77)"/><use href="#jb-leg-r" transform="rotate(10 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-guard-l" transform="rotate(-8 -80 -149)"/><use href="#jb-arm-right" transform="rotate(27 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(150 3287)"><g transform="translate(-9 32) rotate(-77 0 -92) scale(.82)"><use href="#jb-leg-l" transform="rotate(0 -17 -77)"/><use href="#jb-leg-r" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(0 -80 -149)"/><use href="#jb-arm-right" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(450 3287)"><g transform="translate(-9 32) rotate(-77 0 -92) scale(.82)"><use href="#jb-leg-l" transform="rotate(0 -17 -77)"/><use href="#jb-leg-r" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(0 -80 -149)"/><use href="#jb-arm-right" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g><g transform="translate(750 3287)"><g transform="translate(-9 32) rotate(-77 0 -92) scale(.82)"><use href="#jb-leg-l" transform="rotate(0 -17 -77)"/><use href="#jb-leg-r" transform="rotate(0 17 -77)"/>
+ <use href="#jb-hips"/><use href="#jb-arm-left" transform="rotate(0 -80 -149)"/><use href="#jb-arm-right" transform="rotate(0 80 -149)"/>
+ <use href="#jb-shirt"/><use href="#jb-neck"/><use href="#jb-head"/></g></g></svg>
