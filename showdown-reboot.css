@@ -225,3 +225,8 @@ a{color:var(--sky)}:focus-visible{outline:3px solid var(--gold);outline-offset:3
 .preview-pose-control select:focus-visible{outline:3px solid #ffe596;outline-offset:2px}
 .preview-pose-control select:disabled{opacity:.52;cursor:not-allowed}
 @media(max-width:380px){.preview-pose-control{flex-wrap:wrap}.preview-pose-control select{width:100%;max-width:none}}
+
+/* Johnny-specific animation artwork comparison; hidden unless slot #001 is selected. */
+.preview-pose-control[hidden],.sprite-comparison-note[hidden]{display:none!important}
+.sprite-comparison-note{font-size:.75rem;color:#d0d9f7;line-height:1.45;margin:0 0 10px}
+#johnny-art-mode{max-width:210px}
