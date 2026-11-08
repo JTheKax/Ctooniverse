@@ -20,19 +20,30 @@ const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Joh
  portrait:'/images/showdown/johnny-bravo-mugen-portrait.webp',
  preview_sheet:'/images/showdown/johnny-bravo-mugen-atlas.png',preview_columns:3,preview_rows:11};
 const demoCPU={...demoHero};
+const johnnyArt={mode:'approved',testSheet:'/images/showdown/johnny-bravo-classic-test.svg'};
+const johnnyArtMenu=$('johnny-art-mode');
+const johnnyArtControl=$('johnny-art-control'),johnnyArtNotice=$('johnny-art-notice');
 const combatSpriteCache=new Map();
 // Sprite atlas rows: idle, walk, run, punch, kick, guard, jump, crouch, special, hurt, KO.
 // Use the same approved sprite asset in both match and character preview.
 function spriteSources(profile){
  if(!profile)return [];
- const chosen=profile.fighter_id==='johnny-bravo'?demoHero.preview_sheet:profile.preview_sheet;
+ const isJohnny=profile.fighter_id==='johnny-bravo';
+ const chosen=isJohnny?(johnnyArt.mode==='classic'?johnnyArt.testSheet:demoHero.preview_sheet):profile.preview_sheet;
  const url=safeImage(chosen);if(!url)return [];
  const sources=[url],u=new URL(url);
- if(u.origin===location.origin){
-  if(u.pathname.startsWith('/images/'))sources.push(u.origin+'/public'+u.pathname+u.search);
-  else if(u.pathname.startsWith('/public/images/'))sources.push(u.origin+u.pathname.replace('/public/','/')+u.search);
+ function addStaticLocations(uri){
+  if(uri.origin!==location.origin)return;
+  if(uri.pathname.startsWith('/images/'))sources.push(uri.origin+'/public'+uri.pathname+uri.search);
+  else if(uri.pathname.startsWith('/public/images/'))sources.push(uri.origin+uri.pathname.replace('/public/','/')+uri.search);
  }
- if(profile.fighter_id==='johnny-bravo'){
+ addStaticLocations(u);
+ if(isJohnny){
+  // Fail back to the already playable Johnny atlas if the test art is missing.
+  if(johnnyArt.mode==='classic'){
+   const approved=safeImage(demoHero.preview_sheet);
+   if(approved){sources.push(approved);addStaticLocations(new URL(approved));}
+  }
   for(const backup of ['/images/showdown/johnny-bravo-complete-v2.svg','/public/images/showdown/johnny-bravo-complete-v2.svg']){
    const candidate=safeImage(backup);if(candidate)sources.push(candidate);
   }
@@ -211,6 +222,19 @@ function renderPreviewFrame(timestamp){
  p.drawImage(img,frame*fw,row*fh,fw,fh,(canvas.width-dw)/2,(canvas.height-dh)/2+Math.sin(timestamp/290)*3,dw,dh);
  p.restore();
 }
+if(johnnyArtMenu){
+ johnnyArtMenu.value=johnnyArt.mode;
+ johnnyArtMenu.addEventListener('change',()=>{
+  johnnyArt.mode=johnnyArtMenu.value==='classic'?'classic':'approved';
+  const fighter=currentFighter();
+  if(fighter?.fighter_id==='johnny-bravo')setupPreviewAnimation(fighter);
+  else if(!fighter)setupPreviewAnimation(demoHero);
+  if(johnnyArtNotice)johnnyArtNotice.hidden=johnnyArt.mode!=='classic'||fighter?.fighter_id!=='johnny-bravo';
+  $('showdown-status').textContent=johnnyArt.mode==='classic'
+    ?'Comparing Johnny\'s classic cartoon model test. The existing game artwork can be restored anytime.'
+    :'Johnny\'s existing playable sprite sheet is restored.';
+ });
+}
 const previewPoseMenu=$('preview-pose');
 if(previewPoseMenu){
  previewPoseMenu.replaceChildren(...SPRITE_POSES.map(pose=>new Option(pose.toUpperCase(),pose)));
@@ -284,6 +308,9 @@ function selectSlot(slot){
  selection.slot=slot;
  const fighter=currentFighter();
  const locked=isLocked(fighter);
+ const testingJohnny=fighter?.fighter_id==='johnny-bravo';
+ if(johnnyArtControl)johnnyArtControl.hidden=!testingJohnny;
+ if(johnnyArtNotice)johnnyArtNotice.hidden=!testingJohnny||johnnyArt.mode!=='classic';
  const avatar=$('preview-avatar');avatar.replaceChildren();
  avatar.style.setProperty('--fighter-accent',validColor(fighter?.accent));
  const uri=safeImage(fighter?.portrait);
