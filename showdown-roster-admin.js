@@ -10,6 +10,7 @@ const nextSlot=()=>{const taken=filled();let slot=1;while(taken.has(slot))slot++
 function clearForm(){
  editingSlot=null;form.reset();$('fighter-slot').readOnly=false;$('fighter-slot').value=String(nextSlot());
  $('fighter-enabled').checked=true;$('fighter-accent').value='#69d8ff';
+ $('fighter-unlockable').checked=false;$('fighter-unlock-hint').value='';$('fighter-unlock-hint').disabled=true;
  $('editor-title').textContent='Add a New Fighter';$('save-fighter').textContent='Publish Fighter';
 }
 function editFighter(f){
@@ -18,6 +19,9 @@ function editFighter(f){
  $('fighter-id').value=f.fighter_id;$('fighter-name').value=f.name;
  $('fighter-series').value=f.series;$('fighter-portrait').value=f.portrait||'';
  $('fighter-accent').value=f.accent||'#69d8ff';$('fighter-enabled').checked=!!f.enabled;
+ $('fighter-unlockable').checked=!!f.unlockable;
+ $('fighter-unlock-hint').value=f.unlock_hint||'';
+ $('fighter-unlock-hint').disabled=!f.unlockable;
  $('editor-title').textContent='Edit Fighter — Slot '+String(f.slot).padStart(3,'0');
  $('save-fighter').textContent='Save Changes';
  form.scrollIntoView({behavior:'smooth',block:'start'});
@@ -26,13 +30,13 @@ function render(){
  const q=$('owner-search').value.trim().toLowerCase();
  const view=roster.filter(f=>!q||String(f.slot).includes(q)||f.name.toLowerCase().includes(q)||f.series.toLowerCase().includes(q));
  list.replaceChildren();
- $('roster-summary').textContent=roster.filter(f=>f.enabled).length+' published · '+roster.length+' assigned';
+ $('roster-summary').textContent=roster.filter(f=>f.enabled).length+' published · '+roster.filter(f=>f.enabled&&f.unlockable).length+' locked · '+roster.length+' assigned';
  if(!view.length){const text=document.createElement('p');text.textContent=roster.length?'No matches for this search.':'No reboot fighters yet. The first 200 slots are empty and ready.';list.append(text);return}
  const frag=document.createDocumentFragment();
  for(const f of view){
   const row=document.createElement('article');row.className='manager-row';
   const heading=document.createElement('strong');heading.textContent='SLOT '+String(f.slot).padStart(3,'0')+' · '+f.name;
-  const sub=document.createElement('span');sub.textContent=f.series+' · '+(f.enabled?'Published':'Draft / hidden');
+  const sub=document.createElement('span');sub.textContent=f.series+' · '+(f.enabled?'Published':'Draft / hidden')+(f.unlockable?' · 🔒 Unlockable':' · Playable');
   const actions=document.createElement('div');actions.className='manager-actions';
   const edit=document.createElement('button');edit.className='arcade-btn alt';edit.type='button';edit.textContent='Edit';
   edit.addEventListener('click',()=>editFighter(f));
@@ -43,7 +47,7 @@ function render(){
  list.append(frag);
 }
 async function refresh(){
- const {data,error}=await db.from(TABLE).select('slot,fighter_id,name,series,portrait,accent,enabled').order('slot',{ascending:true});
+ const {data,error}=await db.from(TABLE).select('slot,fighter_id,name,series,portrait,accent,enabled,unlockable,unlock_hint').order('slot',{ascending:true});
  if(error)throw error;
  roster=Array.isArray(data)?data:[];
  render();if(editingSlot===null)$('fighter-slot').value=String(nextSlot());
@@ -58,6 +62,11 @@ async function removeFighter(f){
   await refresh();label('Slot '+f.slot+' is empty again.');
  }catch(err){label('Could not remove fighter: '+err.message)}
 }
+$('fighter-unlockable').addEventListener('change',()=>{
+ const marked=$('fighter-unlockable').checked;
+ $('fighter-unlock-hint').disabled=!marked;
+ if(!marked)$('fighter-unlock-hint').value='';
+});
 $('fighter-name').addEventListener('input',()=>{
  if(editingSlot!==null||$('fighter-id').value.trim())return;
  $('fighter-id').value=$('fighter-name').value.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80);
@@ -74,7 +83,10 @@ form.addEventListener('submit',async event=>{
  $('save-fighter').disabled=true;label('Saving fighter…');
  try{
   const row={slot,fighter_id:id,name,series,portrait:$('fighter-portrait').value.trim()||null,
-   accent:$('fighter-accent').value,enabled:$('fighter-enabled').checked,updated_at:new Date().toISOString()};
+   accent:$('fighter-accent').value,enabled:$('fighter-enabled').checked,
+   unlockable:$('fighter-unlockable').checked,
+   unlock_hint:$('fighter-unlockable').checked?$('fighter-unlock-hint').value.trim()||null:null,
+   updated_at:new Date().toISOString()};
   const {error}=await db.from(TABLE).upsert(row,{onConflict:'slot'});
   if(error)throw error;
   editingSlot=null;
