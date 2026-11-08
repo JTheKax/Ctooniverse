@@ -2,6 +2,25 @@
 const year = document.getElementById("year");
 if (year) year.textContent = String(new Date().getFullYear());
 
+/* Load the shared operational-status buttons on every page using the main site header. */
+(() => {
+  const mount=()=>{
+    if(!document.querySelector(".site-header, .jam-topbar"))return;
+    if(!document.querySelector('link[data-site-status-style]')){
+      const style=document.createElement("link");style.rel="stylesheet";
+      style.href="site-status.css?v=1";style.dataset.siteStatusStyle="true";
+      document.head.append(style);
+    }
+    if(!document.querySelector('script[data-site-status-widget]')){
+      const script=document.createElement("script");script.src="site-status.js?v=1";
+      script.defer=true;script.dataset.siteStatusWidget="true";
+      document.head.append(script);
+    }
+  };
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",mount,{once:true});
+  else mount();
+})();
+
 /* Keep the Owner navigation stable across refreshes while verifying membership.
    A cached hint never grants access: the signed-in user must match and the
    Owner dashboard independently verifies permissions on every visit. */
