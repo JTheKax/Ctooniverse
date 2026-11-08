@@ -2,6 +2,7 @@
 // The roster begins with 200 empty positions and automatically expands
 // to the next page when a fighter is published beyond slot 200.
 'use strict';
+import {createBattleAudio} from './showdown-battle-audio.js?v=20261108-battle-music-v1';
 const API_URL='https://hsxdyxdazsdmpucyhqly.supabase.co';
 const PUBLIC_KEY='sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS';
 const START_SLOTS=200, PAGE_SIZE=25;
@@ -15,6 +16,12 @@ const SPRITE_POSES=['idle','walk','run','punch','kick','guard','jump','crouch','
 const previewAnimation={image:null,source:null,token:0,columns:3,rows:1,loaded:false,pose:'idle',poseStart:0,footAnchors:null};
 const startBtn=$('start-match'),practiceBtn=$('training-match'),restartBtn=$('restart-match'),pauseBtn=$('pause-match');
 const arena=$('arena'),ctx=arena.getContext('2d');
+const battleAudio=createBattleAudio($('battle-music-theme'),$('battle-music-volume'),$('battle-music-status'));
+const fightAnnouncement=$('fight-announcement');
+function announceFight(label,phase=''){
+ fightAnnouncement.textContent=label;
+ fightAnnouncement.dataset.phase=phase;
+}
 // Until additional licensed/cartoon fighters are published, training is a Johnny Bravo mirror match.
 // Johnny Bravo is the first fighter. Other full 3x11 atlases use the same pose mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
@@ -508,7 +515,7 @@ for(const button of buttons){
 }
 const GROUND=445,LEFT=68,RIGHT=892;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,stamp:0,last:0,animClock:0};
+const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,countdown:3,fightBanner:0,roundMessage:'',last:0,animClock:0};
 function body(profile,x,face){
  return {profile,x,face,y:0,vy:0,hp:100,meter:0,cooldown:0,attack:0,attackType:'',attackHit:false,block:false,crouch:false,stun:0,flash:0,moveSpeed:0,hurtAt:null,koAt:null,jumpAt:null};
 }
@@ -524,27 +531,46 @@ function updateHud(){
 }
 function resetRound(){
  game.hero=body(game.heroProfile,250,1);game.cpu=body(game.cpuProfile,710,-1);
- game.timer=60;game.mode='fighting';game.between=0;
- $('fight-announcement').textContent='';
+ game.timer=60;game.mode='countdown';game.between=0;game.countdown=3;game.fightBanner=0;
+ game.roundMessage='';
+ down.clear();oneShots.clear();
+ battleAudio.stopTheme();
+ announceFight('3','countdown');
+ battleAudio.cue(3);
+ $('showdown-status').textContent='Round '+game.round+' · Starting in 3…';
  updateHud();
+}
+function beginFight(){
+ game.mode='fighting';game.countdown=0;game.fightBanner=.85;
+ down.clear();oneShots.clear();
+ announceFight('FIGHT!','fight');
+ battleAudio.cue('fight');
+ battleAudio.startTheme();
+ $('showdown-status').textContent='FIGHT! Use keyboard controls or the on-screen buttons.';
 }
 function startMatch(profile){
  if(!ctx){$('showdown-status').textContent='Your browser does not support the battle canvas.';return}
  game.heroProfile=profile;game.cpuProfile=demoCPU;
  game.round=1;game.wins=[0,0];game.paused=false;
+ battleAudio.prepare();
  resetRound();restartBtn.disabled=false;pauseBtn.disabled=false;pauseBtn.textContent='Pause';
- $('showdown-status').textContent='Battle started. Use keyboard controls or the on-screen buttons.';
- $('fight-announcement').textContent='FIGHT!';
- game.stamp=performance.now()+1000;
  document.querySelector('.arena-frame').scrollIntoView({behavior:'smooth',block:'center'});
 }
 practiceBtn.addEventListener('click',()=>startMatch(demoHero));
 startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter&&!isLocked(fighter))startMatch(fighter)});
 restartBtn.addEventListener('click',()=>startMatch(game.heroProfile));
 pauseBtn.addEventListener('click',()=>{
- if(!['fighting','between'].includes(game.mode))return;
+ if(!['countdown','fighting','between'].includes(game.mode))return;
  game.paused=!game.paused;pauseBtn.textContent=game.paused?'Resume':'Pause';
- $('fight-announcement').textContent=game.paused?'PAUSED':'';
+ if(game.paused){
+  battleAudio.pause();
+  announceFight('PAUSED','paused');
+ }else{
+  battleAudio.resume();
+  if(game.mode==='countdown')announceFight(String(Math.ceil(game.countdown)),'countdown');
+  else if(game.mode==='fighting')announceFight(game.fightBanner>0?'FIGHT!':'',game.fightBanner>0?'fight':'');
+  else announceFight(game.roundMessage,'result');
+ }
 });
 // The hit becomes active on the middle attack sprite, not on button-down.
 const ATTACK_MOVES=Object.freeze({
@@ -581,15 +607,18 @@ function resolveAttack(attacker,defender){
 function finishRound(){
  if(game.mode!=='fighting')return;
  game.mode='between';game.between=2.2;
+ battleAudio.stopTheme();
  const winner=game.hero.hp>game.cpu.hp?0:game.cpu.hp>game.hero.hp?1:-1;
  if(winner>=0)game.wins[winner]++;
  const message=winner===0?'PLAYER WINS ROUND!':winner===1?'CPU WINS ROUND!':'DRAW ROUND';
- $('fight-announcement').textContent=message;
+ game.roundMessage=message;
+ announceFight(message,'result');
  $('showdown-status').textContent=message;
  if(Math.max(...game.wins)>=2){
   game.mode='finished';game.between=0;
   const result=game.wins[0]>=2?'YOU WIN THE MATCH!':'CPU WINS THE MATCH';
-  $('fight-announcement').textContent=result;
+  game.roundMessage=result;
+  announceFight(result,'result');
   $('showdown-status').textContent=result+' Choose Restart Match for another round.';
   pauseBtn.disabled=true;
  }
@@ -607,6 +636,19 @@ function settleRoundPoses(dt){
  }
 }
 function step(dt){
+ if(game.mode==='countdown'){
+  const previous=Math.ceil(game.countdown);
+  game.countdown=Math.max(0,game.countdown-dt);
+  const current=Math.ceil(game.countdown);
+  if(current===0)beginFight();
+  else if(current!==previous){
+   announceFight(String(current),'countdown');
+   battleAudio.cue(current);
+   $('showdown-status').textContent='Round '+game.round+' · Starting in '+current+'…';
+  }
+  oneShots.clear();
+  return;
+ }
  if(game.mode==='between'){
   settleRoundPoses(dt);
   game.between-=dt;
@@ -615,6 +657,10 @@ function step(dt){
  }
  if(game.mode==='finished'){settleRoundPoses(dt);oneShots.clear();return;}
  if(game.mode!=='fighting'||game.paused)return;
+ if(game.fightBanner>0){
+  game.fightBanner=Math.max(0,game.fightBanner-dt);
+  if(game.fightBanner===0)announceFight('');
+ }
  game.timer=Math.max(0,game.timer-dt);
  const p=game.hero,c=game.cpu;
  const previousPX=p.x,previousCX=c.x;
@@ -741,8 +787,8 @@ function drawArena(now){
 }
 function tick(stamp){
  const dt=game.last?clamp((stamp-game.last)/1000,0,.05):0;game.last=stamp;
- if(game.stamp>stamp){drawArena(stamp);requestAnimationFrame(tick);return}
  if(!game.paused){game.animClock+=dt;step(dt);}
+ battleAudio.tick();
  drawArena(stamp);
  renderPreviewFrame(stamp);
  requestAnimationFrame(tick);
