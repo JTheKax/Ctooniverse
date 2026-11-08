@@ -174,7 +174,9 @@ function togglePause(){
 }
 function currentPlace(){
  if(!race)return 1;
- return 1+race.rivals.filter(o=>o.position>race.position).length;
+ // A rival that crossed the line earlier must stay ahead on the final standings.
+ return 1+race.rivals.filter(o=>o.position>race.position ||
+   (race.phase==="finished"&&o.finish!==null&&o.finish<race.time)).length;
 }
 function getPickups(){
  if(!race)return [];
@@ -453,7 +455,8 @@ function updateHud(){
  $("speed-bar").style.width=Math.min(100,Math.round(r.speed/maxSpeed(r.driver)*100))+"%";
  $("boost-bar").style.width=Math.round(r.energy)+"%";
  $("hud-boost").textContent=Math.round(r.energy)+"%";
- const order=[{name:"YOU",position:r.position,me:true},...r.rivals.map(x=>({name:x.name,position:x.position,me:false}))].sort((a,b)=>b.position-a.position);
+ const order=[{name:"YOU",position:r.position,finish:r.phase==="finished"?r.time:null,me:true},...r.rivals.map(x=>({name:x.name,position:x.position,finish:x.finish,me:false}))]
+ .sort((a,b)=>b.position-a.position||(a.finish??Infinity)-(b.finish??Infinity));
  $("race-standings").innerHTML=order.map((x,i)=>'<span class="'+(x.me?"me":"")+'">'+(i+1)+'. '+x.name+'</span>').join('');
 }
 function frame(ms){
