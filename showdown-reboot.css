@@ -218,3 +218,10 @@ a{color:var(--sky)}:focus-visible{outline:3px solid var(--gold);outline-offset:3
 }
 @media(max-width:370px){.roster-wall .roster-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){.roster-wall .fighter-slot:hover{transform:none}}
+
+/* A fighter's eleven atlas poses can be inspected without entering a match. */
+.preview-pose-control{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 2px;text-align:left;color:#f3eefe;font-size:.81rem;font-weight:800}
+.preview-pose-control select{max-width:145px;min-width:116px;min-height:40px;border:2px solid #9b9bdb;border-radius:10px;background:#101a3a;color:#fff;padding:7px 9px;font-weight:800;cursor:pointer}
+.preview-pose-control select:focus-visible{outline:3px solid #ffe596;outline-offset:2px}
+.preview-pose-control select:disabled{opacity:.52;cursor:not-allowed}
+@media(max-width:380px){.preview-pose-control{flex-wrap:wrap}.preview-pose-control select{width:100%;max-width:none}}
