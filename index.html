@@ -8,7 +8,25 @@
   <title>CTooniverse | Collect Your Universe</title>
   <link rel="stylesheet" href="styles.css?v=mobile-layout-20261107"><link rel="stylesheet" href="arcade-polish.css?v=4">
   <script src="script.js?v=status-nav-colors-20261108" defer></script><script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
-<script type="module" src="account-menu.js?v=1"></script><script src="owner-menu.js?v=owner-dropdown-repair-20261106" defer></script><script src="community-menu.js?v=2" defer></script><script src="music-player.js?v=random-autoplay-12" defer></script><script type="module" src="home-new-ctoons.js?v=1"></script></head>
+<script type="module" src="account-menu.js?v=1"></script><script src="owner-menu.js?v=owner-dropdown-repair-20261106" defer></script><script src="community-menu.js?v=2" defer></script><script src="music-player.js?v=random-autoplay-12" defer></script><script type="module" src="home-new-ctoons.js?v=1"></script>
+  <style>
+    /* Always-visible player guide; these colors are examples, not a live status claim. */
+    .home-status-guide{margin:1.2rem 0 1.8rem;padding:1.3rem 1.4rem;border:2px solid #7865c7;border-radius:20px;background:linear-gradient(140deg,rgba(20,19,52,.96),rgba(36,23,67,.93));box-shadow:0 8px 22px #05041566}
+    .home-status-guide h2{margin:.15rem 0 .55rem;color:#f6f0ff;font-size:clamp(1.25rem,3vw,1.75rem)}
+    .home-status-guide p{margin:.35rem 0 1rem;color:#e4def8}
+    .home-status-rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .home-status-rule{padding:1rem;border-radius:15px;border:2px solid #ffffff45;background:#0a0e24dd}
+    .home-status-rule strong{display:flex;align-items:center;gap:.7rem;font-size:1.05rem;color:#fff}
+    .home-status-rule p{margin:.6rem 0 0;color:#ecedfc;line-height:1.5}
+    .home-status-dot{width:1.35rem;height:1.35rem;flex-shrink:0;border-radius:7px;border:2px solid #fff9;box-shadow:0 0 12px currentColor}
+    .home-status-rule--live{border-color:#3da96c}
+    .home-status-rule--live .home-status-dot{background:#37c978;color:#37c978}
+    .home-status-rule--maintenance{border-color:#d9ac38}
+    .home-status-rule--maintenance .home-status-dot{background:#f3d34e;color:#f3d34e}
+    .home-status-guide .home-status-footnote{font-size:.9rem;margin:1rem 0 0;color:#ccc5e9}
+    @media(max-width:650px){.home-status-guide{padding:1rem}.home-status-rules{grid-template-columns:1fr}}
+  </style>
+</head>
 <body class="home-universe-page">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
@@ -23,6 +41,22 @@
         
       </div>
       <aside class="announcement-panel" aria-labelledby="announcements-title"><h2 id="announcements-title">✦ Latest Announcements</h2><ul><li><a href="ctoons.html">Browse the CToon collection and sets</a></li><li><a href="games.html">Visit the Games arcade</a></li><li><a href="auction.html">Explore the Auction House</a></li><li><a href="shop.html">Visit the Shop for CToons and packs</a></li></ul></aside>
+    </section>
+    <section class="home-status-guide" aria-labelledby="home-status-guide-title">
+      <p class="eyebrow">✦ PLAYER INFORMATION ✦</p>
+      <h2 id="home-status-guide-title">What the navigation colors mean</h2>
+      <p>The colors on the website tabs and dropdown menus tell you whether CTooniverse is live or under maintenance.</p>
+      <div class="home-status-rules">
+        <div class="home-status-rule home-status-rule--live">
+          <strong><span class="home-status-dot" aria-hidden="true"></span> GREEN — LIVE</strong>
+          <p>The website is online and operating normally. You can browse, collect CToons, and play available games.</p>
+        </div>
+        <div class="home-status-rule home-status-rule--maintenance">
+          <strong><span class="home-status-dot" aria-hidden="true"></span> YELLOW — MAINTENANCE</strong>
+          <p>The website is being updated or repaired. Some pages, games, and features may be temporarily unavailable.</p>
+        </div>
+      </div>
+      <p class="home-status-footnote">These colors apply to navigation tabs and dropdown menus on desktop and mobile. The color examples above explain the rules; they do not indicate the current site status.</p>
     </section>
     <section class="home-sections" aria-labelledby="explore-title"><div class="explore-heading"><div><p class="eyebrow">PICK YOUR DESTINATION</p><h2 id="explore-title">Choose Your Destination</h2></div><span class="explore-subtitle">Your universe starts here</span></div><div class="home-tiles">
       <a class="home-tile" href="ctoons.html"><span class="tile-symbol" aria-hidden="true">▣</span><strong>Ctoons</strong><small>Explore collections</small></a>
