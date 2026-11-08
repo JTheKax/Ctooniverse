@@ -14,14 +14,44 @@ const previewAnimation={image:null,token:0,columns:3,rows:1,loaded:false};
 const startBtn=$('start-match'),practiceBtn=$('training-match'),restartBtn=$('restart-match'),pauseBtn=$('pause-match');
 const arena=$('arena'),ctx=arena.getContext('2d');
 // Until additional licensed/cartoon fighters are published, training is a Johnny Bravo mirror match.
+// Johnny Bravo is the first fighter. Other full 3x11 atlases use the same pose mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
-  portrait:'/images/showdown/johnny-bravo-portrait.svg',preview_sheet:'/images/showdown/johnny-bravo-idle.svg'};
+ portrait:'/images/showdown/johnny-bravo-mugen-portrait.webp',
+ preview_sheet:'/images/showdown/johnny-bravo-mugen-atlas.png',preview_columns:3,preview_rows:11};
 const demoCPU={...demoHero};
-const johnnySheet=new Image();
-let johnnyArtReady=false;
-johnnySheet.onload=()=>{johnnyArtReady=true;};
-johnnySheet.onerror=()=>{console.warn('Johnny Bravo sprite strip unavailable; using fallback renderer.');};
-johnnySheet.src='/images/showdown/johnny-bravo-idle.svg';
+const combatSpriteCache=new Map();
+// Sprite atlas rows: idle, walk, run, punch, kick, guard, jump, crouch, special, hurt, KO.
+function spriteAtlas(profile){
+ if(!profile||Number(profile.preview_rows)<11||Number(profile.preview_columns)<3)return null;
+ const source=safeImage(profile.preview_sheet);
+ if(!source)return null;
+ let item=combatSpriteCache.get(source);
+ if(!item){
+  item={image:new Image(),loaded:false,failed:false};
+  const entry=item;
+  item.image.onload=()=>{entry.loaded=entry.image.naturalWidth>0&&entry.image.naturalHeight>0};
+  item.image.onerror=()=>{entry.failed=true;console.warn('Could not load fighter sprite atlas:',source)};
+  item.image.decoding='async';item.image.src=source;
+  combatSpriteCache.set(source,item);
+ }
+ return item.loaded?item.image:null;
+}
+function spritePose(f,t,columns){
+ let row=0,frame=Math.floor(t*5)%columns;
+ if(f.hp<=0){row=10;frame=columns-1}
+ else if(f.attack>0){
+  row=f.attackType==='kick'?4:f.attackType==='special'?8:3;
+  const duration=f.attackType==='kick'?.48:f.attackType==='special'?.72:.3;
+  frame=Math.min(columns-1,Math.floor((1-f.attack/duration)*columns));
+ }
+ else if(f.stun>.02){row=9;frame=Math.floor(t*9)%columns}
+ else if(f.block){row=5;frame=Math.floor(t*4)%columns}
+ else if(f.y>2){row=6;frame=Math.floor(t*9)%columns}
+ else if(f.crouch){row=7;frame=0}
+ else if(Math.abs(f.moveSpeed||0)>160){row=2;frame=Math.floor(t*10)%columns}
+ else if(Math.abs(f.moveSpeed||0)>8){row=1;frame=Math.floor(t*7)%columns}
+ return {row,frame};
+}
 const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
 const pad=n=>String(n).padStart(3,'0');
 const text=(parent,name,value,className)=>{
@@ -301,7 +331,7 @@ const GROUND=445,LEFT=68,RIGHT=892;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,stamp:0,last:0};
 function body(profile,x,face){
- return {profile,x,face,y:0,vy:0,hp:100,meter:0,cooldown:0,attack:0,attackType:'',block:false,crouch:false,stun:0,flash:0};
+ return {profile,x,face,y:0,vy:0,hp:100,meter:0,cooldown:0,attack:0,attackType:'',block:false,crouch:false,stun:0,flash:0,moveSpeed:0};
 }
 function updateHud(){
  const p=game.hero,c=game.cpu;
@@ -377,6 +407,7 @@ function step(dt){
  if(game.mode!=='fighting'||game.paused)return;
  game.timer=Math.max(0,game.timer-dt);
  const p=game.hero,c=game.cpu;
+ const previousPX=p.x,previousCX=c.x;
  for(const f of [p,c]){
   f.cooldown=Math.max(0,f.cooldown-dt);f.attack=Math.max(0,f.attack-dt);f.stun=Math.max(0,f.stun-dt);f.flash=Math.max(0,f.flash-dt);
   f.vy-=1200*dt;f.y=Math.max(0,f.y+f.vy*dt);if(f.y===0&&f.vy<0)f.vy=0;
@@ -396,36 +427,42 @@ function step(dt){
   if(dist<132&&Math.random()<dt*.88)attack(c,p,Math.random()>.7?'kick':'punch');
  }
  if(Math.abs(p.x-c.x)<62){const mid=(p.x+c.x)/2;p.x=clamp(mid-p.face*31,LEFT,RIGHT);c.x=clamp(mid+p.face*31,LEFT,RIGHT)}
+ p.moveSpeed=dt>0?(p.x-previousPX)/dt:0;
+ c.moveSpeed=dt>0?(c.x-previousCX)/dt:0;
  if(game.timer===0)finishRound();
  updateHud();
  oneShots.clear();
 }
 function drawBody(f,t){
  const x=f.x,y=GROUND-f.y,accent=validColor(f.profile.accent);
- if(f.profile.fighter_id==='johnny-bravo'&&johnnyArtReady){
-  ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(f.face,1);
-  // Sprite frames animate even when idle, with responsive attack/crouch/guard poses.
-  const action=f.attackType;
-  const attacking=f.attack>0;
-  const col=attacking?(action==='kick'?2:1):Math.floor(t*5)%3;
-  const bounce=f.y===0?Math.sin(t*8)*1.8:0;
-  const lean=attacking?(action==='special'?-0.16:action==='kick'?-0.10:-0.07):0;
-  if(f.crouch)ctx.scale(1,.8);
-  ctx.rotate(lean);
-  ctx.globalAlpha=.33;ctx.fillStyle='#000';
-  ctx.beginPath();ctx.ellipse(0,0,64,11,0,0,Math.PI*2);ctx.fill();
-  ctx.globalAlpha=1;
-  ctx.drawImage(johnnySheet,col*300,0,300,340,-130,-282+bounce,260,282);
-  if(attacking){
-   const isSpecial=action==='special';
-   ctx.strokeStyle=isSpecial?'#ffe677':'#eff9ff';
-   ctx.lineWidth=isSpecial?13:7;
-   ctx.globalAlpha=.82;ctx.shadowBlur=23;ctx.shadowColor=ctx.strokeStyle;
-   ctx.beginPath();ctx.arc(60,-156,48,-1.1,1.25);ctx.stroke();
+ const atlas=spriteAtlas(f.profile);
+ if(atlas){
+  const columns=Math.max(3,Math.min(12,Math.floor(Number(f.profile.preview_columns)||3)));
+  const rows=Math.max(11,Math.min(32,Math.floor(Number(f.profile.preview_rows)||11)));
+  const frameWidth=atlas.naturalWidth/columns,frameHeight=atlas.naturalHeight/rows;
+  const pose=spritePose(f,t,columns);
+  // Keep the character's feet on the ground, even when he jumps or gets knocked down.
+  ctx.save();
+  ctx.globalAlpha=.32;ctx.fillStyle='#030713';
+  ctx.beginPath();ctx.ellipse(x,GROUND+2,57,9,0,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+  ctx.save();
+  ctx.translate(Math.round(x),Math.round(y));
+  ctx.scale(f.face,1);
+  ctx.imageSmoothingEnabled=false;
+  const bounce=f.y===0&&pose.row===0?Math.sin(t*6)*1.7:0;
+  ctx.drawImage(atlas,pose.frame*frameWidth,pose.row*frameHeight,frameWidth,frameHeight,
+   -118,-253+bounce,236,248);
+  if(f.attack>0){
+   const effect=f.attackType==='special'?'#ffe17c':'#f4f9ff';
+   ctx.strokeStyle=effect;ctx.lineWidth=f.attackType==='special'?11:5;
+   ctx.globalAlpha=.73;ctx.shadowColor=effect;ctx.shadowBlur=17;
+   ctx.beginPath();ctx.arc(71,-126,f.attackType==='kick'?53:38,-1.25,1.35);ctx.stroke();
    ctx.shadowBlur=0;ctx.globalAlpha=1;
   }
-  if(f.block){ctx.strokeStyle='#b9ebff';ctx.lineWidth=6;ctx.beginPath();ctx.arc(45,-155,60,-1.5,1.45);ctx.stroke()}
-  if(f.flash){ctx.fillStyle='#fff';ctx.globalAlpha=.17;ctx.fillRect(-130,-282,260,282)}
+  if(f.block){ctx.strokeStyle='#9ce9ff';ctx.lineWidth=4;ctx.globalAlpha=.67;
+   ctx.beginPath();ctx.arc(51,-137,60,-1.4,1.4);ctx.stroke();}
+  if(f.flash){ctx.fillStyle='#fff';ctx.globalAlpha=.15;ctx.fillRect(-110,-247,220,240)}
   ctx.restore();
   return;
  }
