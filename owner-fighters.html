@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#151631">
-<title>CToon Showdown Fighter Manager | CTooniverse</title><link rel="stylesheet" href="showdown-reboot.css?v=20261108-2">
+<title>CToon Showdown Fighter Manager | CTooniverse</title><link rel="stylesheet" href="showdown-reboot.css?v=20261108-3">
 <style>
 .manager-wrap{max-width:1160px;margin:auto;padding:clamp(12px,3vw,28px)}
 .manager-wrap h1{font-family:Impact,system-ui;font-size:clamp(2.5rem,6vw,4.5rem);font-style:italic;color:#fff0bf;margin:18px 0 5px}
@@ -19,6 +19,14 @@
 .manager-row .arcade-btn{font-size:.8rem;padding:7px 12px;min-height:38px}
 .manager-row button.delete{background:#6d263f;border-color:#e68a9e}
 .manager-meta{font-size:.93rem;color:#c8c2e6;line-height:1.6}
+.fighter-form .span-all{grid-column:1/-1}
+.fighter-form input[type=file]{padding:10px;background:#0d1d3b}
+.fighter-form label small{color:#b8cdea;font-weight:600;line-height:1.4}
+.fighter-form [disabled]{opacity:.65}
+.manager-grant{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end}
+.manager-grant label{display:flex;flex-direction:column;gap:8px;font-size:.83rem;font-weight:800}
+.manager-grant input,.manager-grant select{background:#10142d;color:white;border:2px solid #8b80bd;border-radius:10px;padding:10px;min-height:44px;width:100%}
+@media(max-width:700px){.manager-grant{grid-template-columns:1fr}}
 @media(max-width:650px){.fighter-form{grid-template-columns:1fr}.manager-roster{grid-template-columns:1fr}}
 </style>
 </head><body><main class="manager-wrap">
@@ -33,18 +41,34 @@
 <label>Fighter ID <input id="fighter-id" pattern="[a-z0-9][a-z0-9_-]*" maxlength="80" placeholder="unique-fighter-id" required></label>
 <label>Character Name <input id="fighter-name" maxlength="100" required></label>
 <label>Series / Franchise <input id="fighter-series" maxlength="100" required></label>
-<label>Portrait image URL or file path (optional) <input id="fighter-portrait" maxlength="1024" placeholder="images/showdown/your-fighter.png"></label>
+<label>Portrait URL or image path (optional) <input id="fighter-portrait" maxlength="1024" placeholder="images/showdown/portrait.png"></label>
+<label>Upload character portrait <input id="fighter-portrait-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><small>PNG, JPG, WebP or GIF · maximum 10 MB. Uploaded artwork replaces the URL above.</small></label>
+<label>Idle sprite sheet URL (optional) <input id="fighter-preview-sheet" maxlength="1024" placeholder="images/showdown/idle-sheet.png"><small>Use a horizontal sprite strip or the first row of a sprite atlas.</small></label>
+<label>Upload idle sprite sheet <input id="fighter-preview-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><small>Rows and columns below tell the preview which frames to animate.</small></label>
+<label>Idle animation columns <input id="fighter-preview-columns" type="number" min="1" max="12" value="3" required></label>
+<label>Idle animation rows <input id="fighter-preview-rows" type="number" min="1" max="32" value="1" required></label>
 <label>Fighter accent color <input type="color" id="fighter-accent" value="#69d8ff"></label>
 <label class="form-check"><input type="checkbox" id="fighter-enabled" checked> Published and visible to players</label>
-<label class="form-check"><input type="checkbox" id="fighter-unlockable"> 🔒 Unlockable fighter (show a locked badge)</label>
-<label>Planned unlock requirement (optional)
+<label class="form-check"><input type="checkbox" id="fighter-unlockable"> 🔒 Fighter must be unlocked before play</label>
+<label>Unlock method <select id="fighter-unlock-method" disabled><option value="coins">Spend Cartoon Coins</option><option value="owner" selected>Owner award</option></select></label>
+<label>Coin price (if purchasing) <input id="fighter-unlock-cost" type="number" min="1" max="1000000" step="1" placeholder="1000" disabled></label>
+<label>Unlock details / hint (optional)
  <input id="fighter-unlock-hint" maxlength="160" placeholder="Example: Win 10 battles — planned">
 </label>
-<p class="manager-meta" style="grid-column:1/-1;margin:0">Unlockable fighters appear in the roster with a gold lock icon and cannot be selected for matches yet. This is a visual setup; unlock rewards and conditions are not active.</p>
+<p class="manager-meta span-all" style="margin:0">Coin unlocks use the player's real Cartoon Coin wallet, save permanently to their account, and prevent double purchases. Owner-awarded fighters can be granted below by player name. No automatic achievement unlocks are active.</p>
 <div class="form-actions"><button type="submit" class="arcade-btn main" id="save-fighter">Publish Fighter</button><button type="button" class="arcade-btn alt" id="clear-fighter">New Fighter / Clear Form</button></div>
 </form></section>
 <section class="showdown-panel" aria-labelledby="existing-title"><div class="panel-header"><div><p class="eyebrow">02 / FRESH ROSTER</p><h2 id="existing-title">Published &amp; Draft Fighters</h2></div><button type="button" class="arcade-btn alt" id="refresh-fighters">Refresh List</button></div>
 <label for="owner-search" class="manager-meta">Search your fighters</label><input id="owner-search" class="manager-search" type="search" placeholder="Slot, name or series">
 <div class="manager-roster" id="manager-roster" aria-live="polite"></div>
 <p class="manager-meta">Future expansion needs no layout changes: publishing slot 201 expands the roster to 225, then slot 226 expands it to 250.</p></section>
-</div></main><script type="module" src="showdown-roster-admin.js?v=20261108-2"></script></body></html>
+<section class="showdown-panel" aria-labelledby="grant-title">
+ <div class="panel-header"><div><p class="eyebrow">03 / PLAYER REWARDS</p><h2 id="grant-title">Grant an Unlockable Fighter</h2></div></div>
+ <form id="grant-fighter-form" class="manager-grant">
+ <label>Player display name <input id="grant-player-name" required maxlength="40" placeholder="Exact player username"></label>
+ <label>Unlockable fighter <select id="grant-fighter-id" required><option value="">Select fighter</option></select></label>
+ <button type="submit" class="arcade-btn main" id="grant-button">Grant Fighter</button>
+ </form>
+ <p class="manager-meta">Only the verified Owner can grant fighters. This does not charge the player Cartoon Coins. Duplicate player names are rejected.</p>
+</section>
+</div></main><script type="module" src="showdown-roster-admin.js?v=20261108-3"></script></body></html>
