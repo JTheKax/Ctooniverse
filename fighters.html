@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10122d">
   <meta name="description" content="CToon Showdown: a fresh 2D fighter with a 200-slot roster that grows as new fighters are published.">
   <title>CToon Showdown | CTooniverse</title>
-  <link rel="stylesheet" href="showdown-reboot.css?v=20261108-johnny-66-motion">
+  <link rel="stylesheet" href="showdown-reboot.css?v=20261108-roster-select-v2">
 </head>
 <body>
 <main class="showdown-shell">
@@ -23,9 +23,10 @@
   </section>
   <section class="showdown-panel roster-showcase" aria-labelledby="roster-title">
     <div class="panel-header">
-      <div><p class="eyebrow">01 / THE CHARACTER SELECT SCREEN</p><h2 id="roster-title">Choose Your Champion</h2><p class="roster-subtitle">200 starter slots · unlimited future expansion</p></div>
+      <div><p class="eyebrow">01 / ARCADE CHARACTER SELECT</p><h2 id="roster-title">SELECT YOUR FIGHTER</h2><p class="roster-subtitle">200 starting spots · new challengers unlock as the roster grows</p></div>
       <span class="roster-tally" id="roster-tally">0 / 200 published</span>
     </div>
+    <div class="roster-marquee" aria-hidden="true"><span>1P / CHARACTER SELECT</span><strong>CHOOSE YOUR CHAMPION</strong><span>★ READY TO BATTLE ★</span></div>
     <div class="roster-scoreboard" aria-label="Roster progress">
       <div class="roster-score"><strong id="roster-ready">0</strong><span>Playable</span></div>
       <div class="roster-score"><strong id="roster-locked">0</strong><span>Unlockable <span aria-hidden="true">🔒</span></span></div>
@@ -37,6 +38,13 @@
       <label>Search fighter or slot <input id="roster-search" type="search" placeholder="Name, series, or slot 025" autocomplete="off"></label>
       <label>Series <select id="roster-series"><option value="all">All series</option></select></label>
       <label>Show <select id="roster-state"><option value="all">All roster slots</option><option value="ready">All published</option><option value="playable">Playable now</option><option value="unlockable">🔒 Unlockable fighters</option><option value="owned">✓ My unlocked fighters</option><option value="empty">Open slots</option></select></label>
+      <label>Sort by <select id="roster-sort"><option value="slot">Roster slot</option><option value="name">Fighter A–Z</option><option value="series">Series A–Z</option></select></label>
+    </div>
+    <div class="roster-shortcuts" role="group" aria-label="Quick roster filters">
+      <button type="button" class="roster-chip" data-roster-filter="all" aria-pressed="true">All fighters</button>
+      <button type="button" class="roster-chip" data-roster-filter="playable" aria-pressed="false">✓ Playable</button>
+      <button type="button" class="roster-chip" data-roster-filter="unlockable" aria-pressed="false">🔒 Unlockable</button>
+      <button type="button" class="roster-chip" data-roster-filter="empty" aria-pressed="false">+ Future slots</button>
     </div>
     <div class="roster-legend" aria-label="Roster icon legend">
       <span><i class="legend-square legend-playable" aria-hidden="true"></i> Playable</span>
@@ -45,15 +53,17 @@
     </div>
     <div class="select-layout">
       <div class="roster-wall">
-        <div class="roster-wall-heading"><span>SELECT PLAYER 1</span><span>FIGHTER ROSTER · 25 / PAGE</span></div>
+        <div class="roster-wall-heading"><span><b class="roster-player-icon">1P</b> PICK A FIGHTER</span><span id="roster-results" aria-live="polite">FIGHTERS 1–25 OF 200</span></div>
         <div id="roster-grid" class="roster-grid" role="group" aria-label="Fighter slots"></div>
         <div class="roster-pages">
           <button type="button" class="arcade-btn alt" id="roster-prev">◀ Previous</button>
           <span class="page-info" id="roster-page">PAGE 1 / 8</span>
           <button type="button" class="arcade-btn alt" id="roster-next">Next ▶</button>
         </div>
+        <div class="roster-page-track" aria-hidden="true"><span id="roster-page-bar" style="width:12.5%"></span></div>
       </div>
       <aside class="preview-card" aria-labelledby="preview-title">
+        <div class="preview-selection-strip"><span id="preview-slot">FIGHTER NO. 001</span><span id="preview-status-text">READY FOR BATTLE</span></div>
         <div class="preview-frame"><span class="preview-caption" aria-hidden="true">PLAYER 1 // SPOTLIGHT</span><div id="preview-avatar" class="preview-avatar is-empty" aria-hidden="true">?</div><canvas id="preview-idle-canvas" width="264" height="235" aria-label="Fighter sprite animation preview" hidden></canvas><span id="preview-lock" class="preview-lock" hidden aria-label="Unlockable fighter">🔒</span></div>
         <div><span class="tag" id="preview-tag">EMPTY SLOT</span><h3 id="preview-title">SLOT 001</h3><p id="preview-series">This place is reserved for a future fighter.</p></div>
         <p id="preview-detail">Select a published fighter to prepare a match, or use Practice Mode to test the new battle system now.</p><p id="preview-unlock-note" class="preview-unlock-note" hidden></p>
@@ -109,6 +119,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=20261108-johnny-grounded"></script>
+<script type="module" src="showdown-reboot.js?v=20261108-roster-select-v2"></script>
 </body>
 </html>
