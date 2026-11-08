@@ -131,6 +131,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   ['Games Home','games.html'],
   ['CToon Clash','clash.html'],
   ['CToon Heroes: Battle Quest','hero-battle.html'],
+  ['CToon Jam','ctoon-jam.html'],
   ['CToon Showdown','fighters.html'],
   ['CToon Speedway','speedway.html'],
   ['Video Game Emulator','emulator.html'],
