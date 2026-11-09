@@ -119,15 +119,26 @@
   async function loadTrackChart(song) {
     const match=/^tracks\/([a-z0-9_-]+)\.(mp3|ogg|wav)$/i.exec(song.path||"");
     if(!match)return null;
-    // A missing abort API must not prevent the song from starting.
+    // Chart downloads must never keep the game on a loading message forever,
+    // even if fetch hangs or the browser ignores AbortController.
     const controller=typeof AbortController==="function"?new AbortController():null;
-    const timeout=controller?setTimeout(()=>controller.abort(),5000):null;
+    let timeout=null;
     try{
       const options={cache:"default"};
       if(controller)options.signal=controller.signal;
-      const response=await fetch("ctoon-jam-charts/"+match[1]+".json?v=3",options);
-      if(!response.ok)return null;
-      const data=await response.json();
+      const download=(async()=>{
+        const response=await fetch("ctoon-jam-charts/"+match[1]+".json?v=3",options);
+        if(!response.ok)return null;
+        return response.json();
+      })();
+      const expires=new Promise(resolve=>{
+        timeout=setTimeout(()=>{
+          if(controller)controller.abort();
+          resolve(null);
+        },5500);
+      });
+      const data=await Promise.race([download,expires]);
+      if(!data)return null;
       if(data.format!=="ctoon-jam-chart"||data.version!==1||data.sourceStoragePath!==song.path||
          !Number.isFinite(data.bpm)||data.bpm<50||data.bpm>220||!data.difficultyNotes)return null;
       for(const difficulty of ["easy","normal","hard"]){
@@ -646,7 +657,7 @@
     setupOffset();
     if(playStyleSelect)playStyleSelect.disabled=false;
     if(radioPanel)radioPanel.hidden=!isRadio;
-    if(chartStatus)chartStatus.textContent=isRadio?"Loading song chart in parallel…":"Playing original arcade chart.";
+    if(chartStatus)chartStatus.textContent=isRadio?"Preparing Golden note chart · audio loads separately…":"Original arcade notes ready.";
     const chartPromise=isRadio?getTrackChart(track):Promise.resolve(null);
     state="loading";
     showSongLoading(isRadio?"Connecting to "+track.title+"…":"Preparing "+track.title+"…");
@@ -681,6 +692,7 @@
       let started=false;
       let loadingTimeout=null;
       let loadedChart=null;
+      let chartComplete=false;
       const valid=()=>current===loadSerial && radioAudio===media;
       const refreshAudioLoading=(message)=>{
         if(!valid() || !["loading","buffering","ready"].includes(state))return;
@@ -691,6 +703,7 @@
       // Display real notes while the MP3 buffers instead of an empty highway.
       chartPromise.then(chart=>{
         if(!valid() || state==="finished")return;
+        chartComplete=true;
         loadedChart=chart;
         if(chart){
           track.bpm=chart.bpm;
@@ -699,13 +712,16 @@
           const t=media.currentTime||0;
           for(const note of prepared)if(note.at<t-.22)note.judged=true;
           notes=prepared;missCursor=0;
-          if(chartStatus)chartStatus.textContent="Loaded "+activeDifficulty+" chart · "+track.bpm+" BPM · "+notes.length+" notes · timing draft.";
+          if(chartStatus)chartStatus.textContent="Chart ready · "+activeDifficulty.toUpperCase()+" · "+notes.length+" notes · "+track.bpm+" BPM.";
         }else if(chartStatus){
-          chartStatus.textContent="Chart unavailable — using practice notes.";
+          chartStatus.textContent="Chart timed out or unavailable · practice notes are ready. Audio playback is independent.";
         }
         draw();updateHud();
       }).catch(error=>{
-        if(valid()&&chartStatus)chartStatus.textContent="Chart unavailable — using practice notes.";
+        if(valid()){
+          chartComplete=true;
+          if(chartStatus)chartStatus.textContent="Chart unavailable · practice notes are ready. Audio playback is independent.";
+        }
         console.warn("CToon Jam chart error:",error);
       });
       const enterPlaying=()=>{
@@ -736,6 +752,7 @@
         if(playStyleSelect)playStyleSelect.disabled=true;
         hideOverlay();
         audioStatus.textContent="Now streaming "+track.title+".";
+        if(chartStatus&&!chartComplete)chartStatus.textContent="Audio playing · preparing note chart separately; practice notes active.";
         status.textContent="Now playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hold frets and strum, or use Tap Style next song.";
         // Also restart rendering when playback begins after a timeout or blocked autoplay.
         cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
