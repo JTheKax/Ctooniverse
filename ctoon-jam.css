@@ -103,3 +103,61 @@ footer a{color:#91eaff;font-weight:900}
 .jam-strum-controls .jam-button:active,.jam-strum-controls .jam-button.is-pressed{filter:brightness(1.4);transform:translateY(2px)}
 .jam-settings label:has(#jam-play-style){flex:1 1 185px}
 @media(max-width:650px){#jam-board{height:clamp(480px,128vw,620px)}.jam-highway-caption{font-size:.57rem;letter-spacing:1px}.jam-strum-controls{flex-wrap:wrap;padding:8px}.jam-strum-controls span{flex:1 1 100%;order:-1}.jam-strum-controls .jam-button{flex:1 1 44%;min-width:0;font-size:.75rem}}
+
+/* Integrated song-picker screen sits inside the fretboard, not in a detached page. */
+.jam-settings .jam-settings-native[hidden]{display:none!important}
+.jam-song-picker{position:absolute;inset:0;z-index:6;overflow-y:auto;overscroll-behavior:contain;padding:clamp(14px,2.5vw,27px);color:#f4f5ff;background:linear-gradient(135deg,#080d22f7 0%,#241041fa 48%,#0c1634fc 100%);scrollbar-color:#9d76f4 #141329}
+.jam-song-picker[hidden]{display:none!important}
+.jam-picker-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.jam-picker-top h2{font-size:clamp(1.45rem,3.5vw,2.55rem);letter-spacing:.02em;line-height:1;margin:5px 0 6px;font-style:italic;text-shadow:0 0 21px #9362fa66}
+.jam-picker-eyebrow{color:#91e9ff;font-size:.67rem;letter-spacing:1.6px;font-weight:950;margin:0;text-transform:uppercase}
+.jam-picker-intro{margin:0;color:#d8d4f9;font-size:.83rem}
+.jam-picker-count{white-space:nowrap;border:1px solid #746ab8;background:#32205f;border-radius:999px;padding:7px 10px;color:#b7f7ff;font-size:.72rem;font-weight:900}
+.jam-picker-toolbar{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+.jam-picker-search-label{display:flex;flex:1 1 190px;flex-direction:column;gap:4px;font-weight:900;color:#d5dbff;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px}
+#jam-picker-search,.jam-picker-selectors select{min-height:43px;background:#161b42;border:1px solid #7f71c4;color:#fff;border-radius:10px;padding:9px 12px;font:700 .83rem system-ui;width:100%}
+.jam-picker-filters{display:flex;gap:7px;flex-wrap:wrap}
+.jam-picker-filters button{background:#242452;border:1px solid #7560ab;border-radius:999px;color:#e2dff9;padding:9px 13px;min-height:40px;font-weight:900;font-size:.75rem;cursor:pointer}
+.jam-picker-filters button.is-active{background:#57c9ed;color:#0a1636;border-color:#b5f6ff;box-shadow:0 0 13px #57dcff66}
+.jam-picker-content{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(240px,.84fr);gap:14px;align-items:start}
+.jam-picker-list{display:grid;gap:8px;align-content:start;max-height:clamp(230px,54vh,490px);overflow-y:auto;padding:2px 6px 3px 2px;scrollbar-color:#7866c4 #181638}
+.jam-picker-empty{padding:22px 10px;color:#d8d3fa;font-size:.87rem;text-align:center;border:1px dashed #7667b8;border-radius:12px}
+.jam-song-item{display:flex;align-items:center;text-align:left;gap:11px;border:2px solid #48458b;border-radius:12px;background:linear-gradient(105deg,#171c46,#23153f);color:#fff;padding:10px;width:100%;min-height:72px;cursor:pointer}
+.jam-song-item:hover,.jam-song-item:focus-visible{border-color:#8fe7ff;background:#25215b}
+.jam-song-item.is-selected{border-color:#81e9ff;background:linear-gradient(100deg,#1a4974,#342266);box-shadow:inset 4px 0 #73e9ff,0 0 15px #38a7fb33}
+.jam-song-item-art{display:grid;place-items:center;width:49px;height:49px;flex:0 0 49px;border:1px solid #ffffff66;border-radius:9px;font-size:1.7rem;font-weight:900;color:#fff;text-shadow:0 0 12px #0008;background:linear-gradient(135deg,#18b1c5,#6336ac)}
+.jam-song-item-art[data-theme="pixel"],.jam-picker-cover[data-theme="pixel"]{background:linear-gradient(135deg,#ea5d8a,#5936bc)}
+.jam-song-item-art[data-theme="starlight"],.jam-picker-cover[data-theme="starlight"]{background:linear-gradient(135deg,#3560ce,#19bfb5)}
+.jam-song-item-art[data-theme="golden"],.jam-picker-cover[data-theme="golden"]{background:linear-gradient(135deg,#f4b64d,#e453a6)}
+.jam-song-item-copy{min-width:0;flex:1;display:grid;gap:3px}
+.jam-song-item-copy strong{font-size:.97rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jam-song-item-copy small{color:#c6c6ec;font-size:.72rem}
+.jam-song-item-arrow{font-weight:1000;color:#92edff;font-size:1.35rem}
+.jam-picker-details{display:grid;align-content:start;gap:9px;background:linear-gradient(155deg,#282054,#121c43);border:1px solid #7667be;border-radius:15px;padding:15px;box-shadow:inset 0 0 25px #24106655}
+.jam-picker-cover{display:grid;place-items:center;width:100%;height:clamp(55px,10vh,95px);border-radius:10px;background:linear-gradient(135deg,#18b1c5,#6336ac);font-size:2.3rem;text-shadow:0 3px 12px #13104a}
+.jam-picker-details h3{font-size:clamp(1.25rem,2.5vw,1.75rem);line-height:1.1;margin:0}
+.jam-picker-meta{margin:0;color:#c2dafa;font-size:.8rem}
+.jam-picker-selectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.jam-picker-selectors label{min-width:0;display:flex;flex-direction:column;gap:5px;color:#d2d6f7;font-weight:900;text-transform:uppercase;font-size:.64rem;letter-spacing:.6px}
+.jam-picker-selectors select{padding:8px 7px;font-size:.75rem}
+.jam-picker-best{margin:1px 0;color:#a6f1cf;font-size:.76rem;font-weight:800}
+.jam-picker-start{width:100%;font-size:1rem;background:linear-gradient(120deg,#18a2cf,#673bea);box-shadow:0 3px #090b27,0 0 18px #30b5ec55}
+.jam-picker-hint{font-size:.7rem;line-height:1.25;color:#c5bee8;margin:0}
+.jam-next-song{margin:11px 0 0}
+@media(max-width:650px){
+ .jam-song-picker{padding:13px}
+ .jam-picker-top{margin-bottom:10px}
+ .jam-picker-count{font-size:.62rem;padding:6px}
+ .jam-picker-toolbar{margin-bottom:10px;gap:8px}
+ .jam-picker-search-label{flex-basis:100%}
+ .jam-picker-filters button{min-height:33px;padding:5px 10px}
+ .jam-picker-content{grid-template-columns:minmax(0,1fr);gap:12px}
+ .jam-picker-list{max-height:none;overflow:visible}
+ .jam-song-item{min-height:61px;padding:7px}
+ .jam-song-item-art{width:43px;height:43px;flex-basis:43px}
+ .jam-picker-details{padding:12px}
+ .jam-picker-cover{height:50px}
+ .jam-picker-details h3{font-size:1.25rem}
+ .jam-picker-start{position:sticky;bottom:0;z-index:1}
+}
+@media(prefers-reduced-motion:reduce){.jam-song-picker *{scroll-behavior:auto!important}}
