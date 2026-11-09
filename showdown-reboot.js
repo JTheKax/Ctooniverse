@@ -20,6 +20,7 @@ const rosterLayer=$('showdown-roster-layer'),arenaFrame=arena.closest('.arena-fr
 const arenaSection=arena.closest('.showdown-panel');
 const quickStartBtn=$('quick-start-match'),returnRosterBtn=$('return-roster');
 const arenaSelectBtn=$('arena-character-select'),inlineStage=$('in-game-stage');
+const rosterExpandBtn=$('roster-fullscreen'),battleExpandBtn=$('battle-fullscreen');
 const selectedFighterStatus=$('selected-fighter-status');
 const battleAudio=createBattleAudio($('battle-music-theme'),$('battle-music-volume'),$('battle-music-status'));
 const fightAnnouncement=$('fight-announcement');
@@ -478,7 +479,12 @@ function selectSlot(slot){
  for(const tile of rosterGrid.querySelectorAll('.fighter-slot'))
   tile.setAttribute('aria-pressed',String(Number(tile.dataset.slot)===slot));
 }
-function setPage(delta){selection.page+=delta;renderRoster();rosterLayer.scrollTo({top:0,behavior:'smooth'})}
+function setPage(delta){
+ selection.page+=delta;
+ renderRoster();
+ rosterGrid.scrollTop=0;
+ if(window.matchMedia('(max-width: 900px)').matches)rosterLayer.scrollTop=0;
+}
 $('roster-prev').addEventListener('click',()=>setPage(-1));
 $('roster-next').addEventListener('click',()=>setPage(1));
 for(const input of [search,series,kind,order])input.addEventListener('input',()=>{
@@ -565,6 +571,7 @@ function showCharacterSelect(focus=false){
  down.clear();oneShots.clear();
  rosterLayer.hidden=false;
  arenaSelectBtn.hidden=true;
+ battleExpandBtn.hidden=true;
  arena.setAttribute('aria-hidden','true');
  arenaFrame.classList.add('is-selecting');
  arenaSection.classList.add('is-selecting');
@@ -574,6 +581,7 @@ function showCharacterSelect(focus=false){
  $('showdown-status').textContent='Choose your fighter inside the game screen, then press FIGHT to begin.';
  if(focus){
   rosterLayer.scrollTop=0;
+  rosterGrid.scrollTop=0;
   const selected=rosterGrid.querySelector('.fighter-slot[aria-pressed="true"]');
   (quickStartBtn.disabled?selected:quickStartBtn)?.focus({preventScroll:true});
   arenaFrame.scrollIntoView({behavior:'smooth',block:'center'});
@@ -582,6 +590,7 @@ function showCharacterSelect(focus=false){
 function hideCharacterSelect(){
  rosterLayer.hidden=true;
  arenaSelectBtn.hidden=false;
+ battleExpandBtn.hidden=false;
  arena.setAttribute('aria-hidden','false');
  arenaFrame.classList.remove('is-selecting');
  arenaSection.classList.remove('is-selecting');
@@ -591,6 +600,47 @@ function hideCharacterSelect(){
 returnRosterBtn.addEventListener('click',()=>showCharacterSelect(true));
 arenaSelectBtn.addEventListener('click',()=>showCharacterSelect(true));
 quickStartBtn.addEventListener('click',()=>startBtn.click());
+
+// Native fullscreen when supported, with a fixed-window fallback on mobile browsers.
+function isExpanded(){
+ return document.fullscreenElement===arenaFrame||arenaFrame.classList.contains('is-theater');
+}
+function syncExpandButtons(){
+ const expanded=isExpanded();
+ for(const button of [rosterExpandBtn,battleExpandBtn]){
+  button.textContent=expanded?'⛶ Exit Full Screen':'⛶ Expand';
+  button.setAttribute('aria-pressed',String(expanded));
+  button.setAttribute('aria-label',expanded?'Exit expanded game screen':'Expand game screen');
+ }
+}
+function leaveTheater(){
+ arenaFrame.classList.remove('is-theater');
+ document.body.classList.remove('showdown-theater-open');
+ syncExpandButtons();
+}
+async function toggleExpandedGame(){
+ if(document.fullscreenElement===arenaFrame){
+  try{await document.exitFullscreen()}catch(error){console.warn('Could not exit full screen',error)}
+  syncExpandButtons();
+  return;
+ }
+ if(arenaFrame.classList.contains('is-theater')){leaveTheater();return}
+ try{
+  if(typeof arenaFrame.requestFullscreen!=='function')throw new Error('Fullscreen API unavailable');
+  await arenaFrame.requestFullscreen();
+ }catch(error){
+  // Safari and restricted embedded browsers can deny fullscreen; preserve the same UI.
+  arenaFrame.classList.add('is-theater');
+  document.body.classList.add('showdown-theater-open');
+ }
+ syncExpandButtons();
+}
+rosterExpandBtn.addEventListener('click',toggleExpandedGame);
+battleExpandBtn.addEventListener('click',toggleExpandedGame);
+document.addEventListener('fullscreenchange',syncExpandButtons);
+window.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&arenaFrame.classList.contains('is-theater'))leaveTheater();
+});
 
 function body(profile,x,face){
  return {profile,x,face,y:0,vy:0,hp:100,meter:0,cooldown:0,attack:0,attackType:'',attackHit:false,block:false,crouch:false,stun:0,flash:0,moveSpeed:0,hurtAt:null,koAt:null,jumpAt:null};
