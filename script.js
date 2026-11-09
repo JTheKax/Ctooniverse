@@ -280,3 +280,50 @@ if (year) year.textContent = String(new Date().getFullYear());
     })
     .catch(error => console.warn('CToon linked-series discovery:', error.message));
 })();
+
+
+/* Reader-controlled CToon size: shared preference across collection and shop pages. */
+(() => {
+  const key = 'ctooniverse-card-size';
+  const allowed = ['small','standard','large'];
+  let chosen = 'standard';
+  try { const saved = localStorage.getItem(key); if (allowed.includes(saved)) chosen = saved; } catch (_) {}
+  const apply = value => {
+    chosen = allowed.includes(value) ? value : 'standard';
+    document.documentElement.dataset.ctoonSize = chosen;
+    try { localStorage.setItem(key, chosen); } catch (_) {}
+  };
+  apply(chosen);
+  const mount = () => {
+    if (document.querySelector('.ctoon-size-toolbar')) return true;
+    const grid = document.querySelector('.collection-grid,.ctoons-featured-grid,.kingdom-ctoon-grid,.ctoon-shop-grid,.shop-ctoons-grid');
+    const card = document.querySelector('.ctoon-shop-card');
+    const target = grid || card?.parentElement;
+    if (!target) return false;
+    const toolbar = document.createElement('div');
+    toolbar.className = 'ctoon-size-toolbar';
+    const label = document.createElement('label');
+    label.textContent = 'CToon display size';
+    const select = document.createElement('select');
+    select.setAttribute('aria-label','CToon display size');
+    select.id = 'ctoon-size-choice';
+    label.htmlFor = select.id;
+    for (const [value,title] of [['small','Small'],['standard','Standard'],['large','Large']]) {
+      const option = document.createElement('option');
+      option.value = value; option.textContent = title;
+      select.append(option);
+    }
+    select.value = chosen;
+    select.addEventListener('change', () => apply(select.value));
+    toolbar.append(label,select);
+    target.parentElement?.insertBefore(toolbar,target);
+    return true;
+  };
+  const ready = () => {
+    if (mount()) return;
+    const observer = new MutationObserver(() => { if (mount()) observer.disconnect(); });
+    observer.observe(document.body,{childList:true,subtree:true});
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',ready,{once:true});
+  else ready();
+})();
