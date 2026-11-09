@@ -259,13 +259,18 @@
     if (state!=="playing" || (isRadio ? !radioAudio : !audio)) return;
     const t=songTime();
     let candidate=null,bestDiff=Infinity;
-    for (const note of notes) {
+    for (let i=missCursor;i<notes.length;i++) {
+      const note=notes[i];
+      if(note.at>t+.22)break;
       if (note.judged || note.lane!==lane) continue;
       const offset=Math.abs(t-note.at);
       if(offset<bestDiff && offset<=.22){candidate=note;bestDiff=offset;}
       if(note.at>t+.22) break;
     }
     if(!candidate){feedback("OFF BEAT","#9296bf");return;}
+    awardNote(candidate,bestDiff,t);
+  }
+  function awardNote(candidate,bestDiff,t){
     candidate.judged=true;
     if(candidate.duration>=.2)activeSustains.push({note:candidate,lastAt:candidate.at});
 
@@ -278,7 +283,7 @@
     health=clamp(health+1.5,0,100);
     if(!hypeActive) charge=clamp(charge+2.5,0,100);
     feedback(quality+(combo>1?" · "+combo+" COMBO":""),quality==="PERFECT"?"#98fbf7":quality==="GREAT"?"#f7e879":"#fff");
-    if (!isRadio && audio && master) voice(track.root+12+track.scale[lane%track.scale.length],audio.currentTime,.13,"triangle",.04);
+    if (!isRadio && audio && master) voice(track.root+12+track.scale[candidate.lane%track.scale.length],audio.currentTime,.13,"triangle",.04);
     updateHud();
   }
 
@@ -295,7 +300,7 @@
       const d=Math.abs(t-n.at);
       if(d<=.22&&d<diff){closest=n;diff=d;}
     }
-    if(!closest){combo=0;feedback("OVERSTRUM","#ff8198");updateHud();return;}
+    if(!closest){combo=0;health=clamp(health-1.5,0,100);feedback("OVERSTRUM","#ff8198");updateHud();return;}
     const group=[];
     for(let i=missCursor;i<notes.length;i++){
       const n=notes[i];
@@ -304,9 +309,10 @@
     }
     const needed=new Set(group.map(n=>n.lane));
     if(needed.size!==heldFrets.size||[...needed].some(lane=>!heldFrets.has(lane))){
-      combo=0;feedback("WRONG FRETS","#ff8198");updateHud();return;
+      combo=0;health=clamp(health-1.5,0,100);feedback("WRONG FRETS","#ff8198");updateHud();return;
     }
-    for(const n of group)hit(n.lane);
+    for(const n of group)awardNote(n,Math.abs(t-n.at),t);
+    if(group.length>1)feedback("CHORD! · "+combo+" STREAK","#94fbff");
   }
   function updateSustains(t){
     if(!activeSustains.length)return;
@@ -619,6 +625,7 @@
         status.textContent=reason+" Try a different song if it keeps failing.";
         if(["loading","buffering","playing","paused"].includes(state)){
           state="ready";
+          if(playStyleSelect)playStyleSelect.disabled=false;
           cancelAnimationFrame(raf);
           showOverlay("AUDIO LOAD FAILED",reason+" Use Retry Audio above or select another song.");
           playBtn.disabled=false;playBtn.textContent="↻ Retry Start";
@@ -789,6 +796,7 @@
     if(syncValue)syncValue.textContent=(next>=0?"+":"")+next.toFixed(2)+"s";
     try{localStorage.setItem(offsetKey(),String(next));}catch{}
     for(const note of notes)if(!note.judged)note.at+=difference;
+    activeSustains=[];
     draw();
   });
   songSelect.addEventListener("change",()=>{
@@ -842,7 +850,7 @@
   }
   document.addEventListener("keydown",event=>{
     const tag=event.target&&event.target.tagName;
-    if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA"||tag==="BUTTON")return;
+    if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA")return;
     if(event.code==="Escape"){event.preventDefault();if(!event.repeat)togglePause();return;}
     if(event.code==="Space"){event.preventDefault();if(!event.repeat)activateHype();return;}
     if(event.code==="ArrowUp"||event.code==="ArrowDown"||event.code==="Enter"){
