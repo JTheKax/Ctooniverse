@@ -62,10 +62,13 @@
   async function loadTrackChart(song) {
     const match=/^tracks\/([a-z0-9_-]+)\.(mp3|ogg|wav)$/i.exec(song.path||"");
     if(!match)return null;
-    const controller=new AbortController();
-    const timeout=setTimeout(()=>controller.abort(),5000);
+    // A missing abort API must not prevent the song from starting.
+    const controller=typeof AbortController==="function"?new AbortController():null;
+    const timeout=controller?setTimeout(()=>controller.abort(),5000):null;
     try{
-      const response=await fetch("ctoon-jam-charts/"+match[1]+".json?v=3",{signal:controller.signal,cache:"default"});
+      const options={cache:"default"};
+      if(controller)options.signal=controller.signal;
+      const response=await fetch("ctoon-jam-charts/"+match[1]+".json?v=3",options);
       if(!response.ok)return null;
       const data=await response.json();
       if(data.format!=="ctoon-jam-chart"||data.version!==1||data.sourceStoragePath!==song.path||
@@ -80,7 +83,7 @@
     }catch(error){
       console.warn("CToon Jam chart not available:",song.title,error);
       return null;
-    }finally{clearTimeout(timeout);}
+    }finally{if(timeout!==null)clearTimeout(timeout);}
   }
   function notesFromChart(chart,duration) {
     const offset=(Number(chart.offsetSeconds)||0)+appliedOffset;
