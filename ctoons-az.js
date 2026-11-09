@@ -23,7 +23,6 @@
   };
   function card(item) {
     const article=el("article","ctoons-directory-card");
-    article.append(el("span","ctoons-window-top","✦ CTOON DISPLAY ✦"));
     const art=el("div","ctoons-directory-art");
     if(item.image_path && /^(https:\/\/|\/|public\/|images\/|assets\/)/i.test(item.image_path)){
       const image=el("img");
@@ -37,7 +36,7 @@
     body.append(el("h3","",item.name));
     if(item.series)body.append(el("small","",item.series));
     if(item.rarity)body.append(el("span","ctoons-rarity",item.rarity));
-    article.append(art,body,el("span","ctoons-window-plaque"));return article;
+    article.append(art,body);return article;
   }
   function message(title,detail) {
     clear(results);
@@ -50,7 +49,6 @@
       const grid=el("div","ctoons-empty-showcase-grid");
       for(let i=0;i<4;i++){
         const window=el("div","ctoons-empty-window");
-        window.append(el("span","","✦ DISPLAY WINDOW ✦"));
         const pane=el("div","");pane.setAttribute("aria-label","Empty CToon display");pane.append(el("span","","◇"));
         window.append(pane,el("small","","Empty Slot"));
         grid.append(window);
