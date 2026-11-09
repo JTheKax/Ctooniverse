@@ -542,7 +542,7 @@ const down=new Set();
 const oneShots=new Set();
 const buttons=[...document.querySelectorAll('[data-control]')];
 const keyDown=event=>{
- if(!rosterLayer.hidden)return; // Roster navigation must not trigger punches or movement.
+ if(game.mode==='idle')return; // Only accept fighting controls during a match, not while browsing the roster.
  if(event.target?.closest?.('input,textarea,select,[contenteditable="true"],.roster-grid'))return;
  const key=keyAliases[event.key.toLowerCase()];
  if(!key)return;
@@ -564,32 +564,32 @@ const GROUND=445,LEFT=68,RIGHT=892;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,countdown:3,fightBanner:0,roundMessage:'',hitEffects:[],last:0,animClock:0};
 function showCharacterSelect(focus=false){
- // This is the game's menu, not a separate page; stop the current fight safely.
+ // Restore the classic layout: the character roster remains above the separate arena.
  battleAudio.stopTheme();
  game.mode='idle';game.paused=false;game.hero=null;game.cpu=null;
  game.hitEffects.length=0;
  down.clear();oneShots.clear();
  rosterLayer.hidden=false;
  arenaSelectBtn.hidden=true;
- battleExpandBtn.hidden=true;
- arena.setAttribute('aria-hidden','true');
- arenaFrame.classList.add('is-selecting');
- arenaSection.classList.add('is-selecting');
+ battleExpandBtn.hidden=false;
+ arena.setAttribute('aria-hidden','false');
+ arenaFrame.classList.remove('is-selecting');
+ arenaSection.classList.remove('is-selecting');
  returnRosterBtn.hidden=true;
  restartBtn.disabled=true;pauseBtn.disabled=true;pauseBtn.textContent='Pause';
- announceFight('','');
- $('showdown-status').textContent='Choose your fighter inside the game screen, then press FIGHT to begin.';
+ announceFight('READY TO TRAIN','');
+ $('showdown-status').textContent='Select a fighter in the roster above, then start a match in the arena below.';
  if(focus){
-  rosterLayer.scrollTop=0;
   rosterGrid.scrollTop=0;
+  rosterLayer.scrollIntoView({behavior:'smooth',block:'start'});
   const selected=rosterGrid.querySelector('.fighter-slot[aria-pressed="true"]');
-  (quickStartBtn.disabled?selected:quickStartBtn)?.focus({preventScroll:true});
-  arenaFrame.scrollIntoView({behavior:'smooth',block:'center'});
+  selected?.focus({preventScroll:true});
  }
 }
 function hideCharacterSelect(){
- rosterLayer.hidden=true;
- arenaSelectBtn.hidden=false;
+ // Starting a match never removes the player's roster or its preview from the page.
+ rosterLayer.hidden=false;
+ arenaSelectBtn.hidden=true;
  battleExpandBtn.hidden=false;
  arena.setAttribute('aria-hidden','false');
  arenaFrame.classList.remove('is-selecting');

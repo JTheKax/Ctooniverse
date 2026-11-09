@@ -8,7 +8,7 @@
   <title>CToon Showdown | CTooniverse</title>
   <link rel="stylesheet" href="showdown-reboot.css?v=ingame-roster-20261109-v3">
   <link rel="stylesheet" href="mobile-responsive.css?v=mobile-layout-20261109-v2">
-  <link rel="stylesheet" href="showdown-polish.css?v=arcade-edition-20261109">
+  <link rel="stylesheet" href="showdown-polish.css?v=classic-layout-restored-20261109">
 </head>
 <body>
 <main class="showdown-shell">
@@ -24,34 +24,7 @@
     </div>
     <div class="launch-count"><b id="roster-capacity">200</b><small>Starting roster slots</small></div>
   </section>
-  <section class="showdown-panel" aria-labelledby="arena-title">
-    <div class="panel-header">
-      <div><p class="eyebrow">01 / ENTER THE ARENA</p><h2 id="arena-title">THE FIGHT ZONE</h2></div>
-      <span class="roster-tally" id="round-score">TRAINING READY</span>
-    </div>
-    <div class="arena-hud">
-      <div class="hud-side"><div class="hud-name" id="player-name">PLAYER</div><div class="health-rail" aria-label="Player health"><div class="health-fill" id="player-health"></div></div></div>
-      <div class="hud-time" id="fight-timer" aria-label="Time remaining">60</div>
-      <div class="hud-side cpu"><div class="hud-name" id="cpu-name">CPU</div><div class="health-rail cpu" aria-label="CPU health"><div class="health-fill" id="cpu-health"></div></div></div>
-    </div>
-    <div class="arena-frame">
-      <div class="showdown-roster-layer" id="showdown-roster-layer" role="region" aria-label="In-game character selection">
-        <div class="showdown-overlay-toolbar">
-          <div class="showdown-overlay-player">
-            <span class="showdown-overlay-label">1P · CHARACTER SELECT</span>
-            <span class="showdown-overlay-pick" id="selected-fighter-status" aria-live="polite">Pick a fighter below</span>
-          </div>
-          <label class="showdown-inline-stage">Battle stage
-            <select id="in-game-stage" aria-label="Choose battle stage from the character selection screen">
-              <option value="skyline">Neon Skyline</option><option value="dojo">Moonlit Dojo</option>
-              <option value="arcade">Retro Arcade</option><option value="desert">Desert Ruins</option>
-              <option value="space">Cosmic Arena</option><option value="random">Random Stage</option>
-            </select>
-          </label>
-          <button type="button" class="arcade-btn main" id="quick-start-match" disabled>Choose a fighter</button>
-          <button type="button" class="arcade-btn alt screen-expand-btn" id="roster-fullscreen" aria-pressed="false" aria-label="Expand game screen">⛶ Expand</button>
-        </div>
-<section class="showdown-panel roster-showcase" aria-labelledby="roster-title">
+<section id="showdown-roster-layer" class="showdown-panel roster-showcase" aria-labelledby="roster-title">
     <div class="panel-header">
       <div><p class="eyebrow">01 / ARCADE CHARACTER SELECT</p><h2 id="roster-title">SELECT YOUR FIGHTER</h2><p class="roster-subtitle">200 starting spots · new challengers unlock as the roster grows</p></div>
       <span class="roster-tally" id="roster-tally">0 / 200 published</span>
@@ -111,12 +84,27 @@
         </div>
       </aside>
     </div>
+
+    <div class="showdown-overlay-toolbar" hidden aria-hidden="true">
+          <div class="showdown-overlay-player">
+            <span class="showdown-overlay-label">1P · CHARACTER SELECT</span>
+            <span class="showdown-overlay-pick" id="selected-fighter-status" aria-live="polite">Pick a fighter below</span>
+          </div>
+          <label class="showdown-inline-stage">Battle stage
+            <select id="in-game-stage" aria-label="Choose battle stage from the character selection screen">
+              <option value="skyline">Neon Skyline</option><option value="dojo">Moonlit Dojo</option>
+              <option value="arcade">Retro Arcade</option><option value="desert">Desert Ruins</option>
+              <option value="space">Cosmic Arena</option><option value="random">Random Stage</option>
+            </select>
+          </label>
+          <button type="button" class="arcade-btn main" id="quick-start-match" disabled>Choose a fighter</button>
+          <button type="button" class="arcade-btn alt screen-expand-btn" id="roster-fullscreen" aria-pressed="false" aria-label="Expand game screen">⛶ Expand</button>
+        </div>
   </section>
-      </div>
-      <canvas id="arena" width="960" height="540" aria-label="2D fighting arena showing the player and CPU">Canvas is required to play this game.</canvas>
-      <button type="button" class="arena-character-select arcade-btn alt" id="arena-character-select" hidden>◀ Select Fighter</button>
-      <button type="button" class="arena-fullscreen arcade-btn alt" id="battle-fullscreen" aria-pressed="false" hidden>⛶ Expand</button>
-      <div class="arena-announcement" id="fight-announcement" aria-live="polite">READY TO TRAIN</div>
+  <section class="showdown-panel" aria-labelledby="arena-title">
+    <div class="panel-header">
+      <div><p class="eyebrow">02 / THE NEW ARENA</p><h2 id="arena-title">ARCADE BATTLE</h2></div>
+      <span class="roster-tally" id="round-score">TRAINING READY</span>
     </div>
     <section class="stage-selection" aria-label="Battle stages"><div class="stage-header"><strong>CHOOSE YOUR BATTLE STAGE</strong><span id="stage-label">Neon Skyline</span></div><div class="stage-grid"><button class="stage-choice is-selected" type="button" data-stage="skyline" aria-pressed="true"><span class="stage-thumb stage-skyline"></span><b>Neon Skyline</b></button><button class="stage-choice" type="button" data-stage="dojo" aria-pressed="false"><span class="stage-thumb stage-dojo"></span><b>Moonlit Dojo</b></button><button class="stage-choice" type="button" data-stage="arcade" aria-pressed="false"><span class="stage-thumb stage-arcade"></span><b>Retro Arcade</b></button><button class="stage-choice" type="button" data-stage="desert" aria-pressed="false"><span class="stage-thumb stage-desert"></span><b>Desert Ruins</b></button><button class="stage-choice" type="button" data-stage="space" aria-pressed="false"><span class="stage-thumb stage-space"></span><b>Cosmic Arena</b></button><button class="stage-choice" type="button" data-stage="random" aria-pressed="false"><span class="stage-thumb stage-random">?</span><b>Random Stage</b></button></div></section><div class="battle-music-panel" aria-label="Original CToon Showdown battle music">
       <div class="battle-music-title"><span class="battle-music-note" aria-hidden="true">♫</span><div><strong>SHOWDOWN SOUNDTRACK</strong><small id="battle-music-status">NEON KNOCKOUT · ORIGINAL SHOWDOWN THEME</small></div></div>
@@ -132,6 +120,19 @@
       </label>
     </div>
     <p class="battle-countdown-hint">Every round starts with <b>3 · 2 · 1 · FIGHT!</b> before controls and the match timer activate.</p>
+    <div class="arena-hud">
+      <div class="hud-side"><div class="hud-name" id="player-name">PLAYER</div><div class="health-rail" aria-label="Player health"><div class="health-fill" id="player-health"></div></div></div>
+      <div class="hud-time" id="fight-timer" aria-label="Time remaining">60</div>
+      <div class="hud-side cpu"><div class="hud-name" id="cpu-name">CPU</div><div class="health-rail cpu" aria-label="CPU health"><div class="health-fill" id="cpu-health"></div></div></div>
+    </div>
+    <div class="arena-frame">
+
+      <canvas id="arena" width="960" height="540" aria-label="2D fighting arena showing the player and CPU">Canvas is required to play this game.</canvas>
+      <button type="button" class="arena-character-select arcade-btn alt" id="arena-character-select" hidden>◀ Select Fighter</button>
+      <button type="button" class="arena-fullscreen arcade-btn alt" id="battle-fullscreen" aria-pressed="false" hidden>⛶ Expand</button>
+      <div class="arena-announcement" id="fight-announcement" aria-live="polite">READY TO TRAIN</div>
+    </div>
+
     <div class="arena-actions">
       <div><button type="button" class="arcade-btn alt" id="return-roster" hidden>◀ Character Select</button><button type="button" class="arcade-btn" id="restart-match" disabled>Restart Match</button><button type="button" class="arcade-btn alt" id="pause-match" disabled>Pause</button></div>
       <span class="score" id="match-result">BEST OF THREE · VS CPU</span>
@@ -155,6 +156,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=johnny-roster-portrait-20261109"></script>
+<script type="module" src="showdown-reboot.js?v=classic-layout-restored-20261109"></script>
 </body>
 </html>

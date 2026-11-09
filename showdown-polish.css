@@ -368,3 +368,9 @@ body{
   .showdown-roster-layer .roster-wall .fighter-slot{transition:none!important}
   .arcade-btn:hover:enabled,.stage-choice:hover,.back-link:hover{transform:none}
 }
+
+/* Restore the separate character-select section and original arena placement. */
+.showdown-shell{max-width:1400px}
+#showdown-roster-layer{height:auto;max-height:none}
+#showdown-roster-layer .select-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,320px);gap:18px;align-items:start}
+@media(max-width:970px){#showdown-roster-layer .select-layout{grid-template-columns:1fr}}
