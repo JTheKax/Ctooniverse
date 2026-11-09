@@ -10,6 +10,7 @@
   const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
   const collator=new Intl.Collator(undefined,{numeric:true,sensitivity:"base"});
   let all=[];
+  let availableSubseries=[];
   const clear=node=>node.replaceChildren();
   const el=(tag,cls,text)=>{
     const node=document.createElement(tag);
@@ -43,7 +44,7 @@
     const box=el("div","ctoons-empty");
     box.append(el("h2","",title),el("p","",detail));
     results.append(box);
-    if(title==="The collection is empty"){
+    if(title==="The collection is empty" || title.endsWith(" — coming soon")){
       const showcase=el("div","ctoons-empty-showcase");
       showcase.append(el("h3","","New display windows — ready for future CToons"));
       const grid=el("div","ctoons-empty-showcase-grid");
@@ -58,7 +59,7 @@
   }
   function populateSubseries() {
     const selected=subseries.value;
-    const names=[...new Set(all.map(item=>item.series).filter(Boolean))].sort(collator.compare);
+    const names=[...new Set([...availableSubseries,...all.map(item=>item.series)].filter(Boolean))].sort(collator.compare);
     subseries.replaceChildren(new Option("All Subseries",""));
     for(const name of names)subseries.add(new Option(name,name));
     subseries.value=names.includes(selected)?selected:"";
@@ -90,19 +91,38 @@
       for(const item of list)grid.append(card(item));
       section.append(header,grid);results.append(section);
     }
-    if(!filtered.length)message(q||chosen?"No matches":"The collection is empty",q||chosen?"Try another name or choose All Subseries.":"New CToons will appear here in alphabetical order when they are added. Nothing from the deleted collection has been restored.");
+    if(!filtered.length){
+      if(chosen && !q && availableSubseries.includes(chosen)){
+        message(chosen+" — coming soon","This subseries is ready. Its CToon display windows will fill automatically as the first characters are added.");
+      }else{
+        message(q||chosen?"No matches":"The collection is empty",q||chosen?"Try another name or choose All Subseries.":"New CToons will appear here in alphabetical order when they are added. Nothing from the deleted collection has been restored.");
+      }
+    }
   }
   search.addEventListener("input",render);
   subseries.addEventListener("change",render);
   clearFilters.addEventListener("click",()=>{search.value="";subseries.value="";render();search.focus();});
   async function load() {
-    const endpoint="https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/ctoon_catalog?select=id,name,series,parent_series,rarity,image_path&order=name.asc";
+    const api="https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/";
+    const endpoint=api+"ctoon_catalog?select=id,name,series,parent_series,rarity,image_path&order=name.asc";
+    const seriesEndpoint=api+"ctoon_series?select=name&order=name.asc";
     const key="sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS";
     try{
-      const response=await fetch(endpoint,{headers:{apikey:key,Authorization:"Bearer "+key},cache:"no-store"});
+      const headers={apikey:key,Authorization:"Bearer "+key};
+      const [response,seriesResponse]=await Promise.all([
+        fetch(endpoint,{headers,cache:"no-store"}),
+        fetch(seriesEndpoint,{headers,cache:"no-store"}).catch(()=>null)
+      ]);
       if(!response.ok)throw new Error("Catalog HTTP "+response.status);
       const rows=await response.json();
       if(!Array.isArray(rows))throw new Error("Unexpected catalog response");
+      if(seriesResponse && seriesResponse.ok){
+        const seriesRows=await seriesResponse.json();
+        if(Array.isArray(seriesRows)){
+          availableSubseries=seriesRows.filter(item=>typeof item.name==="string")
+            .map(item=>item.name.trim()).filter(Boolean);
+        }
+      }
       all=rows.filter(row=>row && typeof row.name==="string" && row.name.trim())
         .map(row=>({name:row.name.trim(),series:typeof row.series==="string"?row.series:"",rarity:typeof row.rarity==="string"?row.rarity:"",image_path:typeof row.image_path==="string"?row.image_path:""}))
         .sort((a,b)=>collator.compare(a.name,b.name)||collator.compare(a.series,b.series));
