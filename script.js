@@ -168,7 +168,7 @@ if (year) year.textContent = String(new Date().getFullYear());
 (function(){
   if(document.querySelector('link[data-mobile-layout]'))return;
   const sheet=document.createElement('link');
-  sheet.rel='stylesheet';sheet.href='mobile-responsive.css?v=20261105-1';
+  sheet.rel='stylesheet';sheet.href='mobile-responsive.css?v=mobile-layout-20261109-v2';
   sheet.setAttribute('data-mobile-layout','');
   document.head.appendChild(sheet);
 })();

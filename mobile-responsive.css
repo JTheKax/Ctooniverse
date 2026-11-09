@@ -1,53 +1,237 @@
-/* Site-wide mobile layout repair. Loaded after the main stylesheet. */
+/* MOBILE PASS — 2026-11-09
+ * Keep desktop styling unchanged. Shared by every site and standalone game page.
+ * Prioritize usable touch navigation, in-flow dropdowns and unclipped game displays. */
 @media (max-width: 700px) {
-  html { width:100%; overflow-x:clip; -webkit-text-size-adjust:100%; }
-  body { width:100%; min-width:0; overflow-x:clip; }
+  html { width:100%; max-width:100%; overflow-x:clip; -webkit-text-size-adjust:100%; }
+  body { width:100%; max-width:100%; min-width:0; overflow-x:clip; }
   *, *::before, *::after { box-sizing:border-box; }
-  img, video, iframe, canvas, svg { max-width:100%; }
-  img, video { height:auto; }
-  main, main > *, section, article, aside, .site-header, footer { min-width:0; max-width:100%; }
-  h1,h2,h3,p,li,a,button,label { overflow-wrap:break-word; }
-  .site-header { position:relative; z-index:100; height:auto; }
-  .site-header nav { display:flex; flex-wrap:wrap; align-items:stretch; justify-content:center; gap:6px; width:100%; min-width:0; overflow:visible!important; }
-  .site-header nav > * { min-width:0; }
-  .site-header .nav-link { display:flex; align-items:center; justify-content:center; gap:5px; min-height:44px; max-width:100%; white-space:normal; text-align:center; }
-  .site-header .community-dropdown, .site-header .account-dropdown, .site-header .owner-menu, .site-header .games-dropdown { position:static!important; }
-  .site-header .community-dropdown-panel, .site-header .account-dropdown-panel, .site-header .owner-menu-panel, .site-header .games-dropdown-panel {
-    position:fixed!important; top:auto!important; bottom:max(12px,env(safe-area-inset-bottom))!important;
-    left:12px!important; right:12px!important; width:auto!important; min-width:0!important;
-    max-height:min(65dvh,520px)!important; overflow-y:auto!important;
-    z-index:2147483000!important; overscroll-behavior:contain;
+  :is(main, section, article, aside, footer, .panel, .section, .site-header,
+      .showdown-shell, .showdown-panel, .jam-shell, .jam-stage, .jam-game-main,
+      .jam-game-sidebar, .theater-main, .shop-main, .clash, .emulator-page,
+      .hb-shell, .shell, .ctoons-directory) { min-width:0; max-width:100%; }
+  :is(img, video, iframe, svg) { max-width:100%; }
+  :is(h1,h2,h3,p,li,label,button,.panel,.button) { overflow-wrap:anywhere; }
+  :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
+    min-width:0; max-width:100%;
   }
-  .site-header .community-dropdown:has([aria-expanded="true"]),
-  .site-header .account-dropdown:has([aria-expanded="true"]),
-  .site-header .owner-menu:has([aria-expanded="true"]),
-  .site-header .games-dropdown:has([aria-expanded="true"]) { z-index:2147483000!important; }
-  .home-top, .home-sections, .welcome-panel, .announcement-panel, .home-tiles,
-  .jukebox-upcoming-header, .jukebox-upcoming-slots { max-width:100%; min-width:0; }
+  :is(.hero-actions,.collection-display-tools,.emulator-controls,.pinball-controls,
+      .site-operating-actions,.jam-footer-controls) { flex-wrap:wrap; }
+  :is(.hero-actions,.collection-display-tools,.emulator-controls) > * { max-width:100%; }
+
+  /* Navigation uses the same two-column layout across all primary pages.
+   * Dropdowns open below their trigger, rather than covering the bottom of a game. */
+  .site-header { position:relative; z-index:50; height:auto; max-width:100%; }
+  .site-header nav {
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:100%!important;
+    align-items:start!important;
+    justify-items:stretch!important;
+    overflow:visible!important;
+    isolation:auto!important;
+  }
+  .site-header nav > * {
+    width:100%!important; max-width:100%!important; min-width:0!important;
+    margin:0!important;
+  }
+  .site-header nav :is(.nav-link,button.nav-link) {
+    display:flex!important; align-items:center!important; justify-content:center!important;
+    gap:5px; width:100%!important; max-width:100%!important; min-width:0!important;
+    min-height:46px!important; padding:8px 6px!important;
+    white-space:normal!important; text-align:center!important; line-height:1.2;
+    font-size:clamp(11px,3vw,14px)!important;
+  }
+  .site-header nav .nav-link:hover { transform:none!important; }
+  .site-header nav .nav-icon { flex-shrink:0; }
+  .site-header nav :is(.ctoons-dropdown,.games-dropdown,.community-dropdown,
+      .account-dropdown,.owner-menu) {
+    position:relative!important; min-width:0!important; width:100%!important;
+    max-width:100%!important; overflow:visible!important; z-index:auto!important;
+  }
+  .site-header nav :is(.ctoons-dropdown-panel,.games-dropdown-panel,
+      .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) {
+    position:static!important; inset:auto!important; transform:none!important;
+    width:100%!important; min-width:0!important; max-width:100%!important;
+    max-height:min(55dvh,450px)!important; overflow-x:hidden!important;
+    overflow-y:auto!important; overscroll-behavior:contain;
+    margin:6px 0 0!important; padding:5px!important;
+    border-radius:12px!important; z-index:auto!important;
+    box-shadow:0 8px 20px #0007!important;
+  }
+  .site-header nav :is(.ctoons-dropdown-panel,.games-dropdown-panel,
+      .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel)
+      :is(a,button) {
+    display:block; width:100%; min-width:0; max-width:100%;
+    min-height:42px; padding:10px 8px!important;
+    white-space:normal!important; overflow-wrap:anywhere!important;
+    text-align:left;
+  }
+  .site-header nav .ctoons-dropdown:not(.is-open) .ctoons-dropdown-panel,
+  .site-header nav .community-dropdown:not(.is-open) .community-dropdown-panel,
+  .site-header nav .owner-menu:not(.is-open) .owner-menu-panel,
+  .site-header nav .account-dropdown:not(:has(.account-dropdown-trigger[aria-expanded="true"]))
+     .account-dropdown-panel { display:none!important; }
+  .site-header nav .ctoons-dropdown.is-open .ctoons-dropdown-panel,
+  .site-header nav .community-dropdown.is-open .community-dropdown-panel,
+  .site-header nav .owner-menu.is-open .owner-menu-panel,
+  .site-header nav .account-dropdown:has(.account-dropdown-trigger[aria-expanded="true"])
+     .account-dropdown-panel { display:grid!important; }
+  .site-header nav [hidden] { display:none!important; }
+  .site-header .header-player { min-width:0; max-width:100%; }
+  .site-header .header-player-info { min-width:0; }
+  #header-player-name { overflow-wrap:anywhere; }
+  .brand-logo { max-width:min(280px,85vw); height:auto; }
+
+  /* Home, galleries and collectible windows: never require horizontal page scrolling. */
   .home-top { display:grid; grid-template-columns:minmax(0,1fr); }
-  .home-tiles, .jukebox-upcoming-slots { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .hero-actions, .collection-display-tools, .pinball-controls { flex-wrap:wrap; }
-  .hero-actions > *, .collection-display-tools > * { max-width:100%; }
-  .ctoons-featured-grid, .kingdom-ctoon-grid { gap:10px; }
-  .ctoons-featured-grid .ctoon-shop-card, .kingdom-ctoon-grid .ctoon-shop-card {
-    flex:0 1 min(182px,calc((100% - 10px)/2)); min-width:0; max-width:182px;
+  .home-tiles,.jukebox-upcoming-slots { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .ctoons-directory { width:100%; padding-inline:9px; }
+  .ctoons-toolbar { flex-wrap:wrap; align-items:stretch; }
+  .ctoons-toolbar label { min-width:0; max-width:100%; }
+  .ctoons-letter-grid,.ctoons-empty-showcase-grid {
+    display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px;
   }
-  .ctoon-shop-card, .ctoon-shop-art, .ctoon-shop-details { min-width:0; }
-  .ctoon-shop-art img, .ctoon-set-checklist img { max-width:100%; object-fit:contain; }
-  .ctoon-editor-dialog, dialog { max-width:calc(100vw - 24px); max-height:calc(100dvh - 32px); overflow:auto; }
-  input,select,textarea,button { max-width:100%; }
-  input,select,textarea { min-width:0; }
-  .collection-grid, .ctoon-set-checklist { max-width:100%; }
-  .pinball-cabinet, .prize-wheel-stage { max-width:calc(100vw - 36px); }
-  .pinball-cabinet canvas { display:block; width:100%; }
-  .header-player { min-width:0; max-width:100%; }
-  .header-player-info { min-width:0; }
-  .header-player-name, #header-player-name { overflow-wrap:anywhere; }
+  :is(.ctoons-directory-card,.ctoons-empty-window,.ctoons-window-top,
+      .ctoons-directory-art) { min-width:0; max-width:100%; }
+  .ctoons-directory-art img { width:100%; height:100%; object-fit:contain; }
+  .ctoons-alphabet { max-width:100%; }
+  .ctoons-alphabet :is(a,span) { min-width:30px; min-height:34px; }
+
+  /* Responsive card dimensions follow the user's Small / Default / Large choice.
+     Two cards fit an ordinary narrow phone without clipping their artwork. */
+  html {
+    --ctoon-card-w:min(140px,calc((100vw - 44px)/2));
+    --ctoon-card-h:calc(var(--ctoon-card-w) * 1.55);
+    --ctoon-art-h:calc(var(--ctoon-card-w) * .85);
+  }
+  html[data-ctoon-size="small"] {
+    --ctoon-card-w:min(122px,calc((100vw - 44px)/2));
+    --ctoon-card-h:calc(var(--ctoon-card-w) * 1.55);
+    --ctoon-art-h:calc(var(--ctoon-card-w) * .85);
+  }
+  html[data-ctoon-size="large"] {
+    --ctoon-card-w:min(150px,calc((100vw - 44px)/2));
+    --ctoon-card-h:calc(var(--ctoon-card-w) * 1.55);
+    --ctoon-art-h:calc(var(--ctoon-card-w) * .85);
+  }
+  :is(.collection-grid,.ctoons-featured-grid,.kingdom-ctoon-grid,
+      .czone-display,.czone-owned,.ctoon-set-checklist) {
+    max-width:100%; min-width:0;
+    grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--ctoon-card-w)),1fr))!important;
+    gap:9px!important;
+  }
+  :is(.collection-grid,.ctoons-featured-grid,.kingdom-ctoon-grid,.czone-owned)
+     .ctoon-shop-card { margin-inline:auto!important; }
+  :is(.ctoon-shop-card,.ctoon-shop-art,.ctoon-shop-details,.czone-card) { min-width:0; }
+  .ctoon-shop-art img { max-width:100%; object-fit:contain; }
+  :is(.collection-summary,.collection-heading,.czone-background-choice,
+      .ctoon-size-toolbar) { flex-wrap:wrap; min-width:0; }
+  .czone-preview,.czone-picker { width:100%; max-width:100%; padding-inline:10px; }
+  .czone-transform-editor { max-width:100%; overflow-x:auto; }
+  .ctoon-editor-dialog,dialog {
+    max-width:calc(100vw - 24px)!important;
+    max-height:calc(100dvh - 24px)!important;
+    overflow:auto;
+  }
+
+  /* Shop, account, community, owner tools, theater and emulator. */
+  .shop-department-grid,.emulator-fields { grid-template-columns:minmax(0,1fr); }
+  .owner-panel,.emulator-panel,.collection-section { min-width:0; max-width:100%; }
+  .emulator-page { padding:12px 9px; }
+  .emulator-screen { width:100%; min-height:260px; overflow:hidden; }
+  .emulator-screen #game {
+    display:block; width:100%!important; max-width:100%!important;
+    min-height:280px; height:clamp(300px,62dvh,650px);
+  }
+  .emu-case-grid { max-width:100%; overscroll-behavior-x:contain; }
+  .theater-main,.theater-stage,.theater-screen { width:100%; max-width:100%; min-width:0; }
+  .theater-curtains { max-width:100%; }
+  .clash,.clash .board,.clash .panel { min-width:0; max-width:100%; }
+  .clash .board { grid-template-columns:minmax(0,1fr)!important; }
+  .clash .hand { flex-wrap:wrap; }
+  .clash .tcg-card { max-width:100%; }
+  .prize-wheel-stage,.pinball-cabinet {
+    width:100%; max-width:calc(100vw - 30px); margin-inline:auto;
+  }
+  .pinball-cabinet canvas { display:block; width:100%; height:auto; }
+  .table-responsive,.table-wrapper { max-width:100%; overflow-x:auto; }
   table { max-width:100%; }
-  .table-responsive, .table-wrapper { overflow-x:auto; max-width:100%; }
-  iframe { max-width:100%; }
+  :is(.owner-panel,.emulator-panel,.site-operating-controls,.panel) input,
+  :is(.owner-panel,.emulator-panel,.site-operating-controls,.panel) select { max-width:100%; }
+
+  /* CToon Showdown: keep the roster and preview on the game screen,
+     but scroll *inside* the selection layer so neither is cropped. */
+  .showdown-shell { width:100%; padding:7px; }
+  .showdown-shell > .showdown-panel { max-width:100%; min-width:0; padding:8px; }
+  .arena-frame { width:100%; max-width:100%; min-width:0; }
+  .arena-frame > #arena { display:block; width:100%; max-width:100%; }
+  .arena-frame.is-selecting { min-height:0; height:clamp(540px,88svh,860px); }
+  .showdown-roster-layer {
+    max-width:100%; min-width:0; overflow-x:hidden!important;
+    overflow-y:auto!important; overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch; touch-action:pan-y;
+  }
+  .showdown-roster-layer .roster-showcase,
+  .showdown-roster-layer .select-layout { min-width:0; overflow:visible!important; }
+  .showdown-roster-layer .preview-card { min-width:0; max-width:100%; }
+  .showdown-roster-layer .roster-wall #roster-grid {
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    min-width:0; max-width:100%; overflow:visible!important;
+  }
+  .showdown-roster-layer .roster-controls input,
+  .showdown-roster-layer .roster-controls select { width:100%; max-width:100%; }
+  .showdown-roster-layer .roster-pages { flex-wrap:wrap; }
+  .showdown-overlay-toolbar { min-width:0; max-width:100%; }
+  .showdown-overlay-toolbar > * { max-width:100%; }
+  .stage-grid { max-width:100%; }
+  .arena-actions { flex-wrap:wrap; }
+  .arena-frame:fullscreen,.arena-frame.is-theater { max-width:none!important; }
+
+  /* CToon Jam: song list, highway, touch frets and controls remain reachable. */
+  .jam-shell { width:100%; padding:8px 7px 20px; }
+  .jam-stage { min-width:0; max-width:100%; padding:8px; }
+  .jam-game-layout { grid-template-columns:minmax(0,1fr); min-width:0; }
+  .jam-board-wrap { width:100%; min-width:0; height:clamp(500px,76dvh,740px); }
+  #jam-board { display:block; width:100%; max-width:100%; }
+  .jam-song-picker { overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+  .jam-picker-content { grid-template-columns:minmax(0,1fr); }
+  .jam-picker-list,.jam-picker-details { min-width:0; max-width:100%; }
+  .jam-picker-list { overflow:visible; max-height:none; }
+  .jam-controls { grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; }
+  .jam-controls button { min-width:0; min-height:46px; }
+  .jam-game-sidebar { min-width:0; max-width:100%; }
+  .jam-topbar,.jam-game-header { flex-wrap:wrap; }
+  .jam-stage:fullscreen,.jam-theater-view .jam-stage { max-width:none; }
+  .jam-stage:fullscreen .jam-board-wrap,
+  .jam-theater-view .jam-stage .jam-board-wrap { height:clamp(460px,65dvh,740px); }
+
+  /* CToon Heroes, Speedway and other games. */
+  .hb-shell,.shell { width:100%; max-width:100%; min-width:0; }
+  .hb-columns,.hb-hero-columns,.setup,.two-cols { min-width:0; }
+  .hb-arena,.hb-fighters,.game-frame { max-width:100%; min-width:0; }
+  .game-frame canvas { max-width:100%; }
+  .hb-unit { min-width:0; }
 }
-@media (max-width:380px) {
-  .home-tiles, .jukebox-upcoming-slots { grid-template-columns:minmax(0,1fr); }
-  .site-header .nav-link { font-size:.85rem; padding:8px; }
+@media (max-width:390px) {
+  .home-tiles,.jukebox-upcoming-slots { grid-template-columns:minmax(0,1fr); }
+  .site-header nav { gap:6px!important; }
+  .ctoons-letter-grid,.ctoons-empty-showcase-grid { gap:7px; }
+  .showdown-roster-layer .roster-wall #roster-grid {
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+  .jam-game-sidebar { grid-template-columns:minmax(0,1fr); }
+  .jam-picker-selectors { grid-template-columns:minmax(0,1fr); }
+  .theater-library .theater-cases {
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+  .hb-unit { flex:1 1 calc(50% - 8px); max-width:calc(50% - 4px); }
 }
+@media (max-width:700px) and (orientation:landscape) and (max-height:480px) {
+  .arena-frame.is-selecting { height:95svh; min-height:0; }
+  .arena-frame:fullscreen.is-selecting,
+  .arena-frame.is-theater.is-selecting { height:100dvh; }
+  .jam-board-wrap { height:clamp(300px,85dvh,520px); }
+}
+
