@@ -5,6 +5,14 @@
   const controls = [...document.querySelectorAll("[data-lane]")];
   const playBtn = $("jam-play"), pauseBtn = $("jam-pause"), hypeBtn = $("jam-hype");
   const songSelect = $("jam-song"), difficultySelect = $("jam-difficulty"), muteInput = $("jam-mute");
+  const songPicker=$("jam-song-picker"), pickerList=$("jam-picker-list"), pickerSearch=$("jam-picker-search");
+  const pickerCount=$("jam-picker-count"), pickerTitle=$("jam-picker-title"), pickerMeta=$("jam-picker-meta"),
+        pickerArt=$("jam-picker-art"), pickerBest=$("jam-picker-best"), pickerDifficulty=$("jam-picker-difficulty"),
+        pickerStyle=$("jam-picker-style"), pickerStart=$("jam-picker-start");
+  const pickerFilters=[...document.querySelectorAll("[data-song-filter]")];
+  const libraryBtn=$("jam-song-library"), nextSongBtn=$("jam-results-library");
+  let pickerFilter="all";
+
   const playStyleSelect=$("jam-play-style"), strumButtons=[...document.querySelectorAll("[data-strum]")];
   const overlay = $("jam-overlay"), judgement = $("jam-judgement");
   const status = $("jam-message"), best = $("jam-best");
@@ -230,7 +238,126 @@
       ? track.title+" · "+difficultySelect.value.toUpperCase()+" · "+fmt(stored.score)+" points · "+stored.accuracy+"% accuracy"
       : "No completed run yet for "+track.title+" on "+difficultySelect.value+".";
   }
+
+  // Song library lives inside the playable note highway. The existing canonical
+  // selects remain the single source of truth for charts, scores and song playback.
+  function songPickerBest(id,difficulty){
+    try{
+      const result=JSON.parse(localStorage.getItem("ctoon-jam-best-v1-"+id+"-"+difficulty)||"null");
+      if(result&&Number.isFinite(result.score))return "BEST · "+fmt(result.score)+" POINTS · "+(Number(result.accuracy)||0)+"% ACCURACY";
+    }catch{}
+    return "NO PERSONAL BEST YET";
+  }
+  function renderSongPicker(){
+    if(!songPicker||!pickerList)return;
+    const query=(pickerSearch?.value||"").trim().toLowerCase();
+    const matching=Object.entries(songs).filter(([id,song])=>{
+      const category=song.radio?"featured":"arcade";
+      return (pickerFilter==="all"||category===pickerFilter)&&
+        (id+" "+song.title+" "+(song.radio?"featured":"arcade original")).toLowerCase().includes(query);
+    });
+    const scroll=pickerList.scrollTop;
+    pickerList.replaceChildren();
+    for(const [id,song] of matching){
+      const button=document.createElement("button");
+      button.type="button";button.className="jam-song-item";
+      if(id===songSelect.value)button.classList.add("is-selected");
+      button.dataset.songId=id;
+      button.setAttribute("aria-pressed",String(id===songSelect.value));
+      const art=document.createElement("span");art.className="jam-song-item-art";
+      art.dataset.theme=id;art.setAttribute("aria-hidden","true");art.textContent=song.radio?"★":"♫";
+      const info=document.createElement("span");info.className="jam-song-item-copy";
+      const name=document.createElement("strong");name.textContent=song.title;
+      const subtitle=document.createElement("small");
+      subtitle.textContent=(song.radio?"FEATURED SONG":"ARCADE ORIGINAL")+" · "+song.bpm+" BPM";
+      info.append(name,subtitle);
+      const arrow=document.createElement("span");arrow.className="jam-song-item-arrow";
+      arrow.textContent=id===songSelect.value?"✓":"›";arrow.setAttribute("aria-hidden","true");
+      button.append(art,info,arrow);
+      button.addEventListener("click",()=>selectPickerSong(id));
+      pickerList.append(button);
+    }
+    if(!matching.length){
+      const empty=document.createElement("p");empty.className="jam-picker-empty";
+      empty.textContent="No songs match. Try another search or choose All.";
+      pickerList.append(empty);
+    }
+    pickerList.scrollTop=scroll;
+    if(pickerCount)pickerCount.textContent=matching.length+" / "+Object.keys(songs).length+" TRACKS";
+    for(const button of pickerFilters){
+      const active=button.dataset.songFilter===pickerFilter;
+      button.classList.toggle("is-active",active);
+      button.setAttribute("aria-pressed",String(active));
+    }
+    const id=songs[songSelect.value]?songSelect.value:Object.keys(songs)[0];
+    const song=songs[id];
+    if(!song)return;
+    if(pickerTitle)pickerTitle.textContent=song.title;
+    if(pickerMeta)pickerMeta.textContent=(song.radio?"Featured Recording · Streamed Audio":"Original Arcade Track · Synth Audio")+" · "+song.bpm+" BPM";
+    if(pickerArt){pickerArt.dataset.theme=id;pickerArt.textContent=song.radio?"★":"♫";}
+    if(pickerBest)pickerBest.textContent=songPickerBest(id,difficultySelect.value);
+    if(pickerDifficulty)pickerDifficulty.value=difficultySelect.value;
+    if(pickerStyle&&playStyleSelect)pickerStyle.value=playStyleSelect.value;
+  }
+  function selectPickerSong(id){
+    if(!songs[id])return;
+    songSelect.value=id;
+    track=songs[id];
+    isRadio=!!track.radio;
+    setupOffset();
+    refreshBest();
+    renderSongPicker();
+    draw();
+    try{localStorage.setItem("ctoon-jam-last-song-v1",id);}catch{}
+  }
+  function openSongPicker(focusSearch=false){
+    if(!songPicker)return;
+    if(!songPicker.hidden){
+      renderSongPicker();
+      if(focusSearch)pickerSearch?.focus();
+      return;
+    }
+    // Stop, rather than silently playing a discarded recording behind the menu.
+    ++loadSerial;
+    cancelAnimationFrame(raf);
+    if(radioAudio){
+      const media=radioAudio;
+      media.onplaying=media.onpause=media.onwaiting=media.onstalled=media.onerror=media.onended=
+        media.oncanplay=media.onloadedmetadata=media.onseeked=media.onprogress=
+        media.ondurationchange=media.onloadeddata=null;
+      media.pause();radioAudio=null;
+    }
+    if(audio){const previous=audio;audio=null;previous.close().catch(()=>{});}
+    master=null;resetFrets();hideSongLoading();
+    state="ready";notes=[];missCursor=0;totalTime=0;
+    score=0;combo=0;maxCombo=0;judged=0;weighted=0;health=75;charge=0;hypeEnd=0;
+    playBtn.disabled=false;playBtn.textContent="▶ Play Selected Song";
+    pauseBtn.disabled=true;songSelect.disabled=false;difficultySelect.disabled=false;
+    if(playStyleSelect)playStyleSelect.disabled=false;
+    if(radioPanel)radioPanel.hidden=true;
+    track=songs[songSelect.value]||songs.neon;
+    isRadio=!!track.radio;
+    setupOffset();
+    showOverlay("READY TO ROCK?","Choose a track from the song library.");
+    status.textContent="Choose a song and difficulty to begin.";
+    songPicker.hidden=false;
+    renderSongPicker();
+    refreshBest();draw();updateHud();
+    if(focusSearch)pickerSearch?.focus();
+  }
+  function launchPickerSong(){
+    if(!songPicker||songPicker.hidden)return;
+    if(pickerDifficulty)difficultySelect.value=pickerDifficulty.value;
+    if(pickerStyle&&playStyleSelect){
+      playStyleSelect.value=pickerStyle.value;
+      applyPlayStyle();
+    }
+    songPicker.hidden=true;
+    startSong();
+  }
+
   function updateHud() {
+
     $("jam-score").textContent=fmt(score);
     $("jam-combo").textContent=fmt(combo);
     const hypeActive=state==="playing" && hypeEnd>0 && songTime()<hypeEnd;
@@ -497,6 +624,7 @@
   // All radio playback is driven by the browser's native audio element.
   // The note highway never waits on a dangling media.play() Promise.
   async function startSong(forceReload=false) {
+    if(songPicker)songPicker.hidden=true;
     const current=++loadSerial;
     resetFrets();
     cancelAnimationFrame(raf);
@@ -781,7 +909,24 @@
     }
   }
   if(retryAudio)retryAudio.addEventListener("click",()=>{if(songSelect.value==="golden")startSong(true);});
-  playBtn.addEventListener("click",()=>startSong());
+  playBtn.addEventListener("click",()=>songPicker&&!songPicker.hidden?launchPickerSong():startSong());
+  if(libraryBtn)libraryBtn.addEventListener("click",()=>openSongPicker(true));
+  if(nextSongBtn)nextSongBtn.addEventListener("click",()=>{
+    openSongPicker(true);
+    gameStage?.scrollIntoView({block:"start",behavior:"smooth"});
+  });
+  if(pickerStart)pickerStart.addEventListener("click",launchPickerSong);
+  if(pickerSearch)pickerSearch.addEventListener("input",renderSongPicker);
+  for(const button of pickerFilters){
+    button.addEventListener("click",()=>{pickerFilter=button.dataset.songFilter||"all";renderSongPicker();});
+  }
+  if(pickerDifficulty)pickerDifficulty.addEventListener("change",()=>{
+    difficultySelect.value=pickerDifficulty.value;refreshBest();renderSongPicker();
+  });
+  if(pickerStyle)pickerStyle.addEventListener("change",()=>{
+    if(!playStyleSelect)return;
+    playStyleSelect.value=pickerStyle.value;resetFrets();applyPlayStyle();renderSongPicker();draw();
+  });
   pauseBtn.addEventListener("click",togglePause);
   hypeBtn.addEventListener("click",activateHype);
   muteInput.addEventListener("change",()=>{
@@ -802,13 +947,12 @@
   songSelect.addEventListener("change",()=>{
     track=songs[songSelect.value]||songs.neon;
     refreshBest();
-    // Choosing a song should begin play, rather than leaving the game waiting on Start.
-    startSong();
-    gameStage?.scrollIntoView({block:"start",behavior:"smooth"});
+    // The top select is retained for the audio engine; the visible picker decides when to start.
+    renderSongPicker();
   });
   difficultySelect.addEventListener("change",()=>{
     track=songs[songSelect.value]||songs.neon;
-    refreshBest();draw();updateHud();
+    refreshBest();renderSongPicker();draw();updateHud();
   });
 
   if(playStyleSelect){
@@ -850,7 +994,8 @@
   }
   document.addEventListener("keydown",event=>{
     const tag=event.target&&event.target.tagName;
-    if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA")return;
+    if(songPicker&&!songPicker.hidden)return;
+    if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA"||tag==="BUTTON")return;
     if(event.code==="Escape"){event.preventDefault();if(!event.repeat)togglePause();return;}
     if(event.code==="Space"){event.preventDefault();if(!event.repeat)activateHype();return;}
     if(event.code==="ArrowUp"||event.code==="ArrowDown"||event.code==="Enter"){
@@ -881,6 +1026,14 @@
   const warmChart=()=>{getTrackChart(songs.golden).catch(()=>{});};
   if(typeof requestIdleCallback==="function")requestIdleCallback(warmChart,{timeout:1800});
   else setTimeout(warmChart,800);
+  try{
+    const savedSong=localStorage.getItem("ctoon-jam-last-song-v1");
+    if(savedSong&&songs[savedSong])songSelect.value=savedSong;
+  }catch{}
+  track=songs[songSelect.value]||songs.neon;
+  isRadio=!!track.radio;setupOffset();
+  if(songPicker)songPicker.hidden=false;
+  renderSongPicker();
   try {refreshBest();updateHud();draw();}
   catch(error){console.warn("CToon Jam stage initialization failed:",error);status.textContent="The note board may need a reload.";}
 })();
