@@ -375,7 +375,7 @@
     // Let streamed songs finish even if players miss many notes.
     if(health<=0 && !isRadio)finishSong(true);
   }
-  function draw() {
+  function draw(){
     const rect=canvas.getBoundingClientRect(),w=rect.width,h=rect.height;
     if(!w||!h)return;
     const dpr=Math.min(window.innerWidth<=650?1.5:2,window.devicePixelRatio||1);
@@ -384,58 +384,91 @@
     }
     pen.setTransform(dpr,0,0,dpr);pen.clearRect(0,0,w,h);
     const backdrop=pen.createLinearGradient(0,0,0,h);
-    backdrop.addColorStop(0,"#220e50");backdrop.addColorStop(.48,"#100e2f");backdrop.addColorStop(1,"#080a23");
+    backdrop.addColorStop(0,"#24104c");backdrop.addColorStop(.48,"#0d0f30");backdrop.addColorStop(1,"#060919");
     pen.fillStyle=backdrop;pen.fillRect(0,0,w,h);
-    const t=Math.max(-2,songTime()),top=24,hitY=h*.79;
-    for(let i=0;i<30;i++){
-      const x=(i*97+43)%Math.max(1,w),y=(i*151+22)%Math.max(1,h*.65);
-      pen.fillStyle=i%3===0?"#cba1fd88":"#6ae1ff77";
-      pen.fillRect(x,y,i%5===0?3:2,i%5===0?3:2);
-    }
-    const width=Math.min(w*.90,620),left=(w-width)/2,laneW=width/5;
-    pen.fillStyle="#0e1137e5";pen.fillRect(left,top,width,h-top);
-    for(let lane=0;lane<5;lane++){
-      pen.fillStyle=lane%2?"#252044bb":"#171a43bb";pen.fillRect(left+lane*laneW,top,laneW,h-top);
-      pen.fillStyle=colors[lane]+"20";pen.fillRect(left+lane*laneW,hitY-13,laneW,30);
-      pen.strokeStyle=colors[lane]+"77";pen.lineWidth=2;pen.beginPath();pen.moveTo(left+lane*laneW,top);pen.lineTo(left+lane*laneW,h);pen.stroke();
-    }
-    pen.strokeStyle="#967dffb0";pen.strokeRect(left,top,width,h-top);
-    // Show incoming notes from the first frame, including while radio audio buffers.
+    const t=Math.max(-2,songTime()),top=h*.045,hitY=h*.80,center=w*.5;
+    const bottomWidth=Math.min(w*.96,740),topWidth=bottomWidth*.4;
+    const widthAt=y=>topWidth+(bottomWidth-topWidth)*Math.pow(clamp((y-top)/(hitY-top),0,1),1.12);
+    const edge=(lane,y)=>center+(lane/5-.5)*widthAt(y);
     const speed=2.85;
-    pen.lineWidth=2;
-    for(let beat=0;beat<9;beat++){
-      const offset=beat*beatSeconds();
-      const next=Math.ceil(Math.max(0,t)/beatSeconds())*beatSeconds()+offset;
-      const y=hitY-(next-t)/speed*(hitY-top);
-      if(y>=top&&y<=hitY){pen.strokeStyle="#ffffff18";pen.beginPath();pen.moveTo(left,y);pen.lineTo(left+width,y);pen.stroke();}
-    }
-    for(const note of notes){
-      if(note.at>t+speed+.1)break;
-      if(note.judged)continue;
-      const ahead=note.at-t;
-      if(ahead>speed+.1||ahead<-.27)continue;
-      const x=left+(note.lane+.5)*laneW,y=hitY-ahead/speed*(hitY-top);
-      const rx=Math.min(30,laneW*.34),ry=11;
-      pen.shadowColor=colors[note.lane];pen.shadowBlur=20;
-      pen.fillStyle=colors[note.lane];
-      pen.beginPath();pen.ellipse(x,y,rx,ry,0,0,2*Math.PI);pen.fill();
-      pen.shadowBlur=0;
-      pen.fillStyle="#ffffffaa";pen.beginPath();pen.ellipse(x,y-3,rx*.58,ry*.32,0,0,2*Math.PI);pen.fill();
-    }
-    pen.fillStyle="#fff";pen.shadowColor="#a5eaff";pen.shadowBlur=17;
-    pen.fillRect(left,hitY-4,width,7);pen.shadowBlur=0;
+    const yAt=time=>top+(hitY-top)*Math.pow(clamp(1-(time-t)/speed,0,1),1.45);
+    const bgGlow=pen.createRadialGradient(center,top,4,center,top,h*.95);
+    bgGlow.addColorStop(0,"#945aff55");bgGlow.addColorStop(1,"#19123b00");
+    pen.fillStyle=bgGlow;pen.fillRect(0,0,w,h);
+    // Five-lane trapezoid gives notes a genuine descending perspective.
     for(let lane=0;lane<5;lane++){
-      const x=left+(lane+.5)*laneW;
-      pen.fillStyle=colors[lane];pen.beginPath();pen.ellipse(x,hitY+14,Math.min(18,laneW*.25),8,0,0,2*Math.PI);pen.fill();
-      pen.fillStyle="#fff";pen.font="bold "+Math.max(12,Math.min(20,laneW*.21))+"px system-ui";pen.textAlign="center";pen.fillText(keys[lane].toUpperCase(),x,Math.min(h-14,hitY+52));
+      pen.beginPath();pen.moveTo(edge(lane,top),top);pen.lineTo(edge(lane+1,top),top);
+      pen.lineTo(edge(lane+1,h),h);pen.lineTo(edge(lane,h),h);pen.closePath();
+      pen.fillStyle=lane%2?"#212342":"#111832";pen.fill();
+      pen.beginPath();pen.moveTo(edge(lane,top),top);pen.lineTo(edge(lane,h),h);
+      pen.strokeStyle="#b8a6f958";pen.lineWidth=2;pen.stroke();
+    }
+    pen.beginPath();pen.moveTo(edge(5,top),top);pen.lineTo(edge(5,h),h);
+    pen.strokeStyle="#b8a6f958";pen.lineWidth=2;pen.stroke();
+    pen.beginPath();pen.moveTo(edge(0,top),top);pen.lineTo(edge(5,top),top);
+    pen.lineTo(edge(5,h),h);pen.lineTo(edge(0,h),h);pen.closePath();
+    pen.strokeStyle="#966cf5";pen.lineWidth=3;pen.stroke();
+    const beat=beatSeconds();
+    const first=Math.ceil(Math.max(0,t)/beat)*beat;
+    for(let i=0;i<12;i++){
+      const next=first+i*beat;
+      if(next>t+speed)break;
+      const y=yAt(next);
+      pen.beginPath();pen.moveTo(edge(0,y),y);pen.lineTo(edge(5,y),y);
+      pen.strokeStyle=i%4===0?"#dbcfff74":"#a6b0ea33";
+      pen.lineWidth=i%4===0?2:1;pen.stroke();
+    }
+    // Only draw visible chart notes, avoiding full-song 60fps scans.
+    for(let i=Math.max(0,missCursor-5);i<notes.length;i++){
+      const note=notes[i];
+      if(note.at>t+speed+.02)break;
+      if(note.judged||note.at<t-.25)continue;
+      const y=yAt(note.at),x=(edge(note.lane,y)+edge(note.lane+1,y))*.5;
+      const laneWidth=widthAt(y)/5;
+      if(note.duration>0){
+        const farY=yAt(note.at+note.duration);
+        const farX=(edge(note.lane,farY)+edge(note.lane+1,farY))*.5;
+        pen.beginPath();pen.moveTo(x,y);pen.lineTo(farX,farY);
+        pen.strokeStyle=colors[note.lane]+"ba";pen.lineWidth=Math.max(6,laneWidth*.3);
+        pen.shadowColor=colors[note.lane];pen.shadowBlur=12;pen.stroke();pen.shadowBlur=0;
+      }
+      const rx=Math.max(6,laneWidth*.36),ry=Math.max(4.5,rx*.38);
+      pen.fillStyle="#040615";pen.beginPath();pen.ellipse(x,y+ry*.45,rx*1.16,ry*1.22,0,0,2*Math.PI);pen.fill();
+      pen.fillStyle=colors[note.lane];pen.shadowColor=colors[note.lane];pen.shadowBlur=18;
+      pen.beginPath();pen.ellipse(x,y,rx,ry,0,0,2*Math.PI);pen.fill();pen.shadowBlur=0;
+      pen.strokeStyle="#ffffff9c";pen.lineWidth=Math.max(1,rx*.1);pen.stroke();
+      pen.fillStyle="#fffc";pen.beginPath();pen.ellipse(x,y-ry*.35,rx*.57,ry*.2,0,0,2*Math.PI);pen.fill();
+    }
+    for(const hold of activeSustains){
+      const note=hold.note,end=note.at+note.duration;
+      if(t>=end||!heldFrets.has(note.lane))continue;
+      const farY=yAt(end),farX=(edge(note.lane,farY)+edge(note.lane+1,farY))*.5;
+      const nearX=(edge(note.lane,hitY)+edge(note.lane+1,hitY))*.5;
+      pen.beginPath();pen.moveTo(farX,farY);pen.lineTo(nearX,hitY);
+      pen.strokeStyle=colors[note.lane]+"d4";pen.lineWidth=Math.max(7,widthAt(hitY)/5*.18);
+      pen.shadowColor=colors[note.lane];pen.shadowBlur=16;pen.stroke();pen.shadowBlur=0;
+    }
+    // Fixed strikeline and illuminated fret receptors.
+    pen.beginPath();pen.moveTo(edge(0,hitY),hitY);pen.lineTo(edge(5,hitY),hitY);
+    pen.strokeStyle="#f0faff";pen.lineWidth=6;pen.shadowColor="#66d8ff";pen.shadowBlur=22;pen.stroke();pen.shadowBlur=0;
+    for(let lane=0;lane<5;lane++){
+      const x=(edge(lane,hitY)+edge(lane+1,hitY))*.5;
+      const radius=Math.min(27,widthAt(hitY)/5*.29);
+      pen.fillStyle=heldFrets.has(lane)?"#ffffff":colors[lane];
+      pen.shadowColor=colors[lane];pen.shadowBlur=heldFrets.has(lane)?34:13;
+      pen.beginPath();pen.ellipse(x,hitY+18,radius,11,0,0,2*Math.PI);pen.fill();pen.shadowBlur=0;
+      pen.strokeStyle=colors[lane];pen.lineWidth=3;pen.stroke();
+      pen.fillStyle="#f7f7ff";pen.font="900 "+Math.max(12,Math.min(19,w/30))+"px system-ui";pen.textAlign="center";
+      pen.fillText(keys[lane].toUpperCase(),x,Math.min(h-12,hitY+59));
     }
     if(state==="playing"&&hypeEnd>0&&t<hypeEnd){
-      pen.fillStyle="#df8cff12";pen.fillRect(left,top,width,h-top);
-      pen.strokeStyle="#efbaff";pen.lineWidth=3;pen.strokeRect(left,top,width,h-top);
+      pen.fillStyle="#e09bff12";pen.fillRect(0,0,w,h);
+      pen.fillStyle="#ffe1ff";pen.font="900 19px system-ui";pen.textAlign="center";
+      pen.fillText("★ HYPE MODE ★",center,top+33);
     }
     if(state==="playing"&&t<0){
-      pen.fillStyle="#fff";pen.font="900 45px system-ui";pen.textAlign="center";pen.shadowColor="#54cfff";pen.shadowBlur=16;
-      pen.fillText("READY!",w/2,h*.25);pen.shadowBlur=0;
+      pen.fillStyle="#fff";pen.font="900 42px system-ui";pen.textAlign="center";
+      pen.shadowColor="#58d6ff";pen.shadowBlur=16;pen.fillText("GET READY!",center,h*.28);pen.shadowBlur=0;
     }
   }
   function tick() {
