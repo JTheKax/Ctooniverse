@@ -3,8 +3,10 @@
   const results=document.getElementById("ctoons-directory-results");
   const alphabet=document.getElementById("ctoons-alphabet");
   const search=document.getElementById("ctoons-search");
+  const subseries=document.getElementById("ctoons-subseries");
+  const clearFilters=document.getElementById("ctoons-clear-filters");
   const count=document.getElementById("ctoons-result-count");
-  if(!results||!alphabet||!search||!count)return;
+  if(!results||!alphabet||!search||!subseries||!clearFilters||!count)return;
   const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
   const collator=new Intl.Collator(undefined,{numeric:true,sensitivity:"base"});
   let all=[];
@@ -42,10 +44,18 @@
     box.append(el("h2","",title),el("p","",detail));
     results.append(box);
   }
+  function populateSubseries() {
+    const selected=subseries.value;
+    const names=[...new Set(all.map(item=>item.series).filter(Boolean))].sort(collator.compare);
+    subseries.replaceChildren(new Option("All Subseries",""));
+    for(const name of names)subseries.add(new Option(name,name));
+    subseries.value=names.includes(selected)?selected:"";
+  }
   function render() {
     const q=search.value.trim().toLocaleLowerCase();
-    const filtered=all.filter(item=>(item.name+" "+(item.series||"")).toLocaleLowerCase().includes(q));
-    count.textContent=filtered.length+" CToon"+(filtered.length===1?"":"s")+(q?" found":"");
+    const chosen=subseries.value;
+    const filtered=all.filter(item=>(!chosen||item.series===chosen) && (item.name+" "+(item.series||"")).toLocaleLowerCase().includes(q));
+    count.textContent=filtered.length+" CToon"+(filtered.length===1?"":"s")+(q||chosen?" found":"");
     clear(alphabet);clear(results);
     const groups=new Map();
     for(const item of filtered){
@@ -68,11 +78,13 @@
       for(const item of list)grid.append(card(item));
       section.append(header,grid);results.append(section);
     }
-    if(!filtered.length)message(q?"No matches":"The collection is empty",q?"Try another name or series.":"New CToons will appear here in alphabetical order when they are added. Nothing from the deleted collection has been restored.");
+    if(!filtered.length)message(q||chosen?"No matches":"The collection is empty",q||chosen?"Try another name or choose All Subseries.":"New CToons will appear here in alphabetical order when they are added. Nothing from the deleted collection has been restored.");
   }
   search.addEventListener("input",render);
+  subseries.addEventListener("change",render);
+  clearFilters.addEventListener("click",()=>{search.value="";subseries.value="";render();search.focus();});
   async function load() {
-    const endpoint="https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/ctoon_catalog?select=id,name,series,rarity,image_path&order=name.asc";
+    const endpoint="https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/ctoon_catalog?select=id,name,series,parent_series,rarity,image_path&order=name.asc";
     const key="sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS";
     try{
       const response=await fetch(endpoint,{headers:{apikey:key,Authorization:"Bearer "+key},cache:"no-store"});
@@ -82,6 +94,7 @@
       all=rows.filter(row=>row && typeof row.name==="string" && row.name.trim())
         .map(row=>({name:row.name.trim(),series:typeof row.series==="string"?row.series:"",rarity:typeof row.rarity==="string"?row.rarity:"",image_path:typeof row.image_path==="string"?row.image_path:""}))
         .sort((a,b)=>collator.compare(a.name,b.name)||collator.compare(a.series,b.series));
+      populateSubseries();
       render();
     }catch(error){
       count.textContent="Catalog unavailable";
