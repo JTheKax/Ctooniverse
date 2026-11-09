@@ -19,6 +19,8 @@ const arena=$('arena'),ctx=arena.getContext('2d');
 const rosterLayer=$('showdown-roster-layer'),arenaFrame=arena.closest('.arena-frame');
 const arenaSection=arena.closest('.showdown-panel');
 const quickStartBtn=$('quick-start-match'),returnRosterBtn=$('return-roster');
+const arenaSelectBtn=$('arena-character-select'),inlineStage=$('in-game-stage');
+const selectedFighterStatus=$('selected-fighter-status');
 const battleAudio=createBattleAudio($('battle-music-theme'),$('battle-music-volume'),$('battle-music-status'));
 const fightAnnouncement=$('fight-announcement');
 function announceFight(label,phase=''){
@@ -471,6 +473,7 @@ function selectSlot(slot){
  startBtn.textContent=locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
  quickStartBtn.disabled=startBtn.disabled;
  quickStartBtn.textContent=locked?'🔒 Locked':fighter?'FIGHT AS '+fighter.name:'Choose a fighter';
+ selectedFighterStatus.textContent=locked?'🔒 '+fighter.name+' · unlock required':fighter?'Selected: '+fighter.name:'Select a playable fighter';
  // Preserve keyboard focus when switching portraits instead of recreating the wall.
  for(const tile of rosterGrid.querySelectorAll('.fighter-slot'))
   tile.setAttribute('aria-pressed',String(Number(tile.dataset.slot)===slot));
@@ -561,6 +564,8 @@ function showCharacterSelect(focus=false){
  game.hitEffects.length=0;
  down.clear();oneShots.clear();
  rosterLayer.hidden=false;
+ arenaSelectBtn.hidden=true;
+ arena.setAttribute('aria-hidden','true');
  arenaFrame.classList.add('is-selecting');
  arenaSection.classList.add('is-selecting');
  returnRosterBtn.hidden=true;
@@ -576,12 +581,15 @@ function showCharacterSelect(focus=false){
 }
 function hideCharacterSelect(){
  rosterLayer.hidden=true;
+ arenaSelectBtn.hidden=false;
+ arena.setAttribute('aria-hidden','false');
  arenaFrame.classList.remove('is-selecting');
  arenaSection.classList.remove('is-selecting');
  returnRosterBtn.hidden=false;
  down.clear();oneShots.clear();
 }
 returnRosterBtn.addEventListener('click',()=>showCharacterSelect(true));
+arenaSelectBtn.addEventListener('click',()=>showCharacterSelect(true));
 quickStartBtn.addEventListener('click',()=>startBtn.click());
 
 function body(profile,x,face){
@@ -875,8 +883,16 @@ function refreshStage(){
  currentStage=stageChoice==='random'?STAGE_POOL[Math.floor(Math.random()*STAGE_POOL.length)]:stageChoice;
  for(const button of document.querySelectorAll('[data-stage]')){const selected=button.dataset.stage===stageChoice;button.classList.toggle('is-selected',selected);button.setAttribute('aria-pressed',String(selected));}
  $('stage-label').textContent=stageChoice==='random'?'Random: '+STAGE_NAMES[currentStage]:STAGE_NAMES[stageChoice];
+ inlineStage.value=stageChoice;
 }
-document.querySelectorAll('[data-stage]').forEach(button=>button.addEventListener('click',()=>{stageChoice=button.dataset.stage;try{localStorage.setItem('showdown-stage',stageChoice)}catch(_){}refreshStage();}));
+function chooseStage(value){
+ if(!(value in STAGE_NAMES))return;
+ stageChoice=value;
+ try{localStorage.setItem('showdown-stage',stageChoice)}catch(_){}
+ refreshStage();
+}
+document.querySelectorAll('[data-stage]').forEach(button=>button.addEventListener('click',()=>chooseStage(button.dataset.stage)));
+inlineStage.addEventListener('change',()=>chooseStage(inlineStage.value));
 refreshStage();
 function stageBackground(t){
  const palette={skyline:['#090f39','#774c88','#191b42'],dojo:['#0b243f','#43626c','#252b42'],arcade:['#160e3d','#753483','#24113b'],desert:['#f1b77f','#c97b6d','#854a58'],space:['#03091d','#3b2374','#151535']}[currentStage];
