@@ -663,3 +663,25 @@ a{color:var(--sky)}:focus-visible{outline:3px solid var(--gold);outline-offset:3
 @media(max-width:370px){
   .showdown-roster-layer .roster-wall .roster-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
+
+/* Arena-first character-select refinements */
+.showdown-overlay-toolbar{flex-wrap:wrap;gap:10px}
+.showdown-overlay-player{display:flex;flex:1 1 180px;flex-direction:column;justify-content:center;gap:2px;min-width:0}
+.showdown-overlay-pick{font-size:.75rem;font-weight:800;color:#a8f4fa;overflow-wrap:anywhere}
+.showdown-inline-stage{display:flex;flex-direction:column;gap:3px;flex:0 1 174px;min-width:120px;color:#d5e3ff;font-size:.67rem;font-weight:900;text-transform:uppercase;letter-spacing:.045em}
+.showdown-inline-stage select{min-height:35px;width:100%;border-radius:8px;border:1px solid #8aa8e8;background:#091d3e;color:#fff;padding:5px 9px;font-size:.8rem;font-weight:750;letter-spacing:0;text-transform:none}
+.showdown-inline-stage select:focus-visible{outline:3px solid #ffde88;outline-offset:2px}
+.arena-character-select{position:absolute;z-index:5;top:12px;right:12px;min-height:38px;padding:7px 12px;border-color:#ffdf96;background:linear-gradient(140deg,#142852e8,#3c2565eb);box-shadow:0 4px 17px #05061999;font-size:.82rem}
+.arena-frame.is-selecting .arena-character-select{display:none!important}
+@media(max-width:650px){
+ .showdown-overlay-toolbar{gap:7px;padding:7px 9px}
+ .showdown-overlay-player{flex:1 0 100%;gap:1px}
+ .showdown-overlay-pick{font-size:.68rem}
+ .showdown-inline-stage{flex:1 1 110px}
+ .showdown-overlay-toolbar #quick-start-match{flex:1 1 140px;white-space:normal}
+ .arena-character-select{top:7px;right:7px;min-height:34px;padding:5px 8px;font-size:.71rem}
+}
+@media(max-width:390px){
+ .showdown-inline-stage{min-width:105px}
+ .showdown-overlay-toolbar #quick-start-match{font-size:.68rem}
+}
