@@ -11,6 +11,8 @@ const rosterGrid=$('roster-grid'), banner=$('catalog-banner');
 const search=$('roster-search'),series=$('roster-series'),kind=$('roster-state'),order=$('roster-sort');
 const rosterShortcuts=[...document.querySelectorAll('[data-roster-filter]')];
 const selection={page:0,slot:1,slots:START_SLOTS,fighters:new Map()};
+// Alphabetical character names are the default; open roster slots follow published fighters.
+if(order)order.value="name";
 const account={db:null,user:null,owned:new Set(),balance:null,loading:true,busy:false};
 const SPRITE_POSES=['idle','walk','run','punch','kick','guard','jump','crouch','special','hurt','ko'];
 const previewAnimation={image:null,source:null,token:0,columns:3,rows:1,loaded:false,pose:'idle',poseStart:0,footAnchors:null};
