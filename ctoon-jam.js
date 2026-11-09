@@ -30,6 +30,8 @@
   let beatNext = 0, raf = 0, score = 0, combo = 0, judged = 0, weighted = 0, health = 75;
   let charge = 0, hypeEnd = 0, feedbackUntil = 0;
   let totalTime = 0, activeDifficulty = "normal";
+  // Keep rendering and missed-note checks proportional to the visible song section.
+  let missCursor = 0, lastHudFrame = 0;
   const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
   const beatSeconds = () => 60 / track.bpm;
   const songTime = () => isRadio ? (radioAudio ? radioAudio.currentTime : 0) : (audio ? audio.currentTime - startAt : -3);
@@ -90,7 +92,8 @@
     const limit=Number.isFinite(duration)&&duration>0?duration-.2:390;
     const raw=chart.difficultyNotes[activeDifficulty]||chart.difficultyNotes.normal;
     return raw.map(([seconds,lane])=>({at:seconds+offset,lane,judged:false}))
-              .filter(note=>note.at>=0&&note.at<limit);
+              .filter(note=>note.at>=0&&note.at<limit)
+              .sort((a,b)=>a.at-b.at);
   }
 
   function makeNotes() {
@@ -262,11 +265,12 @@
   }
   let maxCombo=0;
   function checkMisses(t) {
-    for (const note of notes) {
-      if(note.judged)continue;
-      if(t-note.at>.22) {
-        note.judged=true;registerMiss();
-      } else if (note.at>t) break;
+    // Notes are ordered; never rescan the entire song on every animation frame.
+    while(missCursor<notes.length){
+      const note=notes[missCursor];
+      if(note.judged){missCursor++;continue;}
+      if(t-note.at<=.22)break;
+      note.judged=true;registerMiss();missCursor++;
     }
     maxCombo=Math.max(maxCombo,combo);
     // Let streamed songs finish even if players miss many notes.
@@ -275,7 +279,7 @@
   function draw() {
     const rect=canvas.getBoundingClientRect(),w=rect.width,h=rect.height;
     if(!w||!h)return;
-    const dpr=Math.min(2,window.devicePixelRatio||1);
+    const dpr=Math.min(window.innerWidth<=650?1.5:2,window.devicePixelRatio||1);
     if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){
       canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
     }
@@ -307,6 +311,7 @@
       if(y>=top&&y<=hitY){pen.strokeStyle="#ffffff18";pen.beginPath();pen.moveTo(left,y);pen.lineTo(left+width,y);pen.stroke();}
     }
     for(const note of notes){
+      if(note.at>t+speed+.1)break;
       if(note.judged)continue;
       const ahead=note.at-t;
       if(ahead>speed+.1||ahead<-.27)continue;
@@ -335,11 +340,7 @@
     }
   }
   function tick() {
-    if(state==="loading"){
-      draw();
-      raf=requestAnimationFrame(tick);
-      return;
-    }
+    // The static note highway is already painted while loading; don't spin at 60fps.
     if(state!=="playing")return;
     const t=songTime();
     if(!isRadio)scheduleMusic();
@@ -347,7 +348,8 @@
     if(state!=="playing")return;
     if(performance.now()>feedbackUntil)judgement.textContent="";
     maxCombo=Math.max(maxCombo,combo);
-    updateHud();
+    const frameTime=performance.now();
+    if(frameTime-lastHudFrame>=50){updateHud();lastHudFrame=frameTime;}
     draw();
     if(isRadio){if(radioAudio && radioAudio.ended){finishSong();return;}}
     else if(t>totalTime+.65){finishSong();return;}
@@ -355,7 +357,7 @@
   }
   // All radio playback is driven by the browser's native audio element.
   // The note highway never waits on a dangling media.play() Promise.
-  async function startSong() {
+  async function startSong(forceReload=false) {
     const current=++loadSerial;
     cancelAnimationFrame(raf);
     if(radioAudio){
@@ -363,7 +365,8 @@
       previous.onplaying=null;previous.onpause=null;previous.onwaiting=null;
       previous.onstalled=null;previous.onerror=null;previous.onended=null;previous.oncanplay=null;
       previous.onloadedmetadata=null;previous.onseeked=null;
-      previous.pause();previous.removeAttribute("src");previous.load();
+      previous.pause();
+      // Preserve the MP3 URL and buffered bytes for a fast replay.
       radioAudio=null;
     }
     if(audio){audio.close().catch(()=>{});audio=null;}
@@ -380,14 +383,13 @@
     playBtn.disabled=false;playBtn.textContent="↻ Retry Start";
     pauseBtn.disabled=true;songSelect.disabled=false;difficultySelect.disabled=false;
     score=0;combo=0;maxCombo=0;judged=0;weighted=0;health=75;charge=0;hypeEnd=0;beatNext=0;
-    notes=makeNotes();
+    notes=makeNotes();missCursor=0;lastHudFrame=0;
     if(isRadio&&appliedOffset)for(const note of notes)note.at+=appliedOffset;
     totalTime=isRadio?180:(4+track.bars*4)*beatSeconds();
     showOverlay("GETTING SONG READY",isRadio?"Audio player is available above. You can press its Play button if playback does not begin.":"Preparing original arcade track…");
     judgement.textContent="";
     status.textContent="Preparing "+track.title+"…";
     draw();updateHud();
-    raf=requestAnimationFrame(tick);
     if(isRadio){
       const media=radioControl;
       if(!media){state="ready";cancelAnimationFrame(raf);status.textContent="Golden player is unavailable.";showOverlay("PLAYER UNAVAILABLE","Refresh the game page and try again.");return;}
@@ -395,9 +397,16 @@
       media.preload="auto";
       media.volume=.75;
       media.muted=muteInput.checked;
-      media.src=radioBase+encodeURI(track.path);
-      media.load();
-      audioStatus.textContent="Connecting to Golden. You can use Play in the player.";
+      const sourceUrl=radioBase+encodeURI(track.path);
+      const canReuse=!forceReload && media.getAttribute("src")===sourceUrl && !media.error;
+      if(!canReuse){
+        media.src=sourceUrl;
+        // An explicit Retry Audio can force a new attempt after a network failure.
+        if(forceReload)media.load();
+      }else if(media.readyState>=1){
+        try{media.currentTime=0;}catch{}
+      }
+      audioStatus.textContent=canReuse?"Song ready from previous load. Starting…":"Connecting to "+track.title+"…";
       let started=false;
       let loadingTimeout=null;
       let loadedChart=null;
@@ -412,7 +421,7 @@
           const prepared=notesFromChart(chart,duration);
           const t=media.currentTime||0;
           for(const note of prepared)if(note.at<t-.22)note.judged=true;
-          notes=prepared;
+          notes=prepared;missCursor=0;
           if(chartStatus)chartStatus.textContent="Loaded "+activeDifficulty+" chart · "+track.bpm+" BPM · "+notes.length+" notes · timing draft.";
         }else if(chartStatus){
           chartStatus.textContent="Chart unavailable — using practice notes.";
@@ -440,7 +449,7 @@
         totalTime=duration;
         track.bars=Math.max(1,Math.min(240,Math.floor((duration-4*beatSeconds())/(4*beatSeconds()))));
         // Preserve a chart that loaded before audio playback was allowed.
-        notes=loadedChart?notesFromChart(loadedChart,duration):makeNotes();
+        notes=loadedChart?notesFromChart(loadedChart,duration):makeNotes();missCursor=0;
         if(!loadedChart && appliedOffset)for(const note of notes)note.at+=appliedOffset;
         const now=media.currentTime||0;
         for(const note of notes)if(note.at<now-.22)note.judged=true;
@@ -583,6 +592,7 @@
     hideOverlay();
     status.textContent="Playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hit notes on the fret line!";
     updateHud();draw();
+    raf=requestAnimationFrame(tick);
   }
   async function togglePause() {
     if(isRadio){
@@ -607,8 +617,8 @@
       raf=requestAnimationFrame(tick);
     }
   }
-  if(retryAudio)retryAudio.addEventListener("click",()=>{if(songSelect.value==="golden")startSong();});
-  playBtn.addEventListener("click",startSong);
+  if(retryAudio)retryAudio.addEventListener("click",()=>{if(songSelect.value==="golden")startSong(true);});
+  playBtn.addEventListener("click",()=>startSong());
   pauseBtn.addEventListener("click",togglePause);
   hypeBtn.addEventListener("click",activateHype);
   muteInput.addEventListener("change",()=>{
@@ -664,6 +674,10 @@
   });
   window.addEventListener("resize",draw);
 
+  // Fetch the small chart during browser idle time, never blocking the game or MP3.
+  const warmChart=()=>{getTrackChart(songs.golden).catch(()=>{});};
+  if(typeof requestIdleCallback==="function")requestIdleCallback(warmChart,{timeout:1800});
+  else setTimeout(warmChart,800);
   try {refreshBest();updateHud();draw();}
   catch(error){console.warn("CToon Jam stage initialization failed:",error);status.textContent="The note board may need a reload.";}
 })();
