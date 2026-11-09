@@ -89,31 +89,6 @@ if (year) year.textContent = String(new Date().getFullYear());
 })();
 
 
-/* Site-wide CToons navigation dropdown, accessible on desktop and mobile. */
-(() => {
- const nav=document.querySelector('.site-header nav');
- if(!nav||nav.querySelector('.ctoons-dropdown'))return;
- const original=[...nav.querySelectorAll('a.nav-link')].find(a=>{try{return new URL(a.href,location.href).pathname.endsWith('/ctoons.html')}catch{return false}});
- if(!original)return;
- const wrapper=document.createElement('div');wrapper.className='ctoons-dropdown';
- const button=document.createElement('button');button.type='button';button.className='nav-link ctoons-dropdown-trigger';
- if(original.classList.contains('active')||location.pathname.endsWith('/my-collection.html')||location.pathname.endsWith('/czone.html'))button.classList.add('active');
- button.setAttribute('aria-haspopup','true');button.setAttribute('aria-expanded','false');
- button.innerHTML='<span class="nav-icon" aria-hidden="true">▣</span><span>CToons</span><span aria-hidden="true">▾</span>';
- const panel=document.createElement('div');panel.className='ctoons-dropdown-panel';
- for(const [label,url] of [['CToons','ctoons.html'],['My Collection','my-collection.html'],['CZone','czone.html'],['Trades','trades.html']]){
-  const a=document.createElement('a');a.href=url;a.textContent=label;
-  if(location.pathname.endsWith('/'+url))a.setAttribute('aria-current','page');
-  panel.append(a);
- }
- const close=()=>{wrapper.classList.remove('is-open');button.setAttribute('aria-expanded','false')};
- button.addEventListener('click',()=>{const open=!wrapper.classList.contains('is-open');wrapper.classList.toggle('is-open',open);button.setAttribute('aria-expanded',String(open))});
- wrapper.addEventListener('keydown',e=>{if(e.key==='Escape'){close();button.focus()}});
- document.addEventListener('click',e=>{if(!wrapper.contains(e.target))close()});
- wrapper.append(button,panel);original.replaceWith(wrapper);
-})();
-
-
 /* Shop dropdown shared across desktop and mobile navigation. */
 (() => {
  const nav=document.querySelector('.site-header nav');
@@ -122,11 +97,11 @@ if (year) year.textContent = String(new Date().getFullYear());
  if(!original)return;
  const wrap=document.createElement('div');wrap.className='ctoons-dropdown shop-dropdown';
  const btn=document.createElement('button');btn.type='button';btn.className='nav-link ctoons-dropdown-trigger';
- if(['shop.html','auction.html'].some(p=>location.pathname.endsWith('/'+p)))btn.classList.add('active');
+ if(location.pathname.endsWith('/shop.html'))btn.classList.add('active');
  btn.setAttribute('aria-haspopup','true');btn.setAttribute('aria-expanded','false');
  btn.innerHTML='<span class="nav-icon" aria-hidden="true">🛒</span><span>Shop</span><span aria-hidden="true">▾</span>';
  const panel=document.createElement('div');panel.className='ctoons-dropdown-panel';
- for(const [label,url] of [['Shop','shop.html'],['Auction House','auction.html']]){
+ for(const [label,url] of [['Shop','shop.html']]){
   const link=document.createElement('a');link.href=url;link.textContent=label;
   if(location.pathname.endsWith('/'+url))link.setAttribute('aria-current','page');
   panel.append(link);
@@ -282,3 +257,12 @@ if (year) year.textContent = String(new Date().getFullYear());
 })();
 
 
+
+/* Remove obsolete collection links from legacy pages while preserving other games. */
+(() => {
+ const obsolete=new Set(['ctoons.html','sets-overview.html','my-collection.html','my-scene.html','czone.html','trades.html','auction.html','owner-ctoon-maker.html','owner-ctoon-packs.html']);
+ for(const a of document.querySelectorAll('a[href]')) {
+  const filename=a.getAttribute('href').split(/[?#]/)[0].split('/').pop();
+  if(obsolete.has(filename)) a.remove();
+ }
+})();
