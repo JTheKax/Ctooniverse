@@ -17,8 +17,12 @@
   const songs = {
     neon: {title:"Neon Rush",bpm:118,bars:20,root:52,seed:1,wave:"sawtooth",scale:[0,3,5,7,10,12,15,17],progression:[0,5,3,7]},
     pixel: {title:"Pixel Thunder",bpm:146,bars:24,root:50,seed:3,wave:"square",scale:[0,2,5,7,9,12,14,17],progression:[0,7,5,3]},
-    starlight: {title:"Starlight Solo",bpm:104,bars:20,root:53,seed:4,wave:"triangle",scale:[0,2,4,7,9,12,14,16],progression:[0,4,5,7]}
+    starlight: {title:"Starlight Solo",bpm:104,bars:20,root:53,seed:4,wave:"triangle",scale:[0,2,4,7,9,12,14,16],progression:[0,4,5,7]},
+    golden: {title:"Golden · HUNTR/X",radio:true,path:"tracks/4c25e71528734dac8763825b46ed23d2.mp3",bpm:123,bars:95,root:52,seed:2,wave:"triangle",scale:[0,3,5,7,10,12,15,17],progression:[0,5,3,7]}
   };
+  // Dedicated recording; never imports the sitewide radio song library.
+  const radioBase="https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/";
+  function syncRadioSelection() {} // No radio-library controls.
   const AC = window.AudioContext || window.webkitAudioContext;
   let audio = null, master = null, noiseBuffer = null;
   let radioAudio = null, isRadio = false, loadSerial = 0, appliedOffset = 0;
@@ -385,12 +389,13 @@
     raf=requestAnimationFrame(tick);
     if(isRadio){
       const media=radioControl;
+      if(!media){state="ready";status.textContent="Golden player is unavailable.";return;}
       radioAudio=media;
       media.preload="metadata";
       media.volume=.75;
       media.muted=muteInput.checked;
       media.src=radioBase+encodeURI(track.path);
-      audioStatus.textContent="Connecting to CTooniverse Radio. You can use Play in the player.";
+      audioStatus.textContent="Connecting to Golden. You can use Play in the player.";
       let started=false;
       let loadingTimeout=null;
       const valid=()=>current===loadSerial && radioAudio===media;
@@ -401,7 +406,7 @@
           state="playing";
           hideOverlay();pauseBtn.disabled=false;pauseBtn.textContent="Pause";
           status.textContent="Audio resumed. Continue playing!";
-          audioStatus.textContent="Radio audio playing.";
+          audioStatus.textContent="Golden is playing.";
           cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
           return;
         }
@@ -471,14 +476,14 @@
         }
       };
       media.onstalled=()=>{
-        if(valid())audioStatus.textContent="Radio connection stalled. Try the Play button or Retry Audio.";
+        if(valid())audioStatus.textContent="Golden audio stalled. Try Play or Retry Audio.";
       };
       media.onpause=()=>{
         if(!valid())return;
         if(state==="playing"||state==="buffering"){
           state="paused";cancelAnimationFrame(raf);
-          pauseBtn.textContent="Resume";showOverlay("PAUSED","Press Play in the radio player or Resume to continue.");
-          status.textContent="Radio audio paused.";
+          pauseBtn.textContent="Resume";showOverlay("PAUSED","Press Play in the song player or Resume to continue.");
+          status.textContent="Golden paused.";
         }
       };
       media.onerror=()=>{if(valid())errorMessage();};
@@ -503,9 +508,9 @@
             if(error&&error.name==="AbortError")return;
             const blocked=error&&error.name==="NotAllowedError";
             audioStatus.textContent=blocked
-              ?"Autoplay was blocked. Tap Play in the radio audio player."
+              ?"Autoplay was blocked. Tap Play in the song audio player."
               :"The browser could not start audio. Tap Play or Retry Audio.";
-            status.textContent=blocked?"Tap the radio player's Play button to begin.":"Try Play in the radio player or select a different song.";
+            status.textContent=blocked?"Tap the song player's Play button to begin.":"Try Play in the radio player or select a different song.";
             showOverlay("TAP PLAY TO START",blocked?"Your browser requires a direct tap on the audio player.":"Use the player above to start this recording.");
             if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
           });
@@ -567,6 +572,7 @@
       raf=requestAnimationFrame(tick);
     }
   }
+  if(retryAudio)retryAudio.addEventListener("click",()=>{if(radioAudio)radioAudio.play().catch(()=>{if(audioStatus)audioStatus.textContent="Tap Play in the audio player to start Golden.";});});
   playBtn.addEventListener("click",startSong);
   pauseBtn.addEventListener("click",togglePause);
   hypeBtn.addEventListener("click",activateHype);
