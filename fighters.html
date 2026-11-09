@@ -8,23 +8,25 @@
   <title>CToon Showdown | CTooniverse</title>
   <link rel="stylesheet" href="showdown-reboot.css?v=ingame-roster-20261109-v3">
   <link rel="stylesheet" href="mobile-responsive.css?v=mobile-layout-20261109-v2">
+  <link rel="stylesheet" href="showdown-polish.css?v=arcade-edition-20261109">
 </head>
 <body>
 <main class="showdown-shell">
   <header class="showdown-top">
     <a class="back-link" href="games.html">← CTOONIVERSE / GAMES</a>
-    <span class="release-tag">NEW FOUNDATION · REBOOT</span>
+    <span class="release-tag">ARCADE EDITION · 2D FIGHTERS</span>
   </header>
   <section class="showdown-hero" aria-labelledby="showdown-title">
     <div>
+      <p class="hero-kicker">THE CROSSOVER FIGHTING ARENA</p>
       <h1 id="showdown-title">CTOON<br><span>SHOWDOWN</span></h1>
-      <p>Johnny Bravo and Samurai Jack are ready for battle! Choose a fighter, preview their animated 2D moves and enter the arena. The roster can grow beyond 200 slots.</p>
+      <p>Choose your champion from an expandable 200-slot roster. Preview authentic 2D fighter moves, pick your stage, and take on the CPU in an arcade-style showdown.</p>
     </div>
     <div class="launch-count"><b id="roster-capacity">200</b><small>Starting roster slots</small></div>
   </section>
   <section class="showdown-panel" aria-labelledby="arena-title">
     <div class="panel-header">
-      <div><p class="eyebrow">02 / THE NEW ARENA</p><h2 id="arena-title">Arcade Game Screen</h2></div>
+      <div><p class="eyebrow">01 / ENTER THE ARENA</p><h2 id="arena-title">THE FIGHT ZONE</h2></div>
       <span class="roster-tally" id="round-score">TRAINING READY</span>
     </div>
     <div class="arena-hud">
@@ -116,7 +118,7 @@
       <button type="button" class="arena-fullscreen arcade-btn alt" id="battle-fullscreen" aria-pressed="false" hidden>⛶ Expand</button>
       <div class="arena-announcement" id="fight-announcement" aria-live="polite">READY TO TRAIN</div>
     </div>
-    <section class="stage-selection" aria-label="Battle stages"><div class="stage-header"><strong>SELECT BATTLE BACKGROUND</strong><span id="stage-label">Neon Skyline</span></div><div class="stage-grid"><button class="stage-choice is-selected" type="button" data-stage="skyline" aria-pressed="true"><span class="stage-thumb stage-skyline"></span><b>Neon Skyline</b></button><button class="stage-choice" type="button" data-stage="dojo" aria-pressed="false"><span class="stage-thumb stage-dojo"></span><b>Moonlit Dojo</b></button><button class="stage-choice" type="button" data-stage="arcade" aria-pressed="false"><span class="stage-thumb stage-arcade"></span><b>Retro Arcade</b></button><button class="stage-choice" type="button" data-stage="desert" aria-pressed="false"><span class="stage-thumb stage-desert"></span><b>Desert Ruins</b></button><button class="stage-choice" type="button" data-stage="space" aria-pressed="false"><span class="stage-thumb stage-space"></span><b>Cosmic Arena</b></button><button class="stage-choice" type="button" data-stage="random" aria-pressed="false"><span class="stage-thumb stage-random">?</span><b>Random Stage</b></button></div></section><div class="battle-music-panel" aria-label="Original CToon Showdown battle music">
+    <section class="stage-selection" aria-label="Battle stages"><div class="stage-header"><strong>CHOOSE YOUR BATTLE STAGE</strong><span id="stage-label">Neon Skyline</span></div><div class="stage-grid"><button class="stage-choice is-selected" type="button" data-stage="skyline" aria-pressed="true"><span class="stage-thumb stage-skyline"></span><b>Neon Skyline</b></button><button class="stage-choice" type="button" data-stage="dojo" aria-pressed="false"><span class="stage-thumb stage-dojo"></span><b>Moonlit Dojo</b></button><button class="stage-choice" type="button" data-stage="arcade" aria-pressed="false"><span class="stage-thumb stage-arcade"></span><b>Retro Arcade</b></button><button class="stage-choice" type="button" data-stage="desert" aria-pressed="false"><span class="stage-thumb stage-desert"></span><b>Desert Ruins</b></button><button class="stage-choice" type="button" data-stage="space" aria-pressed="false"><span class="stage-thumb stage-space"></span><b>Cosmic Arena</b></button><button class="stage-choice" type="button" data-stage="random" aria-pressed="false"><span class="stage-thumb stage-random">?</span><b>Random Stage</b></button></div></section><div class="battle-music-panel" aria-label="Original CToon Showdown battle music">
       <div class="battle-music-title"><span class="battle-music-note" aria-hidden="true">♫</span><div><strong>SHOWDOWN SOUNDTRACK</strong><small id="battle-music-status">NEON KNOCKOUT · ORIGINAL SHOWDOWN THEME</small></div></div>
       <label class="battle-audio-select">Battle theme
         <select id="battle-music-theme" aria-label="Choose battle music">
