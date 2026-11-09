@@ -582,6 +582,7 @@ function beginFight(){
  $('showdown-status').textContent='FIGHT! Use keyboard controls or the on-screen buttons.';
 }
 function startMatch(profile){
+ if(stageChoice==='random')refreshStage();
  if(!ctx){$('showdown-status').textContent='Your browser does not support the battle canvas.';return}
  game.heroProfile=profile;game.cpuProfile=profile.fighter_id==='samurai-jack'?demoHero:samuraiJack;
   spriteAtlas(game.heroProfile);spriteAtlas(game.cpuProfile); // Preload before the fight begins.
@@ -828,14 +829,49 @@ function drawBody(f,t){
  if(attacking){ctx.strokeStyle=f.attackType==='special'?'#ffe189':'#ffffff';ctx.lineWidth=f.attackType==='special'?13:7;ctx.globalAlpha=.75;ctx.beginPath();ctx.arc(extension-4,-125,45,-1.1,1.2);ctx.stroke()}
  ctx.restore();
 }
+
+const STAGE_NAMES={skyline:'Neon Skyline',dojo:'Moonlit Dojo',arcade:'Retro Arcade',desert:'Desert Ruins',space:'Cosmic Arena',random:'Random Stage'};
+const STAGE_POOL=['skyline','dojo','arcade','desert','space'];
+let stageChoice='skyline',currentStage='skyline';
+try{const v=localStorage.getItem('showdown-stage');if(v in STAGE_NAMES)stageChoice=v;}catch(_){}
+function refreshStage(){
+ currentStage=stageChoice==='random'?STAGE_POOL[Math.floor(Math.random()*STAGE_POOL.length)]:stageChoice;
+ for(const button of document.querySelectorAll('[data-stage]')){const selected=button.dataset.stage===stageChoice;button.classList.toggle('is-selected',selected);button.setAttribute('aria-pressed',String(selected));}
+ $('stage-label').textContent=stageChoice==='random'?'Random: '+STAGE_NAMES[currentStage]:STAGE_NAMES[stageChoice];
+}
+document.querySelectorAll('[data-stage]').forEach(button=>button.addEventListener('click',()=>{stageChoice=button.dataset.stage;try{localStorage.setItem('showdown-stage',stageChoice)}catch(_){}refreshStage();}));
+refreshStage();
+function stageBackground(t){
+ const palette={skyline:['#090f39','#774c88','#191b42'],dojo:['#0b243f','#43626c','#252b42'],arcade:['#160e3d','#753483','#24113b'],desert:['#f1b77f','#c97b6d','#854a58'],space:['#03091d','#3b2374','#151535']}[currentStage];
+ const grad=ctx.createLinearGradient(0,0,0,540);palette.forEach((color,i)=>grad.addColorStop(i/2,color));ctx.fillStyle=grad;ctx.fillRect(0,0,960,540);
+ ctx.save();
+ if(currentStage==='skyline'){
+  ctx.fillStyle='#e8ceff';ctx.beginPath();ctx.arc(715,120,60,0,Math.PI*2);ctx.fill();
+  for(let i=0;i<19;i++){let x=i*55-10,y=225+(i*41%132);ctx.fillStyle=i%2?'#152051':'#202758';ctx.fillRect(x,y,46,GROUND-y);ctx.fillStyle=i%3?'#6adff2':'#f4a2e4';for(let yy=y+15;yy<GROUND-7;yy+=22)ctx.fillRect(x+15,yy,7,8)}
+ }else if(currentStage==='dojo'){
+  ctx.fillStyle='#ebe8dc';ctx.beginPath();ctx.arc(733,105,60,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#182e45';ctx.beginPath();ctx.moveTo(0,350);for(let i=0;i<=960;i+=120)ctx.lineTo(i,230+(i*13%115));ctx.lineTo(960,GROUND);ctx.lineTo(0,GROUND);ctx.fill();
+  for(let x=60;x<940;x+=160){ctx.fillStyle='#703e52';ctx.fillRect(x,255,23,190);ctx.fillRect(x-15,245,53,15)}
+  ctx.fillStyle='#703248';ctx.beginPath();ctx.moveTo(0,263);ctx.lineTo(480,155);ctx.lineTo(960,263);ctx.lineTo(960,283);ctx.lineTo(480,180);ctx.lineTo(0,283);ctx.fill();
+ }else if(currentStage==='arcade'){
+  for(let i=0;i<8;i++){const x=36+i*116;ctx.fillStyle='#171744';ctx.fillRect(x,160,93,285);ctx.strokeStyle=i%2?'#53f8e8':'#f781ed';ctx.lineWidth=4;ctx.strokeRect(x,160,93,285);ctx.fillStyle='#264585';ctx.fillRect(x+11,180,71,95);ctx.fillStyle='#dbcdff';ctx.font='30px sans-serif';ctx.fillText('★',x+31,240)}
+ }else if(currentStage==='desert'){
+  ctx.fillStyle='#995b61';ctx.beginPath();ctx.moveTo(0,348);for(let i=0;i<=960;i+=130)ctx.lineTo(i,255+(i*7%110));ctx.lineTo(960,GROUND);ctx.lineTo(0,GROUND);ctx.fill();
+  ctx.fillStyle='#ffe2a6';ctx.beginPath();ctx.arc(752,111,62,0,Math.PI*2);ctx.fill();
+  for(let x of [155,280,670,814]){ctx.fillStyle='#764a58';ctx.fillRect(x,295,25,150);ctx.fillRect(x-18,282,61,15)}
+ }else{
+  for(let i=0;i<78;i++){ctx.globalAlpha=.35+.45*Math.sin(i+t)**2;ctx.fillStyle='#e7ecff';ctx.fillRect((i*137+21)%960,(i*69+19)%GROUND,2,2)}ctx.globalAlpha=1;
+  ctx.fillStyle='#8b71d7';ctx.beginPath();ctx.arc(480,160,77,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#b6a7ff';ctx.lineWidth=7;ctx.beginPath();ctx.ellipse(480,160,170,46,-.2,0,Math.PI*2);ctx.stroke();
+ }
+ ctx.restore();ctx.fillStyle={skyline:'#161a3c',dojo:'#363343',arcade:'#271845',desert:'#995b66',space:'#14163d'}[currentStage];ctx.fillRect(0,GROUND,960,95);
+ ctx.strokeStyle={skyline:'#637bc4',dojo:'#b58190',arcade:'#af63da',desert:'#d99a83',space:'#7c7ed2'}[currentStage];ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,GROUND);ctx.lineTo(960,GROUND);ctx.stroke();
+ ctx.globalAlpha=.4;ctx.lineWidth=1.5;for(let i=0;i<14;i++){ctx.beginPath();ctx.moveTo(i*78,GROUND);ctx.lineTo(480+(i-7)*155,540);ctx.stroke()}ctx.globalAlpha=1;
+}
+
 function drawArena(now){
  if(!ctx)return;
  const w=arena.width,h=arena.height,t=game.animClock;
- const g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,'#101b53');g.addColorStop(.62,'#34356c');g.addColorStop(1,'#0d1634');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
- ctx.fillStyle='#d2daff';for(let i=0;i<35;i++){const x=(i*97+53)%w,y=(i*61+37)%278;ctx.globalAlpha=.4+.25*Math.sin(t+i);ctx.fillRect(x,y,2,2)}ctx.globalAlpha=1;
- ctx.fillStyle='#2b2361';ctx.beginPath();ctx.moveTo(0,300);ctx.lineTo(110,210);ctx.lineTo(180,298);ctx.lineTo(300,175);ctx.lineTo(430,300);ctx.lineTo(620,200);ctx.lineTo(750,300);ctx.lineTo(860,195);ctx.lineTo(960,305);ctx.lineTo(960,450);ctx.lineTo(0,450);ctx.fill();
- ctx.fillStyle='#151a3a';ctx.fillRect(0,GROUND,w,h-GROUND);ctx.strokeStyle='#6775c4';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,GROUND);ctx.lineTo(w,GROUND);ctx.stroke();
- ctx.strokeStyle='#2e3f71';ctx.lineWidth=2;for(let i=0;i<14;i++){ctx.beginPath();ctx.moveTo(i*78,GROUND);ctx.lineTo(480+(i-7)*155,h);ctx.stroke()}
+ stageBackground(t);
  if(!game.hero){drawBody(body(demoHero,255,1),t);drawBody(body(demoCPU,700,-1),t);return}
  const sorted=[game.hero,game.cpu].sort((a,b)=>a.x-b.x);for(const f of sorted)drawBody(f,t);
  // Short-lived comic impact stars show precisely when a hand or foot connects.
