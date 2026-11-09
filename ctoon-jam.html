@@ -7,9 +7,9 @@
   <meta name="description" content="CToon Jam: five-lane guitar rhythm game featuring original arcade tracks.">
   <title>CToon Jam | CTooniverse</title>
   <link rel="preconnect" href="https://hsxdyxdazsdmpucyhqly.supabase.co" crossorigin>
-  <link rel="stylesheet" href="ctoon-jam.css?v=jam-unified-expanded-screen-20261109">
+  <link rel="stylesheet" href="ctoon-jam.css?v=jam-performance-20261109">
   <link rel="stylesheet" href="site-status.css?v=nav-colors-20261108">
-  <script src="ctoon-jam.js?v=jam-unified-expanded-screen-20261109" defer></script>
+  <script src="ctoon-jam.js?v=jam-performance-20261109" defer></script>
   <script src="site-status.js?v=nav-colors-20261108" defer></script>
   <link rel="stylesheet" href="mobile-responsive.css?v=mobile-layout-20261109-v2">
 </head>
@@ -85,7 +85,7 @@
             </div>
           </div>
         </section>
-        <div id="jam-overlay" class="jam-overlay" role="status" aria-live="polite"><strong>READY TO ROCK?</strong><span>Select a song and press Start Song.</span></div>
+        <div id="jam-overlay" class="jam-overlay" role="status" aria-live="polite"><strong>READY TO ROCK?</strong><span>Select a song and press Start Song.</span><button id="jam-overlay-action" class="jam-button jam-primary jam-overlay-action" type="button" hidden>▶ Start Audio</button></div>
         <div id="jam-judgement" class="jam-judgement" aria-live="off"></div>
         <div class="jam-highway-caption" aria-hidden="true"><span>CTOON JAM</span><span>LIVE STAGE</span></div>
       </div>
@@ -107,7 +107,7 @@
       <label for="jam-song" class="jam-settings-native" hidden>Song<select id="jam-song"><optgroup label="Original Arcade Tracks"><option value="neon">Neon Rush · 118 BPM</option><option value="pixel">Pixel Thunder · 146 BPM</option><option value="starlight">Starlight Solo · 104 BPM</option></optgroup><optgroup label="Featured Songs"><option value="golden">Golden · HUNTR/X</option></optgroup></select></label>
       <label for="jam-difficulty" class="jam-settings-native" hidden>Difficulty<select id="jam-difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label>
       <label for="jam-play-style">Play style<select id="jam-play-style"><option value="strum">Guitar · Fret + Strum</option><option value="tap">Tap · Mobile / Classic</option></select></label>
-      <label class="jam-sync-label" for="jam-sync-offset">Note timing adjustment <output id="jam-sync-value" for="jam-sync-offset">+0.00s</output><input id="jam-sync-offset" type="range" min="-2" max="2" step="0.05" value="0" disabled aria-label="Adjust Golden note timing by up to two seconds"></label>
+      <label class="jam-sync-label" for="jam-sync-offset">Note timing adjustment <output id="jam-sync-value" for="jam-sync-offset">+0.00s</output><input id="jam-sync-offset" type="range" min="-2" max="2" step="0.05" value="0" aria-label="Adjust note timing for the selected song by up to two seconds"></label>
       <label class="jam-mute"><input id="jam-mute" type="checkbox"> Mute music &amp; effects</label>
       <button id="jam-song-library" class="jam-button" type="button">♫ Song Library</button>
       <button id="jam-play" class="jam-button jam-primary" type="button">▶ Play Selected Song</button>
@@ -120,7 +120,7 @@
       </div>
           <div id="jam-radio-player-panel" class="jam-radio-player-panel" hidden>
 <div class="jam-radio-player-heading"><strong>♫ Golden · HUNTR/X</strong><button id="jam-retry-audio" class="jam-button" type="button">↻ Retry Audio</button></div>
-<audio id="jam-radio-audio" controls preload="auto" playsinline aria-label="Golden song player"></audio>
+<audio id="jam-radio-audio" controls preload="none" playsinline aria-label="Golden song player"></audio>
 <p id="jam-audio-status" role="status" aria-live="polite">Select Golden, then press Start Song.</p>
 <p id="jam-chart-status" class="jam-chart-status" role="status" aria-live="polite"></p>
 </div>
@@ -132,7 +132,7 @@
           <section class="jam-results" aria-label="Song record">
       <h2>YOUR BEST RUN</h2><p id="jam-best">Play a song to set your local high score.</p><small>Scores are saved only in this browser. No coins or account rewards are awarded.</small><button id="jam-results-library" class="jam-button jam-next-song" type="button">♫ Choose Another Song</button>
     </section>
-          <details class="jam-help-details"><summary>Controls and tips</summary><p class="jam-help"><b>Guitar Style:</b> Hold <b>A · S · D · J · K</b> and strum <b>↑ / ↓ / Enter</b>. Keep frets held for sustains; hit multiple frets for chords. <b>Space:</b> Hype Mode. <b>Tap Style:</b> Press colored frets directly (mobile-friendly). Golden uses a timing-draft chart, with adjustable timing.</p></details>
+          <details class="jam-help-details"><summary>Controls and tips</summary><p class="jam-help"><b>Guitar Style:</b> Hold <b>A · S · D · J · K</b> and strum <b>↑ / ↓ / Enter</b>. Keep frets held for sustains; hit multiple frets for chords. <b>Space:</b> Hype Mode. <b>Tap Style:</b> Press colored frets directly (mobile-friendly). Adjust note timing for each track. Seeking through the featured recording turns that run into practice mode without a high score.</p></details>
         </aside>
       </div>
     </section>

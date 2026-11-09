@@ -14,7 +14,7 @@
   let pickerFilter="all";
 
   const playStyleSelect=$("jam-play-style"), strumButtons=[...document.querySelectorAll("[data-strum]")];
-  const overlay = $("jam-overlay"), judgement = $("jam-judgement");
+  const overlay = $("jam-overlay"), overlayAction = $("jam-overlay-action"), judgement = $("jam-judgement");
   const status = $("jam-message"), best = $("jam-best");
   const syncInput = $("jam-sync-offset"), syncValue = $("jam-sync-value"), chartStatus = $("jam-chart-status");
   const gameStage = document.querySelector(".jam-stage");
@@ -45,7 +45,8 @@
   let track = songs.neon, notes = [], state = "ready", startAt = 0;
   let beatNext = 0, raf = 0, score = 0, combo = 0, judged = 0, weighted = 0, health = 75;
   let charge = 0, hypeEnd = 0, feedbackUntil = 0;
-  let totalTime = 0, activeDifficulty = "normal";
+  let totalTime = 0, activeDifficulty = "normal", scoreEligible = true;
+  const lanePulseUntil = [0,0,0,0,0];
   // Keep rendering and missed-note checks proportional to the visible song section.
   let missCursor = 0, lastHudFrame = 0;
   const heldFrets=new Set();
@@ -103,7 +104,7 @@
   }
   function setupOffset() {
     appliedOffset=readOffset();
-    if(syncInput){syncInput.value=String(appliedOffset);syncInput.disabled=!isRadio;}
+    if(syncInput){syncInput.value=String(appliedOffset);syncInput.disabled=false;}
     if(syncValue)syncValue.textContent=(appliedOffset>=0?"+":"")+appliedOffset.toFixed(2)+"s";
   }
   function getTrackChart(song) {
@@ -171,7 +172,7 @@
     const add=(at,lane,duration=0)=>result.push({at,lane,duration,judged:false});
     for(let i=0;i<track.bars*4;i++){
       const lane=(i*3+Math.floor(i/4)+track.seed)%5;
-      const at=(i+4)*beatLen;
+      const at=(i+4)*beatLen+appliedOffset;
       add(at,lane,i%12===6?beatLen*1.6:i%16===11?beatLen*.9:0);
       if(level!=="easy"&&i%8===4)add(at,(lane+2)%5);
       if(level==="hard"&&i%16===10)add(at,(lane+4)%5);
@@ -240,10 +241,11 @@
     }
   }
 
-  function showOverlay(heading,message) {
+  function showOverlay(heading,message,actionLabel="") {
     overlay.hidden=false;
     overlay.querySelector("strong").textContent=heading;
     overlay.querySelector("span").textContent=message;
+    if(overlayAction){overlayAction.hidden=!actionLabel;overlayAction.textContent=actionLabel||"▶ Start Audio";}
   }
   function hideOverlay() { overlay.hidden=true; }
   function updateStageTitle(){
@@ -422,6 +424,7 @@
   }
   function awardNote(candidate,bestDiff,t){
     candidate.judged=true;
+    lanePulseUntil[candidate.lane]=performance.now()+160;
     if(candidate.duration>=.2)activeSustains.push({note:candidate,lastAt:candidate.at});
 
     const quality=bestDiff<=.085?"PERFECT":bestDiff<=.15?"GREAT":"GOOD";
@@ -497,7 +500,7 @@
     const accuracy=judged?Math.round(100*weighted/judged):0;
     let previous=null;
     try {previous=JSON.parse(localStorage.getItem(keyForScore())||"null");}catch{}
-    if (!previous || score>previous.score) {
+    if (scoreEligible && (!previous || score>previous.score)) {
       try {localStorage.setItem(keyForScore(),JSON.stringify({score,accuracy}));}catch{}
     }
   }
@@ -515,8 +518,8 @@
     playBtn.disabled=false;playBtn.textContent="↻ Play Again";
     if(!failed)saveBest();
     const accuracy=judged?Math.round(100*weighted/judged):0;
-    showOverlay(failed?"ROCK METER EMPTY":"SONG COMPLETE!",fmt(score)+" points · "+accuracy+"% accuracy · Best combo "+fmt(maxCombo));
-    status.textContent=failed?"The crowd needs another try. Restart the track!":"Great performance! Select another track or try for a higher score.";
+    showOverlay(failed?"ROCK METER EMPTY":scoreEligible?"SONG COMPLETE!":"PRACTICE COMPLETE!",fmt(score)+" points · "+accuracy+"% accuracy · Best combo "+fmt(maxCombo));
+    status.textContent=failed?"The crowd needs another try. Restart the track!":scoreEligible?"Great performance! Select another track or try for a higher score.":"Practice complete. Restart without seeking to save a personal best.";
     refreshBest();updateHud();draw();
   }
   let maxCombo=0;
@@ -611,8 +614,8 @@
     for(let lane=0;lane<5;lane++){
       const x=(edge(lane,hitY)+edge(lane+1,hitY))*.5;
       const radius=Math.min(27,widthAt(hitY)/5*.29);
-      pen.fillStyle=heldFrets.has(lane)?"#ffffff":colors[lane];
-      pen.shadowColor=colors[lane];pen.shadowBlur=heldFrets.has(lane)?34:13;
+      pen.fillStyle=heldFrets.has(lane)||performance.now()<lanePulseUntil[lane]?"#ffffff":colors[lane];
+      pen.shadowColor=colors[lane];pen.shadowBlur=heldFrets.has(lane)||performance.now()<lanePulseUntil[lane]?34:13;
       pen.beginPath();pen.ellipse(x,hitY+18,radius,11,0,0,2*Math.PI);pen.fill();pen.shadowBlur=0;
       pen.strokeStyle=colors[lane];pen.lineWidth=3;pen.stroke();
       pen.fillStyle="#f7f7ff";pen.font="900 "+Math.max(12,Math.min(19,w/30))+"px system-ui";pen.textAlign="center";
@@ -678,9 +681,8 @@
     // Never lock the restart button while waiting for network audio.
     playBtn.disabled=false;playBtn.textContent="↻ Retry Start";
     pauseBtn.disabled=true;songSelect.disabled=false;difficultySelect.disabled=false;
-    score=0;combo=0;maxCombo=0;judged=0;weighted=0;health=75;charge=0;hypeEnd=0;beatNext=0;
+    score=0;combo=0;maxCombo=0;judged=0;weighted=0;health=75;charge=0;hypeEnd=0;beatNext=0;scoreEligible=true;
     notes=makeNotes();missCursor=0;lastHudFrame=0;
-    if(isRadio&&appliedOffset)for(const note of notes)note.at+=appliedOffset;
     totalTime=isRadio?180:(4+track.bars*4)*beatSeconds();
     showOverlay("GETTING SONG READY",isRadio?"Audio player is available above. You can press its Play button if playback does not begin.":"Preparing original arcade track…");
     judgement.textContent="";
@@ -757,7 +759,6 @@
         track.bars=Math.max(1,Math.min(240,Math.floor((duration-4*beatSeconds())/(4*beatSeconds()))));
         // Preserve a chart that loaded before audio playback was allowed.
         notes=loadedChart?notesFromChart(loadedChart,duration):makeNotes();missCursor=0;
-        if(!loadedChart && appliedOffset)for(const note of notes)note.at+=appliedOffset;
         const now=media.currentTime||0;
         for(const note of notes)if(note.at<now-.22)note.judged=true;
         state="playing";hideSongLoading();
@@ -787,7 +788,7 @@
           state="ready";
           if(playStyleSelect)playStyleSelect.disabled=false;
           cancelAnimationFrame(raf);
-          showOverlay("AUDIO LOAD FAILED",reason+" Use Retry Audio above or select another song.");
+          showOverlay("AUDIO LOAD FAILED",reason+" Retry the recording or choose another track.","↻ Retry Audio");
           playBtn.disabled=false;playBtn.textContent="↻ Retry Start";
           pauseBtn.disabled=true;songSelect.disabled=false;difficultySelect.disabled=false;
         }
@@ -803,11 +804,19 @@
       media.onprogress=()=>refreshAudioLoading();
       media.onloadeddata=()=>refreshAudioLoading();
       media.onseeked=()=>{
-        if(!valid())return;
-        // Skipping ahead shouldn't count skipped notes as misses.
-        for(const note of notes)if(note.at<media.currentTime-.22)note.judged=true;
-        draw();updateHud();
-      };
+         if(!valid()||!started)return;
+         // Rebuild note judgements on a seek (including rewind) so the
+         // highway does not remain empty after jumping backwards.
+         const duration=Number.isFinite(media.duration)&&media.duration>0?media.duration:180;
+         notes=loadedChart?notesFromChart(loadedChart,duration):makeNotes();
+         for(const note of notes)if(note.at<media.currentTime-.22)note.judged=true;
+         missCursor=0;
+         while(missCursor<notes.length&&notes[missCursor].judged)missCursor++;
+         resetFrets();score=0;combo=0;maxCombo=0;judged=0;weighted=0;
+         health=75;charge=0;hypeEnd=0;scoreEligible=false;
+         status.textContent="Practice seek active — chart resynced; this run cannot save a personal best.";
+         draw();updateHud();
+       };
       media.oncanplay=()=>{
         if(valid()&&state==="loading"){
           audioStatus.textContent="Audio is ready. Press Play in the player if the song has not started.";
@@ -841,7 +850,7 @@
         if(valid()&&state==="loading"&&!started){
           state="ready";
           cancelAnimationFrame(raf);
-          showOverlay("AUDIO STILL LOADING","Try pressing Play in the visible audio player, or tap Retry Audio. You can also choose another song.");
+          showOverlay("AUDIO STILL LOADING","The recording is slow to respond. Try tapping Play below.","▶ Try Playing Audio");
           audioStatus.textContent="This recording is taking too long to start. Use the player controls or Retry Audio.";
           status.textContent="Waiting for "+track.title+" to stream. The song has not begun yet.";
           refreshAudioLoading("Still loading · tap Play or Retry Audio if needed");
@@ -864,7 +873,7 @@
               ?"Autoplay was blocked. Tap Play in the song audio player."
               :"The browser could not start audio. Tap Play or Retry Audio.";
             status.textContent=blocked?"Tap the song player's Play button to begin.":"Try Play in the radio player or select a different song.";
-            showOverlay("TAP PLAY TO START",blocked?"Your browser requires a direct tap on the audio player.":"Use the player above to start this recording.");
+            showOverlay("TAP PLAY TO START",blocked?"Your browser requires a tap to unlock audio.":"Playback did not start automatically.","▶ Tap to Start Audio");
             if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
           });
         }
@@ -873,7 +882,7 @@
           state="ready";cancelAnimationFrame(raf);
           audioStatus.textContent="Browser audio error: "+(error.message||"unable to play");
           refreshAudioLoading("Tap Play in the audio player to start");
-          showOverlay("TAP PLAY TO START","Use Play in the visible radio player or Retry Audio.");
+          showOverlay("TAP PLAY TO START","Tap below to start the selected recording.","▶ Tap to Start Audio");
           if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
         }
       }
@@ -942,6 +951,15 @@
       raf=requestAnimationFrame(tick);
     }
   }
+  if(overlayAction)overlayAction.addEventListener("click",()=>{
+    if(isRadio&&radioAudio){
+      if(radioAudio.error){startSong(true);return;}
+      radioAudio.play().catch(()=>{
+        if(audioStatus)audioStatus.textContent="Cannot start playback. Try Retry Audio or another song.";
+      });
+    }else if(state==="paused")togglePause();
+    else if(state!=="playing")startSong();
+  });
   if(retryAudio)retryAudio.addEventListener("click",()=>{if(songSelect.value==="golden")startSong(true);});
   playBtn.addEventListener("click",()=>songPicker&&!songPicker.hidden?launchPickerSong():startSong());
   if(libraryBtn)libraryBtn.addEventListener("click",()=>openSongPicker(true));
@@ -976,6 +994,10 @@
     try{localStorage.setItem(offsetKey(),String(next));}catch{}
     for(const note of notes)if(!note.judged)note.at+=difference;
     activeSustains=[];
+    if(state==="playing"||state==="paused"){
+      scoreEligible=false;
+      status.textContent="Timing adjusted — practice only for this run. Restart to record a score.";
+    }
     draw();
   });
   songSelect.addEventListener("change",()=>{
@@ -1090,14 +1112,9 @@
   document.addEventListener("fullscreenchange",refreshScreenSize);
   window.addEventListener("resize",draw);
 
-  // Fetch the small chart during browser idle time, never blocking the game or MP3.
-  // Warm the dedicated recording while the player selects a song.
-  // Mobile browsers may ignore preload until a tap; playback still starts on a user gesture.
-  if(radioControl && songs.golden) {
-    radioControl.preload="auto";
-    radioControl.src=radioBase+encodeURI(songs.golden.path);
-    radioControl.load();
-  }
+  // Load the featured MP3 only when the player actually selects it.
+  // This avoids wasting mobile bandwidth and slowing the arcade tracks.
+  if(radioControl)radioControl.preload="none";
 
   // Golden's chart is bundled above, so no background chart fetch is required.
   try{

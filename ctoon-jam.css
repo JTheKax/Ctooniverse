@@ -263,3 +263,15 @@ footer a{color:#91eaff;font-weight:900}
  .jam-stage:fullscreen .jam-game-sidebar,.jam-theater-view .jam-stage .jam-game-sidebar{overflow:visible}
  .jam-stage:fullscreen .jam-board-wrap,.jam-theater-view .jam-stage .jam-board-wrap{height:clamp(450px,64dvh,750px)}
 }
+
+/* Mobile-ready playback recovery and a more reachable touch fretboard. */
+.jam-overlay-action{pointer-events:auto;position:relative;z-index:2;min-width:170px;margin-top:10px;box-shadow:0 0 20px #45c9ff66,0 4px 0 #0b0a27}
+.jam-overlay-action[hidden]{display:none!important}
+@media(max-width:500px){
+  .jam-board-wrap{height:clamp(400px,59dvh,560px)}
+  .jam-overlay{padding:18px;gap:8px}
+  .jam-overlay strong{font-size:clamp(1.35rem,5vw,2.2rem)}
+  .jam-song-picker{padding:11px}
+  .jam-controls button{min-height:54px;touch-action:none}
+  .jam-picker-start{min-height:52px}
+}
