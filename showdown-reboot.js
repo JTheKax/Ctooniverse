@@ -16,6 +16,9 @@ const SPRITE_POSES=['idle','walk','run','punch','kick','guard','jump','crouch','
 const previewAnimation={image:null,source:null,token:0,columns:3,rows:1,loaded:false,pose:'idle',poseStart:0,footAnchors:null};
 const startBtn=$('start-match'),practiceBtn=$('training-match'),restartBtn=$('restart-match'),pauseBtn=$('pause-match');
 const arena=$('arena'),ctx=arena.getContext('2d');
+const rosterLayer=$('showdown-roster-layer'),arenaFrame=arena.closest('.arena-frame');
+const arenaSection=arena.closest('.showdown-panel');
+const quickStartBtn=$('quick-start-match'),returnRosterBtn=$('return-roster');
 const battleAudio=createBattleAudio($('battle-music-theme'),$('battle-music-volume'),$('battle-music-status'));
 const fightAnnouncement=$('fight-announcement');
 function announceFight(label,phase=''){
@@ -466,11 +469,13 @@ function selectSlot(slot){
  if(previewPoseMenu)previewPoseMenu.disabled=!fighter||!spriteSources(fighter).length;
  startBtn.disabled=!fighter||locked;
  startBtn.textContent=locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
+ quickStartBtn.disabled=startBtn.disabled;
+ quickStartBtn.textContent=locked?'🔒 Locked':fighter?'FIGHT AS '+fighter.name:'Choose a fighter';
  // Preserve keyboard focus when switching portraits instead of recreating the wall.
  for(const tile of rosterGrid.querySelectorAll('.fighter-slot'))
   tile.setAttribute('aria-pressed',String(Number(tile.dataset.slot)===slot));
 }
-function setPage(delta){selection.page+=delta;renderRoster();rosterGrid.scrollIntoView({behavior:'smooth',block:'nearest'})}
+function setPage(delta){selection.page+=delta;renderRoster();rosterLayer.scrollTo({top:0,behavior:'smooth'})}
 $('roster-prev').addEventListener('click',()=>setPage(-1));
 $('roster-next').addEventListener('click',()=>setPage(1));
 for(const input of [search,series,kind,order])input.addEventListener('input',()=>{
@@ -528,6 +533,7 @@ const down=new Set();
 const oneShots=new Set();
 const buttons=[...document.querySelectorAll('[data-control]')];
 const keyDown=event=>{
+ if(!rosterLayer.hidden)return; // Roster navigation must not trigger punches or movement.
  if(event.target?.closest?.('input,textarea,select,[contenteditable="true"],.roster-grid'))return;
  const key=keyAliases[event.key.toLowerCase()];
  if(!key)return;
@@ -548,6 +554,36 @@ for(const button of buttons){
 const GROUND=445,LEFT=68,RIGHT=892;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,countdown:3,fightBanner:0,roundMessage:'',hitEffects:[],last:0,animClock:0};
+function showCharacterSelect(focus=false){
+ // This is the game's menu, not a separate page; stop the current fight safely.
+ battleAudio.stopTheme();
+ game.mode='idle';game.paused=false;game.hero=null;game.cpu=null;
+ game.hitEffects.length=0;
+ down.clear();oneShots.clear();
+ rosterLayer.hidden=false;
+ arenaFrame.classList.add('is-selecting');
+ arenaSection.classList.add('is-selecting');
+ returnRosterBtn.hidden=true;
+ restartBtn.disabled=true;pauseBtn.disabled=true;pauseBtn.textContent='Pause';
+ announceFight('','');
+ $('showdown-status').textContent='Choose your fighter inside the game screen, then press FIGHT to begin.';
+ if(focus){
+  rosterLayer.scrollTop=0;
+  const selected=rosterGrid.querySelector('.fighter-slot[aria-pressed="true"]');
+  (quickStartBtn.disabled?selected:quickStartBtn)?.focus({preventScroll:true});
+  arenaFrame.scrollIntoView({behavior:'smooth',block:'center'});
+ }
+}
+function hideCharacterSelect(){
+ rosterLayer.hidden=true;
+ arenaFrame.classList.remove('is-selecting');
+ arenaSection.classList.remove('is-selecting');
+ returnRosterBtn.hidden=false;
+ down.clear();oneShots.clear();
+}
+returnRosterBtn.addEventListener('click',()=>showCharacterSelect(true));
+quickStartBtn.addEventListener('click',()=>startBtn.click());
+
 function body(profile,x,face){
  return {profile,x,face,y:0,vy:0,hp:100,meter:0,cooldown:0,attack:0,attackType:'',attackHit:false,block:false,crouch:false,stun:0,flash:0,moveSpeed:0,hurtAt:null,koAt:null,jumpAt:null};
 }
@@ -584,6 +620,7 @@ function beginFight(){
 function startMatch(profile){
  if(stageChoice==='random')refreshStage();
  if(!ctx){$('showdown-status').textContent='Your browser does not support the battle canvas.';return}
+ hideCharacterSelect();
  game.heroProfile=profile;game.cpuProfile=profile.fighter_id==='samurai-jack'?demoHero:samuraiJack;
   spriteAtlas(game.heroProfile);spriteAtlas(game.cpuProfile); // Preload before the fight begins.
  game.round=1;game.wins=[0,0];game.paused=false;
@@ -912,5 +949,5 @@ async function showOwnerLink(){
   if(!result.error&&result.data)$('owner-fighter-link').hidden=false;
  }catch(_){}
 }
-addBuiltInFighters();updateSeries();renderRoster();selectSlot(1);loadRoster();initializePlayer();showOwnerLink();
+addBuiltInFighters();updateSeries();renderRoster();selectSlot(1);showCharacterSelect();loadRoster();initializePlayer();showOwnerLink();
 requestAnimationFrame(tick);
