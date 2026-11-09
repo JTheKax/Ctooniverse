@@ -50,6 +50,8 @@ const johnnyArt={mode:'approved',testSheet:'/images/showdown/johnny-bravo-mugen-
 const johnnyArtMenu=$('johnny-art-mode');
 const johnnyArtControl=$('johnny-art-control'),johnnyArtNotice=$('johnny-art-notice');
 const combatSpriteCache=new Map();
+// Reuse transparent-foot measurements between roster previews and battle sprites.
+const footAnchorCache=new Map();
 // Sprite atlas rows: idle, walk, run, punch, kick, guard, jump, crouch, special, hurt, KO.
 // Johnny retains the owner's exact 64x64 source model: six animation frames per action.
 function spriteSources(profile){
@@ -89,25 +91,33 @@ function spriteLayout(profile,source){
 function spriteFootAnchors(image,columns,rows){
  const fw=image.naturalWidth/columns,fh=image.naturalHeight/rows;
  if(!Number.isInteger(fw)||!Number.isInteger(fh)||!fw||!fh)return null;
+ const cacheKey=(image.currentSrc||image.src)+'|'+columns+'x'+rows;
+ if(footAnchorCache.has(cacheKey))return footAnchorCache.get(cacheKey);
  try{
+  // Probe a bounded-size copy, never the entire source atlas. Large uploaded
+  // sheets used to allocate full-resolution pixel buffers on the main thread.
+  const cellW=Math.min(fw,96),cellH=Math.min(fh,128);
   const probe=document.createElement('canvas');
-  probe.width=image.naturalWidth;probe.height=image.naturalHeight;
+  probe.width=columns*cellW;probe.height=rows*cellH;
   const pen=probe.getContext('2d',{willReadFrequently:true});
   if(!pen)return null;
-  pen.drawImage(image,0,0);
+  pen.imageSmoothingEnabled=false;
+  pen.drawImage(image,0,0,probe.width,probe.height);
   const pixels=pen.getImageData(0,0,probe.width,probe.height).data;
   const stride=probe.width;
-  return Array.from({length:rows},(_,row)=>Array.from({length:columns},(_,column)=>{
-   for(let py=fh-1;py>=0;py--){
-    let alphaIndex=((row*fh+py)*stride+column*fw)*4+3;
-    for(let px=0;px<fw;px++,alphaIndex+=4){
-     if(pixels[alphaIndex]>24)return py+1;
+  const anchors=Array.from({length:rows},(_,row)=>Array.from({length:columns},(_,column)=>{
+   for(let py=cellH-1;py>=0;py--){
+    let alphaIndex=((row*cellH+py)*stride+column*cellW)*4+3;
+    for(let px=0;px<cellW;px++,alphaIndex+=4){
+     if(pixels[alphaIndex]>24)return Math.min(fh,Math.round((py+1)*fh/cellH));
     }
    }
-   return 82; // 64px source sprite begins at y=18 inside a 112px cell.
+   return Math.min(fh,Math.round(fh*.73)); // A safe anchor for an empty sprite cell.
   }));
+  footAnchorCache.set(cacheKey,anchors);
+  return anchors;
  }catch(error){
-  console.warn('Johnny ground measurement unavailable; using original anchor',error);
+  console.warn('Sprite ground measurement unavailable; using original anchor',error);
   return null;
  }
 }
@@ -553,7 +563,17 @@ const keyDown=event=>{
 const keyUp=event=>{const key=keyAliases[event.key.toLowerCase()];if(key)down.delete(key)};
 window.addEventListener('keydown',keyDown);
 window.addEventListener('keyup',keyUp);
-window.addEventListener('blur',()=>{down.clear();oneShots.clear();for(const button of buttons)button.classList.remove('pressed')});
+function releaseControls(){
+ down.clear();oneShots.clear();
+ for(const button of buttons)button.classList.remove('pressed');
+}
+window.addEventListener('blur',releaseControls);
+// A mobile tab switch or screen lock must never leave a direction or attack held.
+document.addEventListener('visibilitychange',()=>{
+ if(!document.hidden)return;
+ releaseControls();
+ if(['countdown','fighting','between'].includes(game.mode)&&!game.paused)pauseBtn.click();
+});
 for(const button of buttons){
  const action=button.dataset.control;
  button.addEventListener('pointerdown',event=>{event.preventDefault();button.setPointerCapture(event.pointerId);if(!down.has(action))oneShots.add(action);down.add(action);button.classList.add('pressed')});
@@ -568,7 +588,7 @@ function showCharacterSelect(focus=false){
  battleAudio.stopTheme();
  game.mode='idle';game.paused=false;game.hero=null;game.cpu=null;
  game.hitEffects.length=0;
- down.clear();oneShots.clear();
+ releaseControls();
  rosterLayer.hidden=false;
  arenaSelectBtn.hidden=true;
  battleExpandBtn.hidden=false;
@@ -595,7 +615,7 @@ function hideCharacterSelect(){
  arenaFrame.classList.remove('is-selecting');
  arenaSection.classList.remove('is-selecting');
  returnRosterBtn.hidden=false;
- down.clear();oneShots.clear();
+ releaseControls();
 }
 returnRosterBtn.addEventListener('click',()=>showCharacterSelect(true));
 arenaSelectBtn.addEventListener('click',()=>showCharacterSelect(true));
@@ -660,7 +680,8 @@ function resetRound(){
  game.hitEffects.length=0;
  game.timer=60;game.mode='countdown';game.between=0;game.countdown=3;game.fightBanner=0;
  game.roundMessage='';
- down.clear();oneShots.clear();
+ releaseControls();
+ game.nextHudUpdate=0;
  battleAudio.stopTheme();
  announceFight('3','countdown');
  battleAudio.cue(3);
@@ -669,7 +690,7 @@ function resetRound(){
 }
 function beginFight(){
  game.mode='fighting';game.countdown=0;game.fightBanner=.85;
- down.clear();oneShots.clear();
+ releaseControls();
  announceFight('FIGHT!','fight');
  battleAudio.cue('fight');
  battleAudio.startTheme();
@@ -693,6 +714,7 @@ pauseBtn.addEventListener('click',()=>{
  if(!['countdown','fighting','between'].includes(game.mode))return;
  game.paused=!game.paused;pauseBtn.textContent=game.paused?'Resume':'Pause';
  if(game.paused){
+  releaseControls();
   battleAudio.pause();
   announceFight('PAUSED','paused');
  }else{
@@ -837,7 +859,10 @@ function step(dt){
  resolveAttack(p,c);
  if(game.mode==='fighting')resolveAttack(c,p);
  if(game.timer===0&&game.mode==='fighting')finishRound();
- updateHud();
+ // HUD changes at 12–13 Hz; the canvas still animates every display frame.
+ if(!game.nextHudUpdate||game.animClock>=game.nextHudUpdate){
+  updateHud();game.nextHudUpdate=game.animClock+.08;
+ }
  oneShots.clear();
 }
 function drawBody(f,t){
