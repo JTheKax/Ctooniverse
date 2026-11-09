@@ -8,10 +8,8 @@ const ownerLinks=[
  ['Redeem Codes','owner-redeem-codes.html'],
  ['Music Management','owner-music-management.html'],
  ['Upload Game','emulator.html#emu-owner'],
- ['CToon Maker & Editor','owner-ctoon-maker.html'],
  ['Clash Card Maker','owner-clash-card-maker.html'],
  ['Fighter Manager','owner-fighters.html'],
- ['CToon Pack Manager','owner-ctoon-packs.html']
 ]; 
 ownerLinks.sort((a,b)=>a[0].localeCompare(b[0]));
 for(const link of document.querySelectorAll('.site-header nav a.owner-nav, .site-header nav .owner-menu.owner-nav')){
