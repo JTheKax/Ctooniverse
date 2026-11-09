@@ -7,6 +7,7 @@ const ownerLinks=[
  ['Coin Management','coin-management.html'],
  ['Redeem Codes','owner-redeem-codes.html'],
  ['Music Management','owner-music-management.html'],
+ ['CToon Subseries Manager','owner-subseries.html'],
  ['Upload Game','emulator.html#emu-owner'],
  ['Clash Card Maker','owner-clash-card-maker.html'],
  ['Fighter Manager','owner-fighters.html'],
