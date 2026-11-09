@@ -523,3 +523,14 @@ a{color:var(--sky)}:focus-visible{outline:3px solid var(--gold);outline-offset:3
  .arena-announcement[data-phase="countdown"],
  .arena-announcement[data-phase="fight"]{animation:none}
 }
+
+.stage-selection{padding:15px;margin:12px 0 18px;border:2px solid #75bff8;border-radius:16px;background:linear-gradient(140deg,#15163b,#2e1a58);color:white}
+.stage-header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-weight:800}.stage-header span{color:#9cecff}
+.stage-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.stage-choice{min-width:0;padding:6px;background:#151a42;color:#fff;border:2px solid #6165a5;border-radius:10px;cursor:pointer;font:inherit}
+.stage-choice b{display:block;font-size:12px;padding:6px 0 2px}
+.stage-choice.is-selected{border-color:#ffdf72;box-shadow:0 0 15px #89caff66}
+.stage-choice:focus-visible{outline:3px solid #ffe896;outline-offset:2px}
+.stage-thumb{display:flex;justify-content:center;align-items:center;width:100%;aspect-ratio:16/9;border-radius:5px;border:1px solid #ffffff77}
+.stage-skyline{background:linear-gradient(#12133f,#8c4e8f 65%,#182451 66%)}.stage-dojo{background:radial-gradient(circle at 75% 25%,#f9f0d3 0 12%,transparent 13%),linear-gradient(#10293f 60%,#633745 61%)}.stage-arcade{background:repeating-linear-gradient(90deg,#bb3ac7 0 15%,#183ba8 15% 30%)}.stage-desert{background:linear-gradient(#f3b47b 65%,#99545c 66%)}.stage-space{background:radial-gradient(circle at 50% 40%,#c6eaff,#754bb9 27%,#0a1036 80%)}.stage-random{background:linear-gradient(130deg,#a33fb4,#344fb0,#d09552);font-size:2rem}
+@media(max-width:850px){.stage-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:430px){.stage-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
