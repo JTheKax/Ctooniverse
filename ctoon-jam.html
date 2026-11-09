@@ -7,9 +7,9 @@
   <meta name="description" content="CToon Jam: five-lane guitar rhythm game featuring original arcade tracks.">
   <title>CToon Jam | CTooniverse</title>
   <link rel="preconnect" href="https://hsxdyxdazsdmpucyhqly.supabase.co" crossorigin>
-  <link rel="stylesheet" href="ctoon-jam.css?v=jam-playback-reliability-20261109">
+  <link rel="stylesheet" href="ctoon-jam.css?v=jam-prebuffer-20261109">
   <link rel="stylesheet" href="site-status.css?v=nav-colors-20261108">
-  <script src="ctoon-jam.js?v=jam-fast-load-20261109" defer></script>
+  <script src="ctoon-jam.js?v=jam-prebuffer-20261109" defer></script>
   <script src="site-status.js?v=nav-colors-20261108" defer></script>
 </head>
 <body>
@@ -35,9 +35,14 @@
       <button id="jam-pause" class="jam-button" type="button" disabled>Pause</button>
     </section>
     <section class="jam-stage" aria-label="Rhythm stage">
+      <div id="jam-song-load" class="jam-song-loading" hidden>
+        <div class="jam-song-loading-heading"><strong>♫ LOADING SONG</strong><output id="jam-song-load-value">…</output></div>
+        <div id="jam-song-load-bar" class="jam-song-loading-bar" role="progressbar" aria-label="Song loading progress" aria-valuemin="0" aria-valuemax="100" aria-valuetext="Preparing song"><div id="jam-song-load-fill"></div></div>
+        <p id="jam-song-load-status" role="status" aria-live="polite">Connecting to music…</p>
+      </div>
 <div id="jam-radio-player-panel" class="jam-radio-player-panel" hidden>
 <div class="jam-radio-player-heading"><strong>♫ Golden · HUNTR/X</strong><button id="jam-retry-audio" class="jam-button" type="button">↻ Retry Audio</button></div>
-<audio id="jam-radio-audio" controls preload="none" playsinline aria-label="Golden song player"></audio>
+<audio id="jam-radio-audio" controls preload="auto" playsinline aria-label="Golden song player"></audio>
 <p id="jam-audio-status" role="status" aria-live="polite">Select Golden, then press Start Song.</p>
 <p id="jam-chart-status" class="jam-chart-status" role="status" aria-live="polite"></p>
 </div><div class="jam-hud">
