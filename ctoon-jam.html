@@ -8,7 +8,7 @@
   <title>CToon Jam | CTooniverse</title>
   <link rel="stylesheet" href="ctoon-jam.css?v=original-tracks-only-20261109">
   <link rel="stylesheet" href="site-status.css?v=nav-colors-20261108">
-  <script src="ctoon-jam.js?v=original-tracks-only-20261109" defer></script>
+  <script src="ctoon-jam.js?v=golden-single-track-20261109" defer></script>
   <script src="site-status.js?v=nav-colors-20261108" defer></script>
 </head>
 <body>
@@ -22,17 +22,23 @@
   <main id="main">
     <section class="jam-head">
       <div><p class="jam-eyebrow">FIVE LANES. ONE STAGE. ALL RHYTHM.</p><h1>CTOON <span>JAM!</span></h1>
-      <p>Hit notes as they reach the fret line, build your combo, and ignite Hype Mode. Play the original arcade tracks and master the five colored lanes.</p></div>
+      <p>Hit notes as they reach the fret line, build your combo, and ignite Hype Mode. Play the original arcade tracks or Golden by HUNTR/X, with dedicated Easy, Normal and Hard note charts.</p></div>
       <div class="jam-guitar" aria-hidden="true"><span>★</span><strong>♪</strong><i>⚡</i></div>
     </section>
     <section class="jam-settings" aria-label="Song setup">
-      <label for="jam-song">Song<select id="jam-song"><optgroup label="Original Arcade Tracks"><option value="neon">Neon Rush · 118 BPM</option><option value="pixel">Pixel Thunder · 146 BPM</option><option value="starlight">Starlight Solo · 104 BPM</option></optgroup></select></label>
+      <label for="jam-song">Song<select id="jam-song"><optgroup label="Original Arcade Tracks"><option value="neon">Neon Rush · 118 BPM</option><option value="pixel">Pixel Thunder · 146 BPM</option><option value="starlight">Starlight Solo · 104 BPM</option></optgroup><optgroup label="Featured Songs"><option value="golden">Golden · HUNTR/X</option></optgroup></select></label>
       <label for="jam-difficulty">Difficulty<select id="jam-difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label>
       <label class="jam-mute"><input id="jam-mute" type="checkbox"> Mute music &amp; effects</label>
       <button id="jam-play" class="jam-button jam-primary" type="button">▶ Start Song</button>
       <button id="jam-pause" class="jam-button" type="button" disabled>Pause</button>
     </section>
-    <section class="jam-stage" aria-label="Rhythm stage"><div class="jam-hud">
+    <section class="jam-stage" aria-label="Rhythm stage">
+<div id="jam-radio-player-panel" class="jam-radio-player-panel" hidden>
+<div class="jam-radio-player-heading"><strong>♫ Golden · HUNTR/X</strong><button id="jam-retry-audio" class="jam-button" type="button">↻ Retry Audio</button></div>
+<audio id="jam-radio-audio" controls preload="none" playsinline aria-label="Golden song player"></audio>
+<p id="jam-audio-status" role="status" aria-live="polite">Select Golden, then press Start Song.</p>
+<p id="jam-chart-status" class="jam-chart-status" role="status" aria-live="polite"></p>
+</div><div class="jam-hud">
         <div><small>SCORE</small><strong id="jam-score">0</strong></div>
         <div><small>COMBO</small><strong id="jam-combo">0</strong></div>
         <div><small>MULTIPLIER</small><strong id="jam-multiplier">×1</strong></div>
