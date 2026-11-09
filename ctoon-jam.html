@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#090d24">
   <meta name="description" content="CToon Jam: five-lane guitar rhythm game featuring original arcade tracks.">
   <title>CToon Jam | CTooniverse</title>
-  <link rel="stylesheet" href="ctoon-jam.css?v=original-tracks-only-20261109">
+  <link rel="stylesheet" href="ctoon-jam.css?v=jam-playback-reliability-20261109">
   <link rel="stylesheet" href="site-status.css?v=nav-colors-20261108">
-  <script src="ctoon-jam.js?v=golden-single-track-20261109" defer></script>
+  <script src="ctoon-jam.js?v=jam-playback-reliability-20261109" defer></script>
   <script src="site-status.js?v=nav-colors-20261108" defer></script>
 </head>
 <body>
@@ -28,6 +28,7 @@
     <section class="jam-settings" aria-label="Song setup">
       <label for="jam-song">Song<select id="jam-song"><optgroup label="Original Arcade Tracks"><option value="neon">Neon Rush · 118 BPM</option><option value="pixel">Pixel Thunder · 146 BPM</option><option value="starlight">Starlight Solo · 104 BPM</option></optgroup><optgroup label="Featured Songs"><option value="golden">Golden · HUNTR/X</option></optgroup></select></label>
       <label for="jam-difficulty">Difficulty<select id="jam-difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label>
+      <label class="jam-sync-label" for="jam-sync-offset">Note timing adjustment <output id="jam-sync-value" for="jam-sync-offset">+0.00s</output><input id="jam-sync-offset" type="range" min="-2" max="2" step="0.05" value="0" disabled aria-label="Adjust Golden note timing by up to two seconds"></label>
       <label class="jam-mute"><input id="jam-mute" type="checkbox"> Mute music &amp; effects</label>
       <button id="jam-play" class="jam-button jam-primary" type="button">▶ Start Song</button>
       <button id="jam-pause" class="jam-button" type="button" disabled>Pause</button>
@@ -64,7 +65,7 @@
         <button id="jam-hype" class="jam-button jam-hype-btn" type="button" disabled>★ Activate Hype (Space)</button>
         <div class="jam-progress-track" role="progressbar" aria-label="Song progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="jam-progress"><div id="jam-progress-fill"></div></div>
       </div>
-      <p class="jam-help">Keyboard: <b>A · S · D · J · K</b> to hit the five colored lanes, <b>Space</b> for Hype Mode. On mobile, tap the five buttons. Choose from the original CToon Jam arcade tracks.</p>
+      <p class="jam-help">Keyboard: <b>A · S · D · J · K</b> to hit the five colored lanes, <b>Space</b> for Hype Mode. On mobile, tap the five buttons. Golden's note chart is a draft; use Note timing adjustment if notes are early or late.</p>
       <p id="jam-message" class="jam-message" role="status" aria-live="polite">Choose your track and difficulty to begin.</p>
     </section>
     <section class="jam-results" aria-label="Song record">

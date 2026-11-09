@@ -11,7 +11,6 @@
   const gameStage = document.querySelector(".jam-stage");
   const radioPanel = $("jam-radio-player-panel"), radioControl = $("jam-radio-audio"),
         audioStatus = $("jam-audio-status"), retryAudio = $("jam-retry-audio");
-  const radioList = $("jam-radio-tracks"), radioStatus = $("jam-radio-status"), radioCount = $("jam-radio-count");
   const colors = ["#61ea82","#fd6384","#ffe16a","#65bfff","#d99aff"];
   const keys = ["a","s","d","j","k"];
   const songs = {
@@ -22,7 +21,6 @@
   };
   // Dedicated recording; never imports the sitewide radio song library.
   const radioBase="https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/";
-  function syncRadioSelection() {} // No radio-library controls.
   const AC = window.AudioContext || window.webkitAudioContext;
   let audio = null, master = null, noiseBuffer = null;
   let radioAudio = null, isRadio = false, loadSerial = 0, appliedOffset = 0;
@@ -41,9 +39,13 @@
   function readOffset() {
     let value=0;
     try {value=Number(localStorage.getItem(offsetKey())||0);}catch{}
-    return Number.isFinite(value)?clamp(Math.round(value*20)/20,-12,12):0;
+    return Number.isFinite(value)?clamp(Math.round(value*20)/20,-2,2):0;
   }
-  function setupOffset() { appliedOffset=0; }
+  function setupOffset() {
+    appliedOffset=readOffset();
+    if(syncInput){syncInput.value=String(appliedOffset);syncInput.disabled=!isRadio;}
+    if(syncValue)syncValue.textContent=(appliedOffset>=0?"+":"")+appliedOffset.toFixed(2)+"s";
+  }
   function getTrackChart(song) {
     if(!song || !song.radio)return Promise.resolve(null);
     const key=song.path;
@@ -88,12 +90,6 @@
               .filter(note=>note.at>=0&&note.at<limit);
   }
 
-  function syncRadioSelection() {
-    if(!radioList)return;
-    for(const button of radioList.querySelectorAll("button[data-song]")){
-      button.setAttribute("aria-current",String(button.dataset.song===songSelect.value));
-    }
-  }
   function makeNotes() {
     const result = [], beatLen = beatSeconds();
     const level = difficultySelect.value;
@@ -207,7 +203,7 @@
     feedbackUntil=performance.now()+430;
   }
   function registerMiss() {
-    judged++;combo=0;health=clamp(health-5,0,100);
+    judged++;combo=0;health=clamp(health-2,0,100);
     feedback("MISS","#ff718b");
   }
   function hit(lane) {
@@ -248,7 +244,7 @@
     }
   }
   function finishSong(failed=false) {
-    if(state!=="playing"&&state!=="paused")return;
+    if(!["playing","paused","buffering"].includes(state))return;
     state="finished";
     cancelAnimationFrame(raf);
     if(radioAudio){radioAudio.pause();}
@@ -270,7 +266,8 @@
       } else if (note.at>t) break;
     }
     maxCombo=Math.max(maxCombo,combo);
-    if(health<=0)finishSong(true);
+    // Let streamed songs finish even if players miss many notes.
+    if(health<=0 && !isRadio)finishSong(true);
   }
   function draw() {
     const rect=canvas.getBoundingClientRect(),w=rect.width,h=rect.height;
@@ -362,13 +359,14 @@
       const previous=radioAudio;
       previous.onplaying=null;previous.onpause=null;previous.onwaiting=null;
       previous.onstalled=null;previous.onerror=null;previous.onended=null;previous.oncanplay=null;
+      previous.onloadedmetadata=null;previous.onseeked=null;
       previous.pause();previous.removeAttribute("src");previous.load();
       radioAudio=null;
     }
     if(audio){audio.close().catch(()=>{});audio=null;}
     master=null;
     track=songs[songSelect.value]||songs.neon;
-    syncRadioSelection();isRadio=!!track.radio;
+    isRadio=!!track.radio;
     activeDifficulty=difficultySelect.value;
     setupOffset();
     if(radioPanel)radioPanel.hidden=!isRadio;
@@ -389,12 +387,13 @@
     raf=requestAnimationFrame(tick);
     if(isRadio){
       const media=radioControl;
-      if(!media){state="ready";status.textContent="Golden player is unavailable.";return;}
+      if(!media){state="ready";cancelAnimationFrame(raf);status.textContent="Golden player is unavailable.";showOverlay("PLAYER UNAVAILABLE","Refresh the game page and try again.");return;}
       radioAudio=media;
       media.preload="metadata";
       media.volume=.75;
       media.muted=muteInput.checked;
       media.src=radioBase+encodeURI(track.path);
+      media.load();
       audioStatus.textContent="Connecting to Golden. You can use Play in the player.";
       let started=false;
       let loadingTimeout=null;
@@ -443,9 +442,12 @@
         hideOverlay();
         audioStatus.textContent="Now streaming "+track.title+".";
         status.textContent="Now playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Use the five fret buttons or A S D J K.";
+        // Also restart rendering when playback begins after a timeout or blocked autoplay.
+        cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
         draw();updateHud();
       };
       const errorMessage=()=>{
+        if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
         const err=media.error;
         const reason=err&&err.code===4?"The recording format or URL is unsupported."
           :err&&err.code===3?"The browser could not decode this MP3."
@@ -462,6 +464,17 @@
         }
       };
       media.onplaying=enterPlaying;
+      media.onloadedmetadata=()=>{
+        if(valid()&&Number.isFinite(media.duration)&&media.duration>0){
+          totalTime=media.duration;updateHud();
+        }
+      };
+      media.onseeked=()=>{
+        if(!valid())return;
+        // Skipping ahead shouldn't count skipped notes as misses.
+        for(const note of notes)if(note.at<media.currentTime-.22)note.judged=true;
+        draw();updateHud();
+      };
       media.oncanplay=()=>{
         if(valid()&&state==="loading"){
           audioStatus.textContent="Audio is ready. Press Play in the player if the song has not started.";
@@ -491,6 +504,8 @@
       // Show a specific, actionable message if play() takes too long.
       loadingTimeout=setTimeout(()=>{
         if(valid()&&state==="loading"&&!started){
+          state="ready";
+          cancelAnimationFrame(raf);
           showOverlay("AUDIO STILL LOADING","Try pressing Play in the visible audio player, or tap Retry Audio. You can also choose another song.");
           audioStatus.textContent="This recording is taking too long to start. Use the player controls or Retry Audio.";
           status.textContent="Waiting for "+track.title+" to stream. The song has not begun yet.";
@@ -506,6 +521,7 @@
           }).catch(error=>{
             if(!valid())return;
             if(error&&error.name==="AbortError")return;
+            state="ready";cancelAnimationFrame(raf);
             const blocked=error&&error.name==="NotAllowedError";
             audioStatus.textContent=blocked
               ?"Autoplay was blocked. Tap Play in the song audio player."
@@ -517,6 +533,7 @@
         }
       }catch(error){
         if(valid()){
+          state="ready";cancelAnimationFrame(raf);
           audioStatus.textContent="Browser audio error: "+(error.message||"unable to play");
           showOverlay("TAP PLAY TO START","Use Play in the visible radio player or Retry Audio.");
           if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
@@ -572,7 +589,7 @@
       raf=requestAnimationFrame(tick);
     }
   }
-  if(retryAudio)retryAudio.addEventListener("click",()=>{if(radioAudio)radioAudio.play().catch(()=>{if(audioStatus)audioStatus.textContent="Tap Play in the audio player to start Golden.";});});
+  if(retryAudio)retryAudio.addEventListener("click",()=>{if(songSelect.value==="golden")startSong();});
   playBtn.addEventListener("click",startSong);
   pauseBtn.addEventListener("click",togglePause);
   hypeBtn.addEventListener("click",activateHype);
@@ -580,9 +597,19 @@
     if(isRadio&&radioAudio)radioAudio.muted=muteInput.checked;
     if(audio && master)master.gain.setTargetAtTime(muteInput.checked?0:.46,audio.currentTime,.02);
   });
+  if(syncInput)syncInput.addEventListener("input",()=>{
+    if(!isRadio)return;
+    const next=clamp(Number(syncInput.value)||0,-2,2);
+    const difference=next-appliedOffset;
+    appliedOffset=next;
+    if(syncValue)syncValue.textContent=(next>=0?"+":"")+next.toFixed(2)+"s";
+    try{localStorage.setItem(offsetKey(),String(next));}catch{}
+    for(const note of notes)if(!note.judged)note.at+=difference;
+    draw();
+  });
   songSelect.addEventListener("change",()=>{
     track=songs[songSelect.value]||songs.neon;
-    syncRadioSelection();refreshBest();
+    refreshBest();
     // Choosing a song should begin play, rather than leaving the game waiting on Start.
     startSong();
     gameStage?.scrollIntoView({block:"start",behavior:"smooth"});

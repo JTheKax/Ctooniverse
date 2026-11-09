@@ -67,3 +67,11 @@ footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;paddin
 footer a{color:#91eaff;font-weight:900}
 @media(max-width:650px){.jam-shell{padding:10px 9px 25px}.jam-head{padding:22px 4px 14px}.jam-guitar{display:none}.jam-settings{padding:12px}.jam-settings label:not(.jam-mute){flex-basis:135px}.jam-stage{padding:9px;border-radius:15px}.jam-hud{gap:4px}.jam-hud>div{padding:9px 1px}.jam-hud small{letter-spacing:.5px;font-size:.55rem}.jam-meters{gap:8px}#jam-board{height:clamp(370px,100vw,560px)}.jam-controls{gap:4px}.jam-controls button{padding:12px 1px 9px}.jam-topbar{letter-spacing:.2px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
+/* Dedicated Golden player and readable loading/retry feedback. */
+.jam-radio-player-panel{display:grid;gap:9px;margin-bottom:16px;padding:14px;border:2px solid #7061c6;border-radius:14px;background:#201941}
+.jam-radio-player-panel[hidden]{display:none}
+.jam-radio-player-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.jam-radio-player-panel audio{display:block;width:100%;min-height:44px}
+.jam-radio-player-panel p{margin:0;color:#e3deff;font-size:.86rem}
+.jam-sync-label input[type=range]:disabled{cursor:not-allowed}
