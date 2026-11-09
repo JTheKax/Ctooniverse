@@ -26,7 +26,7 @@ function announceFight(label,phase=''){
 // Johnny is fighter 001; Samurai Jack uses the same full 3x11 action mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
  portrait:'/images/showdown/johnny-bravo-user-model.svg',
- preview_sheet:'/images/showdown/johnny-bravo-limbs-v3.svg',preview_columns:6,preview_rows:11};
+ preview_sheet:'/images/showdown/johnny-bravo-new-4x4.png?v=20261109',preview_columns:4,preview_rows:4};
 const samuraiJack={slot:2,fighter_id:'samurai-jack',name:'Samurai Jack',series:'Samurai Jack',accent:'#a9e5ee',
  portrait:'/images/showdown/samurai-jack-portrait.svg',
  preview_sheet:'/images/showdown/samurai-jack-atlas.svg',preview_columns:3,preview_rows:11,
@@ -73,9 +73,10 @@ function spriteSources(profile){
 // Support both Johnny's padded 6x11 rig and the legacy 3x11 backups.
 function spriteLayout(profile,source){
  const johnny=profile?.fighter_id==='johnny-bravo';
+ const uploaded=johnny&&/johnny-bravo-new-4x4\.png/i.test(source);
  const polished=johnny&&/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(source);
- return {columns:polished?6:johnny?3:Math.max(1,Number(profile?.preview_columns)||3),
-  rows:johnny?11:Math.max(1,Number(profile?.preview_rows)||11),polished};
+ return {columns:uploaded?4:polished?6:johnny?3:Math.max(1,Number(profile?.preview_columns)||3),
+  rows:uploaded?4:johnny?11:Math.max(1,Number(profile?.preview_rows)||11),polished,uploaded};
 }
 // Measure the lowest visible sprite pixel in each frame; transparent padding
 // otherwise makes Johnny's shoes hover above the arena ground.
@@ -107,12 +108,12 @@ function spriteFootAnchors(image,columns,rows){
 function cachedSprite(source,layout){
  let entry=combatSpriteCache.get(source);
  if(!entry){
-  entry={image:new Image(),loaded:false,failed:false,columns:layout.columns,rows:layout.rows,polished:layout.polished,footAnchors:null};
+  entry={image:new Image(),loaded:false,failed:false,columns:layout.columns,rows:layout.rows,polished:layout.polished,uploaded:layout.uploaded,footAnchors:null};
   entry.image.onload=()=>{
    entry.loaded=entry.image.naturalWidth>0&&entry.image.naturalHeight>0&&
     entry.image.naturalWidth%entry.columns===0&&entry.image.naturalHeight%entry.rows===0;
    entry.failed=!entry.loaded;
-   if(entry.loaded&&entry.polished)entry.footAnchors=spriteFootAnchors(entry.image,entry.columns,entry.rows);
+   if(entry.loaded&&(entry.polished||entry.uploaded))entry.footAnchors=spriteFootAnchors(entry.image,entry.columns,entry.rows);
   };
   entry.image.onerror=()=>{entry.failed=true;console.warn('Could not load sprite atlas:',source)};
   entry.image.decoding='async';combatSpriteCache.set(source,entry);entry.image.src=source;
@@ -120,13 +121,24 @@ function cachedSprite(source,layout){
  return entry;
 }
 function spriteAtlas(profile){
- if(!profile||Number(profile.preview_rows)<11||Number(profile.preview_columns)<3)return null;
+ if(!profile||Number(profile.preview_rows)<4||Number(profile.preview_columns)<3)return null;
  for(const source of spriteSources(profile)){
   const item=cachedSprite(source,spriteLayout(profile,source));
   if(item.loaded)return item;
   if(!item.failed)return null;
  }
  return null;
+}
+const JOHNNY_POSE_MAP=[
+ [[0,0],[1,0],[0,2]], [[0,1],[1,1],[0,2]], [[0,0],[0,1],[2,1]],
+ [[2,0],[3,0],[2,1]], [[2,2],[3,2],[2,2]], [[1,0],[1,2],[1,0]],
+ [[3,1],[0,3],[2,3]], [[3,3],[1,1],[3,3]], [[2,0],[3,2],[2,3]],
+ [[1,3],[0,3],[1,3]], [[1,3],[2,3],[2,3]]
+];
+function johnnySpriteCell(row,frame){
+ const sequence=JOHNNY_POSE_MAP[Math.max(0,Math.min(10,row))]||JOHNNY_POSE_MAP[0];
+ const pose=sequence[Math.max(0,frame)%sequence.length];
+ return {frame:pose[0],row:pose[1]};
 }
 function spritePose(f,t,columns){
  let row=0,frame=Math.floor(t*5)%columns;
@@ -142,7 +154,7 @@ function spritePose(f,t,columns){
  else if(f.crouch){row=7;frame=Math.floor(t*7)%columns;}
  else if(Math.abs(f.moveSpeed||0)>160){row=2;frame=Math.floor(t*13)%columns;}
  else if(Math.abs(f.moveSpeed||0)>8){row=1;frame=Math.floor(t*9)%columns;}
- return {row,frame};
+ return columns===4&&f.profile?.fighter_id==='johnny-bravo'?johnnySpriteCell(row,frame):{row,frame};
 }
 const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
 const pad=n=>String(n).padStart(3,'0');
@@ -252,7 +264,7 @@ function setupPreviewAnimation(fighter){
    if(img.naturalWidth%layout.columns||img.naturalHeight%layout.rows){tryNext();return;}
    previewAnimation.image=img;previewAnimation.source=source;previewAnimation.loaded=true;
    previewAnimation.columns=layout.columns;previewAnimation.rows=layout.rows;
-   previewAnimation.footAnchors=layout.polished?spriteFootAnchors(img,layout.columns,layout.rows):null;
+   previewAnimation.footAnchors=(layout.polished||layout.uploaded)?spriteFootAnchors(img,layout.columns,layout.rows):null;
    previewAnimation.poseStart=performance.now();
    avatar.hidden=true;canvas.hidden=false;
   };
@@ -270,15 +282,22 @@ function renderPreviewFrame(timestamp){
  const cols=previewAnimation.columns,rows=previewAnimation.rows;
  const fw=img.naturalWidth/cols,fh=img.naturalHeight/rows;
  if(!fw||!fh)return;
- const row=Math.max(0,SPRITE_POSES.indexOf(previewAnimation.pose));
+ const actionRow=Math.max(0,SPRITE_POSES.indexOf(previewAnimation.pose));
  const age=Math.max(0,timestamp-previewAnimation.poseStart);
  const isLoop=['idle','walk','run','guard','crouch'].includes(previewAnimation.pose);
  const interval=previewAnimation.pose==='run'?85:previewAnimation.pose==='walk'?115:190;
- const frame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%1400)/(1400/cols)));
+ const actionFrame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%1400)/(1400/cols)));
+ const uploaded=/johnny-bravo-new-4x4\.png/i.test(previewAnimation.source||'');
+ const {row,frame}=uploaded?johnnySpriteCell(actionRow,actionFrame):{row:actionRow,frame:actionFrame};
  const polished=/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(previewAnimation.source||'');
  p.clearRect(0,0,canvas.width,canvas.height);
- p.save();p.imageSmoothingEnabled=!polished;p.imageSmoothingQuality='high';
- if(polished){
+ p.save();p.imageSmoothingEnabled=!polished&&!uploaded;p.imageSmoothingQuality='high';
+ if(uploaded){
+  const scale=Math.min((canvas.width-28)/fw,(canvas.height-16)/fh);
+  const feet=previewAnimation.footAnchors?.[row]?.[frame]??60;
+  p.drawImage(img,frame*fw,row*fh,fw,fh,
+   Math.round(canvas.width/2-fw*scale/2),Math.round(canvas.height-10-feet*scale),fw*scale,fh*scale);
+ }else if(polished){
   // The approved sprite occupies 64px inside a padded 112px cell.
   // Anchor his feet so every frame shares the same baseline.
   const scale=Math.min((canvas.width-18)/84,(canvas.height-12)/66);
@@ -302,8 +321,8 @@ if(johnnyArtMenu){
   else if(!fighter)setupPreviewAnimation(demoHero);
   if(johnnyArtNotice)johnnyArtNotice.hidden=johnnyArt.mode!=='classic'||fighter?.fighter_id!=='johnny-bravo';
   $('showdown-status').textContent=johnnyArt.mode==='classic'
-    ?'Viewing the previous Johnny model. Switch back to Uploaded Pixel Model to use the newly supplied sprite.'
-    :'Using your uploaded Johnny Bravo pixel model for previews and battles.';
+    ?'Viewing the previous Johnny model. Switch back to New Johnny Model to use the newly supplied sprite.'
+    :'Using your new Johnny Bravo sprite model for previews and battles.';
  });
 }
 const previewPoseMenu=$('preview-pose');
@@ -483,7 +502,7 @@ async function loadRoster(){
   if(!Array.isArray(fighters))throw new Error('Unexpected catalog format');
   selection.fighters=new Map(fighters.filter(f=>Number.isSafeInteger(f.slot)&&f.slot>0).map(f=>{
     const ready=f.fighter_id==='johnny-bravo'
-      ?{...f,portrait:demoHero.portrait,preview_sheet:demoHero.preview_sheet,preview_columns:6,preview_rows:11}
+      ?{...f,portrait:demoHero.portrait,preview_sheet:demoHero.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='samurai-jack'
       ?{...f,portrait:samuraiJack.portrait,preview_sheet:samuraiJack.preview_sheet,preview_columns:3,preview_rows:11}:f;
     return [ready.slot,ready];
@@ -748,7 +767,11 @@ function drawBody(f,t){
   if(ctx.imageSmoothingEnabled)ctx.imageSmoothingQuality='high';
   // Standing Johnny no longer bobs off the floor between idle frames.
   const bounce=0; // Character soles remain anchored.
-  if(polished){
+  if(atlasEntry.uploaded){
+   const size=270,anchorX=32,anchorY=atlasEntry.footAnchors?.[pose.row]?.[pose.frame]??60;
+   ctx.drawImage(atlas,pose.frame*frameWidth,pose.row*frameHeight,frameWidth,frameHeight,
+    -Math.round(anchorX/frameWidth*size),-Math.round(anchorY/frameHeight*size)+bounce,size,size);
+  }else if(polished){
    // Use the visible sole on each frame, not the padded cell boundary.
    const size=390,anchorX=52,anchorY=atlasEntry.footAnchors?.[pose.row]?.[pose.frame]??82;
    ctx.drawImage(atlas,pose.frame*frameWidth,pose.row*frameHeight,frameWidth,frameHeight,
