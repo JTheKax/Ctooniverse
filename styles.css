@@ -2341,3 +2341,26 @@ body.czone-page #czone-display .czone-empty{position:relative;margin:2rem auto;t
 }
 .clash .tcg-card.selected{outline-color:#fff6a6!important}
 @media(max-width:650px){.clash .tcg-card::before{font-size:9px!important;letter-spacing:0!important}.clash-lane .tcg-card::before{font-size:7px!important}}
+
+
+/* Unified adjustable CToon card sizes (Shop, Featured and My Collection). */
+html{--ctoon-card-w:182px;--ctoon-card-h:282px;--ctoon-art-h:158px}
+html[data-ctoon-size="small"]{--ctoon-card-w:150px;--ctoon-card-h:232px;--ctoon-art-h:128px}
+html[data-ctoon-size="large"]{--ctoon-card-w:220px;--ctoon-card-h:341px;--ctoon-art-h:193px}
+html :is(.ctoon-shop-card,.collection-grid .ctoon-shop-card,.ctoons-featured-grid .ctoon-shop-card,.kingdom-ctoon-grid .ctoon-shop-card){
+ box-sizing:border-box!important;width:var(--ctoon-card-w)!important;min-width:var(--ctoon-card-w)!important;max-width:var(--ctoon-card-w)!important;
+ height:var(--ctoon-card-h)!important;min-height:var(--ctoon-card-h)!important;max-height:var(--ctoon-card-h)!important;
+ flex:0 0 var(--ctoon-card-w)!important;margin-left:0!important;margin-right:0!important;
+}
+html .ctoon-shop-art{flex:0 0 var(--ctoon-art-h)!important;height:var(--ctoon-art-h)!important;min-height:var(--ctoon-art-h)!important;max-height:var(--ctoon-art-h)!important}
+html :is(.collection-grid,.ctoons-featured-grid,.kingdom-ctoon-grid){
+ grid-template-columns:repeat(auto-fit,minmax(min(100%,var(--ctoon-card-w)),1fr))!important;
+}
+html .collection-grid{justify-items:center!important}
+.ctoon-size-toolbar{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;margin:1rem auto;padding:10px 14px;max-width:max-content;border:2px solid #6bdaff;border-radius:12px;background:#10153ce8;color:#f5f1ff}
+.ctoon-size-toolbar label{font-weight:800;font-size:.9rem}
+.ctoon-size-toolbar select{border:1px solid #86cfff;border-radius:8px;background:#fff;color:#19163e;padding:8px;min-width:128px;font:inherit}
+@media(max-width:470px){
+ html :is(.collection-grid,.ctoons-featured-grid,.kingdom-ctoon-grid){gap:8px!important}
+ html[data-ctoon-size="large"]{--ctoon-card-w:182px;--ctoon-card-h:282px;--ctoon-art-h:158px}
+}
