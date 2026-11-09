@@ -567,14 +567,6 @@
       raf=requestAnimationFrame(tick);
     }
   }
-  retryAudio.addEventListener("click",()=>{
-    if(!isRadio||!radioAudio)return;
-    audioStatus.textContent="Retrying radio stream…";
-    try{
-      const p=radioAudio.play();
-      if(p&&p.catch)p.catch(()=>{audioStatus.textContent="Playback still blocked. Try the native Play control or another song.";});
-    }catch{audioStatus.textContent="Unable to restart the radio stream. Choose the song again.";}
-  });
   playBtn.addEventListener("click",startSong);
   pauseBtn.addEventListener("click",togglePause);
   hypeBtn.addEventListener("click",activateHype);
