@@ -161,3 +161,105 @@ footer a{color:#91eaff;font-weight:900}
  .jam-picker-start{position:sticky;bottom:0;z-index:1}
 }
 @media(prefers-reduced-motion:reduce){.jam-song-picker *{scroll-behavior:auto!important}}
+
+/* One larger play cabinet: the setlist, controls, HUD, audio and records share one screen. */
+.jam-shell{max-width:1920px;width:100%;padding:12px clamp(8px,1.6vw,28px) 25px}
+.jam-topbar{padding:0 4px 12px}
+.jam-stage{display:flex;flex-direction:column;gap:12px;padding:clamp(10px,1.2vw,18px);border-radius:18px;border:2px solid #8971ff;min-width:0;box-shadow:0 15px 45px #03020cbb,0 0 35px #8252ff22}
+.jam-game-header{display:flex;align-items:center;justify-content:space-between;gap:clamp(9px,2vw,32px);padding:9px clamp(10px,1.6vw,22px);border:1px solid #594fb4;border-radius:12px;background:linear-gradient(100deg,#1d1947,#131c48);min-width:0}
+.jam-game-brand{min-width:0}
+.jam-game-brand p{margin:0 0 2px;font-size:.63rem;letter-spacing:1.5px;font-weight:950;color:#98eaff}
+.jam-game-brand h1{font-size:clamp(1.65rem,3.1vw,3rem);font-weight:1000;font-style:italic;letter-spacing:-1.8px;line-height:1;margin:0;white-space:nowrap;text-shadow:0 0 20px #753cf577}
+.jam-game-brand h1 span{color:#71e9ff}
+.jam-stage-current{display:flex;flex:1;min-width:0;align-items:center;justify-content:center;flex-direction:column;gap:2px}
+.jam-stage-current small{font-size:.59rem;letter-spacing:1.5px;font-weight:1000;color:#a8b9f3}
+.jam-stage-current strong{max-width:100%;font-size:clamp(.95rem,1.5vw,1.3rem);font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jam-stage-current span{font-size:.62rem;color:#97f2cb;letter-spacing:.7px;font-weight:900}
+.jam-expand{flex:0 0 auto;background:linear-gradient(130deg,#1b6bb7,#51318b);border-color:#8bdfff;min-height:42px;padding:8px 13px}
+.jam-game-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,340px);gap:clamp(10px,1vw,18px);align-items:start;min-width:0}
+.jam-game-main{display:flex;flex-direction:column;gap:9px;min-width:0}
+.jam-game-sidebar{display:flex;flex-direction:column;gap:10px;min-width:0;padding:10px;border:1px solid #3d3975;border-radius:14px;background:#0c112f99}
+.jam-hud{margin:0;gap:7px}
+.jam-hud>div{padding:7px 4px;border-radius:8px}
+.jam-hud small{font-size:.59rem}
+.jam-hud strong{font-size:clamp(1.05rem,2vw,1.75rem)}
+.jam-meters{margin:0;gap:10px}
+.jam-meters>div>span{font-size:.62rem;margin-bottom:3px}
+.jam-meter{height:11px}
+.jam-board-wrap{height:clamp(580px,75dvh,1020px);flex:0 0 auto;min-height:0;border-radius:14px}
+#jam-board{height:100%;width:100%;display:block}
+.jam-controls{margin:0;gap:7px}
+.jam-controls button{min-height:53px;padding:6px 4px}
+.jam-strum-controls{margin:0}
+.jam-footer-controls{margin:0;gap:9px}
+.jam-footer-controls .jam-hype-btn,.jam-footer-controls .jam-progress-track{width:100%;flex-basis:100%}
+.jam-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0;padding:11px;border-radius:12px;border-width:1px;align-items:center}
+.jam-settings label:not(.jam-mute){flex-basis:auto;min-width:0;font-size:.69rem}
+.jam-settings label[for="jam-play-style"],.jam-settings .jam-sync-label,.jam-settings .jam-mute{grid-column:1/-1}
+.jam-settings .jam-sync-label{min-height:38px}
+.jam-settings .jam-mute{min-height:25px}
+.jam-settings .jam-button{min-height:42px;padding:8px 5px;font-size:.75rem}
+.jam-settings select{padding:8px 7px}
+.jam-game-sidebar .jam-song-loading{margin:0;padding:10px 12px}
+.jam-game-sidebar .jam-radio-player-panel{margin:0;padding:9px}
+.jam-game-sidebar .jam-radio-player-heading{gap:8px;font-size:.79rem}
+.jam-game-sidebar .jam-radio-player-panel audio{min-height:38px}
+.jam-game-sidebar .jam-chart-status{font-size:.72rem}
+.jam-message{margin:0;min-height:0;font-size:.78rem}
+.jam-game-sidebar .jam-results{margin:0;padding:11px;border-radius:11px}
+.jam-game-sidebar .jam-results h2{font-size:.84rem}
+.jam-game-sidebar .jam-results p{font-size:.82rem}
+.jam-game-sidebar .jam-results small{font-size:.69rem}
+.jam-game-sidebar .jam-next-song{margin:9px 0 0;min-height:39px;width:100%}
+.jam-help-details{border:1px solid #4c467f;border-radius:11px;padding:9px 11px;background:#18173f;color:#d7d6ff}
+.jam-help-details summary{font-size:.76rem;font-weight:900;cursor:pointer}
+.jam-help-details .jam-help{margin:8px 0 0;font-size:.73rem}
+.jam-highway-caption{z-index:1}
+.jam-song-picker{z-index:6}
+@media(max-width:1040px){
+ .jam-game-layout{grid-template-columns:minmax(0,1fr) minmax(240px,280px)}
+ .jam-game-sidebar{padding:8px;gap:8px}
+ .jam-stage{gap:9px}
+}
+@media(max-width:780px){
+ .jam-shell{padding:8px 8px 20px}
+ .jam-game-layout{grid-template-columns:minmax(0,1fr)}
+ .jam-game-header{gap:8px;padding:8px 10px;flex-wrap:wrap}
+ .jam-stage-current{order:3;flex:1 1 100%;flex-direction:row;gap:8px;justify-content:flex-start}
+ .jam-stage-current small{display:none}
+ .jam-game-brand p{font-size:.54rem;letter-spacing:.6px}
+ .jam-game-brand h1{font-size:clamp(1.5rem,5vw,2.2rem)}
+ .jam-expand{margin-left:auto;min-height:39px;padding:7px 10px}
+ .jam-board-wrap{height:clamp(540px,76dvh,860px)}
+ .jam-game-sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .jam-game-sidebar .jam-settings,.jam-game-sidebar .jam-song-loading,.jam-game-sidebar .jam-radio-player-panel,.jam-game-sidebar .jam-footer-controls,.jam-game-sidebar .jam-results,.jam-help-details,.jam-message{grid-column:1/-1}
+ .jam-game-sidebar .jam-settings{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .jam-settings .jam-mute{align-self:center}
+}
+@media(max-width:500px){
+ .jam-board-wrap{height:clamp(540px,80dvh,850px)}
+ .jam-stage{padding:8px;border-radius:12px}
+ .jam-game-layout{gap:9px}
+ .jam-game-sidebar{padding:8px}
+ .jam-settings{padding:9px}
+ .jam-hud{gap:3px}
+ .jam-hud small{font-size:.52rem}
+ .jam-hud strong{font-size:clamp(.96rem,3vw,1.2rem)}
+ .jam-controls button{min-height:49px;padding:7px 1px}
+}
+.jam-stage:fullscreen,.jam-theater-view .jam-stage{
+ position:fixed;inset:0;width:100%;max-width:none;height:100dvh;max-height:100dvh;
+ overflow:auto;margin:0;border-radius:0;z-index:9999;padding:clamp(8px,1.1vw,15px);background:#080a1c
+}
+.jam-stage:fullscreen{position:relative}
+.jam-theater-view{overflow:hidden}
+@media(min-width:781px){
+ .jam-stage:fullscreen .jam-game-layout,.jam-theater-view .jam-stage .jam-game-layout{flex:1;min-height:0;align-items:stretch}
+ .jam-stage:fullscreen .jam-game-main,.jam-theater-view .jam-stage .jam-game-main{min-height:0}
+ .jam-stage:fullscreen .jam-game-sidebar,.jam-theater-view .jam-stage .jam-game-sidebar{overflow-y:auto;min-height:0;max-height:100%;overscroll-behavior:contain}
+ .jam-stage:fullscreen .jam-board-wrap,.jam-theater-view .jam-stage .jam-board-wrap{flex:1 1 0;height:auto;min-height:260px}
+}
+@media(max-width:780px){
+ .jam-stage:fullscreen .jam-game-sidebar,.jam-theater-view .jam-stage .jam-game-sidebar{overflow:visible}
+ .jam-stage:fullscreen .jam-board-wrap,.jam-theater-view .jam-stage .jam-board-wrap{height:clamp(450px,64dvh,750px)}
+}
