@@ -35,12 +35,13 @@ const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Joh
  preview_sheet:'/images/showdown/johnny-bravo-new-4x4.png?v=20261109',preview_columns:4,preview_rows:4};
 const samuraiJack={slot:2,fighter_id:'samurai-jack',name:'Samurai Jack',series:'Samurai Jack',accent:'#a9e5ee',
  portrait:'/images/showdown/samurai-jack-portrait.svg',
- preview_sheet:'/images/showdown/samurai-jack-atlas.svg',preview_columns:3,preview_rows:11,
+ preview_sheet:'/images/showdown/samurai-jack-4x4.png?v=20261109',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:false,unlock_method:'free'};
 const demoCPU={...demoHero};
 function addBuiltInFighters(){
  for(const fighter of [demoHero,samuraiJack]){
-  if([...selection.fighters.values()].some(item=>item.fighter_id===fighter.fighter_id))continue;
+  const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
+  if(existing){if(fighter.fighter_id==='samurai-jack')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait});continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,{...fighter,slot});
@@ -67,7 +68,8 @@ function spriteSources(profile){
   else if(uri.pathname.startsWith('/public/images/'))sources.push(uri.origin+uri.pathname.replace('/public/','/')+uri.search);
  }
  addStaticLocations(u);
- if(isJohnny){
+ if(profile.fighter_id==='samurai-jack')for(const backup of ['/images/showdown/samurai-jack-atlas.svg','/public/images/showdown/samurai-jack-atlas.svg']){const candidate=safeImage(backup);if(candidate)sources.push(candidate);}
+  if(isJohnny){
   // Preserve the prior Johnny atlas as a fallback if the supplied model is unavailable.
   if(johnnyArt.mode==='classic'){
    const approved=safeImage(demoHero.preview_sheet);
@@ -82,10 +84,11 @@ function spriteSources(profile){
 // Support both Johnny's padded 6x11 rig and the legacy 3x11 backups.
 function spriteLayout(profile,source){
  const johnny=profile?.fighter_id==='johnny-bravo';
- const uploaded=johnny&&/johnny-bravo-new-4x4\.png/i.test(source);
+ const uploaded=/(?:johnny-bravo-new|samurai-jack)-4x4\.png/i.test(source);
  const polished=johnny&&/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(source);
- return {columns:uploaded?4:polished?6:johnny?3:Math.max(1,Number(profile?.preview_columns)||3),
-  rows:uploaded?4:johnny?11:Math.max(1,Number(profile?.preview_rows)||11),polished,uploaded};
+  const legacyJack=/samurai-jack-atlas\.svg/i.test(source);
+ return {columns:uploaded?4:polished?6:(johnny||legacyJack)?3:Math.max(1,Number(profile?.preview_columns)||3),
+  rows:uploaded?4:(johnny||legacyJack)?11:Math.max(1,Number(profile?.preview_rows)||11),polished,uploaded};
 }
 // Measure the lowest visible sprite pixel in each frame; transparent padding
 // otherwise makes Johnny's shoes hover above the arena ground.
@@ -158,6 +161,8 @@ const JOHNNY_POSE_MAP=[
  [[3,1],[0,3],[2,3]], [[3,3],[1,1],[3,3]], [[2,0],[3,2],[2,3]],
  [[1,3],[0,3],[1,3]], [[1,3],[2,3],[2,3]]
 ];
+const JACK_POSE_MAP=[[[0,0],[1,0],[3,3]],[[0,1],[1,1],[2,1]],[[2,0],[3,0],[0,2]],[[0,2],[2,1],[1,2]],[[2,2],[3,2],[1,2]],[[1,0],[2,0],[3,0]],[[1,2],[1,2],[3,1]],[[3,1],[0,3],[3,1]],[[3,0],[1,2],[2,2]],[[2,3],[3,2],[2,3]],[[2,3],[0,3],[0,3]]];
+function jackSpriteCell(row,frame){const poses=JACK_POSE_MAP[Math.max(0,Math.min(10,row))];const cell=poses[Math.max(0,frame)%poses.length];return {frame:cell[0],row:cell[1]};}
 function johnnySpriteCell(row,frame){
  const sequence=JOHNNY_POSE_MAP[Math.max(0,Math.min(10,row))]||JOHNNY_POSE_MAP[0];
  const pose=sequence[Math.max(0,frame)%sequence.length];
@@ -177,6 +182,7 @@ function spritePose(f,t,columns){
  else if(f.crouch){row=7;frame=Math.floor(t*7)%columns;}
  else if(Math.abs(f.moveSpeed||0)>160){row=2;frame=Math.floor(t*13)%columns;}
  else if(Math.abs(f.moveSpeed||0)>8){row=1;frame=Math.floor(t*9)%columns;}
+ if(columns===4&&f.profile?.fighter_id==='samurai-jack')return jackSpriteCell(row,frame);
  return columns===4&&f.profile?.fighter_id==='johnny-bravo'?johnnySpriteCell(row,frame):{row,frame};
 }
 const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
@@ -310,8 +316,8 @@ function renderPreviewFrame(timestamp){
  const isLoop=['idle','walk','run','guard','crouch'].includes(previewAnimation.pose);
  const interval=previewAnimation.pose==='run'?85:previewAnimation.pose==='walk'?115:190;
  const actionFrame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%1400)/(1400/cols)));
- const uploaded=/johnny-bravo-new-4x4\.png/i.test(previewAnimation.source||'');
- const {row,frame}=uploaded?johnnySpriteCell(actionRow,actionFrame):{row:actionRow,frame:actionFrame};
+ const uploaded=/(?:johnny-bravo-new|samurai-jack)-4x4\.png/i.test(previewAnimation.source||'');
+ const {row,frame}=uploaded?(selection.fighters.get(selection.slot)?.fighter_id==='samurai-jack'?jackSpriteCell(actionRow,actionFrame):johnnySpriteCell(actionRow,actionFrame)):{row:actionRow,frame:actionFrame};
  const polished=/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(previewAnimation.source||'');
  p.clearRect(0,0,canvas.width,canvas.height);
  p.save();p.imageSmoothingEnabled=!polished&&!uploaded;p.imageSmoothingQuality='high';
