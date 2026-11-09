@@ -87,3 +87,19 @@ footer a{color:#91eaff;font-weight:900}
 #jam-song-load-status{margin:9px 0 0;color:#e1dcff;font-size:.82rem;font-weight:700}
 @keyframes jam-song-load-sweep{0%{transform:translateX(-110%)}100%{transform:translateX(300%)}}
 @media(prefers-reduced-motion:reduce){.jam-song-loading.is-indeterminate #jam-song-load-fill{animation:none;width:35%}}
+
+/* Guitar stage style: bright fret highway, hardware keys, mobile strum controls. */
+.jam-head h1{font-style:italic;text-transform:uppercase}
+.jam-stage{background:linear-gradient(145deg,#1c1343,#070a21 54%,#140a29);border-color:#866afb}
+.jam-board-wrap{border-color:#9b83ff;box-shadow:0 0 48px #783dca55,inset 0 0 50px #191044}
+#jam-board{height:clamp(460px,64vw,730px)}
+.jam-highway-caption{position:absolute;top:12px;left:16px;right:16px;display:flex;justify-content:space-between;gap:10px;pointer-events:none;color:#cdbaff;text-shadow:0 0 15px #784eff;font-size:.7rem;font-weight:1000;letter-spacing:2px}
+.jam-controls button:nth-child(5){background:#ffa24c}
+.jam-controls button.is-held{transform:translateY(4px);filter:brightness(1.23);border-bottom-width:2px;box-shadow:0 0 22px #fff8,inset 0 0 10px #fffd}
+.jam-strum-controls{display:none;align-items:center;justify-content:space-between;gap:12px;margin:13px auto 0;padding:12px;background:#111638;border:1px solid #5755b6;border-radius:13px}
+.jam-stage.is-strum .jam-strum-controls{display:flex}
+.jam-strum-controls .jam-button{flex:0 0 auto;min-width:118px;background:linear-gradient(130deg,#2b76b8,#6447a2)}
+.jam-strum-controls span{font-size:.78rem;color:#d4d3f8;font-weight:700;text-align:center}
+.jam-strum-controls .jam-button:active,.jam-strum-controls .jam-button.is-pressed{filter:brightness(1.4);transform:translateY(2px)}
+.jam-settings label:has(#jam-play-style){flex:1 1 185px}
+@media(max-width:650px){#jam-board{height:clamp(480px,128vw,620px)}.jam-highway-caption{font-size:.57rem;letter-spacing:1px}.jam-strum-controls{flex-wrap:wrap;padding:8px}.jam-strum-controls span{flex:1 1 100%;order:-1}.jam-strum-controls .jam-button{flex:1 1 44%;min-width:0;font-size:.75rem}}
