@@ -41,7 +41,7 @@
       <label>Search fighter or slot <input id="roster-search" type="search" placeholder="Name, series, or slot 025" autocomplete="off"></label>
       <label>Series <select id="roster-series"><option value="all">All series</option></select></label>
       <label>Show <select id="roster-state"><option value="all">All roster slots</option><option value="ready">All published</option><option value="playable">Playable now</option><option value="unlockable">🔒 Unlockable fighters</option><option value="owned">✓ My unlocked fighters</option><option value="empty">Open slots</option></select></label>
-      <label>Sort by <select id="roster-sort"><option value="slot">Roster slot</option><option value="name">Fighter A–Z</option><option value="series">Series A–Z</option></select></label>
+      <label>Sort by <select id="roster-sort"><option value="name" selected>Fighter A–Z</option><option value="series">Series A–Z</option><option value="slot">Roster slot</option></select></label>
     </div>
     <div class="roster-shortcuts" role="group" aria-label="Quick roster filters">
       <button type="button" class="roster-chip" data-roster-filter="all" aria-pressed="true">All fighters</button>
@@ -156,6 +156,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=showdown-hud-20261109"></script>
+<script type="module" src="showdown-reboot.js?v=roster-az-20261109"></script>
 </body>
 </html>
