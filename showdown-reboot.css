@@ -685,3 +685,146 @@ a{color:var(--sky)}:focus-visible{outline:3px solid var(--gold);outline-offset:3
  .showdown-inline-stage{min-width:105px}
  .showdown-overlay-toolbar #quick-start-match{font-size:.68rem}
 }
+
+/* Larger Showdown screen and stable responsive roster */
+.showdown-shell{max-width:1840px;width:100%;padding:clamp(9px,1.25vw,22px)}
+.showdown-hero{padding:12px 0 10px;align-items:center}
+.showdown-hero h1{font-size:clamp(3rem,6.2vw,5.7rem)}
+.showdown-hero p{margin-top:9px;font-size:clamp(.78rem,1.15vw,.94rem)}
+.showdown-shell > .showdown-panel{padding:clamp(10px,1.3vw,20px);margin:10px 0 21px}
+.showdown-shell > .showdown-panel > .panel-header{margin-bottom:8px}
+.arena-frame{width:100%;min-width:0;isolation:isolate}
+.arena-frame:not(.is-selecting) > #arena{width:100%;height:auto;aspect-ratio:16/9;object-fit:contain}
+.arena-frame.is-selecting{height:clamp(590px,91svh,1010px);min-height:0}
+.arena-frame.is-selecting > #arena{height:100%;width:100%;object-fit:cover}
+.showdown-roster-layer{display:flex;flex-direction:column;overflow:hidden}
+.showdown-roster-layer .showdown-overlay-toolbar{flex:0 0 auto}
+.showdown-roster-layer .roster-showcase{
+  display:flex;flex-direction:column;flex:1 1 auto;
+  min-height:0;overflow:hidden;padding:11px 15px 13px;
+}
+.showdown-roster-layer .roster-showcase > .panel-header,
+.showdown-roster-layer .roster-showcase > .roster-controls{flex:0 0 auto}
+.showdown-roster-layer .select-layout{
+  display:grid;flex:1 1 auto;min-height:0;overflow:hidden;
+  grid-template-columns:minmax(0,1fr) minmax(275px,350px);
+  align-items:stretch;gap:14px;
+}
+.showdown-roster-layer .roster-wall{
+  display:flex;flex-direction:column;min-width:0;min-height:0;padding:10px;
+}
+.showdown-roster-layer .roster-wall-heading,
+.showdown-roster-layer .roster-pages,
+.showdown-roster-layer .roster-page-track{flex:0 0 auto}
+.showdown-roster-layer .roster-wall #roster-grid{
+  flex:1 1 auto;min-height:0;min-width:0;
+  overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  grid-auto-rows:clamp(91px,11svh,126px);
+  align-content:start;padding:4px;
+  scrollbar-color:#879be2 #151936;
+}
+.showdown-roster-layer .roster-wall .fighter-slot{height:100%;min-height:0}
+.showdown-roster-layer .roster-wall .slot-art{min-height:50px}
+.showdown-roster-layer .roster-wall .fighter-slot .slot-art img{max-height:75px}
+.showdown-roster-layer .roster-wall .slot-footer{min-height:30px}
+.showdown-roster-layer .preview-card{
+  display:flex;flex-direction:column;min-height:0;min-width:0;
+  max-height:100%;overflow-y:auto;overscroll-behavior:contain;padding:13px;
+}
+.showdown-roster-layer .preview-frame{height:clamp(150px,25svh,270px);flex-shrink:0}
+.showdown-roster-layer .preview-avatar{height:95%;width:min(100%,210px)}
+.showdown-roster-layer .preview-actions{
+  position:sticky;bottom:0;z-index:3;
+  padding-top:10px;margin-top:auto;
+  background:linear-gradient(0deg,#151934 84%,#15193400);
+}
+.showdown-roster-layer .roster-showcase #catalog-banner{margin:5px 0 7px}
+.showdown-overlay-toolbar .screen-expand-btn{flex:0 0 auto;min-width:93px}
+.arena-fullscreen{
+  position:absolute;z-index:6;top:12px;left:12px;
+  min-height:38px;padding:7px 12px;border-color:#ffdf96;
+  background:linear-gradient(140deg,#142852e8,#3c2565eb);
+  box-shadow:0 4px 17px #05061999;font-size:.82rem;
+}
+.showdown-theater-open{overflow:hidden}
+.arena-frame:fullscreen,.arena-frame.is-theater{
+  width:100vw;height:100dvh!important;min-height:0;max-width:none;
+  border:0;border-radius:0;background:#070b1a;box-shadow:none;
+}
+.arena-frame.is-theater{
+  position:fixed!important;inset:0;z-index:10000;
+}
+.arena-frame:fullscreen:not(.is-selecting)>#arena,
+.arena-frame.is-theater:not(.is-selecting)>#arena{
+  width:100%;height:100%;max-height:100%;aspect-ratio:auto;object-fit:contain;
+}
+.arena-frame:fullscreen.is-selecting,
+.arena-frame.is-theater.is-selecting{height:100dvh!important}
+@media(max-width:900px){
+ .arena-frame.is-selecting{height:clamp(540px,91svh,940px);min-height:0}
+ .showdown-roster-layer{display:block;overflow:auto}
+ .showdown-roster-layer .roster-showcase{
+   display:block;height:auto;min-height:0;overflow:visible;padding:9px;
+ }
+ .showdown-roster-layer .select-layout{
+   display:flex;flex-direction:column;overflow:visible;gap:12px;min-height:0;
+ }
+ .showdown-roster-layer .preview-card{
+   order:-1;display:grid;grid-template-columns:minmax(112px,31%) minmax(0,1fr);
+   gap:7px 12px;max-height:none;overflow:visible;padding:11px;text-align:left;
+ }
+ .showdown-roster-layer .preview-selection-strip{grid-column:1/-1}
+ .showdown-roster-layer .preview-frame{
+   grid-column:1;grid-row:2/span 2;
+   height:150px;min-width:0;width:100%;
+ }
+ .showdown-roster-layer .preview-avatar{height:96%;width:100%}
+ .showdown-roster-layer .preview-card > div:nth-child(3){grid-column:2;grid-row:2;min-width:0}
+ .showdown-roster-layer .preview-card > #preview-detail{
+   grid-column:2;grid-row:3;margin:0;
+ }
+ .showdown-roster-layer .preview-card > :nth-child(n+5){grid-column:1/-1}
+ .showdown-roster-layer .preview-card .preview-actions{
+   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+   margin-top:3px;position:static;padding-top:0;background:none;
+ }
+ .showdown-roster-layer .preview-card .preview-actions .arcade-btn{min-width:0;white-space:normal}
+ .showdown-roster-layer .roster-wall{display:block;min-height:0;padding:7px}
+ .showdown-roster-layer .roster-wall #roster-grid{
+   display:grid;overflow:visible;grid-auto-rows:minmax(92px,auto);
+   grid-template-columns:repeat(5,minmax(0,1fr));padding:3px;
+ }
+ .showdown-roster-layer .roster-wall .fighter-slot{min-height:92px}
+ .showdown-roster-layer .roster-wall .fighter-slot .slot-art img{max-height:67px}
+}
+@media(max-width:650px){
+ .showdown-shell{padding:7px}
+ .showdown-hero{padding:9px 0 7px;gap:8px}
+ .showdown-hero h1{font-size:clamp(2.7rem,12vw,4.1rem)}
+ .showdown-hero p{font-size:.78rem;line-height:1.4;margin:6px 0 0}
+ .launch-count{padding:8px 12px;border-radius:11px}
+ .launch-count b{font-size:1.5rem}
+ .launch-count small{font-size:.58rem}
+ .showdown-shell > .showdown-panel{padding:7px;border-radius:14px}
+ .arena-frame{border-width:2px;border-radius:11px}
+ .arena-frame.is-selecting{height:clamp(520px,90svh,880px)}
+ .showdown-roster-layer .roster-wall #roster-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+ .showdown-roster-layer .roster-wall .fighter-slot{min-height:94px}
+ .showdown-roster-layer .preview-card{grid-template-columns:100px minmax(0,1fr);gap:5px 9px;padding:9px}
+ .showdown-roster-layer .preview-frame{height:132px}
+ .showdown-roster-layer .preview-card h3{font-size:1.22rem;line-height:1.05}
+ .showdown-roster-layer .preview-card p{font-size:.69rem;line-height:1.3;margin:3px 0}
+ .showdown-roster-layer .preview-card .tag{font-size:.6rem;padding:3px 6px}
+ .showdown-roster-layer .preview-actions .arcade-btn{min-height:41px;padding:6px;font-size:.72rem}
+ .arena-fullscreen{top:7px;left:7px;min-height:34px;padding:5px 8px;font-size:.71rem}
+}
+@media(max-width:370px){
+ .showdown-roster-layer .roster-wall #roster-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .showdown-roster-layer .preview-card{grid-template-columns:90px minmax(0,1fr)}
+ .showdown-overlay-toolbar .screen-expand-btn{min-width:74px}
+}
+@media(max-height:480px) and (orientation:landscape){
+ .arena-frame.is-selecting{height:95svh;min-height:0}
+ .arena-frame:fullscreen.is-selecting,.arena-frame.is-theater.is-selecting{height:100dvh}
+}
