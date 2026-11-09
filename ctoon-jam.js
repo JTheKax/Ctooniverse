@@ -63,7 +63,7 @@
     const controller=new AbortController();
     const timeout=setTimeout(()=>controller.abort(),5000);
     try{
-      const response=await fetch("ctoon-jam-charts/"+match[1]+".json?v=1",{signal:controller.signal,cache:"force-cache"});
+      const response=await fetch("ctoon-jam-charts/"+match[1]+".json?v=2",{signal:controller.signal,cache:"force-cache"});
       if(!response.ok)return null;
       const data=await response.json();
       if(data.format!=="ctoon-jam-chart"||data.version!==1||data.sourceStoragePath!==song.path||
