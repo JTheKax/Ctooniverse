@@ -59,10 +59,31 @@
   }
   function populateSubseries() {
     const selected=subseries.value;
-    const names=[...new Set([...availableSubseries,...all.map(item=>item.series)].filter(Boolean))].sort(collator.compare);
+    const groups=new Map([
+      ["Cartoon & Anime",new Set()],
+      ["Video Games",new Set()]
+    ]);
+    const assigned=new Set();
+    for(const item of availableSubseries){
+      if(!item || !item.name)continue;
+      const category=groups.has(item.category)?item.category:"Other";
+      if(!groups.has(category))groups.set(category,new Set());
+      groups.get(category).add(item.name);
+      assigned.add(item.name);
+    }
+    // Retain series referenced by CToons even if the parent entry was removed.
+    const other=groups.get("Other")||new Set();
+    for(const item of all)if(item.series && !assigned.has(item.series))other.add(item.series);
+    if(other.size)groups.set("Other",other);
     subseries.replaceChildren(new Option("All Subseries",""));
-    for(const name of names)subseries.add(new Option(name,name));
-    subseries.value=names.includes(selected)?selected:"";
+    for(const [label,names] of groups){
+      if(!names.size)continue;
+      const group=document.createElement("optgroup");
+      group.label=label;
+      for(const name of [...names].sort(collator.compare))group.append(new Option(name,name));
+      subseries.append(group);
+    }
+    subseries.value=[...subseries.options].some(option=>option.value===selected)?selected:"";
   }
   function render() {
     const q=search.value.trim().toLocaleLowerCase();
@@ -92,7 +113,7 @@
       section.append(header,grid);results.append(section);
     }
     if(!filtered.length){
-      if(chosen && !q && availableSubseries.includes(chosen)){
+      if(chosen && !q && availableSubseries.some(item=>item.name===chosen)){
         message(chosen+" — coming soon","This subseries is ready. Its CToon display windows will fill automatically as the first characters are added.");
       }else{
         message(q||chosen?"No matches":"The collection is empty",q||chosen?"Try another name or choose All Subseries.":"New CToons will appear here in alphabetical order when they are added. Nothing from the deleted collection has been restored.");
@@ -105,7 +126,7 @@
   async function load() {
     const api="https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/";
     const endpoint=api+"ctoon_catalog?select=id,name,series,parent_series,rarity,image_path&order=name.asc";
-    const seriesEndpoint=api+"ctoon_series?select=name&order=name.asc";
+    const seriesEndpoint=api+"ctoon_series?select=name,category&order=name.asc";
     const key="sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS";
     try{
       const headers={apikey:key,Authorization:"Bearer "+key};
@@ -119,8 +140,8 @@
       if(seriesResponse && seriesResponse.ok){
         const seriesRows=await seriesResponse.json();
         if(Array.isArray(seriesRows)){
-          availableSubseries=seriesRows.filter(item=>typeof item.name==="string")
-            .map(item=>item.name.trim()).filter(Boolean);
+          availableSubseries=seriesRows.filter(item=>typeof item.name==="string" && item.name.trim())
+            .map(item=>({name:item.name.trim(),category:item.category}));
         }
       }
       all=rows.filter(row=>row && typeof row.name==="string" && row.name.trim())
