@@ -50,6 +50,7 @@ const johnnyArt={mode:'approved',testSheet:'/images/showdown/johnny-bravo-mugen-
 const johnnyArtMenu=$('johnny-art-mode');
 const johnnyArtControl=$('johnny-art-control'),johnnyArtNotice=$('johnny-art-notice');
 const combatSpriteCache=new Map();
+const SPRITE_TIMEOUT_MS=4500;
 // Reuse transparent-foot measurements between roster previews and battle sprites.
 const footAnchorCache=new Map();
 // Sprite atlas rows: idle, walk, run, punch, kick, guard, jump, crouch, special, hurt, KO.
@@ -133,6 +134,12 @@ function cachedSprite(source,layout){
   };
   entry.image.onerror=()=>{entry.failed=true;console.warn('Could not load sprite atlas:',source)};
   entry.image.decoding='async';combatSpriteCache.set(source,entry);entry.image.src=source;
+   setTimeout(()=>{
+    if(entry.loaded||entry.failed)return;
+    entry.failed=true;
+    entry.image.onload=null;entry.image.onerror=null;entry.image.src='';
+    console.warn('Sprite atlas request timed out; trying backup:',source);
+   },SPRITE_TIMEOUT_MS);
  }
  return entry;
 }
@@ -518,9 +525,11 @@ rosterGrid.addEventListener('keydown',event=>{
 async function loadRoster(){
  banner.textContent='Loading published fighters…';
  try{
+  const controller=typeof AbortController==='function'?new AbortController():null;
+  const wait=controller?setTimeout(()=>controller.abort(),7000):null;
   const response=await fetch(API_URL+'/rest/v1/showdown_reboot_fighters?select=slot,fighter_id,name,series,portrait,accent,enabled,unlockable,unlock_hint,unlock_method,unlock_cost,preview_sheet,preview_columns,preview_rows&enabled=eq.true&order=slot.asc',{
-   headers:{'apikey':PUBLIC_KEY,'Accept':'application/json'},cache:'no-store'
-  });
+   headers:{'apikey':PUBLIC_KEY,'Accept':'application/json'},cache:'no-store',signal:controller?.signal
+  }).finally(()=>{if(wait!==null)clearTimeout(wait)});
   if(!response.ok)throw new Error('Catalog HTTP '+response.status);
   const fighters=await response.json();
   if(!Array.isArray(fighters))throw new Error('Unexpected catalog format');
@@ -672,6 +681,13 @@ function updateHud(){
  $('player-health').style.width=(p?p.hp:100)+'%';
  $('cpu-health').style.width=(c?c.hp:100)+'%';
  $('fight-timer').textContent=String(Math.ceil(game.timer));
+ for(const [which,fighter] of [['player',p],['cpu',c]]){
+  const value=Math.round(clamp(fighter?.meter??0,0,100));
+  const bar=$(which+'-super'),fill=$(which+'-super-fill'),label=$(which+'-super-label');
+  if(fill)fill.style.width=value+'%';
+  if(bar){bar.setAttribute('aria-valuenow',String(value));bar.classList.toggle('is-ready',value>=40);}
+  if(label)label.textContent=value>=40?'★ READY':value+' / 40';
+ }
  $('round-score').textContent='ROUND '+game.round+' · '+game.wins[0]+' — '+game.wins[1];
  $('match-result').textContent='FIRST TO TWO WINS';
 }
@@ -850,7 +866,10 @@ function step(dt){
  if(c.stun===0&&c.cooldown===0){
   if(dist>103)c.x=clamp(c.x+Math.sign(p.x-c.x)*145*dt,LEFT,RIGHT);
   else if(dist<64)c.x=clamp(c.x-Math.sign(p.x-c.x)*72*dt,LEFT,RIGHT);
-  if(dist<132&&Math.random()<dt*.88)attack(c,Math.random()>.7?'kick':'punch');
+  if(dist<(c.meter>=40?187:132)&&Math.random()<dt*.88){
+    const type=c.meter>=40&&dist<185&&Math.random()<.18?'special':Math.random()>.7?'kick':'punch';
+    attack(c,type);
+   }
  }
  if(Math.abs(p.x-c.x)<62){const mid=(p.x+c.x)/2;p.x=clamp(mid-p.face*31,LEFT,RIGHT);c.x=clamp(mid+p.face*31,LEFT,RIGHT)}
  p.face=p.x<=c.x?1:-1;c.face=-p.face;

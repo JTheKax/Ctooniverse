@@ -374,3 +374,13 @@ body{
 #showdown-roster-layer{height:auto;max-height:none}
 #showdown-roster-layer .select-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,320px);gap:18px;align-items:start}
 @media(max-width:970px){#showdown-roster-layer .select-layout{grid-template-columns:1fr}}
+
+/* New special move meters – original roster and arena placement stay intact. */
+.super-label{display:flex;justify-content:space-between;gap:5px;margin-top:7px;font-size:.61rem;font-weight:900;color:#b4dbff}
+.super-label b{color:#ffe49a;font-variant-numeric:tabular-nums;white-space:nowrap}
+.super-bar{height:12px;margin-top:3px;border:1px solid #708ed1;border-radius:4px;overflow:hidden;background:#0a1331}
+.super-bar span{display:block;width:0;height:100%;background:linear-gradient(90deg,#5ecfff,#8b7cf2);transition:width .12s linear}
+.super-bar.is-ready span{background:linear-gradient(90deg,#ffa453,#ffe48b);box-shadow:0 0 13px #ffe4a399}
+.touch-bank button{touch-action:none;-webkit-user-select:none;user-select:none}
+@media(max-width:650px){.super-label{font-size:.5rem}.super-bar{height:10px}.touch-bank button{min-height:60px}}
+@media(prefers-reduced-motion:reduce){.super-bar span{transition:none}}

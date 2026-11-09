@@ -8,7 +8,7 @@
   <title>CToon Showdown | CTooniverse</title>
   <link rel="stylesheet" href="showdown-reboot.css?v=ingame-roster-20261109-v3">
   <link rel="stylesheet" href="mobile-responsive.css?v=mobile-layout-20261109-v2">
-  <link rel="stylesheet" href="showdown-polish.css?v=classic-layout-restored-20261109">
+  <link rel="stylesheet" href="showdown-polish.css?v=showdown-hud-20261109">
 </head>
 <body>
 <main class="showdown-shell">
@@ -121,9 +121,9 @@
     </div>
     <p class="battle-countdown-hint">Every round starts with <b>3 · 2 · 1 · FIGHT!</b> before controls and the match timer activate.</p>
     <div class="arena-hud">
-      <div class="hud-side"><div class="hud-name" id="player-name">PLAYER</div><div class="health-rail" aria-label="Player health"><div class="health-fill" id="player-health"></div></div></div>
+      <div class="hud-side"><div class="hud-name" id="player-name">PLAYER</div><div class="health-rail" aria-label="Player health"><div class="health-fill" id="player-health"></div></div><div class="super-label"><span>SUPER</span><b id="player-super-label">0 / 40</b></div><div class="super-bar" id="player-super" role="progressbar" aria-label="Player special meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="player-super-fill"></span></div></div>
       <div class="hud-time" id="fight-timer" aria-label="Time remaining">60</div>
-      <div class="hud-side cpu"><div class="hud-name" id="cpu-name">CPU</div><div class="health-rail cpu" aria-label="CPU health"><div class="health-fill" id="cpu-health"></div></div></div>
+      <div class="hud-side cpu"><div class="hud-name" id="cpu-name">CPU</div><div class="health-rail cpu" aria-label="CPU health"><div class="health-fill" id="cpu-health"></div></div><div class="super-label"><span>SUPER</span><b id="cpu-super-label">0 / 40</b></div><div class="super-bar" id="cpu-super" role="progressbar" aria-label="CPU special meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="cpu-super-fill"></span></div></div>
     </div>
     <div class="arena-frame">
 
@@ -137,7 +137,7 @@
       <div><button type="button" class="arcade-btn alt" id="return-roster" hidden>◀ Character Select</button><button type="button" class="arcade-btn" id="restart-match" disabled>Restart Match</button><button type="button" class="arcade-btn alt" id="pause-match" disabled>Pause</button></div>
       <span class="score" id="match-result">BEST OF THREE · VS CPU</span>
     </div>
-    <p class="controls-note"><strong>Johnny Bravo:</strong> Punch with his hand using J (or P on mobile), and kick with his foot using K. Land attacks inside range to see hit sparks. <strong>Keyboard:</strong> A/D or ←/→ move · W or ↑ jump · S or ↓ crouch · J punch · K kick · L guard · U special. <strong>Mobile:</strong> use the buttons below.</p>
+    <p class="controls-note"><strong>Johnny Bravo:</strong> Punch with his hand using J (or P on mobile), and kick with his foot using K. Land attacks inside range to see hit sparks. <strong>Keyboard:</strong> A/D or ←/→ move · W or ↑ jump · S or ↓ crouch · J punch · K kick · L guard · U special. <strong>Special:</strong> U or ★ costs 40 meter; watch the bar under your health. <strong>Mobile:</strong> use the buttons below.</p>
     <div class="touch-controls" aria-label="Mobile game controls">
       <div class="touch-bank" aria-label="Movement controls">
         <button type="button" data-control="left" aria-label="Move left">◀</button>
@@ -156,6 +156,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=showdown-input-performance-20261109"></script>
+<script type="module" src="showdown-reboot.js?v=showdown-hud-20261109"></script>
 </body>
 </html>
