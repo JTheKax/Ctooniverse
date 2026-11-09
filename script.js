@@ -260,9 +260,22 @@ if (year) year.textContent = String(new Date().getFullYear());
 
 /* Remove obsolete collection links from legacy pages while preserving other games. */
 (() => {
- const obsolete=new Set(['ctoons.html','sets-overview.html','my-collection.html','my-scene.html','czone.html','trades.html','auction.html','owner-ctoon-maker.html','owner-ctoon-packs.html']);
+ const obsolete=new Set(['sets-overview.html','my-collection.html','my-scene.html','czone.html','trades.html','auction.html','owner-ctoon-maker.html','owner-ctoon-packs.html']);
  for(const a of document.querySelectorAll('a[href]')) {
   const filename=a.getAttribute('href').split(/[?#]/)[0].split('/').pop();
   if(obsolete.has(filename)) a.remove();
  }
+})();
+
+/* Restore the CToons tab on all shared site headers. Do not recreate old sets. */
+(() => {
+ const add=()=>{
+  const nav=document.querySelector('.site-header nav');
+  if(!nav||nav.querySelector('a[href="ctoons.html"]'))return;
+  const link=document.createElement('a');link.href='ctoons.html';link.className='nav-link';
+  link.innerHTML='<span class="nav-icon" aria-hidden="true">▣</span><span>CToons</span>';
+  const shop=[...nav.querySelectorAll('a.nav-link')].find(a=>a.getAttribute('href')==='shop.html');
+  if(shop)shop.before(link);else nav.append(link);
+ };
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add,{once:true});else add();
 })();
