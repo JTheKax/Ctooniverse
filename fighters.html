@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10122d">
   <meta name="description" content="CToon Showdown: a fresh 2D fighter with a 200-slot roster that grows as new fighters are published.">
   <title>CToon Showdown | CTooniverse</title>
-  <link rel="stylesheet" href="showdown-reboot.css?v=ingame-roster-20261109-v2">
+  <link rel="stylesheet" href="showdown-reboot.css?v=ingame-roster-20261109-v3">
 </head>
 <body>
 <main class="showdown-shell">
@@ -46,6 +46,7 @@
             </select>
           </label>
           <button type="button" class="arcade-btn main" id="quick-start-match" disabled>Choose a fighter</button>
+          <button type="button" class="arcade-btn alt screen-expand-btn" id="roster-fullscreen" aria-pressed="false" aria-label="Expand game screen">⛶ Expand</button>
         </div>
 <section class="showdown-panel roster-showcase" aria-labelledby="roster-title">
     <div class="panel-header">
@@ -111,6 +112,7 @@
       </div>
       <canvas id="arena" width="960" height="540" aria-label="2D fighting arena showing the player and CPU">Canvas is required to play this game.</canvas>
       <button type="button" class="arena-character-select arcade-btn alt" id="arena-character-select" hidden>◀ Select Fighter</button>
+      <button type="button" class="arena-fullscreen arcade-btn alt" id="battle-fullscreen" aria-pressed="false" hidden>⛶ Expand</button>
       <div class="arena-announcement" id="fight-announcement" aria-live="polite">READY TO TRAIN</div>
     </div>
     <section class="stage-selection" aria-label="Battle stages"><div class="stage-header"><strong>SELECT BATTLE BACKGROUND</strong><span id="stage-label">Neon Skyline</span></div><div class="stage-grid"><button class="stage-choice is-selected" type="button" data-stage="skyline" aria-pressed="true"><span class="stage-thumb stage-skyline"></span><b>Neon Skyline</b></button><button class="stage-choice" type="button" data-stage="dojo" aria-pressed="false"><span class="stage-thumb stage-dojo"></span><b>Moonlit Dojo</b></button><button class="stage-choice" type="button" data-stage="arcade" aria-pressed="false"><span class="stage-thumb stage-arcade"></span><b>Retro Arcade</b></button><button class="stage-choice" type="button" data-stage="desert" aria-pressed="false"><span class="stage-thumb stage-desert"></span><b>Desert Ruins</b></button><button class="stage-choice" type="button" data-stage="space" aria-pressed="false"><span class="stage-thumb stage-space"></span><b>Cosmic Arena</b></button><button class="stage-choice" type="button" data-stage="random" aria-pressed="false"><span class="stage-thumb stage-random">?</span><b>Random Stage</b></button></div></section><div class="battle-music-panel" aria-label="Original CToon Showdown battle music">
@@ -150,6 +152,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=ingame-roster-20261109-v2"></script>
+<script type="module" src="showdown-reboot.js?v=ingame-roster-20261109-v3"></script>
 </body>
 </html>
