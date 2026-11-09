@@ -246,7 +246,14 @@
     overlay.querySelector("span").textContent=message;
   }
   function hideOverlay() { overlay.hidden=true; }
+  function updateStageTitle(){
+    const name=$("jam-stage-song"),detail=$("jam-stage-mode");
+    if(name)name.textContent=(songs[songSelect.value]||track).title;
+    const viewState=state==="playing"?"PLAYING":state==="finished"?"FINISHED":state==="paused"?"PAUSED":state==="loading"?"LOADING":"READY";
+    if(detail)detail.textContent=difficultySelect.value.toUpperCase()+" · "+viewState;
+  }
   function refreshBest() {
+    updateStageTitle();
     let stored=null;
     try { stored=JSON.parse(localStorage.getItem(keyForScore()) || "null"); } catch {}
     best.textContent=stored && typeof stored.score === "number"
@@ -357,6 +364,7 @@
     status.textContent="Choose a song and difficulty to begin.";
     songPicker.hidden=false;
     renderSongPicker();
+    updateStageTitle();
     refreshBest();draw();updateHud();
     if(focusSearch)pickerSearch?.focus();
   }
@@ -496,6 +504,7 @@
   function finishSong(failed=false) {
     if(!["playing","paused","buffering"].includes(state))return;
     state="finished";
+    updateStageTitle();
     cancelAnimationFrame(raf);
     if(radioAudio){radioAudio.pause();}
     hideSongLoading();
@@ -664,6 +673,7 @@
     if(chartStatus)chartStatus.textContent=isRadio?"Note chart ready · starting Golden audio…":"Original arcade notes ready.";
     const chartPromise=isRadio?getTrackChart(track):Promise.resolve(null);
     state="loading";
+    updateStageTitle();
     showSongLoading(isRadio?"Connecting to "+track.title+"…":"Preparing "+track.title+"…");
     // Never lock the restart button while waiting for network audio.
     playBtn.disabled=false;playBtn.textContent="↻ Retry Start";
@@ -750,7 +760,8 @@
         if(!loadedChart && appliedOffset)for(const note of notes)note.at+=appliedOffset;
         const now=media.currentTime||0;
         for(const note of notes)if(note.at<now-.22)note.judged=true;
-        state="playing";hideSongLoading();playBtn.disabled=false;playBtn.textContent="↻ Restart Song";
+        state="playing";hideSongLoading();
+        updateStageTitle();playBtn.disabled=false;playBtn.textContent="↻ Restart Song";
         pauseBtn.disabled=false;pauseBtn.textContent="Pause";
         songSelect.disabled=true;difficultySelect.disabled=true;
         if(playStyleSelect)playStyleSelect.disabled=true;
@@ -899,7 +910,8 @@
       draw();updateHud();return;
     }
     if(current!==loadSerial)return;
-    state="playing";showSongLoading("Song ready!",100);hideSongLoading(180,current);songSelect.disabled=true;difficultySelect.disabled=true;
+    state="playing";showSongLoading("Song ready!",100);
+    updateStageTitle();hideSongLoading(180,current);songSelect.disabled=true;difficultySelect.disabled=true;
     if(playStyleSelect)playStyleSelect.disabled=true;
     pauseBtn.disabled=false;pauseBtn.textContent="Pause";playBtn.textContent="↻ Restart Song";
     hideOverlay();
@@ -1016,6 +1028,13 @@
   }
   document.addEventListener("keydown",event=>{
     const tag=event.target&&event.target.tagName;
+    if(event.code==="Escape"&&document.body.classList.contains("jam-theater-view")){
+      event.preventDefault();
+      document.body.classList.remove("jam-theater-view");
+      refreshScreenSize();
+      return;
+    }
+
     if(songPicker&&!songPicker.hidden)return;
     if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA"||tag==="BUTTON")return;
     if(event.code==="Escape"){event.preventDefault();if(!event.repeat)togglePause();return;}
@@ -1034,6 +1053,41 @@
   document.addEventListener("visibilitychange",()=>{
     if(document.hidden && state==="playing")togglePause();
   });
+
+  // Fullscreen expands the whole game screen, not just the note highway.
+  // A theater-mode fallback covers browsers without a working Fullscreen API.
+  const expandBtn=$("jam-expand");
+  function refreshScreenSize(){
+    const active=document.fullscreenElement===gameStage||document.body.classList.contains("jam-theater-view");
+    if(expandBtn){
+      expandBtn.textContent=active?"⤢ Exit Fullscreen":"⛶ Fullscreen";
+      expandBtn.setAttribute("aria-pressed",String(active));
+      expandBtn.setAttribute("aria-label",active?"Exit CToon Jam fullscreen":"Expand CToon Jam to fullscreen");
+    }
+    requestAnimationFrame(draw);
+  }
+  async function toggleScreenSize(){
+    if(document.fullscreenElement===gameStage){
+      try{await document.exitFullscreen();}catch{}
+      refreshScreenSize();return;
+    }
+    if(document.body.classList.contains("jam-theater-view")){
+      document.body.classList.remove("jam-theater-view");
+      refreshScreenSize();return;
+    }
+    if(typeof gameStage?.requestFullscreen==="function"){
+      try{
+        await gameStage.requestFullscreen();
+        refreshScreenSize();return;
+      }catch(error){
+        console.info("CToon Jam native fullscreen unavailable; using theater mode.",error);
+      }
+    }
+    document.body.classList.add("jam-theater-view");
+    refreshScreenSize();
+  }
+  if(expandBtn)expandBtn.addEventListener("click",toggleScreenSize);
+  document.addEventListener("fullscreenchange",refreshScreenSize);
   window.addEventListener("resize",draw);
 
   // Fetch the small chart during browser idle time, never blocking the game or MP3.
