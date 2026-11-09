@@ -7,9 +7,9 @@
   <meta name="description" content="CToon Jam: five-lane guitar rhythm game featuring original arcade tracks.">
   <title>CToon Jam | CTooniverse</title>
   <link rel="preconnect" href="https://hsxdyxdazsdmpucyhqly.supabase.co" crossorigin>
-  <link rel="stylesheet" href="ctoon-jam.css?v=jam-prebuffer-20261109">
+  <link rel="stylesheet" href="ctoon-jam.css?v=jam-guitar-stage-20261109">
   <link rel="stylesheet" href="site-status.css?v=nav-colors-20261108">
-  <script src="ctoon-jam.js?v=jam-prebuffer-20261109" defer></script>
+  <script src="ctoon-jam.js?v=jam-guitar-stage-20261109" defer></script>
   <script src="site-status.js?v=nav-colors-20261108" defer></script>
 </head>
 <body>
@@ -23,12 +23,13 @@
   <main id="main">
     <section class="jam-head">
       <div><p class="jam-eyebrow">FIVE LANES. ONE STAGE. ALL RHYTHM.</p><h1>CTOON <span>JAM!</span></h1>
-      <p>Hit notes as they reach the fret line, build your combo, and ignite Hype Mode. Play the original arcade tracks or Golden by HUNTR/X, with dedicated Easy, Normal and Hard note charts.</p></div>
+      <p>Play a five-fret guitar highway with chords, sustained notes, strumming and Hype Mode. Choose Guitar Style or Tap Style, with Easy, Normal and Hard charts.</p></div>
       <div class="jam-guitar" aria-hidden="true"><span>★</span><strong>♪</strong><i>⚡</i></div>
     </section>
     <section class="jam-settings" aria-label="Song setup">
       <label for="jam-song">Song<select id="jam-song"><optgroup label="Original Arcade Tracks"><option value="neon">Neon Rush · 118 BPM</option><option value="pixel">Pixel Thunder · 146 BPM</option><option value="starlight">Starlight Solo · 104 BPM</option></optgroup><optgroup label="Featured Songs"><option value="golden">Golden · HUNTR/X</option></optgroup></select></label>
       <label for="jam-difficulty">Difficulty<select id="jam-difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label>
+      <label for="jam-play-style">Play style<select id="jam-play-style"><option value="strum">Guitar · Fret + Strum</option><option value="tap">Tap · Mobile / Classic</option></select></label>
       <label class="jam-sync-label" for="jam-sync-offset">Note timing adjustment <output id="jam-sync-value" for="jam-sync-offset">+0.00s</output><input id="jam-sync-offset" type="range" min="-2" max="2" step="0.05" value="0" disabled aria-label="Adjust Golden note timing by up to two seconds"></label>
       <label class="jam-mute"><input id="jam-mute" type="checkbox"> Mute music &amp; effects</label>
       <button id="jam-play" class="jam-button jam-primary" type="button">▶ Start Song</button>
@@ -56,22 +57,28 @@
         <div><span>HYPE CHARGE</span><div class="jam-meter"><div id="jam-hype-fill" class="jam-hype-fill"></div></div></div>
       </div>
       <div class="jam-board-wrap">
-        <canvas id="jam-board" width="960" height="640" aria-label="Five scrolling note lanes; press A S D J K or tap the matching color when notes cross the line"></canvas>
+        <canvas id="jam-board" width="960" height="640" aria-label="Five-lane perspective note highway. Hold colored frets A S D J K and strum with Arrow Up, Arrow Down or Enter."></canvas>
         <div id="jam-overlay" class="jam-overlay" role="status" aria-live="polite"><strong>READY TO ROCK?</strong><span>Select a song and press Start Song.</span></div>
         <div id="jam-judgement" class="jam-judgement" aria-live="off"></div>
+        <div class="jam-highway-caption" aria-hidden="true"><span>CTOON JAM</span><span>LIVE STAGE</span></div>
       </div>
       <div class="jam-controls" aria-label="Touch fret buttons">
         <button type="button" data-lane="0" aria-label="Green lane, keyboard A"><span>A</span>GREEN</button>
         <button type="button" data-lane="1" aria-label="Red lane, keyboard S"><span>S</span>RED</button>
         <button type="button" data-lane="2" aria-label="Yellow lane, keyboard D"><span>D</span>YELLOW</button>
         <button type="button" data-lane="3" aria-label="Blue lane, keyboard J"><span>J</span>BLUE</button>
-        <button type="button" data-lane="4" aria-label="Purple lane, keyboard K"><span>K</span>PURPLE</button>
+        <button type="button" data-lane="4" aria-label="Orange lane, keyboard K"><span>K</span>ORANGE</button>
+      </div>
+      <div class="jam-strum-controls" aria-label="Guitar strum buttons">
+        <button type="button" class="jam-button" data-strum="up" aria-label="Strum up">▲ STRUM UP</button>
+        <span>Hold the colored frets, then strum when the notes cross the line.</span>
+        <button type="button" class="jam-button" data-strum="down" aria-label="Strum down">▼ STRUM DOWN</button>
       </div>
       <div class="jam-footer-controls">
         <button id="jam-hype" class="jam-button jam-hype-btn" type="button" disabled>★ Activate Hype (Space)</button>
         <div class="jam-progress-track" role="progressbar" aria-label="Song progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="jam-progress"><div id="jam-progress-fill"></div></div>
       </div>
-      <p class="jam-help">Keyboard: <b>A · S · D · J · K</b> to hit the five colored lanes, <b>Space</b> for Hype Mode. On mobile, tap the five buttons. Golden's note chart is a draft; use Note timing adjustment if notes are early or late.</p>
+      <p class="jam-help"><b>Guitar Style:</b> Hold <b>A · S · D · J · K</b> and strum <b>↑ / ↓ / Enter</b>. Keep frets held for sustains; hit multiple frets for chords. <b>Space:</b> Hype Mode. <b>Tap Style:</b> Press colored frets directly (mobile-friendly). Golden uses a timing-draft chart, with adjustable timing.</p>
       <p id="jam-message" class="jam-message" role="status" aria-live="polite">Choose your track and difficulty to begin.</p>
     </section>
     <section class="jam-results" aria-label="Song record">
