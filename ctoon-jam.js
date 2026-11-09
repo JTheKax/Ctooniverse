@@ -65,7 +65,7 @@
     const controller=new AbortController();
     const timeout=setTimeout(()=>controller.abort(),5000);
     try{
-      const response=await fetch("ctoon-jam-charts/"+match[1]+".json?v=2",{signal:controller.signal,cache:"force-cache"});
+      const response=await fetch("ctoon-jam-charts/"+match[1]+".json?v=3",{signal:controller.signal,cache:"default"});
       if(!response.ok)return null;
       const data=await response.json();
       if(data.format!=="ctoon-jam-chart"||data.version!==1||data.sourceStoragePath!==song.path||
@@ -389,7 +389,7 @@
       const media=radioControl;
       if(!media){state="ready";cancelAnimationFrame(raf);status.textContent="Golden player is unavailable.";showOverlay("PLAYER UNAVAILABLE","Refresh the game page and try again.");return;}
       radioAudio=media;
-      media.preload="metadata";
+      media.preload="auto";
       media.volume=.75;
       media.muted=muteInput.checked;
       media.src=radioBase+encodeURI(track.path);
@@ -397,7 +397,28 @@
       audioStatus.textContent="Connecting to Golden. You can use Play in the player.";
       let started=false;
       let loadingTimeout=null;
+      let loadedChart=null;
       const valid=()=>current===loadSerial && radioAudio===media;
+      // Display real notes while the MP3 buffers instead of an empty highway.
+      chartPromise.then(chart=>{
+        if(!valid() || state==="finished")return;
+        loadedChart=chart;
+        if(chart){
+          track.bpm=chart.bpm;
+          const duration=Number.isFinite(media.duration)&&media.duration>0?media.duration:undefined;
+          const prepared=notesFromChart(chart,duration);
+          const t=media.currentTime||0;
+          for(const note of prepared)if(note.at<t-.22)note.judged=true;
+          notes=prepared;
+          if(chartStatus)chartStatus.textContent="Loaded "+activeDifficulty+" chart · "+track.bpm+" BPM · "+notes.length+" notes · timing draft.";
+        }else if(chartStatus){
+          chartStatus.textContent="Chart unavailable — using practice notes.";
+        }
+        draw();updateHud();
+      }).catch(error=>{
+        if(valid()&&chartStatus)chartStatus.textContent="Chart unavailable — using practice notes.";
+        console.warn("CToon Jam chart error:",error);
+      });
       const enterPlaying=()=>{
         if(!valid())return;
         if(state==="playing")return;
@@ -415,27 +436,11 @@
         const duration=Number.isFinite(media.duration)&&media.duration>0?media.duration:180;
         totalTime=duration;
         track.bars=Math.max(1,Math.min(240,Math.floor((duration-4*beatSeconds())/(4*beatSeconds()))));
-        notes=makeNotes();
-        if(appliedOffset)for(const note of notes)note.at+=appliedOffset;
+        // Preserve a chart that loaded before audio playback was allowed.
+        notes=loadedChart?notesFromChart(loadedChart,duration):makeNotes();
+        if(!loadedChart && appliedOffset)for(const note of notes)note.at+=appliedOffset;
         const now=media.currentTime||0;
         for(const note of notes)if(note.at<now-.22)note.judged=true;
-        // A slow chart must not block the already-streaming audio.
-        chartPromise.then(chart=>{
-          if(!valid()||!["playing","paused","buffering"].includes(state))return;
-          if(chart){
-            track.bpm=chart.bpm;
-            const actualDuration=Number.isFinite(media.duration)&&media.duration>0?media.duration:duration;
-            const loadedNotes=notesFromChart(chart,actualDuration);
-            const at=media.currentTime||0;
-            for(const note of loadedNotes)if(note.at<at-.22)note.judged=true;
-            notes=loadedNotes;
-            if(chartStatus)chartStatus.textContent="Loaded "+activeDifficulty+" chart · "+track.bpm+" BPM · "+notes.length+" notes · timing draft.";
-          }else if(chartStatus)chartStatus.textContent="Chart unavailable — using practice notes.";
-          draw();
-        }).catch(error=>{
-          if(valid()&&chartStatus)chartStatus.textContent="Chart unavailable — using practice notes.";
-          console.warn("CToon Jam chart error:",error);
-        });
         state="playing";playBtn.disabled=false;playBtn.textContent="↻ Restart Song";
         pauseBtn.disabled=false;pauseBtn.textContent="Pause";
         songSelect.disabled=true;difficultySelect.disabled=true;
@@ -511,7 +516,7 @@
           status.textContent="Waiting for "+track.title+" to stream. The song has not begun yet.";
           playBtn.textContent="↻ Retry Start";
         }
-      },6000);
+      },12000);
       // This is called directly inside the song selection gesture for mobile support.
       try{
         const promise=media.play();
@@ -546,7 +551,17 @@
       if(!AC)throw new Error("This browser does not support Web Audio.");
       audio=new AC();
       master=audio.createGain();master.gain.value=muteInput.checked?0:.46;master.connect(audio.destination);
-      makeNoise();await audio.resume();
+      makeNoise();
+      // Some mobile browsers leave resume() pending until a fresh user tap.
+      let resumeTimeout;
+      try{
+        await Promise.race([
+          audio.resume(),
+          new Promise((_,reject)=>{
+            resumeTimeout=setTimeout(()=>reject(new Error("Audio did not start. Tap Retry Start to try again.")),7000);
+          })
+        ]);
+      }finally{clearTimeout(resumeTimeout);}
       if(current!==loadSerial)return;
       startAt=audio.currentTime+1.3;
     }catch(error){
