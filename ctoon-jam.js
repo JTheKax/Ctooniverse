@@ -11,6 +11,10 @@
   const gameStage = document.querySelector(".jam-stage");
   const radioPanel = $("jam-radio-player-panel"), radioControl = $("jam-radio-audio"),
         audioStatus = $("jam-audio-status"), retryAudio = $("jam-retry-audio");
+  const songLoad = $("jam-song-load"), loadBar = $("jam-song-load-bar"),
+        loadFill = $("jam-song-load-fill"), loadValue = $("jam-song-load-value"),
+        loadStatus = $("jam-song-load-status");
+  let loadHideTimer = null;
   const colors = ["#61ea82","#fd6384","#ffe16a","#65bfff","#d99aff"];
   const keys = ["a","s","d","j","k"];
   const songs = {
@@ -33,6 +37,36 @@
   // Keep rendering and missed-note checks proportional to the visible song section.
   let missCursor = 0, lastHudFrame = 0;
   const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
+  function showSongLoading(message, percent=null) {
+    if(!songLoad || !loadBar || !loadFill || !loadValue || !loadStatus)return;
+    if(loadHideTimer!==null){clearTimeout(loadHideTimer);loadHideTimer=null;}
+    songLoad.hidden=false;
+    const known=Number.isFinite(percent);
+    const value=known?clamp(Math.floor(percent),0,100):0;
+    songLoad.classList.toggle("is-indeterminate",!known);
+    loadFill.style.width=known?value+"%":"35%";
+    loadValue.textContent=known?value+"%":"…";
+    loadStatus.textContent=message;
+    loadBar.setAttribute("aria-valuetext",message);
+    if(known)loadBar.setAttribute("aria-valuenow",String(value));
+    else loadBar.removeAttribute("aria-valuenow");
+  }
+  function hideSongLoading(delay=0,serial=loadSerial) {
+    if(loadHideTimer!==null){clearTimeout(loadHideTimer);loadHideTimer=null;}
+    if(!songLoad)return;
+    if(!delay){songLoad.hidden=true;return;}
+    loadHideTimer=setTimeout(()=>{if(serial===loadSerial)songLoad.hidden=true;loadHideTimer=null;},delay);
+  }
+  function songBufferedPercent(media) {
+    if(!Number.isFinite(media.duration)||media.duration<=0)return null;
+    let end=0;
+    try{
+      for(let i=0;i<media.buffered.length;i++){
+        if(media.buffered.start(i)<=.2)end=Math.max(end,media.buffered.end(i));
+      }
+    }catch{return null;}
+    return clamp(100*end/media.duration,0,100);
+  }
   const beatSeconds = () => 60 / track.bpm;
   const songTime = () => isRadio ? (radioAudio ? radioAudio.currentTime : 0) : (audio ? audio.currentTime - startAt : -3);
   const fmt = number => number.toLocaleString("en-US");
@@ -254,6 +288,7 @@
     state="finished";
     cancelAnimationFrame(raf);
     if(radioAudio){radioAudio.pause();}
+    hideSongLoading();
     if(audio&&audio.state==="running")audio.suspend().catch(()=>{});
     songSelect.disabled=false;difficultySelect.disabled=false;pauseBtn.disabled=true;
     playBtn.disabled=false;playBtn.textContent="↻ Play Again";
@@ -365,6 +400,7 @@
       previous.onplaying=null;previous.onpause=null;previous.onwaiting=null;
       previous.onstalled=null;previous.onerror=null;previous.onended=null;previous.oncanplay=null;
       previous.onloadedmetadata=null;previous.onseeked=null;
+      previous.onprogress=null;previous.ondurationchange=null;previous.onloadeddata=null;
       previous.pause();
       // Preserve the MP3 URL and buffered bytes for a fast replay.
       radioAudio=null;
@@ -379,6 +415,7 @@
     if(chartStatus)chartStatus.textContent=isRadio?"Loading song chart in parallel…":"Playing original arcade chart.";
     const chartPromise=isRadio?getTrackChart(track):Promise.resolve(null);
     state="loading";
+    showSongLoading(isRadio?"Connecting to "+track.title+"…":"Preparing "+track.title+"…");
     // Never lock the restart button while waiting for network audio.
     playBtn.disabled=false;playBtn.textContent="↻ Retry Start";
     pauseBtn.disabled=true;songSelect.disabled=false;difficultySelect.disabled=false;
@@ -411,6 +448,12 @@
       let loadingTimeout=null;
       let loadedChart=null;
       const valid=()=>current===loadSerial && radioAudio===media;
+      const refreshAudioLoading=(message)=>{
+        if(!valid() || !["loading","buffering","ready"].includes(state))return;
+        const ready=media.readyState>=3 && state!=="buffering";
+        showSongLoading(message||(state==="buffering"?"Buffering audio…":ready?"Ready to play · streaming in background":"Loading "+track.title+"…"),songBufferedPercent(media));
+      };
+      refreshAudioLoading();
       // Display real notes while the MP3 buffers instead of an empty highway.
       chartPromise.then(chart=>{
         if(!valid() || state==="finished")return;
@@ -436,7 +479,7 @@
         if(state==="playing")return;
         if(state==="paused" || state==="buffering"){
           state="playing";
-          hideOverlay();pauseBtn.disabled=false;pauseBtn.textContent="Pause";
+          hideOverlay();hideSongLoading();pauseBtn.disabled=false;pauseBtn.textContent="Pause";
           status.textContent="Audio resumed. Continue playing!";
           audioStatus.textContent="Golden is playing.";
           cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
@@ -453,7 +496,7 @@
         if(!loadedChart && appliedOffset)for(const note of notes)note.at+=appliedOffset;
         const now=media.currentTime||0;
         for(const note of notes)if(note.at<now-.22)note.judged=true;
-        state="playing";playBtn.disabled=false;playBtn.textContent="↻ Restart Song";
+        state="playing";hideSongLoading();playBtn.disabled=false;playBtn.textContent="↻ Restart Song";
         pauseBtn.disabled=false;pauseBtn.textContent="Pause";
         songSelect.disabled=true;difficultySelect.disabled=true;
         hideOverlay();
@@ -466,6 +509,7 @@
       const errorMessage=()=>{
         if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
         const err=media.error;
+        showSongLoading("Audio loading failed · choose Retry Audio");
         const reason=err&&err.code===4?"The recording format or URL is unsupported."
           :err&&err.code===3?"The browser could not decode this MP3."
           :err&&err.code===2?"The network connection interrupted audio loading."
@@ -485,7 +529,11 @@
         if(valid()&&Number.isFinite(media.duration)&&media.duration>0){
           totalTime=media.duration;updateHud();
         }
+        refreshAudioLoading();
       };
+      media.ondurationchange=()=>refreshAudioLoading();
+      media.onprogress=()=>refreshAudioLoading();
+      media.onloadeddata=()=>refreshAudioLoading();
       media.onseeked=()=>{
         if(!valid())return;
         // Skipping ahead shouldn't count skipped notes as misses.
@@ -495,6 +543,7 @@
       media.oncanplay=()=>{
         if(valid()&&state==="loading"){
           audioStatus.textContent="Audio is ready. Press Play in the player if the song has not started.";
+          refreshAudioLoading("Ready to play · audio streaming");
         }
       };
       media.onwaiting=()=>{
@@ -503,10 +552,11 @@
         if(state==="playing"){
           state="buffering";cancelAnimationFrame(raf);
           showOverlay("AUDIO BUFFERING","Playback will resume with the music when enough audio loads.");
+          refreshAudioLoading("Buffering "+track.title+"…");
         }
       };
       media.onstalled=()=>{
-        if(valid())audioStatus.textContent="Golden audio stalled. Try Play or Retry Audio.";
+        if(valid()){audioStatus.textContent="Golden audio stalled. Try Play or Retry Audio.";refreshAudioLoading("Audio stalled · waiting for connection");}
       };
       media.onpause=()=>{
         if(!valid())return;
@@ -526,6 +576,7 @@
           showOverlay("AUDIO STILL LOADING","Try pressing Play in the visible audio player, or tap Retry Audio. You can also choose another song.");
           audioStatus.textContent="This recording is taking too long to start. Use the player controls or Retry Audio.";
           status.textContent="Waiting for "+track.title+" to stream. The song has not begun yet.";
+          refreshAudioLoading("Still loading · tap Play or Retry Audio if needed");
           playBtn.textContent="↻ Retry Start";
         }
       },12000);
@@ -540,6 +591,7 @@
             if(error&&error.name==="AbortError")return;
             state="ready";cancelAnimationFrame(raf);
             const blocked=error&&error.name==="NotAllowedError";
+            refreshAudioLoading(blocked?"Tap Play in the audio player to start":"Waiting for audio · tap Play or Retry Audio");
             audioStatus.textContent=blocked
               ?"Autoplay was blocked. Tap Play in the song audio player."
               :"The browser could not start audio. Tap Play or Retry Audio.";
@@ -552,6 +604,7 @@
         if(valid()){
           state="ready";cancelAnimationFrame(raf);
           audioStatus.textContent="Browser audio error: "+(error.message||"unable to play");
+          refreshAudioLoading("Tap Play in the audio player to start");
           showOverlay("TAP PLAY TO START","Use Play in the visible radio player or Retry Audio.");
           if(loadingTimeout!==null){clearTimeout(loadingTimeout);loadingTimeout=null;}
         }
@@ -580,6 +633,7 @@
       if(current!==loadSerial)return;
       state="ready";cancelAnimationFrame(raf);
       if(audio){audio.close().catch(()=>{});audio=null;}
+      showSongLoading("Could not prepare this track");
       const message=error&&error.message?error.message:"Audio unavailable";
       status.textContent="Could not start "+track.title+": "+message;
       showOverlay("PLAYBACK UNAVAILABLE","Press Retry Start or choose another track.");
@@ -587,7 +641,7 @@
       draw();updateHud();return;
     }
     if(current!==loadSerial)return;
-    state="playing";songSelect.disabled=true;difficultySelect.disabled=true;
+    state="playing";showSongLoading("Song ready!",100);hideSongLoading(1000,current);songSelect.disabled=true;difficultySelect.disabled=true;
     pauseBtn.disabled=false;pauseBtn.textContent="Pause";playBtn.textContent="↻ Restart Song";
     hideOverlay();
     status.textContent="Playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hit notes on the fret line!";
@@ -675,6 +729,14 @@
   window.addEventListener("resize",draw);
 
   // Fetch the small chart during browser idle time, never blocking the game or MP3.
+  // Warm the dedicated recording while the player selects a song.
+  // Mobile browsers may ignore preload until a tap; playback still starts on a user gesture.
+  if(radioControl && songs.golden) {
+    radioControl.preload="auto";
+    radioControl.src=radioBase+encodeURI(songs.golden.path);
+    radioControl.load();
+  }
+
   const warmChart=()=>{getTrackChart(songs.golden).catch(()=>{});};
   if(typeof requestIdleCallback==="function")requestIdleCallback(warmChart,{timeout:1800});
   else setTimeout(warmChart,800);
