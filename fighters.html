@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#10122d">
   <meta name="description" content="CToon Showdown: a fresh 2D fighter with a 200-slot roster that grows as new fighters are published.">
   <title>CToon Showdown | CTooniverse</title>
-  <link rel="stylesheet" href="showdown-reboot.css?v=stages-20261109-v1">
+  <link rel="stylesheet" href="showdown-reboot.css?v=ingame-roster-20261109-v1">
 </head>
 <body>
 <main class="showdown-shell">
@@ -21,7 +21,37 @@
     </div>
     <div class="launch-count"><b id="roster-capacity">200</b><small>Starting roster slots</small></div>
   </section>
-  <section class="showdown-panel roster-showcase" aria-labelledby="roster-title">
+  <section class="showdown-panel" aria-labelledby="arena-title">
+    <div class="panel-header">
+      <div><p class="eyebrow">02 / THE NEW ARENA</p><h2 id="arena-title">Arcade Battle</h2></div>
+      <span class="roster-tally" id="round-score">TRAINING READY</span>
+    </div>
+    <section class="stage-selection" aria-label="Battle stages"><div class="stage-header"><strong>SELECT BATTLE BACKGROUND</strong><span id="stage-label">Neon Skyline</span></div><div class="stage-grid"><button class="stage-choice is-selected" type="button" data-stage="skyline" aria-pressed="true"><span class="stage-thumb stage-skyline"></span><b>Neon Skyline</b></button><button class="stage-choice" type="button" data-stage="dojo" aria-pressed="false"><span class="stage-thumb stage-dojo"></span><b>Moonlit Dojo</b></button><button class="stage-choice" type="button" data-stage="arcade" aria-pressed="false"><span class="stage-thumb stage-arcade"></span><b>Retro Arcade</b></button><button class="stage-choice" type="button" data-stage="desert" aria-pressed="false"><span class="stage-thumb stage-desert"></span><b>Desert Ruins</b></button><button class="stage-choice" type="button" data-stage="space" aria-pressed="false"><span class="stage-thumb stage-space"></span><b>Cosmic Arena</b></button><button class="stage-choice" type="button" data-stage="random" aria-pressed="false"><span class="stage-thumb stage-random">?</span><b>Random Stage</b></button></div></section><div class="battle-music-panel" aria-label="Original CToon Showdown battle music">
+      <div class="battle-music-title"><span class="battle-music-note" aria-hidden="true">♫</span><div><strong>SHOWDOWN SOUNDTRACK</strong><small id="battle-music-status">NEON KNOCKOUT · ORIGINAL SHOWDOWN THEME</small></div></div>
+      <label class="battle-audio-select">Battle theme
+        <select id="battle-music-theme" aria-label="Choose battle music">
+          <option value="neon">Neon Knockout</option>
+          <option value="pixel">Pixel Rumble</option>
+          <option value="off">Music Off</option>
+        </select>
+      </label>
+      <label class="battle-audio-volume">Volume <output id="battle-music-volume-value" for="battle-music-volume">55%</output>
+        <input id="battle-music-volume" type="range" min="0" max="100" step="5" value="55" aria-label="Battle music volume">
+      </label>
+    </div>
+    <p class="battle-countdown-hint">Every round starts with <b>3 · 2 · 1 · FIGHT!</b> before controls and the match timer activate.</p>
+    <div class="arena-hud">
+      <div class="hud-side"><div class="hud-name" id="player-name">PLAYER</div><div class="health-rail" aria-label="Player health"><div class="health-fill" id="player-health"></div></div></div>
+      <div class="hud-time" id="fight-timer" aria-label="Time remaining">60</div>
+      <div class="hud-side cpu"><div class="hud-name" id="cpu-name">CPU</div><div class="health-rail cpu" aria-label="CPU health"><div class="health-fill" id="cpu-health"></div></div></div>
+    </div>
+    <div class="arena-frame">
+      <div class="showdown-roster-layer" id="showdown-roster-layer" role="region" aria-label="In-game character selection">
+        <div class="showdown-overlay-toolbar">
+          <span class="showdown-overlay-label">1P · CHARACTER SELECT</span>
+          <button type="button" class="arcade-btn main" id="quick-start-match" disabled>Choose a fighter</button>
+        </div>
+<section class="showdown-panel roster-showcase" aria-labelledby="roster-title">
     <div class="panel-header">
       <div><p class="eyebrow">01 / ARCADE CHARACTER SELECT</p><h2 id="roster-title">SELECT YOUR FIGHTER</h2><p class="roster-subtitle">200 starting spots · new challengers unlock as the roster grows</p></div>
       <span class="roster-tally" id="roster-tally">0 / 200 published</span>
@@ -82,36 +112,12 @@
       </aside>
     </div>
   </section>
-  <section class="showdown-panel" aria-labelledby="arena-title">
-    <div class="panel-header">
-      <div><p class="eyebrow">02 / THE NEW ARENA</p><h2 id="arena-title">Arcade Battle</h2></div>
-      <span class="roster-tally" id="round-score">TRAINING READY</span>
-    </div>
-    <section class="stage-selection" aria-label="Battle stages"><div class="stage-header"><strong>SELECT BATTLE BACKGROUND</strong><span id="stage-label">Neon Skyline</span></div><div class="stage-grid"><button class="stage-choice is-selected" type="button" data-stage="skyline" aria-pressed="true"><span class="stage-thumb stage-skyline"></span><b>Neon Skyline</b></button><button class="stage-choice" type="button" data-stage="dojo" aria-pressed="false"><span class="stage-thumb stage-dojo"></span><b>Moonlit Dojo</b></button><button class="stage-choice" type="button" data-stage="arcade" aria-pressed="false"><span class="stage-thumb stage-arcade"></span><b>Retro Arcade</b></button><button class="stage-choice" type="button" data-stage="desert" aria-pressed="false"><span class="stage-thumb stage-desert"></span><b>Desert Ruins</b></button><button class="stage-choice" type="button" data-stage="space" aria-pressed="false"><span class="stage-thumb stage-space"></span><b>Cosmic Arena</b></button><button class="stage-choice" type="button" data-stage="random" aria-pressed="false"><span class="stage-thumb stage-random">?</span><b>Random Stage</b></button></div></section><div class="battle-music-panel" aria-label="Original CToon Showdown battle music">
-      <div class="battle-music-title"><span class="battle-music-note" aria-hidden="true">♫</span><div><strong>SHOWDOWN SOUNDTRACK</strong><small id="battle-music-status">NEON KNOCKOUT · ORIGINAL SHOWDOWN THEME</small></div></div>
-      <label class="battle-audio-select">Battle theme
-        <select id="battle-music-theme" aria-label="Choose battle music">
-          <option value="neon">Neon Knockout</option>
-          <option value="pixel">Pixel Rumble</option>
-          <option value="off">Music Off</option>
-        </select>
-      </label>
-      <label class="battle-audio-volume">Volume <output id="battle-music-volume-value" for="battle-music-volume">55%</output>
-        <input id="battle-music-volume" type="range" min="0" max="100" step="5" value="55" aria-label="Battle music volume">
-      </label>
-    </div>
-    <p class="battle-countdown-hint">Every round starts with <b>3 · 2 · 1 · FIGHT!</b> before controls and the match timer activate.</p>
-    <div class="arena-hud">
-      <div class="hud-side"><div class="hud-name" id="player-name">PLAYER</div><div class="health-rail" aria-label="Player health"><div class="health-fill" id="player-health"></div></div></div>
-      <div class="hud-time" id="fight-timer" aria-label="Time remaining">60</div>
-      <div class="hud-side cpu"><div class="hud-name" id="cpu-name">CPU</div><div class="health-rail cpu" aria-label="CPU health"><div class="health-fill" id="cpu-health"></div></div></div>
-    </div>
-    <div class="arena-frame">
+      </div>
       <canvas id="arena" width="960" height="540" aria-label="2D fighting arena showing the player and CPU">Canvas is required to play this game.</canvas>
       <div class="arena-announcement" id="fight-announcement" aria-live="polite">READY TO TRAIN</div>
     </div>
     <div class="arena-actions">
-      <div><button type="button" class="arcade-btn" id="restart-match" disabled>Restart Match</button><button type="button" class="arcade-btn alt" id="pause-match" disabled>Pause</button></div>
+      <div><button type="button" class="arcade-btn alt" id="return-roster" hidden>◀ Character Select</button><button type="button" class="arcade-btn" id="restart-match" disabled>Restart Match</button><button type="button" class="arcade-btn alt" id="pause-match" disabled>Pause</button></div>
       <span class="score" id="match-result">BEST OF THREE · VS CPU</span>
     </div>
     <p class="controls-note"><strong>Johnny Bravo:</strong> Punch with his hand using J (or P on mobile), and kick with his foot using K. Land attacks inside range to see hit sparks. <strong>Keyboard:</strong> A/D or ←/→ move · W or ↑ jump · S or ↓ crouch · J punch · K kick · L guard · U special. <strong>Mobile:</strong> use the buttons below.</p>
@@ -133,6 +139,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=stages-20261109-v1"></script>
+<script type="module" src="showdown-reboot.js?v=ingame-roster-20261109-v1"></script>
 </body>
 </html>
