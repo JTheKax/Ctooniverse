@@ -31,7 +31,7 @@ function announceFight(label,phase=''){
 // Built-in fighters are available even when the catalog is offline.
 // Johnny is fighter 001; Samurai Jack uses the same full 3x11 action mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
- portrait:'/images/showdown/johnny-bravo-user-model.svg',
+ portrait:'/images/showdown/johnny-bravo-roster-portrait.webp',
  preview_sheet:'/images/showdown/johnny-bravo-new-4x4.png?v=20261109',preview_columns:4,preview_rows:4};
 const samuraiJack={slot:2,fighter_id:'samurai-jack',name:'Samurai Jack',series:'Samurai Jack',accent:'#a9e5ee',
  portrait:'/images/showdown/samurai-jack-portrait.svg',
