@@ -5,6 +5,7 @@
   const controls = [...document.querySelectorAll("[data-lane]")];
   const playBtn = $("jam-play"), pauseBtn = $("jam-pause"), hypeBtn = $("jam-hype");
   const songSelect = $("jam-song"), difficultySelect = $("jam-difficulty"), muteInput = $("jam-mute");
+  const playStyleSelect=$("jam-play-style"), strumButtons=[...document.querySelectorAll("[data-strum]")];
   const overlay = $("jam-overlay"), judgement = $("jam-judgement");
   const status = $("jam-message"), best = $("jam-best");
   const syncInput = $("jam-sync-offset"), syncValue = $("jam-sync-value"), chartStatus = $("jam-chart-status");
@@ -15,7 +16,7 @@
         loadFill = $("jam-song-load-fill"), loadValue = $("jam-song-load-value"),
         loadStatus = $("jam-song-load-status");
   let loadHideTimer = null;
-  const colors = ["#61ea82","#fd6384","#ffe16a","#65bfff","#d99aff"];
+  const colors = ["#61ea82","#fd6384","#ffe16a","#65bfff","#ff9f42"];
   const keys = ["a","s","d","j","k"];
   const songs = {
     neon: {title:"Neon Rush",bpm:118,bars:20,root:52,seed:1,wave:"sawtooth",scale:[0,3,5,7,10,12,15,17],progression:[0,5,3,7]},
@@ -36,6 +37,18 @@
   let totalTime = 0, activeDifficulty = "normal";
   // Keep rendering and missed-note checks proportional to the visible song section.
   let missCursor = 0, lastHudFrame = 0;
+  const heldFrets=new Set();
+  let activeSustains=[];
+  const isGuitarMode=()=>playStyleSelect?.value==="strum";
+  function resetFrets(){
+    heldFrets.clear();activeSustains=[];
+    for(const button of controls)button.classList.remove("is-held");
+  }
+  function applyPlayStyle(){
+    gameStage?.classList.toggle("is-strum",isGuitarMode());
+    try{localStorage.setItem("ctoon-jam-play-style-v1",playStyleSelect.value)}catch{}
+  }
+
   const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
   function showSongLoading(message, percent=null) {
     if(!songLoad || !loadBar || !loadFill || !loadValue || !loadStatus)return;
@@ -112,8 +125,8 @@
       for(const difficulty of ["easy","normal","hard"]){
         const rows=data.difficultyNotes[difficulty];
         if(!Array.isArray(rows)||rows.length===0||rows.length>10000)return null;
-        if(rows.some(row=>!Array.isArray(row)||row.length!==2||!Number.isFinite(row[0])||row[0]<0||row[0]>900||
-           !Number.isInteger(row[1])||row[1]<0||row[1]>4))return null;
+        if(rows.some(row=>!Array.isArray(row)||(row.length!==2&&row.length!==3)||!Number.isFinite(row[0])||row[0]<0||row[0]>900||
+           !Number.isInteger(row[1])||row[1]<0||row[1]>4||(row.length===3&&(!Number.isFinite(row[2])||row[2]<0||row[2]>15))))return null;
       }
       return data;
     }catch(error){
@@ -125,29 +138,25 @@
     const offset=(Number(chart.offsetSeconds)||0)+appliedOffset;
     const limit=Number.isFinite(duration)&&duration>0?duration-.2:390;
     const raw=chart.difficultyNotes[activeDifficulty]||chart.difficultyNotes.normal;
-    return raw.map(([seconds,lane])=>({at:seconds+offset,lane,judged:false}))
+    return raw.map(([seconds,lane,duration=0])=>({at:seconds+offset,lane,duration,judged:false}))
               .filter(note=>note.at>=0&&note.at<limit)
               .sort((a,b)=>a.at-b.at);
   }
 
-  function makeNotes() {
-    const result = [], beatLen = beatSeconds();
-    const level = difficultySelect.value;
-    for (let i = 0; i < track.bars * 4; i++) {
-      const lane = (i * 3 + Math.floor(i / 4) + track.seed) % 5;
-      const at = (i + 4) * beatLen;
-      result.push({at,lane,judged:false});
-      if (level !== "easy" && (level === "hard" || i % 2 === 1)) {
-        result.push({at:at+beatLen*.5,lane:(lane+2+(i%2))%5,judged:false});
-      }
-      if (level === "hard" && i % 8 === 4) {
-        result.push({at,lane:(lane+2)%5,judged:false});
-      }
+  function makeNotes(){
+    const result=[],beatLen=beatSeconds(),level=difficultySelect.value;
+    const add=(at,lane,duration=0)=>result.push({at,lane,duration,judged:false});
+    for(let i=0;i<track.bars*4;i++){
+      const lane=(i*3+Math.floor(i/4)+track.seed)%5;
+      const at=(i+4)*beatLen;
+      add(at,lane,i%12===6?beatLen*1.6:i%16===11?beatLen*.9:0);
+      if(level!=="easy"&&i%8===4)add(at,(lane+2)%5);
+      if(level==="hard"&&i%16===10)add(at,(lane+4)%5);
+      if(level!=="easy"&&(level==="hard"||i%2===1))add(at+beatLen*.5,(lane+2+(i%2))%5);
     }
-    result.sort((a,b)=>a.at-b.at);
+    result.sort((a,b)=>a.at-b.at||a.lane-b.lane);
     return result;
   }
-
   function makeNoise() {
     const length = Math.ceil(audio.sampleRate*.16);
     noiseBuffer = audio.createBuffer(1,length,audio.sampleRate);
@@ -258,6 +267,8 @@
     }
     if(!candidate){feedback("OFF BEAT","#9296bf");return;}
     candidate.judged=true;
+    if(candidate.duration>=.2)activeSustains.push({note:candidate,lastAt:candidate.at});
+
     const quality=bestDiff<=.085?"PERFECT":bestDiff<=.15?"GREAT":"GOOD";
     const value=quality==="PERFECT"?1:quality==="GREAT"?.75:.5;
     combo++;judged++;weighted+=value;
@@ -270,7 +281,58 @@
     if (!isRadio && audio && master) voice(track.root+12+track.scale[lane%track.scale.length],audio.currentTime,.13,"triangle",.04);
     updateHud();
   }
+
+  // Guitar mode: held frets must match the chord at the next strikeline.
+  function strum(){
+    if(!isGuitarMode()||state!=="playing")return;
+    const t=songTime();
+    if(t<0)return;
+    let closest=null,diff=Infinity;
+    for(let i=missCursor;i<notes.length;i++){
+      const n=notes[i];
+      if(n.at>t+.22)break;
+      if(n.judged)continue;
+      const d=Math.abs(t-n.at);
+      if(d<=.22&&d<diff){closest=n;diff=d;}
+    }
+    if(!closest){combo=0;feedback("OVERSTRUM","#ff8198");updateHud();return;}
+    const group=[];
+    for(let i=missCursor;i<notes.length;i++){
+      const n=notes[i];
+      if(n.at>closest.at+.025)break;
+      if(!n.judged&&Math.abs(n.at-closest.at)<=.025)group.push(n);
+    }
+    const needed=new Set(group.map(n=>n.lane));
+    if(needed.size!==heldFrets.size||[...needed].some(lane=>!heldFrets.has(lane))){
+      combo=0;feedback("WRONG FRETS","#ff8198");updateHud();return;
+    }
+    for(const n of group)hit(n.lane);
+  }
+  function updateSustains(t){
+    if(!activeSustains.length)return;
+    const next=[];
+    for(const hold of activeSustains){
+      const end=hold.note.at+hold.note.duration;
+      if(!heldFrets.has(hold.note.lane))continue;
+      const ticks=Math.floor((Math.min(end,t)-hold.lastAt)/.1);
+      if(ticks>0){
+        score+=ticks*10*Math.min(4,1+Math.floor(combo/10))*(hypeEnd>t?2:1);
+        hold.lastAt+=ticks*.1;
+      }
+      if(t<end)next.push(hold);
+    }
+    activeSustains=next;
+  }
+  function pressFret(lane){
+    if(heldFrets.has(lane))return;
+    heldFrets.add(lane);controls[lane]?.classList.add("is-held");
+    if(!isGuitarMode())hit(lane);
+  }
+  function releaseFret(lane){
+    heldFrets.delete(lane);controls[lane]?.classList.remove("is-held");
+  }
   function activateHype() {
+
     if (state!=="playing" || charge<50 || (hypeEnd>0 && songTime()<hypeEnd)) return;
     charge=0;hypeEnd=songTime()+8;
     feedback("HYPE MODE!","#f9c8ff");updateHud();
@@ -289,8 +351,10 @@
     cancelAnimationFrame(raf);
     if(radioAudio){radioAudio.pause();}
     hideSongLoading();
+    resetFrets();
     if(audio&&audio.state==="running")audio.suspend().catch(()=>{});
     songSelect.disabled=false;difficultySelect.disabled=false;pauseBtn.disabled=true;
+    if(playStyleSelect)playStyleSelect.disabled=false;
     playBtn.disabled=false;playBtn.textContent="↻ Play Again";
     if(!failed)saveBest();
     const accuracy=judged?Math.round(100*weighted/judged):0;
@@ -380,6 +444,7 @@
     const t=songTime();
     if(!isRadio)scheduleMusic();
     checkMisses(t);
+    updateSustains(t);
     if(state!=="playing")return;
     if(performance.now()>feedbackUntil)judgement.textContent="";
     maxCombo=Math.max(maxCombo,combo);
@@ -394,6 +459,7 @@
   // The note highway never waits on a dangling media.play() Promise.
   async function startSong(forceReload=false) {
     const current=++loadSerial;
+    resetFrets();
     cancelAnimationFrame(raf);
     if(radioAudio){
       const previous=radioAudio;
@@ -411,6 +477,7 @@
     isRadio=!!track.radio;
     activeDifficulty=difficultySelect.value;
     setupOffset();
+    if(playStyleSelect)playStyleSelect.disabled=false;
     if(radioPanel)radioPanel.hidden=!isRadio;
     if(chartStatus)chartStatus.textContent=isRadio?"Loading song chart in parallel…":"Playing original arcade chart.";
     const chartPromise=isRadio?getTrackChart(track):Promise.resolve(null);
@@ -499,9 +566,10 @@
         state="playing";hideSongLoading();playBtn.disabled=false;playBtn.textContent="↻ Restart Song";
         pauseBtn.disabled=false;pauseBtn.textContent="Pause";
         songSelect.disabled=true;difficultySelect.disabled=true;
+        if(playStyleSelect)playStyleSelect.disabled=true;
         hideOverlay();
         audioStatus.textContent="Now streaming "+track.title+".";
-        status.textContent="Now playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Use the five fret buttons or A S D J K.";
+        status.textContent="Now playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hold frets and strum, or use Tap Style next song.";
         // Also restart rendering when playback begins after a timeout or blocked autoplay.
         cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
         draw();updateHud();
@@ -642,9 +710,10 @@
     }
     if(current!==loadSerial)return;
     state="playing";showSongLoading("Song ready!",100);hideSongLoading(1000,current);songSelect.disabled=true;difficultySelect.disabled=true;
+    if(playStyleSelect)playStyleSelect.disabled=true;
     pauseBtn.disabled=false;pauseBtn.textContent="Pause";playBtn.textContent="↻ Restart Song";
     hideOverlay();
-    status.textContent="Playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hit notes on the fret line!";
+    status.textContent="Playing "+track.title+" · "+activeDifficulty.toUpperCase()+". Hold frets and strum at the hit line!";
     updateHud();draw();
     raf=requestAnimationFrame(tick);
   }
@@ -701,28 +770,59 @@
     refreshBest();draw();updateHud();
   });
 
-  function flashButton(lane) {
-    const button=controls[lane];if(!button)return;
-    button.classList.add("is-pressed");
-    clearTimeout(button._flash);
-    button._flash=setTimeout(()=>button.classList.remove("is-pressed"),100);
+  if(playStyleSelect){
+    try{
+      const saved=localStorage.getItem("ctoon-jam-play-style-v1");
+      playStyleSelect.value=(saved==="tap"||saved==="strum")?saved:
+        (window.matchMedia&&window.matchMedia("(pointer: coarse)").matches?"tap":"strum");
+    }catch{playStyleSelect.value=(window.matchMedia&&window.matchMedia("(pointer: coarse)").matches?"tap":"strum");}
+    applyPlayStyle();
+    playStyleSelect.addEventListener("change",()=>{
+      resetFrets();applyPlayStyle();draw();
+      status.textContent=isGuitarMode()?"Hold A S D J K and strum ↑/↓ or Enter.":"Tap the fret buttons when notes cross the line.";
+    });
   }
-  for(const button of controls) {
+  for(const button of controls){
+    const lane=Number(button.dataset.lane);
     button.addEventListener("pointerdown",event=>{
       event.preventDefault();
-      const lane=Number(button.dataset.lane);
-      flashButton(lane);hit(lane);
+      try{button.setPointerCapture(event.pointerId)}catch{}
+      pressFret(lane);draw();
     });
-    button.addEventListener("click",event=>{if(event.detail===0){const lane=Number(button.dataset.lane);flashButton(lane);hit(lane);}});
+    const release=()=>{releaseFret(lane);draw();};
+    button.addEventListener("pointerup",release);
+    button.addEventListener("pointercancel",release);
+    button.addEventListener("lostpointercapture",release);
+    button.addEventListener("click",event=>{
+      if(event.detail===0){pressFret(lane);releaseFret(lane);draw();}
+    });
     button.addEventListener("contextmenu",event=>event.preventDefault());
   }
+  for(const button of strumButtons){
+    button.addEventListener("pointerdown",event=>{
+      event.preventDefault();strum();button.classList.add("is-pressed");
+    });
+    const release=()=>button.classList.remove("is-pressed");
+    button.addEventListener("pointerup",release);
+    button.addEventListener("pointercancel",release);
+    button.addEventListener("click",event=>{if(event.detail===0)strum();});
+  }
   document.addEventListener("keydown",event=>{
-    const tag=event.target && event.target.tagName;
-    if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA"||(tag==="BUTTON"&&event.code==="Space"))return;
-    if(event.code==="Space" && !event.repeat){event.preventDefault();activateHype();return;}
+    const tag=event.target&&event.target.tagName;
+    if(tag==="INPUT"||tag==="SELECT"||tag==="TEXTAREA"||tag==="BUTTON")return;
+    if(event.code==="Escape"){event.preventDefault();if(!event.repeat)togglePause();return;}
+    if(event.code==="Space"){event.preventDefault();if(!event.repeat)activateHype();return;}
+    if(event.code==="ArrowUp"||event.code==="ArrowDown"||event.code==="Enter"){
+      event.preventDefault();if(!event.repeat)strum();return;
+    }
     const lane=keys.indexOf(event.key.toLowerCase());
-    if(lane>=0&&!event.repeat){event.preventDefault();flashButton(lane);hit(lane);}
+    if(lane>=0){event.preventDefault();if(!event.repeat){pressFret(lane);draw();}}
   });
+  document.addEventListener("keyup",event=>{
+    const lane=keys.indexOf(event.key.toLowerCase());
+    if(lane>=0){event.preventDefault();releaseFret(lane);draw();}
+  });
+  window.addEventListener("blur",()=>{resetFrets();draw();});
   document.addEventListener("visibilitychange",()=>{
     if(document.hidden && state==="playing")togglePause();
   });
