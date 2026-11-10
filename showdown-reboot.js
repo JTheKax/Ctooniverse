@@ -534,6 +534,44 @@ function setPage(delta){
  rosterGrid.scrollTop=0;
  if(window.matchMedia('(max-width: 900px)').matches)rosterLayer.scrollTop=0;
 }
+// Arcade shortcuts choose only fighters the current player can actually use.
+// Clear visual filters so a surprise pick is always visible on its roster page.
+function choosePlayableFighter(random=false){
+ const playable=[...selection.fighters.values()].filter(f=>f.enabled!==false&&!isLocked(f)).sort((a,b)=>a.name.localeCompare(b.name));
+ if(!playable.length){
+  banner.textContent='No playable fighters available yet. Check your fighter unlocks or try Practice Mode.';
+  return;
+ }
+ const currentIndex=playable.findIndex(f=>f.slot===selection.slot);
+ let picked;
+ if(random){
+  const alternatives=playable.length>1?playable.filter(f=>f.slot!==selection.slot):playable;
+  picked=alternatives[Math.floor(Math.random()*alternatives.length)];
+ }else{
+  picked=playable[(currentIndex+1+playable.length)%playable.length];
+ }
+ search.value='';
+ series.value='all';
+ kind.value='playable';
+ selection.page=0;
+ const matches=pageSlots();
+ selection.page=Math.max(0,Math.floor(matches.indexOf(picked.slot)/PAGE_SIZE));
+ renderRoster();
+ selectSlot(picked.slot);
+ const tile=[...rosterGrid.querySelectorAll('.fighter-slot')].find(item=>Number(item.dataset.slot)===picked.slot);
+ if(tile){tile.focus({preventScroll:true});tile.scrollIntoView({block:'nearest',behavior:'smooth'});}
+ banner.textContent=(random?'🎲 RANDOM CHALLENGER: ':'⚡ NEXT CHALLENGER: ')+picked.name+' — ready to fight!';
+}
+$('roster-random')?.addEventListener('click',()=>choosePlayableFighter(true));
+$('roster-next-playable')?.addEventListener('click',()=>choosePlayableFighter(false));
+document.addEventListener('keydown',event=>{
+ if(event.altKey||event.ctrlKey||event.metaKey||event.repeat||event.defaultPrevented)return;
+ const target=event.target;
+ if(target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;
+ if(arenaFrame.classList.contains('is-theater')&&!arenaFrame.classList.contains('is-selecting'))return;
+ if(event.key.toLowerCase()==='r'){event.preventDefault();choosePlayableFighter(true);}
+ if(event.key.toLowerCase()==='n'){event.preventDefault();choosePlayableFighter(false);}
+});
 $('roster-prev').addEventListener('click',()=>setPage(-1));
 $('roster-next').addEventListener('click',()=>setPage(1));
 for(const input of [search,series,kind,order])input.addEventListener('input',()=>{
