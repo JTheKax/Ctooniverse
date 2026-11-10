@@ -568,7 +568,7 @@ document.addEventListener('keydown',event=>{
  if(event.altKey||event.ctrlKey||event.metaKey||event.repeat||event.defaultPrevented)return;
  const target=event.target;
  if(target?.closest?.('input,select,textarea,[contenteditable="true"]'))return;
- if(arenaFrame.classList.contains('is-theater')&&!arenaFrame.classList.contains('is-selecting'))return;
+ if(game.mode!=='idle')return;
  if(event.key.toLowerCase()==='r'){event.preventDefault();choosePlayableFighter(true);}
  if(event.key.toLowerCase()==='n'){event.preventDefault();choosePlayableFighter(false);}
 });
