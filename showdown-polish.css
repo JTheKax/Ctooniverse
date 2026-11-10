@@ -798,3 +798,94 @@ body{
 @media(max-width:650px){
  .stage-grid .stage-thumb.custom-stage-thumb{min-height:54px}
 }
+
+
+/* Roster-name upgrade: character-colored arcade fighter nameplates.
+   Deliberately scoped to Showdown; no fighter IDs, ordering, or gameplay changes. */
+#showdown-roster-layer .roster-wall .fighter-slot .slot-footer{
+  display:flex;
+  width:100%;
+  min-width:0;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:2px;
+  padding:5px 3px 4px;
+  border-top:2px solid var(--fighter-accent,#86b6ea);
+  background:
+    linear-gradient(112deg,transparent 0 13%,#ffffff0b 13% 19%,transparent 19% 78%,#ffffff0a 78% 84%,transparent 84%),
+    linear-gradient(100deg,#080e24f7,#162b50f7 52%,#090f28f7);
+  box-shadow:inset 0 1px #ffffff1b,0 -3px 9px #0007;
+  transform:translateZ(0);
+}
+#showdown-roster-layer .roster-wall .fighter-slot.occupied .slot-label{
+  display:block;
+  max-width:100%;
+  font-family:Impact,"Arial Narrow","Arial Black",system-ui,sans-serif;
+  font-size:clamp(.67rem,.85vw,.96rem);
+  font-stretch:condensed;
+  font-style:italic;
+  font-weight:900;
+  line-height:1.03;
+  letter-spacing:.035em;
+  text-align:center;
+  text-transform:uppercase;
+  color:#f7fbff;
+  text-shadow:1px 1px 0 #07132c,-1px -1px 0 #07132c,2px 3px 0 #061022,0 0 9px var(--fighter-accent,#87c9ff);
+  overflow-wrap:anywhere;
+  hyphens:auto;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-status{
+  display:block;
+  width:max-content;
+  max-width:100%;
+  padding:1px 5px;
+  border:1px solid #87d9ff49;
+  border-radius:3px;
+  color:#b5e8f3;
+  background:#051128c9;
+  font:bold clamp(.45rem,.55vw,.57rem)/1.2 system-ui,sans-serif;
+  letter-spacing:.13em;
+}
+#showdown-roster-layer .roster-wall .fighter-slot.occupied:not(.locked) .slot-status{
+  border-color:#7be8c764;
+  color:#9bf8c9;
+}
+#showdown-roster-layer .roster-wall .fighter-slot.locked .slot-status{
+  border-color:#e9af697c;
+  color:#ffda96;
+}
+#showdown-roster-layer .roster-wall .fighter-slot[aria-pressed="true"] .slot-footer{
+  background:linear-gradient(108deg,#453063,#1a3867 51%,#56366d);
+  border-top:3px solid #ffe6a2;
+  box-shadow:inset 0 1px #ffffff69,0 -4px 15px #ffce8080;
+}
+#showdown-roster-layer .roster-wall .fighter-slot[aria-pressed="true"] .slot-label{
+  color:#fff0b0;
+  text-shadow:1px 1px 0 #17102f,-1px -1px 0 #17102f,2px 3px 0 #231047,0 0 11px #ffe1a8;
+}
+#showdown-roster-layer .preview-card #preview-title{
+  font:italic 900 clamp(1.75rem,3vw,2.8rem)/1.08 Impact,"Arial Narrow","Arial Black",system-ui,sans-serif;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+  color:#ffecb2;
+  -webkit-text-stroke:.45px #27143d;
+  text-shadow:2px 3px 0 #533571,5px 5px 0 #0b102e,0 0 18px #ffce7959;
+}
+@media(max-width:650px){
+ #showdown-roster-layer .roster-wall .fighter-slot .slot-footer{gap:2px;padding:4px 1px 3px}
+ #showdown-roster-layer .roster-wall .fighter-slot.occupied .slot-label{
+   font-size:clamp(.54rem,2.15vw,.72rem);
+   letter-spacing:0;
+   line-height:1.05;
+ }
+ #showdown-roster-layer .roster-wall .fighter-slot .slot-status{
+   font-size:.45rem;
+   letter-spacing:.035em;
+   padding:1px 3px;
+ }
+ #showdown-roster-layer .preview-card #preview-title{font-size:clamp(1.35rem,5.6vw,2rem)}
+}
+@media(max-width:370px){
+ #showdown-roster-layer .roster-wall .fighter-slot.occupied .slot-label{font-size:.58rem}
+}
