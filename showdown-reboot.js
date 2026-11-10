@@ -1045,6 +1045,29 @@ function drawBody(f,t){
 
 const STAGE_NAMES={skyline:'Neon Skyline',dojo:'Moonlit Dojo',arcade:'Retro Arcade',desert:'Desert Ruins',space:'Cosmic Arena',random:'Random Stage'};
 const STAGE_POOL=['skyline','dojo','arcade','desert','space'];
+// Register additional custom stages here after adding their names and selector options.
+const CUSTOM_STAGE_IMAGES={
+ skyline:'/images/showdown/backgrounds/skyline.svg',
+ dojo:'/images/showdown/backgrounds/dojo.svg',
+ arcade:'/images/showdown/backgrounds/arcade.svg',
+ desert:'/images/showdown/backgrounds/desert.svg',
+ space:'/images/showdown/backgrounds/space.svg'
+};
+const stageArtwork=new Map();
+function getStageArtwork(id){
+ const src=CUSTOM_STAGE_IMAGES[id];
+ if(!src)return null;
+ if(!stageArtwork.has(id)){
+  const image=new Image();
+  const record={image,ready:false,failed:false};
+  image.onload=()=>{record.ready=image.naturalWidth>0&&image.naturalHeight>0;};
+  image.onerror=()=>{record.failed=true;console.warn('Stage artwork unavailable, using built-in stage:',src);};
+  image.decoding='async';image.src=src;
+  stageArtwork.set(id,record);
+ }
+ return stageArtwork.get(id);
+}
+STAGE_POOL.forEach(getStageArtwork);
 let stageChoice='skyline',currentStage='skyline';
 try{const v=localStorage.getItem('showdown-stage');if(v in STAGE_NAMES)stageChoice=v;}catch(_){}
 function refreshStage(){
@@ -1052,6 +1075,11 @@ function refreshStage(){
  for(const button of document.querySelectorAll('[data-stage]')){const selected=button.dataset.stage===stageChoice;button.classList.toggle('is-selected',selected);button.setAttribute('aria-pressed',String(selected));}
  $('stage-label').textContent=stageChoice==='random'?'Random: '+STAGE_NAMES[currentStage]:STAGE_NAMES[stageChoice];
  inlineStage.value=stageChoice;
+ for(const button of document.querySelectorAll('.stage-choice[data-stage]')){
+  const src=CUSTOM_STAGE_IMAGES[button.dataset.stage];
+  const thumb=button.querySelector('.stage-thumb');
+  if(src&&thumb){thumb.style.backgroundImage='url("'+src+'")';thumb.classList.add('custom-stage-thumb');}
+ }
 }
 function chooseStage(value){
  if(!(value in STAGE_NAMES))return;
@@ -1063,6 +1091,11 @@ document.querySelectorAll('[data-stage]').forEach(button=>button.addEventListene
 inlineStage.addEventListener('change',()=>chooseStage(inlineStage.value));
 refreshStage();
 function stageBackground(t){
+ const artwork=getStageArtwork(currentStage);
+ if(artwork?.ready){
+  ctx.drawImage(artwork.image,0,0,arena.width,arena.height);
+  return;
+ }
  const palette={skyline:['#090f39','#774c88','#191b42'],dojo:['#0b243f','#43626c','#252b42'],arcade:['#160e3d','#753483','#24113b'],desert:['#f1b77f','#c97b6d','#854a58'],space:['#03091d','#3b2374','#151535']}[currentStage];
  const grad=ctx.createLinearGradient(0,0,0,540);palette.forEach((color,i)=>grad.addColorStop(i/2,color));ctx.fillStyle=grad;ctx.fillRect(0,0,960,540);
  ctx.save();
