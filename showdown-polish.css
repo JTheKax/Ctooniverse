@@ -384,3 +384,29 @@ body{
 .touch-bank button{touch-action:none;-webkit-user-select:none;user-select:none}
 @media(max-width:650px){.super-label{font-size:.5rem}.super-bar{height:10px}.touch-bank button{min-height:60px}}
 @media(prefers-reduced-motion:reduce){.super-bar span{transition:none}}
+
+
+/* Hand-drawn CToon Showdown arena artwork (2026-11-10).
+   Upload ctoon-showdown-background.png to the repository root.
+   Dark overlays preserve roster/menu readability on all screen sizes. */
+body{
+  background-image:
+    linear-gradient(180deg,rgba(5,8,28,.30) 0%,rgba(5,8,28,.56) 46%,rgba(5,8,28,.82) 100%),
+    url("./ctoon-showdown-background.png"),
+    radial-gradient(ellipse at 50% 0%,#42247e,#090e29 78%);
+  background-position:center top,center top,center top;
+  background-size:cover,cover,cover;
+  background-repeat:no-repeat;
+  background-attachment:fixed,fixed,fixed;
+}
+.showdown-hero{
+  background:linear-gradient(105deg,rgba(8,12,38,.89),rgba(12,15,49,.60));
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+}
+.showdown-shell>.showdown-panel{
+  background:linear-gradient(140deg,rgba(10,15,42,.94),rgba(25,16,55,.93));
+}
+@media(max-width:700px){
+ body{background-attachment:scroll,scroll,scroll;background-size:auto 100vh,auto 100vh,cover;}
+}
