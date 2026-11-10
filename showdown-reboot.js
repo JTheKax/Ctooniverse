@@ -3,6 +3,7 @@
 // to the next page when a fighter is published beyond slot 200.
 'use strict';
 import {createBattleAudio} from './showdown-battle-audio.js?v=20261108-battle-music-v1';
+import {createStoryMode} from './showdown-story.js?v=rift-crisis-20261110';
 const API_URL='https://hsxdyxdazsdmpucyhqly.supabase.co';
 const PUBLIC_KEY='sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS';
 const START_SLOTS=200, PAGE_SIZE=25;
@@ -280,6 +281,7 @@ async function refreshAccount(){
  }finally{
   account.loading=false;
   updateAccountBar();renderRoster();selectSlot(selection.slot);
+  storyMode.setAccount(account.user?.id||null);storyMode.syncFighters();
  }
 }
 async function initializePlayer(){
@@ -637,6 +639,7 @@ async function loadRoster(){
    }));
    // Preserve owner-defined slots while adding the built-in fighters.
    addBuiltInFighters();
+  storyMode.syncFighters();
   const maxSlot=selection.fighters.size?Math.max(...selection.fighters.keys()):0;
   selection.slots=Math.max(START_SLOTS,Math.ceil(maxSlot/PAGE_SIZE)*PAGE_SIZE);
   updateSeries();renderRoster();selectSlot(selection.slot);
@@ -646,7 +649,7 @@ async function loadRoster(){
  }catch(err){
   console.warn('CToon Showdown roster unavailable:',err);
   addBuiltInFighters();
-   updateSeries();
+   updateSeries();storyMode.syncFighters();
    banner.textContent='Online catalog unavailable. Free fighters are playable locally; Perfect Cell and Burter remain locked until the catalog reconnects.';
   renderRoster();selectSlot(selection.slot);
  }
@@ -686,8 +689,9 @@ for(const button of buttons){
 }
 const GROUND=445,LEFT=68,RIGHT=892;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,timer:60,round:1,wins:[0,0],between:0,countdown:3,fightBanner:0,roundMessage:'',hitEffects:[],last:0,animClock:0};
+const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,cpuDifficulty:1,timer:60,round:1,wins:[0,0],between:0,countdown:3,fightBanner:0,roundMessage:'',hitEffects:[],last:0,animClock:0};
 function showCharacterSelect(focus=false){
+ storyMode.leave();
  // Restore the classic layout: the character roster remains above the separate arena.
  battleAudio.stopTheme();
  game.mode='idle';game.paused=false;game.hero=null;game.cpu=null;
@@ -807,20 +811,27 @@ function beginFight(){
  battleAudio.startTheme();
  $('showdown-status').textContent='FIGHT! Use keyboard controls or the on-screen buttons.';
 }
-function startMatch(profile){
+function startMatch(profile,opponent=null,difficulty=1){
  if(stageChoice==='random')refreshStage();
  if(!ctx){$('showdown-status').textContent='Your browser does not support the battle canvas.';return}
  hideCharacterSelect();
- game.heroProfile=profile;game.cpuProfile=profile.fighter_id==='samurai-jack'?demoHero:samuraiJack;
+ game.heroProfile=profile;game.cpuProfile=opponent||(profile.fighter_id==='samurai-jack'?demoHero:samuraiJack);
+ game.cpuDifficulty=clamp(Number(difficulty)||1,.7,1.3);
   spriteAtlas(game.heroProfile);spriteAtlas(game.cpuProfile); // Preload before the fight begins.
  game.round=1;game.wins=[0,0];game.paused=false;
  battleAudio.prepare();
  resetRound();restartBtn.disabled=false;pauseBtn.disabled=false;pauseBtn.textContent='Pause';
  document.querySelector('.arena-frame').scrollIntoView({behavior:'smooth',block:'center'});
 }
-practiceBtn.addEventListener('click',()=>startMatch(demoHero));
-startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter&&!isLocked(fighter))startMatch(fighter)});
-restartBtn.addEventListener('click',()=>startMatch(game.heroProfile));
+const storyMode=createStoryMode({
+ getFighter:id=>[...selection.fighters.values()].find(f=>f.fighter_id===id&&f.enabled!==false)||null,
+ getPlayable:()=>[...selection.fighters.values()].filter(f=>f.enabled!==false&&!isLocked(f)),
+ startBattle:(hero,opponent,stage,difficulty)=>{chooseStage(stage);startMatch(hero,opponent,difficulty)},
+ onReturn:()=>showCharacterSelect(false)
+});
+practiceBtn.addEventListener('click',()=>{storyMode.leave();startMatch(demoHero)});
+startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter&&!isLocked(fighter)){storyMode.leave();startMatch(fighter)}});
+restartBtn.addEventListener('click',()=>{if(storyMode.isActive())storyMode.retry();else startMatch(game.heroProfile)});
 pauseBtn.addEventListener('click',()=>{
  if(!['countdown','fighting','between'].includes(game.mode))return;
  game.paused=!game.paused;pauseBtn.textContent=game.paused?'Resume':'Pause';
@@ -899,7 +910,9 @@ function finishRound(){
   const result=game.wins[0]>=2?'YOU WIN THE MATCH!':'CPU WINS THE MATCH';
   game.roundMessage=result;
   announceFight(result,'result');
-  $('showdown-status').textContent=result+' Choose Restart Match for another round.';
+  const storyFinished=storyMode.onMatchFinished(game.wins[0]>=2);
+  $('showdown-status').textContent=storyFinished?(game.wins[0]>=2?'Story mission cleared! Select Continue Story to advance.':'Story battle lost. Retry the mission or return to the chapter map.'):
+    result+' Choose Restart Match for another round.';
   pauseBtn.disabled=true;
  }
  updateHud();
@@ -959,9 +972,9 @@ function step(dt){
  const dist=Math.abs(c.x-p.x);
  c.block=c.stun===0&&c.cooldown===0&&c.y===0&&p.attack>.06&&dist<155&&Math.random()<dt*4;
  if(c.stun===0&&c.cooldown===0){
-  if(dist>103)c.x=clamp(c.x+Math.sign(p.x-c.x)*145*dt,LEFT,RIGHT);
-  else if(dist<64)c.x=clamp(c.x-Math.sign(p.x-c.x)*72*dt,LEFT,RIGHT);
-  if(dist<(c.meter>=40?187:132)&&Math.random()<dt*.88){
+  if(dist>103)c.x=clamp(c.x+Math.sign(p.x-c.x)*145*game.cpuDifficulty*dt,LEFT,RIGHT);
+  else if(dist<64)c.x=clamp(c.x-Math.sign(p.x-c.x)*72*game.cpuDifficulty*dt,LEFT,RIGHT);
+  if(dist<(c.meter>=40?187:132)&&Math.random()<dt*.88*game.cpuDifficulty){
     const type=c.meter>=40&&dist<185&&Math.random()<.18?'special':Math.random()>.7?'kick':'punch';
     attack(c,type);
    }
@@ -1187,5 +1200,5 @@ async function showOwnerLink(){
   if(!result.error&&result.data)$('owner-fighter-link').hidden=false;
  }catch(_){}
 }
-addBuiltInFighters();updateSeries();renderRoster();selectSlot(1);showCharacterSelect();loadRoster();initializePlayer();showOwnerLink();
+addBuiltInFighters();updateSeries();renderRoster();storyMode.syncFighters();selectSlot(1);showCharacterSelect();loadRoster();initializePlayer();showOwnerLink();
 requestAnimationFrame(tick);
