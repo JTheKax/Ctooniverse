@@ -78,3 +78,6 @@
  .story-scene-actions{grid-column:1/-1}
  .story-scene-actions button{flex-basis:100%}
 }
+
+/* Author button display rules must never override native hidden attributes. */
+#story-continue[hidden],#story-return[hidden]{display:none!important}
