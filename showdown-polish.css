@@ -649,3 +649,136 @@ body{
  #showdown-roster-layer .roster-surprise,
  #showdown-roster-layer .roster-surprise-alt{transition:none!important}
 }
+
+
+/* CToon Showdown: Neon Championship visual edition — 2026-11-10.
+   Visual-only styling: game state, hitboxes, roster ordering and inputs unchanged. */
+body{
+  background-color:#080d23;
+}
+.showdown-top{
+  position:relative;
+  border-bottom:2px solid #7ddcfa88;
+  box-shadow:0 5px 18px -16px #5bdaff;
+}
+.showdown-top::after{
+  content:"CTOONVERSE FIGHTING LEAGUE";
+  color:#90e9ff;font:800 .58rem/1.2 system-ui,sans-serif;
+  letter-spacing:.18em;opacity:.78;position:absolute;right:0;bottom:-15px;
+}
+.showdown-hero{
+  border:3px solid #8edcff;
+  box-shadow:0 0 0 4px #0e1640,0 0 35px #659eff4b,inset 0 -35px 95px #0a103e;
+}
+.showdown-hero::before{
+  animation:showdownHalo 16s linear infinite;
+}
+.showdown-hero h1{
+  filter:drop-shadow(0 0 11px #a387ff44);
+  transform:skewX(-4deg);
+}
+#showdown-roster-layer>.panel-header{
+  position:relative;overflow:hidden;
+}
+#showdown-roster-layer>.panel-header::after{
+  content:"★  ARCADE  ★";pointer-events:none;
+  position:absolute;right:14px;bottom:5px;opacity:.16;
+  font:italic 900 clamp(2rem,6vw,5rem)/1 Impact,"Arial Black",sans-serif;
+  color:#fff;transform:rotate(-8deg);
+}
+#showdown-roster-layer .roster-wall{
+  border:3px solid #64c9f4;
+  box-shadow:0 0 0 3px #111537,0 0 28px #4db6ff3b,inset 0 0 55px #03142d;
+}
+#showdown-roster-layer .roster-wall-heading{
+  position:relative;
+  background:linear-gradient(95deg,#0f4f83,#27265c 67%,#592f64);
+  box-shadow:inset 0 1px #e5f9ff55,0 4px 15px #0007;
+}
+#showdown-roster-layer .roster-wall-heading .roster-player-icon{
+  box-shadow:0 0 16px #ffe17aa3;
+}
+#showdown-roster-layer .roster-wall .fighter-slot.occupied{
+  outline:1px solid #b4dcff30;outline-offset:-5px;
+}
+#showdown-roster-layer .roster-wall .fighter-slot.occupied .slot-footer{
+  background:linear-gradient(90deg,#0a1439ee,#123d69ee);
+}
+#showdown-roster-layer .roster-wall .fighter-slot[aria-pressed="true"]{
+  animation:showdownSelected 2.2s ease-in-out infinite;
+}
+#showdown-roster-layer .preview-card{
+  background:
+    radial-gradient(ellipse at 50% 12%,#728dcb3c,transparent 52%),
+    repeating-linear-gradient(135deg,transparent 0 34px,#aaccff07 35px 37px),
+    linear-gradient(160deg,#25295d,#101a39 67%,#0d1030);
+  box-shadow:0 0 0 4px #13183a,0 0 36px #63bcff4a,0 18px 38px #000a;
+}
+#showdown-roster-layer .preview-card::after{
+  content:"CHAMPION SELECT";position:absolute;
+  left:0;right:0;bottom:0;height:5px;
+  background:linear-gradient(90deg,#63f4ff,#ffcd78,#fc78d2,#63f4ff);
+  background-size:200% 100%;animation:showdownScan 7s linear infinite;
+  font-size:0;pointer-events:none;
+}
+#showdown-roster-layer .preview-frame{
+  box-shadow:0 0 0 4px #122447,0 0 0 6px #ecba7855,0 0 25px #77cfff6b,inset 0 0 45px #122549;
+}
+#showdown-roster-layer .preview-frame .preview-avatar img{
+  filter:drop-shadow(0 8px 10px #080c29cc) drop-shadow(0 0 15px #66d7ff55);
+}
+#showdown-roster-layer .preview-selection-strip{
+  box-shadow:inset 0 1px #ffffff41,0 4px 9px #0005;
+}
+#showdown-roster-layer .preview-actions .arcade-btn.main:hover:enabled{
+  filter:brightness(1.15);
+  box-shadow:0 4px 0 #54355a,0 0 22px #ffdb83ad;
+}
+.stage-selection{
+  position:relative;border:2px solid #70b8ef!important;
+  box-shadow:inset 0 0 28px #478fff0e,0 0 20px #5a9bff24;
+}
+.stage-choice{
+  transition:transform .16s,border-color .16s,box-shadow .16s,filter .16s;
+}
+.stage-choice:hover{transform:translateY(-3px);filter:brightness(1.1)}
+.stage-choice.is-selected,
+.stage-choice[aria-pressed="true"]{
+  box-shadow:0 0 0 2px #ffe39f88,0 0 17px #ffbe6c77;
+}
+.arena-frame{
+  border:4px solid #8ddaff;
+  box-shadow:0 0 0 3px #111b49,0 0 32px #66d3ff6b,0 14px 35px #020817c9;
+}
+.arena-frame::before{
+  content:"";pointer-events:none;position:absolute;inset:3px;
+  z-index:2;border:1px solid #b4f1ff35;border-radius:9px;
+}
+.arena-hud{border:2px solid #63b4ee;box-shadow:0 0 20px #42aaff35,inset 0 1px #fff2}
+.hud-time{box-shadow:0 0 19px #ffe19851,0 3px 0 #090d29}
+.arena-announcement{text-shadow:3px 4px 0 #3b1f69,0 0 23px #f8c87b8c}
+@keyframes showdownHalo{
+  0%{transform:rotate(-19deg)}100%{transform:rotate(341deg)}
+}
+@keyframes showdownSelected{
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(1.22)}
+}
+@keyframes showdownScan{
+  from{background-position:0% 50%}to{background-position:200% 50%}
+}
+@media(max-width:650px){
+  .showdown-top::after{display:none}
+  .showdown-hero{border-width:2px}
+  #showdown-roster-layer .roster-wall{border-width:2px}
+  #showdown-roster-layer>.panel-header::after{display:none}
+  #showdown-roster-layer .preview-card::after{height:3px}
+  .arena-frame{border-width:2px}
+  .stage-choice:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .showdown-hero::before,
+  #showdown-roster-layer .roster-wall .fighter-slot[aria-pressed="true"],
+  #showdown-roster-layer .preview-card::after{animation:none!important}
+  .stage-choice{transition:none!important}
+}
