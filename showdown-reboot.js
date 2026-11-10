@@ -43,11 +43,15 @@ const kimPossible={slot:3,fighter_id:'kim-possible',name:'Kim Possible',series:'
  portrait:'/images/showdown/kim-possible-portrait.svg',
  preview_sheet:'/images/showdown/kim-possible-4x4.png?v=20261109',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:false,unlock_method:'free'};
+const perfectCell={slot:4,fighter_id:'perfect-cell',name:'Perfect Cell',series:'Dragon Ball Z',accent:'#83e54f',
+ portrait:'/images/showdown/perfect-cell-portrait.png',
+ preview_sheet:'/images/showdown/perfect-cell-4x4.png?v=20261110',preview_columns:4,preview_rows:4,
+ enabled:true,unlockable:false,unlock_method:'free'};
 const demoCPU={...demoHero};
 function addBuiltInFighters(){
- for(const fighter of [demoHero,samuraiJack,kimPossible]){
+ for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,enabled:true,unlockable:false});continue;}
+  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,enabled:true,unlockable:false});continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,{...fighter,slot});
@@ -90,7 +94,7 @@ function spriteSources(profile){
 // Support both Johnny's padded 6x11 rig and the legacy 3x11 backups.
 function spriteLayout(profile,source){
  const johnny=profile?.fighter_id==='johnny-bravo';
- const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible)-4x4\.png/i.test(source);
+ const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell)-4x4\.png/i.test(source);
  const polished=johnny&&/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(source);
   const legacyJack=/samurai-jack-atlas\.svg/i.test(source);
  return {columns:uploaded?4:polished?6:(johnny||legacyJack)?3:Math.max(1,Number(profile?.preview_columns)||3),
@@ -171,6 +175,18 @@ const JACK_POSE_MAP=[[[0,0],[1,0],[3,3]],[[0,1],[1,1],[2,1]],[[2,0],[3,0],[0,2]]
 function jackSpriteCell(row,frame){const poses=JACK_POSE_MAP[Math.max(0,Math.min(10,row))];const cell=poses[Math.max(0,frame)%poses.length];return {frame:cell[0],row:cell[1]};}
 const KIM_POSE_MAP=[[[0,0],[1,0],[2,0]],[[1,0],[2,0],[3,0]],[[1,1],[2,1],[3,1]],[[1,1],[2,1],[3,1]],[[0,2],[1,2],[2,2]],[[0,0],[3,1],[0,0]],[[1,2],[0,3],[1,3]],[[2,3],[2,3],[2,3]],[[2,1],[3,1],[0,2]],[[3,2],[3,3],[3,2]],[[3,2],[3,3],[3,3]]];
 function kimSpriteCell(row,frame){const poses=KIM_POSE_MAP[Math.max(0,Math.min(10,row))];const cell=poses[Math.max(0,frame)%poses.length];return {frame:cell[0],row:cell[1]};}
+// Map the supplied 4x4 Perfect Cell sheet onto all eleven battle pose categories.
+const CELL_POSE_MAP=[
+ [[0,0],[1,0],[2,0]], [[0,1],[1,1],[2,1]], [[1,1],[2,1],[3,1]],
+ [[0,2],[1,2],[2,2]], [[2,2],[3,2],[1,3]], [[0,0],[3,0],[0,0]],
+ [[1,3],[2,3],[3,3]], [[0,3],[1,3],[0,3]], [[2,2],[3,2],[3,3]],
+ [[2,3],[1,3],[2,3]], [[0,3],[0,3],[0,3]]
+];
+function cellSpriteCell(row,frame){
+ const cells=CELL_POSE_MAP[Math.max(0,Math.min(10,row))];
+ const cell=cells[Math.max(0,frame)%cells.length];
+ return {frame:cell[0],row:cell[1]};
+}
 function johnnySpriteCell(row,frame){
  const sequence=JOHNNY_POSE_MAP[Math.max(0,Math.min(10,row))]||JOHNNY_POSE_MAP[0];
  const pose=sequence[Math.max(0,frame)%sequence.length];
@@ -192,6 +208,7 @@ function spritePose(f,t,columns){
  else if(Math.abs(f.moveSpeed||0)>8){row=1;frame=Math.floor(t*9)%columns;}
  if(columns===4&&f.profile?.fighter_id==='samurai-jack')return jackSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='kim-possible')return kimSpriteCell(row,frame);
+ if(columns===4&&f.profile?.fighter_id==='perfect-cell')return cellSpriteCell(row,frame);
  return columns===4&&f.profile?.fighter_id==='johnny-bravo'?johnnySpriteCell(row,frame):{row,frame};
 }
 const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
@@ -325,8 +342,8 @@ function renderPreviewFrame(timestamp){
  const isLoop=['idle','walk','run','guard','crouch'].includes(previewAnimation.pose);
  const interval=previewAnimation.pose==='run'?85:previewAnimation.pose==='walk'?115:190;
  const actionFrame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%1400)/(1400/cols)));
- const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible)-4x4\.png/i.test(previewAnimation.source||'');
- const {row,frame}=uploaded?(selection.fighters.get(selection.slot)?.fighter_id==='samurai-jack'?jackSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='kim-possible'?kimSpriteCell(actionRow,actionFrame):johnnySpriteCell(actionRow,actionFrame)):{row:actionRow,frame:actionFrame};
+ const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell)-4x4\.png/i.test(previewAnimation.source||'');
+ const {row,frame}=uploaded?(selection.fighters.get(selection.slot)?.fighter_id==='samurai-jack'?jackSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='kim-possible'?kimSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='perfect-cell'?cellSpriteCell(actionRow,actionFrame):johnnySpriteCell(actionRow,actionFrame)):{row:actionRow,frame:actionFrame};
  const polished=/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(previewAnimation.source||'');
  p.clearRect(0,0,canvas.width,canvas.height);
  p.save();p.imageSmoothingEnabled=!polished&&!uploaded;p.imageSmoothingQuality='high';
@@ -554,7 +571,9 @@ async function loadRoster(){
       :f.fighter_id==='samurai-jack'
       ?{...f,portrait:samuraiJack.portrait,preview_sheet:samuraiJack.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='kim-possible'
-      ?{...f,portrait:kimPossible.portrait,preview_sheet:kimPossible.preview_sheet,preview_columns:4,preview_rows:4}:f;
+      ?{...f,portrait:kimPossible.portrait,preview_sheet:kimPossible.preview_sheet,preview_columns:4,preview_rows:4}
+      :f.fighter_id==='perfect-cell'
+      ?{...f,portrait:perfectCell.portrait,preview_sheet:perfectCell.preview_sheet,preview_columns:4,preview_rows:4}:f;
     return [ready.slot,ready];
    }));
    // Preserve owner-defined slots while adding the built-in fighters.
@@ -569,7 +588,7 @@ async function loadRoster(){
   console.warn('CToon Showdown roster unavailable:',err);
   addBuiltInFighters();
    updateSeries();
-   banner.textContent='Online catalog unavailable. Johnny Bravo, Kim Possible, and Samurai Jack are playable locally; locked fighters need the catalog connection.';
+   banner.textContent='Online catalog unavailable. Johnny Bravo, Kim Possible, Perfect Cell, and Samurai Jack are playable locally; locked fighters need the catalog connection.';
   renderRoster();selectSlot(selection.slot);
  }
 }
