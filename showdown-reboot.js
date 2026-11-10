@@ -46,16 +46,18 @@ const kimPossible={slot:3,fighter_id:'kim-possible',name:'Kim Possible',series:'
 const perfectCell={slot:4,fighter_id:'perfect-cell',name:'Perfect Cell',series:'Dragon Ball Z',accent:'#83e54f',
  portrait:'/images/showdown/perfect-cell-pixel-portrait.png',portrait_fallback:'/images/showdown/perfect-cell-portrait.png',
  preview_sheet:'/images/showdown/perfect-cell-4x4.png?v=20261110',preview_columns:4,preview_rows:4,
- enabled:true,unlockable:false,unlock_method:'free'};
+ enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:2500,
+ unlock_hint:'Spend Cartoon Coins to recruit Perfect Cell.'};
 const burter={slot:5,fighter_id:'burter',name:'Burter',series:'Dragon Ball Z',accent:'#4ca9ff',
  portrait:'/images/showdown/burter-portrait.png',
  preview_sheet:'/images/showdown/burter-4x4.png?v=20261110',preview_columns:4,preview_rows:4,
- enabled:true,unlockable:false,unlock_method:'free'};
+ enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:1500,
+ unlock_hint:'Spend Cartoon Coins to recruit Burter.'};
 const demoCPU={...demoHero};
 function addBuiltInFighters(){
  for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,unlockable:false});continue;}
+  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter'].includes(fighter.fighter_id)?{}:{unlockable:false})});continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,{...fighter,slot});
@@ -645,7 +647,7 @@ async function loadRoster(){
   console.warn('CToon Showdown roster unavailable:',err);
   addBuiltInFighters();
    updateSeries();
-   banner.textContent='Online catalog unavailable. Burter, Johnny Bravo, Kim Possible, Perfect Cell, and Samurai Jack are playable locally; locked fighters need the catalog connection.';
+   banner.textContent='Online catalog unavailable. Free fighters are playable locally; Perfect Cell and Burter remain locked until the catalog reconnects.';
   renderRoster();selectSlot(selection.slot);
  }
 }
