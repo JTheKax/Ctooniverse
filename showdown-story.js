@@ -37,7 +37,7 @@ const MISSIONS=[
 const PROGRESS_PREFIX='ctoon-showdown-story-v1:';
 const $=id=>document.getElementById(id);
 
-export function createStoryMode({getFighter,getPlayable,startBattle}){
+export function createStoryMode({getFighter,getPlayable,startBattle,onReturn}){
  const panel=$('story-mode'),map=$('story-mission-map'),progress=$('story-progress');
  const heroSelect=$('story-hero'),scene=$('story-scene'),sceneTitle=$('story-scene-title');
  const sceneIntro=$('story-scene-intro'),sceneQuote=$('story-scene-quote');
@@ -129,13 +129,13 @@ export function createStoryMode({getFighter,getPlayable,startBattle}){
    scenePortrait.append(art);
   }else scenePortrait.textContent=enemy?.name?.[0]||'★';
   primary.disabled=false;
-  primary.textContent=mode==='victory'?(nextMission()?'▶ NEXT MISSION':'↻ REPLAY STORY') :mode==='defeat'?'↻ RETRY BATTLE':'⚔ BEGIN STORY BATTLE';
+  primary.textContent=mode==='victory'?(nextMission()?'▶ NEXT MISSION':'↻ REPLAY FIRST MISSION') :mode==='defeat'?'↻ RETRY BATTLE':'⚔ BEGIN STORY BATTLE';
   close.textContent=mode==='intro'?'Back to chapter map':'Return to chapter map';
  }
  function openMission(mission){
   const index=MISSIONS.findIndex(m=>m.id===mission.id);
   if(index<0||!accessible(index))return;
-  if(['countdown','fighting','between'].includes(battle?.mode))return;
+  if(battle?.mode==='active'){announce('Finish this battle or select STORY MAP in the arena before switching missions.');return;}
   battle=null;continueBtn.hidden=true;returnBtn.hidden=true;
   showScene(mission,'intro');
   goto(scene);
@@ -183,16 +183,16 @@ export function createStoryMode({getFighter,getPlayable,startBattle}){
   battle=null;
   continueBtn.hidden=true;returnBtn.hidden=true;
  }
- function storyReturn(){leave();scene.hidden=true;goto(panel);}
+ function storyReturn(){leave();scene.hidden=true;onReturn?.();goto(panel);}
  primary.addEventListener('click',()=>{
   if(sceneMode==='victory'){
    const next=nextMission();
    if(next)openMission(next);
-   else {completed.clear();write();render();openMission(MISSIONS[0]);}
+   else openMission(MISSIONS[0]);
   }else begin();
  });
  close.addEventListener('click',()=>{scene.hidden=true;goto(panel);});
- continueBtn.addEventListener('click',()=>{continueStory();goto(scene.hidden?panel:scene);});
+ continueBtn.addEventListener('click',()=>{const retrying=battle?.mode==='defeat';continueStory();if(!retrying)goto(scene.hidden?panel:scene);});
  returnBtn.addEventListener('click',storyReturn);
  heroSelect.addEventListener('change',()=>{savedHeroId=heroSelect.value});
  $('story-begin').addEventListener('click',()=>{
