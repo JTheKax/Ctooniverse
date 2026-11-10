@@ -607,3 +607,45 @@ body{
   #showdown-roster-layer .roster-wall .fighter-slot,
   #showdown-roster-layer .roster-wall .fighter-slot .slot-art img{transition:none!important}
 }
+
+/* Upgrade: arcade character discovery controls. */
+#showdown-roster-layer .roster-surprise,
+#showdown-roster-layer .roster-surprise-alt{
+  position:relative;overflow:hidden;
+  font-weight:1000;letter-spacing:.06em;
+  color:#14132e;
+  border:2px solid #ffeba6;
+  background:linear-gradient(115deg,#ffefab,#ffb768 72%,#ed9c80);
+  box-shadow:0 4px 0 #67425a,0 0 18px #ffd16c38;
+  text-shadow:none;
+}
+#showdown-roster-layer .roster-surprise-alt{
+  color:#eafcff;border-color:#7feaff;
+  background:linear-gradient(125deg,#126588,#3d4ca2 65%,#603c91);
+  box-shadow:0 4px 0 #13264c,0 0 18px #50dfff2c;
+}
+#showdown-roster-layer .roster-surprise:focus-visible,
+#showdown-roster-layer .roster-surprise-alt:focus-visible{
+  outline:3px solid #ffffff;outline-offset:3px;
+}
+#showdown-roster-layer .roster-surprise:hover,
+#showdown-roster-layer .roster-surprise-alt:hover{
+  transform:translateY(-3px);
+  filter:brightness(1.1);
+}
+#showdown-roster-layer .roster-surprise:active,
+#showdown-roster-layer .roster-surprise-alt:active{
+  transform:translateY(1px);
+  box-shadow:0 1px 0 #172446;
+}
+@media(max-width:650px){
+  #showdown-roster-layer .roster-surprise,
+  #showdown-roster-layer .roster-surprise-alt{
+    flex:1 1 130px;min-height:43px;
+    font-size:.69rem;letter-spacing:0;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+ #showdown-roster-layer .roster-surprise,
+ #showdown-roster-layer .roster-surprise-alt{transition:none!important}
+}
