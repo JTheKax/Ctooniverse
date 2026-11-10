@@ -33,18 +33,18 @@ function announceFight(label,phase=''){
 // Built-in fighters are available even when the catalog is offline.
 // Johnny is fighter 001; Samurai Jack uses the same full 3x11 action mapping.
 const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Johnny Bravo',accent:'#f7d345',
- portrait:'/images/showdown/johnny-bravo-roster-portrait.webp',
+ portrait:'/images/showdown/johnny-bravo-pixel-portrait.png',portrait_fallback:'/images/showdown/johnny-bravo-roster-portrait.webp',
  preview_sheet:'/images/showdown/johnny-bravo-new-4x4.png?v=20261109',preview_columns:4,preview_rows:4};
 const samuraiJack={slot:2,fighter_id:'samurai-jack',name:'Samurai Jack',series:'Samurai Jack',accent:'#a9e5ee',
- portrait:'/images/showdown/samurai-jack-portrait.svg',
+ portrait:'/images/showdown/samurai-jack-pixel-portrait.png',portrait_fallback:'/images/showdown/samurai-jack-portrait.svg',
  preview_sheet:'/images/showdown/samurai-jack-4x4.png?v=20261109',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:false,unlock_method:'free'};
 const kimPossible={slot:3,fighter_id:'kim-possible',name:'Kim Possible',series:'Kim Possible',accent:'#ff8048',
- portrait:'/images/showdown/kim-possible-portrait.svg',
+ portrait:'/images/showdown/kim-possible-pixel-portrait.png',portrait_fallback:'/images/showdown/kim-possible-portrait.svg',
  preview_sheet:'/images/showdown/kim-possible-4x4.png?v=20261109',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:false,unlock_method:'free'};
 const perfectCell={slot:4,fighter_id:'perfect-cell',name:'Perfect Cell',series:'Dragon Ball Z',accent:'#83e54f',
- portrait:'/images/showdown/perfect-cell-portrait.png',
+ portrait:'/images/showdown/perfect-cell-pixel-portrait.png',portrait_fallback:'/images/showdown/perfect-cell-portrait.png',
  preview_sheet:'/images/showdown/perfect-cell-4x4.png?v=20261110',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:false,unlock_method:'free'};
 const burter={slot:5,fighter_id:'burter',name:'Burter',series:'Dragon Ball Z',accent:'#4ca9ff',
@@ -55,7 +55,7 @@ const demoCPU={...demoHero};
 function addBuiltInFighters(){
  for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,enabled:true,unlockable:false});continue;}
+  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,unlockable:false});continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,{...fighter,slot});
@@ -464,7 +464,7 @@ function renderRoster(){
   if(img){
    const portrait=document.createElement('img');portrait.src=img;portrait.alt='';
    portrait.loading=n===selection.slot?'eager':'lazy';
-   portrait.onerror=()=>portrait.replaceWith(mark);
+   portrait.onerror=()=>{const backup=safeImage(fighter?.portrait_fallback);if(backup&&portrait.src!==backup){portrait.onerror=()=>portrait.replaceWith(mark);portrait.src=backup;}else portrait.replaceWith(mark);};
    mark.replaceWith(portrait);
   }
   const footer=document.createElement('span');footer.className='slot-footer';button.append(footer);
@@ -504,7 +504,7 @@ function selectSlot(slot){
  const uri=safeImage(fighter?.portrait);
  if(fighter&&uri){
    const img=document.createElement('img');img.src=uri;img.alt='';
-   img.onerror=()=>{avatar.replaceChildren();avatar.textContent=fighter.name.charAt(0).toUpperCase()};
+   img.onerror=()=>{const backup=safeImage(fighter.portrait_fallback);if(backup&&img.src!==backup){img.onerror=()=>{avatar.replaceChildren();avatar.textContent=fighter.name.charAt(0).toUpperCase()};img.src=backup;}else{avatar.replaceChildren();avatar.textContent=fighter.name.charAt(0).toUpperCase();}};
    avatar.append(img);
  }else avatar.textContent=fighter?fighter.name.charAt(0).toUpperCase():'?';
  avatar.classList.toggle('is-empty',!fighter);
@@ -622,13 +622,13 @@ async function loadRoster(){
   if(!Array.isArray(fighters))throw new Error('Unexpected catalog format');
   selection.fighters=new Map(fighters.filter(f=>Number.isSafeInteger(f.slot)&&f.slot>0).map(f=>{
     const ready=f.fighter_id==='johnny-bravo'
-      ?{...f,portrait:demoHero.portrait,preview_sheet:demoHero.preview_sheet,preview_columns:4,preview_rows:4}
+      ?{...f,portrait:demoHero.portrait,portrait_fallback:demoHero.portrait_fallback,preview_sheet:demoHero.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='samurai-jack'
-      ?{...f,portrait:samuraiJack.portrait,preview_sheet:samuraiJack.preview_sheet,preview_columns:4,preview_rows:4}
+      ?{...f,portrait:samuraiJack.portrait,portrait_fallback:samuraiJack.portrait_fallback,preview_sheet:samuraiJack.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='kim-possible'
-      ?{...f,portrait:kimPossible.portrait,preview_sheet:kimPossible.preview_sheet,preview_columns:4,preview_rows:4}
+      ?{...f,portrait:kimPossible.portrait,portrait_fallback:kimPossible.portrait_fallback,preview_sheet:kimPossible.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='perfect-cell'
-      ?{...f,portrait:perfectCell.portrait,preview_sheet:perfectCell.preview_sheet,preview_columns:4,preview_rows:4}
+      ?{...f,portrait:perfectCell.portrait,portrait_fallback:perfectCell.portrait_fallback,preview_sheet:perfectCell.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='burter'
       ?{...f,portrait:burter.portrait,preview_sheet:burter.preview_sheet,preview_columns:4,preview_rows:4}:f;
     return [ready.slot,ready];
