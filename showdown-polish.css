@@ -1186,3 +1186,153 @@ body{background:
  html{scroll-behavior:auto}
  .hub-link,.command-cta{transition:none}
 }
+
+
+/* Character select 2.0: luminous tournament board, fighter cards, spotlight. */
+#showdown-roster-layer.roster-showcase{
+ isolation:isolate;
+ background:radial-gradient(ellipse at 50% 0%,#6634b04a,transparent 55%),
+ repeating-linear-gradient(135deg,transparent 0 38px,#9e8cff07 39px 41px),
+ linear-gradient(155deg,#0a1536,#161038 58%,#091936)!important;
+ border:2px solid #45e7ff!important;
+ box-shadow:0 0 0 4px #070b22,0 0 32px #34bfff36,inset 0 0 48px #6329b530!important;
+}
+#showdown-roster-layer>.panel-header h2{
+ font-size:clamp(2.1rem,4.2vw,3.8rem)!important;
+ color:#fff!important;text-shadow:3px 4px #7b2ea9,0 0 22px #784fff66!important;
+}
+#showdown-roster-layer .roster-marquee{
+ min-height:64px;margin:14px 0 20px;padding:14px 20px;
+ border:2px solid #9c5bff;border-radius:10px;clip-path:none;
+ background:repeating-linear-gradient(125deg,transparent 0 28px,#ffffff09 29px 31px),
+ linear-gradient(90deg,#122f69,#4d1e73 50%,#0b3a67)!important;
+ box-shadow:0 5px 0 #080b22,0 0 22px #ae4cff77,inset 0 0 18px #50baff22!important;
+}
+#showdown-roster-layer .roster-marquee strong{
+ font:italic 1000 clamp(1rem,2.4vw,1.9rem) Impact,'Arial Black',sans-serif;
+ color:#ffe5a1!important;letter-spacing:.1em;
+ text-shadow:2px 3px #9d286e,0 0 16px #ffa857!important;
+}
+#showdown-roster-layer .roster-scoreboard{gap:12px}
+#showdown-roster-layer .roster-score{
+ border:1px solid #6f7fee;border-radius:10px;
+ background:linear-gradient(145deg,#162a59,#211b4a);
+ box-shadow:inset 0 0 18px #588bff1c,0 4px 0 #090d24;
+}
+#showdown-roster-layer .roster-controls{
+ border:1px solid #6658bc;border-radius:12px;padding:12px;
+ background:#080f2bd9;
+}
+#showdown-roster-layer .roster-chip{
+ border-radius:8px;transition:transform .16s,box-shadow .16s,filter .16s;
+}
+#showdown-roster-layer .roster-chip:hover{transform:translateY(-2px);filter:brightness(1.12)}
+#showdown-roster-layer .roster-chip[aria-pressed="true"]{
+ border-color:#ffe28e;box-shadow:0 0 0 1px #ffe28e,0 0 14px #ffbb5d55;
+}
+#showdown-roster-layer .select-layout{
+ grid-template-columns:minmax(0,1fr) minmax(270px,350px);
+ gap:clamp(14px,2vw,26px);align-items:start;
+}
+#showdown-roster-layer .roster-wall{
+ padding:clamp(9px,1.6vw,19px);
+ border:2px solid #59dcff;border-radius:15px;
+ background:repeating-linear-gradient(90deg,transparent 0 43px,#7ed6ff07 44px 45px),
+ radial-gradient(ellipse at 50% 0%,#543a9b44,transparent 55%),linear-gradient(160deg,#0c1739,#0c1230)!important;
+ box-shadow:0 0 0 3px #080d26,0 0 23px #44c6ff33,inset 0 0 30px #263c9340!important;
+}
+#showdown-roster-layer .roster-wall-heading{
+ padding:5px 5px 15px;margin-bottom:14px;border-bottom:2px solid #6847b7;
+ font-size:.75rem;letter-spacing:.12em;
+}
+#showdown-roster-layer .roster-player-icon{
+ background:linear-gradient(140deg,#ffda70,#ff7c58);color:#231137;
+ border-radius:5px;padding:5px 8px;box-shadow:2px 3px #8b3663;
+}
+#showdown-roster-layer .roster-grid{gap:clamp(6px,1vw,12px);align-items:stretch}
+#showdown-roster-layer .roster-wall .fighter-slot{
+ min-width:0;overflow:hidden;border:2px solid #475b9a;border-radius:10px;
+ background:linear-gradient(145deg,#27325b,#101a3a 70%,#151137);
+ box-shadow:0 4px 0 #070b1f,inset 0 0 0 1px #ffffff0d;
+ transition:transform .17s,border-color .17s,box-shadow .17s,filter .17s;
+}
+#showdown-roster-layer .roster-wall .fighter-slot.occupied{
+ border-color:var(--fighter-accent,#6feaff);
+ background:radial-gradient(ellipse at 50% 24%,#6c81c65a,transparent 73%),linear-gradient(160deg,#253864,#131c3d);
+}
+#showdown-roster-layer .roster-wall .fighter-slot:hover{
+ transform:translateY(-3px);border-color:#9ff6ff;
+ box-shadow:0 7px 0 #070b1f,0 0 18px #67dcff66,inset 0 0 0 1px #ffffff22;
+ z-index:2;
+}
+#showdown-roster-layer .roster-wall .fighter-slot:focus-visible{
+ outline:3px solid #ffed94;outline-offset:2px;z-index:4;
+}
+#showdown-roster-layer .roster-wall .fighter-slot[aria-pressed="true"]{
+ border-color:#ffe58b!important;
+ background:radial-gradient(ellipse at 50% 23%,#ab8dff75,transparent 70%),linear-gradient(160deg,#40356e,#17294f)!important;
+ box-shadow:0 0 0 2px #ffda75,0 0 23px #ffac4d9c,inset 0 0 20px #ffed9b20!important;
+ transform:none;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-no{
+ position:relative;z-index:2;border-radius:4px;
+ background:#080e2ce8;color:#a5eaff;font-weight:1000;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-art{
+ display:flex;align-items:center;justify-content:center;min-width:0;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-art img{
+ max-width:100%;max-height:100%;object-fit:contain;object-position:center;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-footer{
+ background:linear-gradient(180deg,#121a3eeb,#0a0f2aeF);
+ border-top:1px solid #6a77b75e;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-label{
+ color:#fff;font-weight:950;text-shadow:1px 2px #070b24;
+}
+#showdown-roster-layer .roster-pages{margin-top:16px}
+#showdown-roster-layer .preview-card{
+ position:relative;overflow:hidden;
+ border:2px solid #a366ff!important;border-radius:15px;
+ background:radial-gradient(ellipse at 50% 20%,#4e3fa186,transparent 56%),linear-gradient(160deg,#1d2451,#0b1330 78%)!important;
+ box-shadow:0 0 0 3px #080b24,0 0 28px #8b4dff55,inset 0 0 40px #743de72c!important;
+}
+#showdown-roster-layer .preview-card::before{
+ content:"FIGHTER SPOTLIGHT";display:block;margin:-17px -17px 13px;padding:13px;
+ background:linear-gradient(90deg,#39216d,#194a85);
+ border-bottom:2px solid #a57cff;
+ color:#e9f4ff;font:italic 900 1rem Impact,'Arial Black',sans-serif;letter-spacing:.15em;
+}
+#showdown-roster-layer .preview-frame{
+ border:2px solid #5bdcff;border-radius:10px;
+ background:radial-gradient(ellipse at 50% 50%,#7450b566,transparent 75%),linear-gradient(145deg,#0d234f,#161334);
+ box-shadow:inset 0 0 32px #56c6ff22,0 0 17px #3cb9ff38;
+}
+#showdown-roster-layer .preview-card h3{
+ color:#ffe19a!important;font:italic 900 clamp(1.8rem,3vw,2.5rem) Impact,'Arial Black',sans-serif;
+ text-shadow:2px 3px #763e8c;letter-spacing:.05em;
+}
+#showdown-roster-layer .preview-actions .arcade-btn.main{
+ font-size:1.08rem;font-weight:1000;
+ box-shadow:0 4px 0 #9a4d4e,0 0 22px #ffba6b60;
+}
+@media(max-width:1050px){
+ #showdown-roster-layer .select-layout{grid-template-columns:minmax(0,1fr) minmax(230px,300px)}
+}
+@media(max-width:800px){
+ #showdown-roster-layer .select-layout{grid-template-columns:1fr}
+ #showdown-roster-layer .preview-card{max-width:none}
+ #showdown-roster-layer .roster-marquee span{font-size:.55rem}
+}
+@media(max-width:520px){
+ #showdown-roster-layer .roster-marquee{padding:12px 8px;gap:5px}
+ #showdown-roster-layer .roster-marquee strong{font-size:1rem}
+ #showdown-roster-layer .roster-wall{padding:7px}
+ #showdown-roster-layer .roster-grid{gap:5px}
+ #showdown-roster-layer .roster-wall .fighter-slot{border-radius:7px}
+ #showdown-roster-layer .preview-card::before{margin:-17px -17px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+ #showdown-roster-layer .roster-wall .fighter-slot,#showdown-roster-layer .roster-chip{transition:none}
+}
