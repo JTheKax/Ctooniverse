@@ -19,7 +19,13 @@ async function load(){
 function draw(){
  list.replaceChildren();total.textContent="("+entries.length+")";
  if(!entries.length){const p=document.createElement("p");p.textContent="No subseries yet. Add your first one above.";list.append(p);return;}
- for(const item of entries){
+ for(const groupName of ["Cartoon & Anime","Video Games","Uncategorized"]){
+  const members=entries.filter(item=>(item.category==="Video Games"?"Video Games":item.category==="Cartoon & Anime"?"Cartoon & Anime":"Uncategorized")===groupName);
+  const section=document.createElement("section");section.className="subseries-category-group";
+  const header=document.createElement("h3");header.textContent=groupName+" ("+members.length+")";
+  section.append(header);list.append(section);
+  if(!members.length){const empty=document.createElement("p");empty.textContent="No subseries in this category yet.";section.append(empty);}
+  for(const item of members){
   const row=document.createElement("div");row.className="subseries-row";
   const info=document.createElement("div");info.className="subseries-info";
   const heading=document.createElement("strong");heading.textContent=item.name;
@@ -28,7 +34,23 @@ function draw(){
   const actions=document.createElement("div");actions.className="subseries-actions";
   const rename=document.createElement("button");rename.type="button";rename.textContent="Rename";
   const remove=document.createElement("button");remove.type="button";remove.className="subseries-delete";remove.textContent="Delete";
-  actions.append(rename,remove);row.append(info,actions);list.append(row);
+  const move=document.createElement("button");move.type="button";
+  move.textContent=item.category==="Video Games"?"Move to Cartoon & Anime":"Move to Video Games";
+  actions.append(rename,move,remove);row.append(info,actions);section.append(row);
+  move.addEventListener("click",async()=>{
+    if(busy)return;
+    const target=item.category==="Video Games"?"Cartoon & Anime":"Video Games";
+    if(!confirm('Move "'+item.name+'" to '+target+'?'))return;
+    if(entries.some(other=>other.id!==item.id&&other.name.toLowerCase()===item.name.toLowerCase()&&other.category===target)){
+      message("A subseries with this name already exists in "+target+".",true);return;
+    }
+    lock(true);
+    try{
+      const {data,error}=await db.from("ctoon_series").update({category:target}).eq("id",item.id).select("id");
+      if(error)throw error;if(!data?.length)throw new Error("Category change was not saved.");
+      await load();message(item.name+" moved to "+target+".");
+    }catch(error){message(error.message,true);}finally{lock(false);}
+  });
   rename.addEventListener("click",async()=>{
    if(busy)return;
    const next=prompt("Rename subseries:",item.name);if(next===null)return;
@@ -54,6 +76,7 @@ function draw(){
     await load();message("Deleted "+item.name+".");
    }catch(error){message(error.message,true);}finally{lock(false);}
   });
+  }
  }
 }
 form.addEventListener("submit",async event=>{
