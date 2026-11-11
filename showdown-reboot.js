@@ -453,10 +453,23 @@ if(previewPoseMenu){
   previewAnimation.poseStart=performance.now();
  });
 }
+// Visible roster positions are alphabetical. Database slot IDs remain unchanged
+// so saved fighters, unlocks, story mode, and combat references stay intact.
+function alphabeticalSlotNumbers(){
+ const occupied=[...selection.fighters.entries()].sort((a,b)=>
+  (a[1].name||'').localeCompare(b[1].name||'',undefined,{sensitivity:'base'})||
+  (a[1].fighter_id||'').localeCompare(b[1].fighter_id||'')||a[0]-b[0]);
+ const numbers=new Map();
+ occupied.forEach(([slot],index)=>numbers.set(slot,index+1));
+ let next=occupied.length+1;
+ for(let slot=1;slot<=selection.slots;slot++)if(!numbers.has(slot))numbers.set(slot,next++);
+ return numbers;
+}
 function pageSlots(){
  const q=search.value.trim().toLowerCase().replace(/\s+/g,' ');
  const state=kind.value, group=series.value;
  const slotQuery=q.match(/^(?:slot\s*#?\s*)(\d+)$/);
+ const displayNumbers=alphabeticalSlotNumbers();
  const matches=[];
  for(let n=1;n<=selection.slots;n++){
    const f=selection.fighters.get(n);
@@ -466,7 +479,7 @@ function pageSlots(){
       (state==='owned'&&(!f||!account.owned.has(f.fighter_id))))continue;
    if(group!=='all'&&(!f||f.series!==group))continue;
    if(q&&!((f?.name||'').toLowerCase().includes(q)||(f?.series||'').toLowerCase().includes(q)||
-     (f?.fighter_id||'').toLowerCase().includes(q)|| (slotQuery?Number(slotQuery[1])===n:(!Number.isNaN(Number(q))&&Number(q)===n))))continue;
+     (f?.fighter_id||'').toLowerCase().includes(q)|| (slotQuery?Number(slotQuery[1])===displayNumbers.get(n):(!Number.isNaN(Number(q))&&Number(q)===displayNumbers.get(n)))))continue;
    matches.push(n);
  }
  if(order?.value==='name'||order?.value==='series'){
@@ -490,19 +503,21 @@ function updateSeries(){
 }
 function renderRoster(){
  const matches=pageSlots(),pages=Math.max(1,Math.ceil(matches.length/PAGE_SIZE));
+ const displayNumbers=alphabeticalSlotNumbers();
  selection.page=Math.min(selection.page,pages-1);
  rosterGrid.replaceChildren();
  const frame=document.createDocumentFragment();
  for(const n of matches.slice(selection.page*PAGE_SIZE,(selection.page+1)*PAGE_SIZE)){
   const fighter=selection.fighters.get(n);
+  const visibleSlot=displayNumbers.get(n);
   const button=document.createElement('button');button.type='button';
   const locked=isLocked(fighter);
   button.className='fighter-slot'+(fighter?' occupied':'')+(locked?' locked':'')+(fighter?.unlockable&&!locked?' claimed':'');
   button.dataset.slot=String(n);
   button.style.setProperty('--fighter-accent',validColor(fighter?.accent));
   button.setAttribute('aria-pressed',String(selection.slot===n));
-  button.setAttribute('aria-label',fighter?'Slot '+n+': '+fighter.name+(locked?', locked':fighter.unlockable?', unlocked':', playable'):'Slot '+n+': future fighter');
-  text(button,'span',pad(n),'slot-no');
+  button.setAttribute('aria-label',fighter?'Slot '+visibleSlot+': '+fighter.name+(locked?', locked':fighter.unlockable?', unlocked':', playable'):'Slot '+visibleSlot+': future fighter');
+  text(button,'span',pad(visibleSlot),'slot-no');
   const art=document.createElement('span');art.className='slot-art';button.append(art);
   const mark=text(art,'span',fighter?fighter.name.slice(0,1).toUpperCase():'?','slot-symbol');
   if(locked){const badge=text(button,'span','🔒','slot-lock');badge.setAttribute('aria-hidden','true');badge.title='Unlockable fighter';}
