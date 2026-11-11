@@ -101,7 +101,7 @@ const captainAmerica={slot:37,fighter_id:"captain-america",name:"Captain America
 const pussInBoots={slot:38,fighter_id:"puss-in-boots",name:"Puss in Boots",series:"Shrek",accent:"#e39a48",enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
 const omi={slot:39,fighter_id:"omi",name:"Omi",series:"Xiaolin Showdown",accent:"#e3b54e",enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
 const bloo={slot:40,fighter_id:"bloo",name:"Bloo",series:"Foster's Home for Imaginary Friends",accent:"#398fda",enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
-const ben10={slot:41,fighter_id:"ben-10",name:"Ben 10",series:"Ben 10",accent:"#70bf4b",enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
+const ben10={slot:41,fighter_id:"ben-10",name:"Ben Tennyson",series:"Ben 10",accent:"#70bf4b",enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
 const demoCPU={...demoHero};
 function noCoinCost(f){return f?.unlockable?{...f,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'}:f;}
 function addBuiltInFighters(){
