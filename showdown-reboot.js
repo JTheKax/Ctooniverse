@@ -71,7 +71,7 @@ const jeice={slot:9,fighter_id:'jeice',name:'Jeice',series:'Dragon Ball Z',accen
  preview_sheet:'/images/showdown/jeice-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'};
 const oogieBoogie={slot:10,fighter_id:'oogie-boogie',name:'Oogie Boogie',series:'The Nightmare Before Christmas',accent:'#a6e45c',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:'/images/showdown/oogie-boogie-4x4.png?v=20261111',preview_sheet:'/images/showdown/oogie-boogie-4x4.png?v=20261111',preview_columns:4,preview_rows:4};
-const buggyTheClown={slot:11,fighter_id:'buggy-the-clown',name:'Buggy the Clown',series:'One Piece',accent:'#e64d8d',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
+const buggyTheClown={slot:11,fighter_id:'buggy-the-clown',name:'Buggy the Clown',series:'One Piece',accent:'#e64d8d',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Sprite artwork supplied · Awaiting asset upload',portrait:'/images/showdown/buggy-the-clown-portrait.png',preview_sheet:'/images/showdown/buggy-the-clown-4x4.png',preview_columns:4,preview_rows:4};
 const drDrakken={slot:12,fighter_id:'dr-drakken',name:'Dr. Drakken',series:'Kim Possible',accent:'#4d9bdb',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
 const captainHook={slot:13,fighter_id:'captain-hook',name:'Captain Hook',series:'Peter Pan',accent:'#cf414e',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
 const baymax={slot:14,fighter_id:'baymax',name:'Baymax',series:'Big Hero 6',accent:'#e2e9f3',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
@@ -858,7 +858,7 @@ async function loadRoster(){
   const fighters=await response.json();
   if(!Array.isArray(fighters))throw new Error('Unexpected catalog format');
   selection.fighters=new Map(fighters.filter(f=>Number.isSafeInteger(f.slot)&&f.slot>0).map(f=>{
-    const ready=f.fighter_id==='oogie-boogie'?{...f,...oogieBoogie,slot:f.slot}:f.fighter_id==='johnny-bravo'
+    const ready=f.fighter_id==='oogie-boogie'?{...f,...oogieBoogie,slot:f.slot}:f.fighter_id==='buggy-the-clown'?{...f,...buggyTheClown,slot:f.slot}:f.fighter_id==='johnny-bravo'
       ?{...f,portrait:demoHero.portrait,portrait_fallback:demoHero.portrait_fallback,preview_sheet:demoHero.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='samurai-jack'
       ?{...f,portrait:samuraiJack.portrait,portrait_fallback:samuraiJack.portrait_fallback,preview_sheet:samuraiJack.preview_sheet,preview_columns:4,preview_rows:4}
