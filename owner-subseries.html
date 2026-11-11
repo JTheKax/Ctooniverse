@@ -1,9 +1,13 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#061126"><meta name="description" content="CTooniverse owner administration setup status."><title>Subseries Manager | CTooniverse</title><link rel="stylesheet" href="styles.css?v=player-card-20261103"><link rel="stylesheet" href="arcade-polish.css?v=2"><script src="script.js?v=status-nav-colors-20261108" defer></script><script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script><script type="module" src="owner-subseries.js?v=1"></script><script type="module" src="account-menu.js?v=1"></script><script src="owner-menu.js?v=subseries-manager-20261109" defer></script><script src="community-menu.js?v=2" defer></script><script src="music-player.js?v=random-autoplay-12" defer></script><style>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#061126"><meta name="description" content="CTooniverse owner administration setup status."><title>Subseries Manager | CTooniverse</title><link rel="stylesheet" href="styles.css?v=player-card-20261103"><link rel="stylesheet" href="arcade-polish.css?v=2"><script src="script.js?v=status-nav-colors-20261108" defer></script><script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script><script type="module" src="owner-subseries.js?v=category-groups-20261111"></script><script type="module" src="account-menu.js?v=1"></script><script src="owner-menu.js?v=subseries-manager-20261109" defer></script><script src="community-menu.js?v=2" defer></script><script src="music-player.js?v=random-autoplay-12" defer></script><style>
 #subseries-owner-tools[hidden]{display:none!important}
 #subseries-create-form input,#subseries-create-form select,.subseries-rename-input{width:100%;max-width:520px;background:#10163a;border:2px solid #69d9ff;border-radius:10px;color:#fff;font:inherit;padding:11px}
 #subseries-create-form label{font-weight:800;margin:0}
-#subseries-list{display:grid;gap:10px}
+#subseries-list{display:grid;gap:20px}
+.subseries-category-group{display:grid;gap:10px;padding:14px;border:2px solid #608fd3;border-radius:16px;background:#131943de}
+.subseries-category-group h3{margin:0 0 4px;color:#aeedff;font-size:1.2rem}
+.subseries-category-group:nth-child(2){border-color:#a47bdd}
+.subseries-category-group:nth-child(2) h3{color:#e3c1ff}
 .subseries-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border:2px solid #6556c7;border-radius:13px;background:#12173bdc}
 .subseries-info{flex:1 1 200px;min-width:0}.subseries-info strong{display:block;font-size:1.05rem}.subseries-info small{color:#d8dcff}
 .subseries-actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -27,7 +31,7 @@
 </form></section>
 <section class="coin-panel" style="padding:20px;margin:20px auto">
 <h2>Existing subseries <span id="subseries-total"></span></h2>
-<p>Subseries are sorted A–Z. Rename or delete them here. Existing CToon artwork is never deleted from this manager.</p>
+<p>Subseries are grouped by Cartoon &amp; Anime or Video Games, then sorted A–Z. Rename, move between categories, or delete empty subseries here. Existing CToon artwork is never deleted.</p>
 <div id="subseries-list" aria-live="polite"></div>
 </section></div>
 <p id="subseries-feedback" role="status" aria-live="polite"></p>
