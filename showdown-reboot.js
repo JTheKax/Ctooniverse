@@ -70,7 +70,7 @@ const jeice={slot:9,fighter_id:'jeice',name:'Jeice',series:'Dragon Ball Z',accen
  portrait:'/images/showdown/jeice-portrait.png?v=20261111',
  preview_sheet:'/images/showdown/jeice-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'};
-const oogieBoogie={slot:10,fighter_id:'oogie-boogie',name:'Oogie Boogie',series:'The Nightmare Before Christmas',accent:'#a6e45c',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
+const oogieBoogie={slot:10,fighter_id:'oogie-boogie',name:'Oogie Boogie',series:'The Nightmare Before Christmas',accent:'#a6e45c',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:'/images/showdown/oogie-boogie-4x4.png?v=20261111',preview_sheet:'/images/showdown/oogie-boogie-4x4.png?v=20261111',preview_columns:4,preview_rows:4};
 const demoCPU={...demoHero};
 function noCoinCost(f){return f?.unlockable?{...f,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'}:f;}
 function addBuiltInFighters(){
@@ -257,6 +257,18 @@ const COURAGE_POSE_MAP=[
  [[0,3],[1,3],[2,3]],[[3,1],[0,1],[3,1]],[[3,2],[0,3],[2,3]],
  [[1,3],[2,3],[1,3]],[[1,3],[1,3],[1,3]]
 ];
+// Oogie Boogie's supplied 4x4 atlas, mapped to eleven preview actions.
+const OOGIE_POSE_MAP=[
+ [[0,0],[1,0],[2,0]],[[1,0],[2,0],[1,1]],[[1,0],[2,0],[2,1]],
+ [[2,1],[3,1],[1,2]],[[0,2],[1,2],[2,2]],[[0,1],[1,1],[0,1]],
+ [[3,0],[3,2],[3,0]],[[0,1],[0,3],[0,1]],[[3,2],[3,3],[3,2]],
+ [[1,2],[2,2],[1,2]],[[1,3],[1,3],[1,3]]
+];
+function oogieSpriteCell(row,frame){
+ const poses=OOGIE_POSE_MAP[Math.max(0,Math.min(10,row))];
+ const pose=poses[Math.max(0,frame)%poses.length];
+ return {frame:pose[0],row:pose[1]};
+}
 // Jeice's supplied 4x4 atlas mapped to the engine's eleven actions.
 const JEICE_POSE_MAP=[
  [[0,0],[1,0],[2,0]],[[0,1],[1,1],[2,1]],[[1,1],[2,1],[3,1]],
@@ -306,6 +318,7 @@ function spritePose(f,t,columns){
  if(columns===4&&f.profile?.fighter_id==='nigel-uno')return nigelSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='courage')return courageSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='jeice')return jeiceSpriteCell(row,frame);
+ if(columns===4&&f.profile?.fighter_id==='oogie-boogie')return oogieSpriteCell(row,frame);
  return columns===4&&f.profile?.fighter_id==='johnny-bravo'?johnnySpriteCell(row,frame):{row,frame};
 }
 const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
