@@ -50,13 +50,13 @@ const perfectCell={slot:4,fighter_id:'perfect-cell',name:'Perfect Cell',series:'
  enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:2500,
  unlock_hint:'Spend Cartoon Coins to recruit Perfect Cell.'};
 const burter={slot:5,fighter_id:'burter',name:'Burter',series:'Dragon Ball Z',accent:'#4ca9ff',
- portrait:'/images/showdown/burter-portrait.png',
+ portrait:'/images/showdown/burter-roster-portrait.png?v=20261111',
  preview_sheet:'/images/showdown/burter-4x4.png?v=20261110',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:1500,
  unlock_hint:'Spend Cartoon Coins to recruit Burter.'};
 // The Flea uses the owner's transparent 4x4 sprite sheet for both preview and combat.
 const theFlea={slot:6,fighter_id:'the-flea',name:'The Flea',series:'Mucha Lucha',accent:'#e5a348',
- portrait:'/images/showdown/the-flea-4x4.png?v=20261111',
+ portrait:'/images/showdown/the-flea-portrait.png?v=20261111',
  preview_sheet:'/images/showdown/the-flea-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:false,unlock_method:'free'};
 const demoCPU={...demoHero};
