@@ -4,13 +4,17 @@
   const alphabet=document.getElementById("ctoons-alphabet");
   const search=document.getElementById("ctoons-search");
   const subseries=document.getElementById("ctoons-subseries");
+  const category=document.getElementById("ctoons-category");
   const clearFilters=document.getElementById("ctoons-clear-filters");
   const count=document.getElementById("ctoons-result-count");
-  if(!results||!alphabet||!search||!subseries||!clearFilters||!count)return;
+  if(!results||!alphabet||!search||!subseries||!category||!clearFilters||!count)return;
   const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
   const collator=new Intl.Collator(undefined,{numeric:true,sensitivity:"base"});
   let all=[];
   let availableSubseries=[];
+  const CATEGORIES=["Cartoon & Anime","Video Games"];
+  const categoryFor=new Map();
+  const cleanCategory=value=>value==="Video Games"?"Video Games":value==="Cartoon & Anime"?"Cartoon & Anime":"Uncategorized";
   const clear=node=>node.replaceChildren();
   const el=(tag,cls,text)=>{
     const node=document.createElement(tag);
@@ -57,72 +61,91 @@
       showcase.append(grid);results.append(showcase);
     }
   }
-  function populateSubseries() {
-    const selected=subseries.value;
-    const groups=new Map([
-      ["Cartoon & Anime",new Set()],
-      ["Video Games",new Set()]
-    ]);
-    const assigned=new Set();
-    for(const item of availableSubseries){
-      if(!item || !item.name)continue;
-      const category=groups.has(item.category)?item.category:"Other";
-      if(!groups.has(category))groups.set(category,new Set());
-      groups.get(category).add(item.name);
-      assigned.add(item.name);
-    }
-    // Retain series referenced by CToons even if the parent entry was removed.
-    const other=groups.get("Other")||new Set();
-    for(const item of all)if(item.series && !assigned.has(item.series))other.add(item.series);
-    if(other.size)groups.set("Other",other);
+  function populateSubseries(){
+    const previous=subseries.value;
     subseries.replaceChildren(new Option("All Subseries",""));
-    for(const [label,names] of groups){
-      if(!names.size)continue;
-      const group=document.createElement("optgroup");
-      group.label=label;
+    for(const groupName of CATEGORIES){
+      const names=new Set(availableSubseries.filter(item=>cleanCategory(item.category)===groupName).map(item=>item.name));
+      for(const item of all)if(item.series&&categoryFor.get(item.series)===groupName)names.add(item.series);
+      const group=document.createElement("optgroup");group.label=groupName;
       for(const name of [...names].sort(collator.compare))group.append(new Option(name,name));
+      if(group.children.length)subseries.append(group);
+    }
+    const remaining=new Set(all.map(item=>item.series).filter(name=>name&&!categoryFor.has(name)));
+    if(remaining.size){
+      const group=document.createElement("optgroup");group.label="Uncategorized";
+      for(const name of [...remaining].sort(collator.compare))group.append(new Option(name,name));
       subseries.append(group);
     }
-    subseries.value=[...subseries.options].some(option=>option.value===selected)?selected:"";
+    subseries.value=[...subseries.options].some(option=>option.value===previous)?previous:"";
   }
-  function render() {
+  function render(){
     const q=search.value.trim().toLocaleLowerCase();
     const chosen=subseries.value;
-    const filtered=all.filter(item=>(!chosen||item.series===chosen) && (item.name+" "+(item.series||"")).toLocaleLowerCase().includes(q));
-    count.textContent=filtered.length+" CToon"+(filtered.length===1?"":"s")+(q||chosen?" found":"");
+    const chosenCategory=category.value;
+    const filtered=all.filter(item=>
+      (!chosen||item.series===chosen) &&
+      (!chosenCategory||cleanCategory(categoryFor.get(item.series))===chosenCategory) &&
+      (item.name+" "+(item.series||"")).toLocaleLowerCase().includes(q)
+    );
+    count.textContent=filtered.length+" CToon"+(filtered.length===1?"":"s")+(q||chosen||chosenCategory?" found":"");
     clear(alphabet);clear(results);
-    const groups=new Map();
+    const byCategory=new Map();
     for(const item of filtered){
-      const letter=initial(item.name);
-      if(!groups.has(letter))groups.set(letter,[]);
-      groups.get(letter).push(item);
+      const groupName=cleanCategory(categoryFor.get(item.series));
+      if(!byCategory.has(groupName))byCategory.set(groupName,[]);
+      byCategory.get(groupName).push(item);
     }
-    for(const letter of ["#",...letters]){
-      const list=groups.get(letter);
-      if(!list || !list.length){
-        if(letter!=="#")alphabet.append(el("span","",letter));
-        continue;
+    const firstAnchor=new Map();
+    for(const groupName of [...CATEGORIES,"Uncategorized"]){
+      const items=byCategory.get(groupName);
+      if(!items?.length)continue;
+      const wrapper=el("section","ctoons-category-section");
+      wrapper.setAttribute("aria-label",groupName+" CToons");
+      const banner=el("div","ctoons-category-header");
+      banner.append(el("h2","",groupName),el("span","",items.length+" CToon"+(items.length===1?"":"s")));
+      wrapper.append(banner);
+      const groups=new Map();
+      for(const item of items){
+        const letter=initial(item.name);
+        if(!groups.has(letter))groups.set(letter,[]);
+        groups.get(letter).push(item);
       }
-      const anchor=el("a","",letter);anchor.href="#ctoons-letter-"+(letter==="#"?"misc":letter.toLowerCase());
-      alphabet.append(anchor);
-      const section=el("section","ctoons-letter-section");section.id="ctoons-letter-"+(letter==="#"?"misc":letter.toLowerCase());
-      const header=el("div","ctoons-letter-heading");
-      header.append(el("h2","",letter),el("span","",list.length+" CToon"+(list.length===1?"":"s")));
-      const grid=el("div","ctoons-letter-grid");
-      for(const item of list)grid.append(card(item));
-      section.append(header,grid);results.append(section);
+      for(const letter of ["#",...letters]){
+        const list=groups.get(letter);
+        if(!list?.length)continue;
+        const id="ctoons-letter-"+(groupName==="Cartoon & Anime"?"cartoon":groupName==="Video Games"?"game":"misc")+"-"+(letter==="#"?"other":letter.toLowerCase());
+        if(!firstAnchor.has(letter))firstAnchor.set(letter,id);
+        const section=el("section","ctoons-letter-section");section.id=id;
+        const header=el("div","ctoons-letter-heading");
+        header.append(el("h3","",letter),el("span","",list.length+" CToon"+(list.length===1?"":"s")));
+        const grid=el("div","ctoons-letter-grid");
+        for(const item of list)grid.append(card(item));
+        section.append(header,grid);wrapper.append(section);
+      }
+      results.append(wrapper);
+    }
+    for(const letter of letters){
+      if(firstAnchor.has(letter)){
+        const anchor=el("a","",letter);anchor.href="#"+firstAnchor.get(letter);alphabet.append(anchor);
+      }else alphabet.append(el("span","",letter));
     }
     if(!filtered.length){
-      if(chosen && !q && availableSubseries.some(item=>item.name===chosen)){
-        message(chosen+" — coming soon","This subseries is ready. Its CToon display windows will fill automatically as the first characters are added.");
-      }else{
-        message(q||chosen?"No matches":"The collection is empty",q||chosen?"Try another name or choose All Subseries.":"New CToons will appear here in alphabetical order when they are added. Nothing from the deleted collection has been restored.");
-      }
+      if(chosen&&!q&&availableSubseries.some(item=>item.name===chosen))
+        message(chosen+" — coming soon","This subseries is ready for its first CToons.");
+      else
+        message(q||chosen||chosenCategory?"No matches":"The collection is empty",
+          q||chosen||chosenCategory?"Try another name, category, or subseries.":"CToons will appear here when new items are added.");
     }
   }
   search.addEventListener("input",render);
-  subseries.addEventListener("change",render);
-  clearFilters.addEventListener("click",()=>{search.value="";subseries.value="";render();search.focus();});
+  category.addEventListener("change",()=>{subseries.value="";populateSubseries();render();});
+  subseries.addEventListener("change",()=>{
+    const selected=availableSubseries.find(item=>item.name===subseries.value);
+    if(selected&&category.value&&cleanCategory(selected.category)!==category.value)category.value="";
+    render();
+  });
+  clearFilters.addEventListener("click",()=>{search.value="";category.value="";subseries.value="";render();search.focus();});
   async function load() {
     const api="https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/";
     const endpoint=api+"ctoon_catalog?select=id,name,series,parent_series,rarity,image_path&order=name.asc";
@@ -147,6 +170,8 @@
       all=rows.filter(row=>row && typeof row.name==="string" && row.name.trim())
         .map(row=>({name:row.name.trim(),series:typeof row.series==="string"?row.series:"",rarity:typeof row.rarity==="string"?row.rarity:"",image_path:typeof row.image_path==="string"?row.image_path:""}))
         .sort((a,b)=>collator.compare(a.name,b.name)||collator.compare(a.series,b.series));
+      categoryFor.clear();
+      for(const item of availableSubseries)categoryFor.set(item.name,item.category);
       populateSubseries();
       render();
     }catch(error){
