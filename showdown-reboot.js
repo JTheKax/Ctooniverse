@@ -39,8 +39,7 @@ const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Joh
 const samuraiJack={slot:2,fighter_id:'samurai-jack',name:'Samurai Jack',series:'Samurai Jack',accent:'#a9e5ee',
  portrait:'/images/showdown/samurai-jack-pixel-portrait.png',portrait_fallback:'/images/showdown/samurai-jack-portrait.svg',
  preview_sheet:'/images/showdown/samurai-jack-4x4.png?v=20261109',preview_columns:4,preview_rows:4,
- enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:2000,
- unlock_hint:'Spend 2,000 Cartoon Coins to recruit Samurai Jack.'};
+ enabled:true,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'};
 const kimPossible={slot:3,fighter_id:'kim-possible',name:'Kim Possible',series:'Kim Possible',accent:'#ff8048',
  portrait:'/images/showdown/kim-possible-pixel-portrait.png',portrait_fallback:'/images/showdown/kim-possible-portrait.svg',
  preview_sheet:'/images/showdown/kim-possible-4x4.png?v=20261109',preview_columns:4,preview_rows:4,
@@ -48,13 +47,11 @@ const kimPossible={slot:3,fighter_id:'kim-possible',name:'Kim Possible',series:'
 const perfectCell={slot:4,fighter_id:'perfect-cell',name:'Perfect Cell',series:'Dragon Ball Z',accent:'#83e54f',
  portrait:'/images/showdown/perfect-cell-pixel-portrait.png',portrait_fallback:'/images/showdown/perfect-cell-portrait.png',
  preview_sheet:'/images/showdown/perfect-cell-4x4.png?v=20261110',preview_columns:4,preview_rows:4,
- enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:2500,
- unlock_hint:'Spend Cartoon Coins to recruit Perfect Cell.'};
+ enabled:true,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'};
 const burter={slot:5,fighter_id:'burter',name:'Burter',series:'Dragon Ball Z',accent:'#4ca9ff',
  portrait:'/images/showdown/burter-roster-portrait.png?v=20261111-fixed',
  preview_sheet:'/images/showdown/burter-4x4.png?v=20261110',preview_columns:4,preview_rows:4,
- enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:1500,
- unlock_hint:'Spend Cartoon Coins to recruit Burter.'};
+ enabled:true,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'};
 // The Flea uses the owner's transparent 4x4 sprite sheet for both preview and combat.
 const theFlea={slot:6,fighter_id:'the-flea',name:'The Flea',series:'Mucha Lucha',accent:'#e5a348',
  portrait:'/images/showdown/the-flea-portrait.png?v=20261111',
@@ -72,16 +69,16 @@ const courage={slot:8,fighter_id:'courage',name:'Courage',series:'Courage the Co
 const jeice={slot:9,fighter_id:'jeice',name:'Jeice',series:'Dragon Ball Z',accent:'#fa5252',
  portrait:'/images/showdown/jeice-portrait.png?v=20261111',
  preview_sheet:'/images/showdown/jeice-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
- enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:1500,
- unlock_hint:'Spend 1,500 Cartoon Coins to recruit Jeice.'};
+ enabled:true,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'};
 const demoCPU={...demoHero};
+function noCoinCost(f){return f?.unlockable?{...f,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'}:f;}
 function addBuiltInFighters(){
  for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea,nigelUno,courage,jeice]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno'||fighter.fighter_id==='courage'||fighter.fighter_id==='jeice')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter','samurai-jack','jeice'].includes(fighter.fighter_id)?{unlockable:fighter.unlockable,unlock_method:fighter.unlock_method,unlock_cost:fighter.unlock_cost,unlock_hint:fighter.unlock_hint}:{unlockable:false})});continue;}
+  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno'||fighter.fighter_id==='courage'||fighter.fighter_id==='jeice')selection.fighters.set(existing.slot,noCoinCost({...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter','samurai-jack','jeice'].includes(fighter.fighter_id)?{unlockable:fighter.unlockable,unlock_method:fighter.unlock_method,unlock_cost:fighter.unlock_cost,unlock_hint:fighter.unlock_hint}:{unlockable:false})}));continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
-  selection.fighters.set(slot,{...fighter,slot});
+  selection.fighters.set(slot,noCoinCost({...fighter,slot}));
  }
 }
 const johnnyArt={mode:'approved',testSheet:'/images/showdown/johnny-bravo-mugen-atlas.png'};
@@ -731,7 +728,7 @@ async function loadRoster(){
       ?{...f,portrait:burter.portrait,preview_sheet:burter.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='the-flea'
       ?{...f,portrait:theFlea.portrait,preview_sheet:theFlea.preview_sheet,preview_columns:4,preview_rows:4}:f;
-    return [ready.slot,ready];
+    return [ready.slot,noCoinCost(ready)];
    }));
    // Preserve owner-defined slots while adding the built-in fighters.
    addBuiltInFighters();
@@ -746,7 +743,7 @@ async function loadRoster(){
   console.warn('CToon Showdown roster unavailable:',err);
   addBuiltInFighters();
    updateSeries();storyMode.syncFighters();
-   banner.textContent='Online catalog unavailable. Free fighters are playable locally; Perfect Cell and Burter remain locked until the catalog reconnects.';
+   banner.textContent='Online catalog unavailable. Free fighters are playable locally; locked fighters remain unavailable.';
   renderRoster();selectSlot(selection.slot);
  }
 }
