@@ -604,7 +604,7 @@ function renderRoster(){
   text(button,'span',pad(visibleSlot),'slot-no');
   const art=document.createElement('span');art.className='slot-art';button.append(art);
   const mark=text(art,'span',fighter?fighter.name.slice(0,1).toUpperCase():'?','slot-symbol');
-  if(fighter?.coming_soon){const badge=text(button,'span','SOON','slot-lock');badge.title='Coming Soon';}
+  if(fighter?.coming_soon){button.classList.add('coming-soon');const badge=text(button,'span','COMING SOON','slot-lock');badge.title='Coming Soon';}
   else if(locked){const badge=text(button,'span','🔒','slot-lock');badge.setAttribute('aria-hidden','true');badge.title='Unlockable fighter';}
   else if(fighter?.unlockable){const badge=text(button,'span','✓','slot-claimed');badge.setAttribute('aria-hidden','true');badge.title='Unlocked for your account';}
   const img=safeImage(fighter?.portrait);
@@ -616,7 +616,7 @@ function renderRoster(){
   }
   const footer=document.createElement('span');footer.className='slot-footer';button.append(footer);
   text(footer,'span',fighter?fighter.name:'COMING SOON','slot-label');
-  text(footer,'span',fighter?(locked?'LOCKED':fighter.unlockable?'UNLOCKED':'READY'):'FUTURE','slot-status');
+  text(footer,'span',fighter?(fighter.coming_soon?'COMING SOON':locked?'LOCKED':fighter.unlockable?'UNLOCKED':'READY'):'FUTURE','slot-status');
   text(button,'span','1P','slot-player-indicator').setAttribute('aria-hidden','true');
   button.addEventListener('click',()=>selectSlot(n));
   frame.append(button);
@@ -665,7 +665,7 @@ function selectSlot(slot){
  $('preview-status-text').textContent=fighter?.coming_soon?'COMING SOON':locked?'LOCKED FIGHTER':fighter?.unlockable?'FIGHTER UNLOCKED':fighter?'READY FOR BATTLE':'FUTURE FIGHTER';
  $('preview-series').textContent=fighter?fighter.series:'This place is reserved for a future fighter.';
  $('preview-detail').textContent=locked?
-   'Unlock this character for your account before entering the arena.':
+   (fighter?.coming_soon?'This fighter is coming soon! Artwork and combat animations are in development.':'Unlock this character for your account before entering the arena.'):
    fighter?(testingJohnny?'Preview the PUNCH and KICK poses, then use J and K (or the mobile P and K buttons) to strike your opponent.':fighter.fighter_id==='samurai-jack'?'Katana fighter: J performs a sword strike, K kicks, and U unleashes a charged sword slash. Preview all 11 animations.':'Choose any of the 11 combat poses, then test the moves in the arena.'):
    'Start a Practice Mode match while new fighters are being created.';
  const note=$('preview-unlock-note');
