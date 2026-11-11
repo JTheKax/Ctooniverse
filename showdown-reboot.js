@@ -59,11 +59,16 @@ const theFlea={slot:6,fighter_id:'the-flea',name:'The Flea',series:'Mucha Lucha'
  portrait:'/images/showdown/the-flea-portrait.png?v=20261111',
  preview_sheet:'/images/showdown/the-flea-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:false,unlock_method:'free'};
+// Nigel Uno (Numbuh 1) — owner-supplied portrait and 4x4 battle sprite atlas.
+const nigelUno={slot:7,fighter_id:'nigel-uno',name:'Nigel Uno',series:'Codename: Kids Next Door',accent:'#e84b55',
+ portrait:'/images/showdown/nigel-uno-portrait.png?v=20261111',
+ preview_sheet:'/images/showdown/nigel-uno-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
+ enabled:true,unlockable:false,unlock_method:'free'};
 const demoCPU={...demoHero};
 function addBuiltInFighters(){
- for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea]){
+ for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea,nigelUno]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter'].includes(fighter.fighter_id)?{}:{unlockable:false})});continue;}
+  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter'].includes(fighter.fighter_id)?{}:{unlockable:false})});continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,{...fighter,slot});
@@ -106,7 +111,7 @@ function spriteSources(profile){
 // Support both Johnny's padded 6x11 rig and the legacy 3x11 backups.
 function spriteLayout(profile,source){
  const johnny=profile?.fighter_id==='johnny-bravo';
- const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter|the-flea)-4x4\.png/i.test(source);
+ const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter|the-flea|nigel-uno)-4x4\.png/i.test(source);
  const polished=johnny&&/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(source);
   const legacyJack=/samurai-jack-atlas\.svg/i.test(source);
  return {columns:uploaded?4:polished?6:(johnny||legacyJack)?3:Math.max(1,Number(profile?.preview_columns)||3),
@@ -230,6 +235,18 @@ function fleaSpriteCell(row,frame){
  const pose=poses[Math.max(0,frame)%poses.length];
  return {frame:pose[0],row:pose[1]};
 }
+// Nigel's supplied 4x4 atlas: map 16 frames to the engine's eleven actions.
+const NIGEL_POSE_MAP=[
+ [[0,0],[1,0],[2,0]], [[0,1],[1,1],[2,1]], [[1,1],[2,1],[3,1]],
+ [[0,2],[1,2],[2,2]], [[2,2],[3,2],[3,1]], [[3,0],[2,0],[3,0]],
+ [[0,3],[1,3],[2,3]], [[3,1],[0,3],[3,1]], [[3,2],[0,3],[2,3]],
+ [[1,3],[2,3],[1,3]], [[1,3],[1,3],[1,3]]
+];
+function nigelSpriteCell(row,frame){
+ const poses=NIGEL_POSE_MAP[Math.max(0,Math.min(10,row))];
+ const pose=poses[Math.max(0,frame)%poses.length];
+ return {frame:pose[0],row:pose[1]};
+}
 function johnnySpriteCell(row,frame){
  const sequence=JOHNNY_POSE_MAP[Math.max(0,Math.min(10,row))]||JOHNNY_POSE_MAP[0];
  const pose=sequence[Math.max(0,frame)%sequence.length];
@@ -254,6 +271,7 @@ function spritePose(f,t,columns){
  if(columns===4&&f.profile?.fighter_id==='perfect-cell')return cellSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='burter')return burterSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='the-flea')return fleaSpriteCell(row,frame);
+ if(columns===4&&f.profile?.fighter_id==='nigel-uno')return nigelSpriteCell(row,frame);
  return columns===4&&f.profile?.fighter_id==='johnny-bravo'?johnnySpriteCell(row,frame):{row,frame};
 }
 const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
