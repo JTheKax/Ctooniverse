@@ -325,7 +325,7 @@ const CHALLENGES={
  'jeice':{label:'Defeat Burter 3 times in Arcade Mode',key:'burter_defeats',target:3}
 };
 const arcadeProgress={arcade_wins:0,jeice_defeats:0,burter_defeats:0,perfect_run:false};
-const arcadeState={active:false,runId:null,hero:null,opponents:[],index:0,losses:0,saving:false,recorded:false};
+const arcadeState={active:false,runId:null,hero:null,opponents:[],index:0,losses:0,saving:false,recorded:false,recordAttempted:false};
 function challengeProgress(id){
  const spec=CHALLENGES[id];if(!spec)return null;
  const current=spec.key==='perfect_run'?(arcadeProgress.perfect_run?1:0):Math.min(spec.target,Number(arcadeProgress[spec.key])||0);
@@ -833,7 +833,7 @@ function startArcade(){
  storyMode.leave();
  const opponents=arcadeOpponentList(hero);
  if(opponents.length<5){showArcadeStatus('At least five CPU opponents are required for Arcade Mode.');return;}
- Object.assign(arcadeState,{active:true,runId:crypto.randomUUID(),hero,opponents,index:0,losses:0,saving:false,recorded:false});
+ Object.assign(arcadeState,{active:true,runId:crypto.randomUUID(),hero,opponents,index:0,losses:0,saving:false,recorded:false,recordAttempted:false});
  startMatch(hero,opponents[0],1);
  showArcadeStatus('ARCADE MATCH 1 / 5 · '+hero.name+' vs '+opponents[0].name+(account.user?'':' · Guest results will not be saved.'));
  updateArcadeButtons();
@@ -841,7 +841,7 @@ function startArcade(){
 async function arcadeMatchFinished(won){
  if(!arcadeState.active||arcadeState.recorded||arcadeState.saving)return;
  arcadeState.saving=true;updateArcadeButtons();
- if(!won)arcadeState.losses++;
+ if(!arcadeState.recordAttempted){if(!won)arcadeState.losses++;arcadeState.recordAttempted=true;}
  const match=arcadeState.index+1,opponent=arcadeState.opponents[arcadeState.index];
  try{
   if(account.user&&account.db){
@@ -861,6 +861,7 @@ async function arcadeMatchFinished(won){
    renderRoster();selectSlot(selection.slot);
   }else showArcadeStatus('Arcade match '+match+' / 5 complete · Sign in to save objectives and fighter unlocks.');
   arcadeState.recorded=true;
+  const retry=$('arcade-retry-save');if(retry)retry.hidden=true;
  }catch(error){
   console.warn('Arcade progress save failed',error);
   showArcadeStatus('Could not save Arcade progress: '+error.message+' · Retry saving before continuing.');
@@ -869,7 +870,7 @@ async function arcadeMatchFinished(won){
 }
 function nextArcadeMatch(){
  if(!arcadeState.active||!arcadeState.recorded||arcadeState.saving||arcadeState.index>=4)return;
- arcadeState.index++;arcadeState.recorded=false;
+ arcadeState.index++;arcadeState.recorded=false;arcadeState.recordAttempted=false;
  const opponent=arcadeState.opponents[arcadeState.index];
  startMatch(arcadeState.hero,opponent,1);
  showArcadeStatus('ARCADE MATCH '+(arcadeState.index+1)+' / 5 · '+arcadeState.hero.name+' vs '+opponent.name);
