@@ -1078,3 +1078,111 @@ body{
   object-position:center!important;
   transform:none!important;
 }
+
+
+/* CToon Showdown full-page arcade overhaul · no changes to battle logic. */
+html{scroll-behavior:smooth;scroll-padding-top:18px}
+body{background:
+ radial-gradient(ellipse 80% 25% at 50% 3%,#6736c56e,transparent 75%),
+ radial-gradient(ellipse 55% 38% at 100% 50%,#0e72c73a,transparent 80%),
+ radial-gradient(ellipse 55% 35% at 0% 75%,#8c28794a,transparent 80%),
+ repeating-linear-gradient(90deg,transparent 0 71px,#72baff08 72px 73px),
+ linear-gradient(155deg,#050816,#110b2b 50%,#07132c)!important}
+.showdown-shell{width:min(100% - 26px,1720px);margin-inline:auto}
+.showdown-top{border-bottom:2px solid #9d4aff88;padding:13px 5px 12px}
+.showdown-hero{min-height:290px;margin:16px 0 14px;padding:clamp(22px,4.5vw,65px)!important;
+ border:2px solid #45e8ff!important;border-radius:22px!important;
+ background:
+ radial-gradient(circle at 81% 30%,#e338fa52,transparent 30%),
+ radial-gradient(circle at 72% 80%,#137de95c,transparent 37%),
+ repeating-linear-gradient(130deg,transparent 0 24px,#ffffff09 25px 27px,transparent 29px 64px),
+ linear-gradient(120deg,#111c49,#180d39 65%,#211047)!important;
+ box-shadow:0 0 0 5px #0c0a2e,0 0 35px #1ec7ff38,inset 0 0 70px #8a3aff25!important}
+.showdown-hero::before{border-color:#45f1ff35!important;box-shadow:0 0 0 20px #b83fff1c,0 0 0 55px #46b6ff13,inset 0 0 90px #b648ff5c!important}
+.showdown-hero h1{font-style:italic;font-weight:1000;font-size:clamp(3.8rem,9vw,9rem)!important;letter-spacing:-.015em!important;
+ color:#f8faff!important;-webkit-text-stroke:1.2px #251042!important;
+ text-shadow:4px 5px 0 #7823bc,9px 10px 0 #0a0b24,0 0 42px #f42ae66b!important}
+.showdown-hero h1 span{color:#ffbd3e!important;text-shadow:4px 5px 0 #e22c55,9px 10px 0 #0a0b24,0 0 35px #ff5d36a8!important}
+.showdown-hero .hero-kicker{color:#85f5ff;font-weight:1000}
+.showdown-hero p:not(.hero-kicker){max-width:670px}
+.showdown-hub-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:18px 0}
+.hub-link{min-width:0;display:flex;align-items:center;gap:13px;padding:17px 18px;
+ color:#f6f6ff;text-decoration:none;border:2px solid #8655ee;border-radius:13px;
+ background:linear-gradient(135deg,#24194d,#101c45 75%);box-shadow:0 5px 0 #080a23,0 0 20px #7537f52e;
+ transition:transform .16s,border-color .16s,box-shadow .16s}
+.hub-link:hover,.hub-link:focus-visible{transform:translateY(-3px);border-color:#80f4ff;box-shadow:0 7px 0 #080a23,0 0 25px #43dfff66}
+.hub-link:focus-visible,.command-cta:focus-visible{outline:3px solid #fff4a2;outline-offset:4px}
+.hub-link.hub-primary{border-color:#ffab56;background:linear-gradient(135deg,#7c204f,#2e174b 60%,#122657)}
+.hub-link-icon{font-size:clamp(1.5rem,2.5vw,2.3rem)}
+.hub-link>span:nth-child(2){flex:1;min-width:0}
+.hub-link strong{display:block;font:italic 900 clamp(.95rem,1.45vw,1.28rem) Impact,'Arial Black',sans-serif;letter-spacing:.07em}
+.hub-link small{display:block;margin-top:5px;color:#bcd5f9;font-size:.73rem;line-height:1.3}
+.hub-link>span:last-child{font-size:1.4rem;color:#8defff}
+.showdown-command-center{position:relative;overflow:hidden;margin:16px 0 26px;
+ border:2px solid #7a4dff;border-radius:18px;
+ background:radial-gradient(ellipse at 26% 35%,#1c55ac50,transparent 50%),linear-gradient(135deg,#0b1433,#1b103c 75%,#0b1c42);
+ box-shadow:0 0 0 4px #090b23,0 13px 38px #030513a8,0 0 25px #9d37ff45}
+.command-head,.command-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+ padding:12px 20px;background:#080e28b8;color:#a6eaff;font-size:.7rem;font-weight:900;letter-spacing:.14em}
+.command-head{border-bottom:1px solid #8a5bff75}
+.command-online{display:inline-flex;align-items:center;gap:8px;color:#a8ffc5}
+.command-online i{width:9px;height:9px;background:#57ff9a;border-radius:50%;box-shadow:0 0 12px #57ff9a}
+.command-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(290px,.85fr);gap:clamp(18px,3vw,40px);padding:clamp(20px,3vw,40px)}
+.command-intro{display:flex;flex-direction:column;align-items:flex-start}
+.command-overline{color:#77edff;font-weight:900;font-size:.73rem;letter-spacing:.2em}
+.command-intro h2{margin:12px 0 14px;color:#fff;line-height:.97;font:italic 1000 clamp(2.4rem,5.3vw,5.8rem) Impact,'Arial Black',sans-serif;
+ text-shadow:4px 5px 0 #3b2381,0 0 26px #7e5fff66}
+.command-intro h2 em{font-style:inherit;color:#ffba53;text-shadow:3px 4px 0 #ad275d}
+.command-intro p{max-width:540px;margin:0 0 22px;color:#d3e1ff;line-height:1.65}
+.command-cta{display:inline-flex;align-items:center;justify-content:space-between;gap:24px;max-width:100%;padding:15px 23px;
+ color:#17132a!important;text-decoration:none!important;font:italic 900 clamp(.95rem,1.8vw,1.35rem) Impact,'Arial Black',sans-serif;
+ letter-spacing:.055em;border:2px solid #fff3aa;border-radius:9px;background:linear-gradient(115deg,#ffe67c,#ff893e 65%,#ff4b65);
+ box-shadow:4px 5px 0 #8c2a5b,0 0 28px #ff9b5b88;transition:transform .15s,filter .15s}
+.command-cta:hover{filter:brightness(1.12);transform:translateY(-2px)}
+.command-news{align-self:stretch;min-width:0;border:2px solid #4089f2;border-radius:12px;background:#080e2dcf;
+ box-shadow:inset 0 0 25px #153f8c55,0 0 20px #3286ff2b;overflow:hidden}
+.command-news-title{display:flex;align-items:center;gap:10px;padding:15px;color:#fff;font:italic 900 1.15rem Impact,'Arial Black',sans-serif;
+ letter-spacing:.08em;background:linear-gradient(90deg,#292267,#431a6d);border-bottom:2px solid #8d61ff}
+.command-news-title>span:first-child{color:#ffca63}
+.command-live{margin-left:auto;padding:4px 7px;border-radius:4px;color:#0d2134;background:#79f1ff;font:900 .6rem system-ui,sans-serif;letter-spacing:.06em}
+.news-entry{display:flex;align-items:center;gap:12px;padding:17px 13px;border-bottom:1px solid #5163a54f}
+.news-entry:last-child{border-bottom:0}
+.news-entry>b{color:#9b9fff;font:900 1.1rem Impact,sans-serif}
+.news-entry>span:nth-child(2){flex:1;min-width:0}
+.news-entry strong{display:block;font-size:.85rem;letter-spacing:.04em;color:#f9f5ff}
+.news-entry small{display:block;margin-top:5px;color:#aebfe3;font-size:.72rem;line-height:1.3}
+.news-status{flex-shrink:0;color:#8bffbd;font-size:.58rem;font-weight:900;letter-spacing:.07em}
+.news-status.locked{color:#ffd17a}
+.command-footer{justify-content:space-around;border-top:1px solid #7854d66e;color:#a8e9ff}
+.showdown-shell>.showdown-panel{margin-bottom:26px;border-color:#7859d9!important;
+ box-shadow:0 0 0 4px #060b22,0 18px 45px #0009,0 0 20px #793bff20!important}
+.showdown-shell>.showdown-panel>.panel-header{padding-bottom:12px;border-bottom:1px solid #8b6cff55}
+.showdown-shell>.showdown-panel>.panel-header h2{font:italic 900 clamp(1.8rem,3.2vw,2.9rem) Impact,'Arial Black',sans-serif!important;
+ color:#fff!important;letter-spacing:.055em;text-shadow:3px 4px #582e9b!important}
+.showdown-shell>.showdown-panel>.panel-header .eyebrow{color:#7eecff!important}
+.roster-showcase{border-color:#36d9ff!important}
+.roster-showcase .roster-marquee{border-color:#ffbe62;box-shadow:0 0 16px #fc8b6233}
+.preview-card{border-color:#8e62f7!important;box-shadow:0 0 22px #8c4cff24}
+.arena-frame{border-color:#59e7ff!important;box-shadow:0 0 0 4px #090a23,0 16px 35px #000a,0 0 28px #32baff4d!important}
+.arcade-btn.main{background:linear-gradient(120deg,#ffe779,#ffab5c)!important;border-color:#fff3bd!important}
+@media(max-width:850px){
+ .showdown-hub-nav{grid-template-columns:1fr;gap:10px}
+ .hub-link{padding:12px 15px}
+ .command-grid{grid-template-columns:1fr}
+ .command-news{width:100%}
+}
+@media(max-width:600px){
+ .showdown-shell{width:calc(100% - 16px)}
+ .showdown-hero{min-height:220px!important;padding:22px 16px!important}
+ .showdown-hero h1{font-size:clamp(3rem,13vw,5rem)!important}
+ .command-grid{padding:16px}
+ .command-intro h2{font-size:clamp(2.4rem,10vw,3.7rem)}
+ .command-head,.command-footer{padding:10px 12px;font-size:.6rem}
+ .command-footer{justify-content:center;gap:9px 17px}
+ .news-entry{gap:8px;padding:13px 9px}
+ .news-status{font-size:.53rem}
+}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ .hub-link,.command-cta{transition:none}
+}
