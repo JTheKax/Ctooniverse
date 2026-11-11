@@ -318,6 +318,25 @@ const safeImage=url=>{
   try{const parsed=new URL(url,location.href);return ['https:','http:'].includes(parsed.protocol)?parsed.href:null}
   catch{return null}
 };
+const CHALLENGES={
+ 'samurai-jack':{label:'Win 10 Arcade matches',key:'arcade_wins',target:10},
+ 'perfect-cell':{label:'Complete a five-match Arcade run without losing a match',key:'perfect_run',target:1},
+ 'burter':{label:'Defeat Jeice 3 times in Arcade Mode',key:'jeice_defeats',target:3},
+ 'jeice':{label:'Defeat Burter 3 times in Arcade Mode',key:'burter_defeats',target:3}
+};
+const arcadeProgress={arcade_wins:0,jeice_defeats:0,burter_defeats:0,perfect_run:false};
+const arcadeState={active:false,runId:null,hero:null,opponents:[],index:0,losses:0,saving:false,recorded:false};
+function challengeProgress(id){
+ const spec=CHALLENGES[id];if(!spec)return null;
+ const current=spec.key==='perfect_run'?(arcadeProgress.perfect_run?1:0):Math.min(spec.target,Number(arcadeProgress[spec.key])||0);
+ return {...spec,current};
+}
+function showArcadeStatus(message){const el=$('arcade-status');if(el)el.textContent=message;}
+function updateArcadeButtons(){
+ const fighter=currentFighter(),available=!!fighter&&!isLocked(fighter);
+ const start=$('arcade-start');if(start){start.disabled=!available||arcadeState.saving;start.textContent=available?'Start Arcade · 5 Matches':'Choose an unlocked fighter';}
+ const next=$('arcade-next');if(next){next.hidden=!arcadeState.active||game.mode!=='finished'||arcadeState.index>=4;next.disabled=arcadeState.saving||!arcadeState.recorded;}
+}
 const isLocked=f=>!!f?.unlockable&&!account.owned.has(f.fighter_id);
 const fmtCoins=n=>Number(n).toLocaleString('en-US');
 function currentFighter(){return selection.fighters.get(selection.slot)||null}
@@ -339,14 +358,17 @@ async function refreshAccount(){
   const {data:{user},error:authError}=await account.db.auth.getUser();
   if(authError)throw authError;
   account.user=user||null;
-  account.owned=new Set();account.balance=null;
+  account.owned=new Set();account.balance=null;Object.assign(arcadeProgress,{arcade_wins:0,jeice_defeats:0,burter_defeats:0,perfect_run:false});
   if(user){
-   const [unlockResult,walletResult]=await Promise.all([
+   const [unlockResult,walletResult,progressResult]=await Promise.all([
     account.db.from('showdown_reboot_unlocks').select('fighter_id'),
-    account.db.from('coin_wallets').select('balance').eq('user_id',user.id).maybeSingle()
+    account.db.from('coin_wallets').select('balance').eq('user_id',user.id).maybeSingle(),
+    account.db.from('showdown_arcade_progress').select('arcade_wins,jeice_defeats,burter_defeats,perfect_run').eq('user_id',user.id).maybeSingle()
    ]);
    if(unlockResult.error)throw unlockResult.error;
    if(walletResult.error)throw walletResult.error;
+   if(progressResult.error)throw progressResult.error;
+   if(progressResult.data)Object.assign(arcadeProgress,progressResult.data);
    account.owned=new Set((unlockResult.data||[]).map(item=>item.fighter_id));
    account.balance=walletResult.data?.balance??null;
   }
@@ -621,6 +643,17 @@ function selectSlot(slot){
  note.textContent=locked?(fighter.unlock_method==='coins'&&fighter.unlock_cost?
   'Unlock price: '+fmtCoins(fighter.unlock_cost)+' Cartoon Coins'+(fighter.unlock_hint?' · '+fighter.unlock_hint:''):
   fighter.unlock_hint||'This fighter is awarded by the CTooniverse owner.'):'';
+ const challenge=challengeProgress(fighter?.fighter_id);
+ const challengePanel=$('fighter-challenge');
+ if(challengePanel){
+  challengePanel.hidden=!challenge;
+  if(challenge){
+   $('fighter-challenge-label').textContent=(locked?'Unlock objective: ':'Objective completed: ')+challenge.label;
+   $('fighter-challenge-bar').style.width=(100*challenge.current/challenge.target)+'%';
+   $('fighter-challenge-count').textContent=challenge.current+' / '+challenge.target+(account.user?'':' · Sign in to save progress');
+  }
+ }
+ if(challenge)note.hidden=true;
  const buy=$('unlock-fighter');
  buy.hidden=!(locked&&fighter?.unlock_method==='coins');
  if(!buy.hidden){
@@ -633,6 +666,7 @@ function selectSlot(slot){
  if(previewPoseMenu)previewPoseMenu.disabled=!fighter||!spriteSources(fighter).length;
  startBtn.disabled=!fighter||locked;
  startBtn.textContent=locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
+ updateArcadeButtons();
  quickStartBtn.disabled=startBtn.disabled;
  quickStartBtn.textContent=locked?'🔒 Locked':fighter?'FIGHT AS '+fighter.name:'Choose a fighter';
  selectedFighterStatus.textContent=locked?'🔒 '+fighter.name+' · unlock required':fighter?'Selected: '+fighter.name:'Select a playable fighter';
@@ -783,7 +817,69 @@ for(const button of buttons){
 const GROUND=445,LEFT=68,RIGHT=892;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,cpuDifficulty:1,timer:60,round:1,wins:[0,0],between:0,countdown:3,fightBanner:0,roundMessage:'',hitEffects:[],last:0,animClock:0};
+function arcadeOpponentList(hero){
+ const roster=[...selection.fighters.values()].filter(f=>f.enabled!==false&&f.fighter_id!==hero.fighter_id);
+ const byId=id=>roster.find(f=>f.fighter_id===id);
+ // Each run includes both locked rivals so their challenges are achievable.
+ const chosen=[byId('jeice'),byId('burter')].filter(Boolean);
+ const rest=roster.filter(f=>!chosen.some(x=>x.fighter_id===f.fighter_id)).sort(()=>Math.random()-.5);
+ for(const f of rest){if(chosen.length>=5)break;chosen.push(f);}
+ while(chosen.length<5&&roster.length)chosen.push(roster[chosen.length%roster.length]);
+ return chosen.slice(0,5);
+}
+function startArcade(){
+ const hero=currentFighter();
+ if(!hero||isLocked(hero))return;
+ storyMode.leave();
+ const opponents=arcadeOpponentList(hero);
+ if(opponents.length<5){showArcadeStatus('At least five CPU opponents are required for Arcade Mode.');return;}
+ Object.assign(arcadeState,{active:true,runId:crypto.randomUUID(),hero,opponents,index:0,losses:0,saving:false,recorded:false});
+ startMatch(hero,opponents[0],1);
+ showArcadeStatus('ARCADE MATCH 1 / 5 · '+hero.name+' vs '+opponents[0].name+(account.user?'':' · Guest results will not be saved.'));
+ updateArcadeButtons();
+}
+async function arcadeMatchFinished(won){
+ if(!arcadeState.active||arcadeState.recorded||arcadeState.saving)return;
+ arcadeState.saving=true;updateArcadeButtons();
+ if(!won)arcadeState.losses++;
+ const match=arcadeState.index+1,opponent=arcadeState.opponents[arcadeState.index];
+ try{
+  if(account.user&&account.db){
+   const {data,error}=await account.db.rpc('showdown_arcade_record_match',{
+    p_run_id:arcadeState.runId,p_match:match,p_hero:arcadeState.hero.fighter_id,
+    p_opponent:opponent.fighter_id,p_won:won
+   });
+   if(error)throw error;
+   for(const key of ['arcade_wins','jeice_defeats','burter_defeats','perfect_run'])if(data[key]!==undefined)arcadeProgress[key]=data[key];
+   const unlocked=Array.isArray(data.unlocked)?data.unlocked:[];
+   unlocked.forEach(id=>account.owned.add(id));
+   if(unlocked.length){
+    const names=unlocked.map(id=>selection.fighters.size?[...selection.fighters.values()].find(f=>f.fighter_id===id)?.name||id:id);
+    announceFight('FIGHTER UNLOCKED! '+names.join(', '),'result');
+    showArcadeStatus('FIGHTER UNLOCKED! '+names.join(', ')+' · Permanently saved to your account.');
+   }else showArcadeStatus(match===5?'ARCADE COMPLETE · '+(arcadeState.losses===0?'Perfect run!':'Run finished.'):'ARCADE MATCH '+match+' / 5 · '+(won?'Victory!':'Defeat.')+' Continue to the next opponent.');
+   renderRoster();selectSlot(selection.slot);
+  }else showArcadeStatus('Arcade match '+match+' / 5 complete · Sign in to save objectives and fighter unlocks.');
+  arcadeState.recorded=true;
+ }catch(error){
+  console.warn('Arcade progress save failed',error);
+  showArcadeStatus('Could not save Arcade progress: '+error.message+' · Retry saving before continuing.');
+  const retry=$('arcade-retry-save');if(retry)retry.hidden=false;
+ }finally{arcadeState.saving=false;updateArcadeButtons();}
+}
+function nextArcadeMatch(){
+ if(!arcadeState.active||!arcadeState.recorded||arcadeState.saving||arcadeState.index>=4)return;
+ arcadeState.index++;arcadeState.recorded=false;
+ const opponent=arcadeState.opponents[arcadeState.index];
+ startMatch(arcadeState.hero,opponent,1);
+ showArcadeStatus('ARCADE MATCH '+(arcadeState.index+1)+' / 5 · '+arcadeState.hero.name+' vs '+opponent.name);
+ updateArcadeButtons();
+}
+$('arcade-start')?.addEventListener('click',startArcade);
+$('arcade-next')?.addEventListener('click',nextArcadeMatch);
+$('arcade-retry-save')?.addEventListener('click',()=>{if(arcadeState.active&&!arcadeState.recorded){$('arcade-retry-save').hidden=true;arcadeMatchFinished(game.wins[0]>=2)}});
 function showCharacterSelect(focus=false){
+ arcadeState.active=false;updateArcadeButtons();
  storyMode.leave();
  // Restore the classic layout: the character roster remains above the separate arena.
  battleAudio.stopTheme();
@@ -922,9 +1018,9 @@ const storyMode=createStoryMode({
  startBattle:(hero,opponent,stage,difficulty)=>{chooseStage(stage);startMatch(hero,opponent,difficulty)},
  onReturn:()=>showCharacterSelect(false)
 });
-practiceBtn.addEventListener('click',()=>{storyMode.leave();startMatch(demoHero)});
-startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter&&!isLocked(fighter)){storyMode.leave();startMatch(fighter)}});
-restartBtn.addEventListener('click',()=>{if(storyMode.isActive())storyMode.retry();else startMatch(game.heroProfile)});
+practiceBtn.addEventListener('click',()=>{arcadeState.active=false;storyMode.leave();startMatch(demoHero)});
+startBtn.addEventListener('click',()=>{const fighter=currentFighter();if(fighter&&!isLocked(fighter)){arcadeState.active=false;storyMode.leave();startMatch(fighter)}});
+restartBtn.addEventListener('click',()=>{if(storyMode.isActive())storyMode.retry();else startMatch(game.heroProfile,arcadeState.active?arcadeState.opponents[arcadeState.index]:null)});
 pauseBtn.addEventListener('click',()=>{
  if(!['countdown','fighting','between'].includes(game.mode))return;
  game.paused=!game.paused;pauseBtn.textContent=game.paused?'Resume':'Pause';
@@ -1003,7 +1099,8 @@ function finishRound(){
   const result=game.wins[0]>=2?'YOU WIN THE MATCH!':'CPU WINS THE MATCH';
   game.roundMessage=result;
   announceFight(result,'result');
-  const storyFinished=storyMode.onMatchFinished(game.wins[0]>=2);
+  const storyFinished=arcadeState.active?false:storyMode.onMatchFinished(game.wins[0]>=2);
+  if(arcadeState.active)void arcadeMatchFinished(game.wins[0]>=2);
   $('showdown-status').textContent=storyFinished?(game.wins[0]>=2?'Story mission cleared! Select Continue Story to advance.':'Story battle lost. Retry the mission or return to the chapter map.'):
     result+' Choose Restart Match for another round.';
   pauseBtn.disabled=true;
