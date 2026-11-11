@@ -130,7 +130,7 @@
         <div class="preview-selection-strip"><span id="preview-slot">FIGHTER NO. 001</span><span id="preview-status-text">READY FOR BATTLE</span></div>
         <div class="preview-frame"><span class="preview-caption" aria-hidden="true">PLAYER 1 // SPOTLIGHT</span><div id="preview-avatar" class="preview-avatar is-empty" aria-hidden="true">?</div><canvas id="preview-idle-canvas" width="264" height="235" aria-label="Fighter sprite animation preview" hidden></canvas><span id="preview-lock" class="preview-lock" hidden aria-label="Unlockable fighter">🔒</span></div>
         <div><span class="tag" id="preview-tag">EMPTY SLOT</span><h3 id="preview-title">SLOT 001</h3><p id="preview-series">This place is reserved for a future fighter.</p></div>
-        <p id="preview-detail">Select a published fighter to prepare a match, or use Practice Mode to test the new battle system now.</p><p id="preview-unlock-note" class="preview-unlock-note" hidden></p>
+        <p id="preview-detail">Select a published fighter to prepare a match, or use Practice Mode to test the new battle system now.</p><p id="preview-unlock-note" class="preview-unlock-note" hidden></p><div id="fighter-challenge" class="preview-unlock-note" hidden><strong id="fighter-challenge-label"></strong><div style="height:9px;border-radius:99px;background:#222a45;overflow:hidden;margin:8px 0"><div id="fighter-challenge-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#47b9ff,#b96cff)"></div></div><span id="fighter-challenge-count"></span></div>
         <label class="preview-pose-control" for="preview-pose">Preview all 11 sprite actions
           <select id="preview-pose" aria-label="Choose a sprite animation to inspect" disabled><option value="idle">IDLE</option></select>
         </label>
@@ -140,7 +140,7 @@
         <p class="sprite-comparison-note" id="johnny-art-notice" hidden>The new model uses your 16 supplied poses, mapped to all 11 fight actions. Compare it with the previous version.</p>
         <div class="preview-actions">
           <button type="button" class="arcade-btn main" id="start-match" disabled>Choose a fighter first</button>
-          <button type="button" class="arcade-btn unlock-btn" id="unlock-fighter" hidden>Unlock this fighter</button>
+          <button type="button" class="arcade-btn alt" id="arcade-start" disabled>Start Arcade · 5 Matches</button><button type="button" class="arcade-btn unlock-btn" id="unlock-fighter" hidden>Unlock this fighter</button>
           <button type="button" class="arcade-btn alt" id="training-match">Johnny Bravo Mirror Match</button>
         </div>
       </aside>
@@ -213,10 +213,10 @@
         <button type="button" data-control="special" aria-label="Special attack">★</button>
       </div>
     </div>
-    <p class="notice" id="showdown-status" role="status" aria-live="polite">Practice mode is available even before any fighters are published.</p>
+    <p class="notice" id="arcade-status" role="status" aria-live="polite">Arcade Mode: choose a fighter and complete a five-match ladder. Burter and Jeice can appear as CPU opponents while locked.</p><p class="notice" id="showdown-status" role="status" aria-live="polite">Practice mode is available even before any fighters are published.</p>
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=locked-no-coins-20261111"></script>
+<script type="module" src="showdown-reboot.js?v=arcade-objectives-20261111"></script>
 </body>
 </html>
