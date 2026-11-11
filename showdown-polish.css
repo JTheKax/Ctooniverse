@@ -1336,3 +1336,52 @@ body{background:
 @media(prefers-reduced-motion:reduce){
  #showdown-roster-layer .roster-wall .fighter-slot,#showdown-roster-layer .roster-chip{transition:none}
 }
+
+
+/* Readable fighter names: override legacy 0.58rem mobile labels. */
+#showdown-roster-layer .roster-wall .fighter-slot .slot-footer{
+ min-height:52px!important;
+ height:auto!important;
+ padding:7px 5px 6px!important;
+ gap:3px!important;
+ background:linear-gradient(180deg,#111a3bf5,#050b21 85%)!important;
+ border-top:2px solid #87a8e3!important;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-label{
+ display:-webkit-box!important;
+ -webkit-box-orient:vertical!important;
+ -webkit-line-clamp:2!important;
+ line-clamp:2;
+ overflow:hidden!important;
+ width:100%!important;
+ max-width:100%!important;
+ font-family:Arial,Helvetica,sans-serif!important;
+ font-size:clamp(11px,1.05vw,15px)!important;
+ font-weight:900!important;
+ line-height:1.2!important;
+ letter-spacing:0!important;
+ text-align:center!important;
+ text-transform:none!important;
+ overflow-wrap:anywhere!important;
+ color:#fff!important;
+ text-shadow:0 2px 3px #000,1px 1px 0 #000!important;
+}
+#showdown-roster-layer .roster-wall .fighter-slot[aria-pressed="true"] .slot-footer{
+ background:linear-gradient(180deg,#534075,#1b2049)!important;
+ border-top-color:#ffe28b!important;
+}
+#showdown-roster-layer .roster-wall .fighter-slot[aria-pressed="true"] .slot-label{
+ color:#fff4bc!important;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-status{
+ font-size:clamp(9px,.75vw,11px)!important;
+ line-height:1.15!important;
+}
+@media(max-width:650px){
+ #showdown-roster-layer .roster-wall .fighter-slot .slot-footer{
+  min-height:50px!important;padding:5px 3px!important;
+ }
+ #showdown-roster-layer .roster-wall .fighter-slot .slot-label{
+  font-size:11px!important;line-height:1.16!important;
+ }
+}
