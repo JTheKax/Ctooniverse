@@ -39,7 +39,8 @@ const demoHero={slot:1,fighter_id:'johnny-bravo',name:'Johnny Bravo',series:'Joh
 const samuraiJack={slot:2,fighter_id:'samurai-jack',name:'Samurai Jack',series:'Samurai Jack',accent:'#a9e5ee',
  portrait:'/images/showdown/samurai-jack-pixel-portrait.png',portrait_fallback:'/images/showdown/samurai-jack-portrait.svg',
  preview_sheet:'/images/showdown/samurai-jack-4x4.png?v=20261109',preview_columns:4,preview_rows:4,
- enabled:true,unlockable:false,unlock_method:'free'};
+ enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:2000,
+ unlock_hint:'Spend 2,000 Cartoon Coins to recruit Samurai Jack.'};
 const kimPossible={slot:3,fighter_id:'kim-possible',name:'Kim Possible',series:'Kim Possible',accent:'#ff8048',
  portrait:'/images/showdown/kim-possible-pixel-portrait.png',portrait_fallback:'/images/showdown/kim-possible-portrait.svg',
  preview_sheet:'/images/showdown/kim-possible-4x4.png?v=20261109',preview_columns:4,preview_rows:4,
@@ -68,7 +69,7 @@ const demoCPU={...demoHero};
 function addBuiltInFighters(){
  for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea,nigelUno]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter'].includes(fighter.fighter_id)?{}:{unlockable:false})});continue;}
+  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter','samurai-jack'].includes(fighter.fighter_id)?{unlockable:fighter.unlockable,unlock_method:fighter.unlock_method,unlock_cost:fighter.unlock_cost,unlock_hint:fighter.unlock_hint}:{unlockable:false})});continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,{...fighter,slot});
