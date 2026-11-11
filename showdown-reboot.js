@@ -72,12 +72,13 @@ const courage={slot:8,fighter_id:'courage',name:'Courage',series:'Courage the Co
 const jeice={slot:9,fighter_id:'jeice',name:'Jeice',series:'Dragon Ball Z',accent:'#fa5252',
  portrait:'/images/showdown/jeice-portrait.png?v=20261111',
  preview_sheet:'/images/showdown/jeice-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
- enabled:true,unlockable:false,unlock_method:'free'};
+ enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:1500,
+ unlock_hint:'Spend 1,500 Cartoon Coins to recruit Jeice.'};
 const demoCPU={...demoHero};
 function addBuiltInFighters(){
  for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea,nigelUno,courage,jeice]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno'||fighter.fighter_id==='courage'||fighter.fighter_id==='jeice')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter','samurai-jack'].includes(fighter.fighter_id)?{unlockable:fighter.unlockable,unlock_method:fighter.unlock_method,unlock_cost:fighter.unlock_cost,unlock_hint:fighter.unlock_hint}:{unlockable:false})});continue;}
+  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno'||fighter.fighter_id==='courage'||fighter.fighter_id==='jeice')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter','samurai-jack','jeice'].includes(fighter.fighter_id)?{unlockable:fighter.unlockable,unlock_method:fighter.unlock_method,unlock_cost:fighter.unlock_cost,unlock_hint:fighter.unlock_hint}:{unlockable:false})});continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,{...fighter,slot});
