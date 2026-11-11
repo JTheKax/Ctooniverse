@@ -70,12 +70,13 @@ const jeice={slot:9,fighter_id:'jeice',name:'Jeice',series:'Dragon Ball Z',accen
  portrait:'/images/showdown/jeice-portrait.png?v=20261111',
  preview_sheet:'/images/showdown/jeice-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'};
+const oogieBoogie={slot:10,fighter_id:'oogie-boogie',name:'Oogie Boogie',series:'The Nightmare Before Christmas',accent:'#a6e45c',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
 const demoCPU={...demoHero};
 function noCoinCost(f){return f?.unlockable?{...f,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'}:f;}
 function addBuiltInFighters(){
- for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea,nigelUno,courage,jeice]){
+ for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea,nigelUno,courage,jeice,oogieBoogie]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno'||fighter.fighter_id==='courage'||fighter.fighter_id==='jeice')selection.fighters.set(existing.slot,noCoinCost({...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter','samurai-jack','jeice'].includes(fighter.fighter_id)?{unlockable:fighter.unlockable,unlock_method:fighter.unlock_method,unlock_cost:fighter.unlock_cost,unlock_hint:fighter.unlock_hint}:{unlockable:false})}));continue;}
+  if(existing){if(fighter.fighter_id==='oogie-boogie'){selection.fighters.set(existing.slot,{...existing,...oogieBoogie,slot:existing.slot});continue;}if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno'||fighter.fighter_id==='courage'||fighter.fighter_id==='jeice')selection.fighters.set(existing.slot,noCoinCost({...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter','samurai-jack','jeice'].includes(fighter.fighter_id)?{unlockable:fighter.unlockable,unlock_method:fighter.unlock_method,unlock_cost:fighter.unlock_cost,unlock_hint:fighter.unlock_hint}:{unlockable:false})}));continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,noCoinCost({...fighter,slot}));
@@ -337,7 +338,7 @@ function updateArcadeButtons(){
  const start=$('arcade-start');if(start){start.disabled=!available||arcadeState.saving;start.textContent=available?'Start Arcade · 5 Matches':'Choose an unlocked fighter';}
  const next=$('arcade-next');if(next){next.hidden=!arcadeState.active||game.mode!=='finished'||arcadeState.index>=4;next.disabled=arcadeState.saving||!arcadeState.recorded;}
 }
-const isLocked=f=>!!f?.unlockable&&!account.owned.has(f.fighter_id);
+const isLocked=f=>!!f?.coming_soon||!!f?.unlockable&&!account.owned.has(f.fighter_id);
 const fmtCoins=n=>Number(n).toLocaleString('en-US');
 function currentFighter(){return selection.fighters.get(selection.slot)||null}
 function updateAccountBar(){
@@ -571,11 +572,12 @@ function renderRoster(){
   button.dataset.slot=String(n);
   button.style.setProperty('--fighter-accent',validColor(fighter?.accent));
   button.setAttribute('aria-pressed',String(selection.slot===n));
-  button.setAttribute('aria-label',fighter?'Slot '+visibleSlot+': '+fighter.name+(locked?', locked':fighter.unlockable?', unlocked':', playable'):'Slot '+visibleSlot+': future fighter');
+  button.setAttribute('aria-label',fighter?'Slot '+visibleSlot+': '+fighter.name+(fighter.coming_soon?', coming soon':locked?', locked':fighter.unlockable?', unlocked':', playable'):'Slot '+visibleSlot+': future fighter');
   text(button,'span',pad(visibleSlot),'slot-no');
   const art=document.createElement('span');art.className='slot-art';button.append(art);
   const mark=text(art,'span',fighter?fighter.name.slice(0,1).toUpperCase():'?','slot-symbol');
-  if(locked){const badge=text(button,'span','🔒','slot-lock');badge.setAttribute('aria-hidden','true');badge.title='Unlockable fighter';}
+  if(fighter?.coming_soon){const badge=text(button,'span','SOON','slot-lock');badge.title='Coming Soon';}
+  else if(locked){const badge=text(button,'span','🔒','slot-lock');badge.setAttribute('aria-hidden','true');badge.title='Unlockable fighter';}
   else if(fighter?.unlockable){const badge=text(button,'span','✓','slot-claimed');badge.setAttribute('aria-hidden','true');badge.title='Unlocked for your account';}
   const img=safeImage(fighter?.portrait);
   if(img){
@@ -626,13 +628,13 @@ function selectSlot(slot){
  }else avatar.textContent=fighter?fighter.name.charAt(0).toUpperCase():'?';
  avatar.classList.toggle('is-empty',!fighter);
  $('preview-lock').hidden=!locked;
- $('preview-tag').textContent=locked?'🔒 UNLOCKABLE':fighter?.unlockable?'✓ UNLOCKED':fighter?'READY TO FIGHT':'OPEN SLOT';
+ $('preview-tag').textContent=fighter?.coming_soon?'COMING SOON':locked?'🔒 UNLOCKABLE':fighter?.unlockable?'✓ UNLOCKED':fighter?'READY TO FIGHT':'OPEN SLOT';
  $('preview-tag').classList.toggle('is-locked',locked);
  $('preview-tag').classList.toggle('is-ready',!!fighter&&!locked);
  document.querySelector('.preview-card').classList.toggle('is-locked',locked);
  $('preview-title').textContent=fighter?fighter.name:'SLOT '+pad(slot);
  $('preview-slot').textContent='FIGHTER NO. '+pad(slot);
- $('preview-status-text').textContent=locked?'LOCKED FIGHTER':fighter?.unlockable?'FIGHTER UNLOCKED':fighter?'READY FOR BATTLE':'FUTURE FIGHTER';
+ $('preview-status-text').textContent=fighter?.coming_soon?'COMING SOON':locked?'LOCKED FIGHTER':fighter?.unlockable?'FIGHTER UNLOCKED':fighter?'READY FOR BATTLE':'FUTURE FIGHTER';
  $('preview-series').textContent=fighter?fighter.series:'This place is reserved for a future fighter.';
  $('preview-detail').textContent=locked?
    'Unlock this character for your account before entering the arena.':
@@ -640,7 +642,7 @@ function selectSlot(slot){
    'Start a Practice Mode match while new fighters are being created.';
  const note=$('preview-unlock-note');
  note.hidden=!locked;
- note.textContent=locked?(fighter.unlock_method==='coins'&&fighter.unlock_cost?
+ note.textContent=fighter?.coming_soon?'Oogie Boogie is the next upcoming fighter. Artwork, animations and moves are in development.':locked?(fighter.unlock_method==='coins'&&fighter.unlock_cost?
   'Unlock price: '+fmtCoins(fighter.unlock_cost)+' Cartoon Coins'+(fighter.unlock_hint?' · '+fighter.unlock_hint:''):
   fighter.unlock_hint||'This fighter is awarded by the CTooniverse owner.'):'';
  const challenge=challengeProgress(fighter?.fighter_id);
@@ -665,7 +667,7 @@ function selectSlot(slot){
  setupPreviewAnimation(fighter);
  if(previewPoseMenu)previewPoseMenu.disabled=!fighter||!spriteSources(fighter).length;
  startBtn.disabled=!fighter||locked;
- startBtn.textContent=locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
+ startBtn.textContent=fighter?.coming_soon?'COMING SOON':locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
  updateArcadeButtons();
  quickStartBtn.disabled=startBtn.disabled;
  quickStartBtn.textContent=locked?'🔒 Locked':fighter?'FIGHT AS '+fighter.name:'Choose a fighter';
@@ -750,7 +752,7 @@ async function loadRoster(){
   const fighters=await response.json();
   if(!Array.isArray(fighters))throw new Error('Unexpected catalog format');
   selection.fighters=new Map(fighters.filter(f=>Number.isSafeInteger(f.slot)&&f.slot>0).map(f=>{
-    const ready=f.fighter_id==='johnny-bravo'
+    const ready=f.fighter_id==='oogie-boogie'?{...f,...oogieBoogie,slot:f.slot}:f.fighter_id==='johnny-bravo'
       ?{...f,portrait:demoHero.portrait,portrait_fallback:demoHero.portrait_fallback,preview_sheet:demoHero.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='samurai-jack'
       ?{...f,portrait:samuraiJack.portrait,portrait_fallback:samuraiJack.portrait_fallback,preview_sheet:samuraiJack.preview_sheet,preview_columns:4,preview_rows:4}
@@ -818,7 +820,7 @@ const GROUND=445,LEFT=68,RIGHT=892;
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const game={mode:'idle',paused:false,hero:null,cpu:null,heroProfile:demoHero,cpuProfile:demoCPU,cpuDifficulty:1,timer:60,round:1,wins:[0,0],between:0,countdown:3,fightBanner:0,roundMessage:'',hitEffects:[],last:0,animClock:0};
 function arcadeOpponentList(hero){
- const roster=[...selection.fighters.values()].filter(f=>f.enabled!==false&&f.fighter_id!==hero.fighter_id);
+ const roster=[...selection.fighters.values()].filter(f=>f.enabled!==false&&!f.coming_soon&&f.fighter_id!==hero.fighter_id);
  const byId=id=>roster.find(f=>f.fighter_id===id);
  // Each run includes both locked rivals so their challenges are achievable.
  const chosen=[byId('jeice'),byId('burter')].filter(Boolean);
