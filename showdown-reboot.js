@@ -670,8 +670,8 @@ function selectSlot(slot){
  startBtn.textContent=fighter?.coming_soon?'COMING SOON':locked?'🔒 FIGHTER LOCKED':fighter?'Fight as '+fighter.name:'Choose a fighter first';
  updateArcadeButtons();
  quickStartBtn.disabled=startBtn.disabled;
- quickStartBtn.textContent=locked?'🔒 Locked':fighter?'FIGHT AS '+fighter.name:'Choose a fighter';
- selectedFighterStatus.textContent=locked?'🔒 '+fighter.name+' · unlock required':fighter?'Selected: '+fighter.name:'Select a playable fighter';
+ quickStartBtn.textContent=fighter?.coming_soon?'COMING SOON':locked?'🔒 Locked':fighter?'FIGHT AS '+fighter.name:'Choose a fighter';
+ selectedFighterStatus.textContent=fighter?.coming_soon?'COMING SOON · '+fighter.name:locked?'🔒 '+fighter.name+' · unlock required':fighter?'Selected: '+fighter.name:'Select a playable fighter';
  // Preserve keyboard focus when switching portraits instead of recreating the wall.
  for(const tile of rosterGrid.querySelectorAll('.fighter-slot'))
   tile.setAttribute('aria-pressed',String(Number(tile.dataset.slot)===slot));
