@@ -54,11 +54,16 @@ const burter={slot:5,fighter_id:'burter',name:'Burter',series:'Dragon Ball Z',ac
  preview_sheet:'/images/showdown/burter-4x4.png?v=20261110',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:true,unlock_method:'coins',unlock_cost:1500,
  unlock_hint:'Spend Cartoon Coins to recruit Burter.'};
+// The Flea uses the owner's transparent 4x4 sprite sheet for both preview and combat.
+const theFlea={slot:6,fighter_id:'the-flea',name:'The Flea',series:'Mucha Lucha',accent:'#e5a348',
+ portrait:'/images/showdown/the-flea-4x4.png?v=20261111',
+ preview_sheet:'/images/showdown/the-flea-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
+ enabled:true,unlockable:false,unlock_method:'free'};
 const demoCPU={...demoHero};
 function addBuiltInFighters(){
- for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter]){
+ for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter'].includes(fighter.fighter_id)?{}:{unlockable:false})});continue;}
+  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter'].includes(fighter.fighter_id)?{}:{unlockable:false})});continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,{...fighter,slot});
@@ -101,7 +106,7 @@ function spriteSources(profile){
 // Support both Johnny's padded 6x11 rig and the legacy 3x11 backups.
 function spriteLayout(profile,source){
  const johnny=profile?.fighter_id==='johnny-bravo';
- const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter)-4x4\.png/i.test(source);
+ const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter|the-flea)-4x4\.png/i.test(source);
  const polished=johnny&&/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(source);
   const legacyJack=/samurai-jack-atlas\.svg/i.test(source);
  return {columns:uploaded?4:polished?6:(johnny||legacyJack)?3:Math.max(1,Number(profile?.preview_columns)||3),
@@ -206,6 +211,25 @@ function burterSpriteCell(row,frame){
  const cell=poses[Math.max(0,frame)%poses.length];
  return {frame:cell[0],row:cell[1]};
 }
+// Map the owner's 16 Flea frames into eleven selectable combat animations.
+const FLEA_POSE_MAP=[
+ [[0,0],[1,0],[2,0]], // idle
+ [[0,1],[1,1],[2,1]], // walk
+ [[1,1],[2,1],[3,1]], // run
+ [[0,2],[1,2],[2,2]], // punch
+ [[2,2],[3,2],[3,1]], // kick
+ [[3,0],[2,0],[3,0]], // guard
+ [[0,3],[1,3],[2,3]], // jump
+ [[0,1],[3,0],[0,1]], // crouch
+ [[3,2],[0,3],[2,3]], // special
+ [[1,3],[2,3],[1,3]], // hurt
+ [[1,3],[1,3],[1,3]]  // KO
+];
+function fleaSpriteCell(row,frame){
+ const poses=FLEA_POSE_MAP[Math.max(0,Math.min(10,row))];
+ const pose=poses[Math.max(0,frame)%poses.length];
+ return {frame:pose[0],row:pose[1]};
+}
 function johnnySpriteCell(row,frame){
  const sequence=JOHNNY_POSE_MAP[Math.max(0,Math.min(10,row))]||JOHNNY_POSE_MAP[0];
  const pose=sequence[Math.max(0,frame)%sequence.length];
@@ -229,6 +253,7 @@ function spritePose(f,t,columns){
  if(columns===4&&f.profile?.fighter_id==='kim-possible')return kimSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='perfect-cell')return cellSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='burter')return burterSpriteCell(row,frame);
+ if(columns===4&&f.profile?.fighter_id==='the-flea')return fleaSpriteCell(row,frame);
  return columns===4&&f.profile?.fighter_id==='johnny-bravo'?johnnySpriteCell(row,frame):{row,frame};
 }
 const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
@@ -363,8 +388,8 @@ function renderPreviewFrame(timestamp){
  const isLoop=['idle','walk','run','guard','crouch'].includes(previewAnimation.pose);
  const interval=previewAnimation.pose==='run'?85:previewAnimation.pose==='walk'?115:190;
  const actionFrame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%1400)/(1400/cols)));
- const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter)-4x4\.png/i.test(previewAnimation.source||'');
- const {row,frame}=uploaded?(selection.fighters.get(selection.slot)?.fighter_id==='samurai-jack'?jackSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='kim-possible'?kimSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='perfect-cell'?cellSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='burter'?burterSpriteCell(actionRow,actionFrame):johnnySpriteCell(actionRow,actionFrame)):{row:actionRow,frame:actionFrame};
+ const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter|the-flea)-4x4\.png/i.test(previewAnimation.source||'');
+ const {row,frame}=uploaded?(selection.fighters.get(selection.slot)?.fighter_id==='samurai-jack'?jackSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='kim-possible'?kimSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='perfect-cell'?cellSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='burter'?burterSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='the-flea'?fleaSpriteCell(actionRow,actionFrame):johnnySpriteCell(actionRow,actionFrame)):{row:actionRow,frame:actionFrame};
  const polished=/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(previewAnimation.source||'');
  p.clearRect(0,0,canvas.width,canvas.height);
  p.save();p.imageSmoothingEnabled=!polished&&!uploaded;p.imageSmoothingQuality='high';
@@ -634,7 +659,9 @@ async function loadRoster(){
       :f.fighter_id==='perfect-cell'
       ?{...f,portrait:perfectCell.portrait,portrait_fallback:perfectCell.portrait_fallback,preview_sheet:perfectCell.preview_sheet,preview_columns:4,preview_rows:4}
       :f.fighter_id==='burter'
-      ?{...f,portrait:burter.portrait,preview_sheet:burter.preview_sheet,preview_columns:4,preview_rows:4}:f;
+      ?{...f,portrait:burter.portrait,preview_sheet:burter.preview_sheet,preview_columns:4,preview_rows:4}
+      :f.fighter_id==='the-flea'
+      ?{...f,portrait:theFlea.portrait,preview_sheet:theFlea.preview_sheet,preview_columns:4,preview_rows:4}:f;
     return [ready.slot,ready];
    }));
    // Preserve owner-defined slots while adding the built-in fighters.
