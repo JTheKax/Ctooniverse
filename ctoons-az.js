@@ -65,6 +65,7 @@
     const previous=subseries.value;
     subseries.replaceChildren(new Option("All Subseries",""));
     for(const groupName of CATEGORIES){
+      if(category.value&&category.value!==groupName)continue;
       const names=new Set(availableSubseries.filter(item=>cleanCategory(item.category)===groupName).map(item=>item.name));
       for(const item of all)if(item.series&&categoryFor.get(item.series)===groupName)names.add(item.series);
       const group=document.createElement("optgroup");group.label=groupName;
@@ -72,7 +73,7 @@
       if(group.children.length)subseries.append(group);
     }
     const remaining=new Set(all.map(item=>item.series).filter(name=>name&&!categoryFor.has(name)));
-    if(remaining.size){
+    if(remaining.size&&(!category.value||category.value==="Uncategorized")){
       const group=document.createElement("optgroup");group.label="Uncategorized";
       for(const name of [...remaining].sort(collator.compare))group.append(new Option(name,name));
       subseries.append(group);
