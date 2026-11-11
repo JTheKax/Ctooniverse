@@ -78,7 +78,7 @@ async function loadCases(){
   const image=document.createElement('img');image.className='emu-case-image';image.alt=game.title+' cover art';image.loading='lazy';
   const slug=game.title.toLowerCase().normalize('NFKD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const imageUrl=game.cover_path?db.storage.from('emulator-covers').getPublicUrl(game.cover_path).data.publicUrl:'images/emulator-covers/'+slug+'.png';
-  image.addEventListener('load',()=>{cover.classList.add('has-cover-art');art.hidden=true;const w=image.naturalWidth,h=image.naturalHeight;if(w>0&&h>0){const maxWidth=window.matchMedia('(max-width:700px)').matches?112:140;const width=Math.min(w,maxWidth);caseEl.style.setProperty('--art-case-width',width+'px');caseEl.style.setProperty('--art-case-ratio',w+' / '+h);}});
+  image.addEventListener('load',()=>{cover.classList.add('has-cover-art');art.hidden=true;image.hidden=false;});
   image.addEventListener('error',()=>{image.hidden=true;cover.classList.remove('has-cover-art');art.hidden=false});
   image.src=imageUrl;
   cover.append(image);
