@@ -906,3 +906,42 @@ body{
  max-width:100%;max-height:100%;
  filter:drop-shadow(0 7px 10px #000a);
 }
+
+/* Burter 64x64 portrait: keep the entire pixel canvas inside the roster window.
+   Override earlier full-bleed and selected-fighter zoom rules. */
+#showdown-roster-layer .roster-wall .fighter-slot .slot-art:has(img[src*="burter-roster-portrait.png"]){
+  box-sizing:border-box;
+  width:100%;
+  min-height:0;
+  padding:5px 7px;
+  display:flex;
+  flex:1 1 auto;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-art img[src*="burter-roster-portrait.png"],
+#showdown-roster-layer .roster-wall .fighter-slot.occupied .slot-art img[src*="burter-roster-portrait.png"],
+#showdown-roster-layer .roster-wall .fighter-slot[aria-pressed="true"] .slot-art img[src*="burter-roster-portrait.png"],
+#showdown-roster-layer .roster-wall .fighter-slot:hover .slot-art img[src*="burter-roster-portrait.png"]{
+  display:block;
+  box-sizing:border-box;
+  flex:none;
+  width:auto;
+  height:auto;
+  max-width:100%;
+  max-height:100%;
+  aspect-ratio:1 / 1;
+  object-fit:contain;
+  object-position:center;
+  transform:none!important;
+  image-rendering:pixelated;
+}
+#showdown-roster-layer .preview-avatar img[src*="burter-roster-portrait.png"]{
+  display:block;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  object-position:center;
+  image-rendering:pixelated;
+}
