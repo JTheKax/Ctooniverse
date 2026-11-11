@@ -945,3 +945,102 @@ body{
   object-position:center;
   image-rendering:pixelated;
 }
+
+
+/* Roster nameplate layout repair — 2026-11-11.
+   Keep every fighter name visible without spilling over the portrait/status. */
+#showdown-roster-layer .roster-wall .roster-grid{
+  align-items:stretch;
+}
+#showdown-roster-layer .roster-wall .fighter-slot{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+  height:100%;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-art{
+  flex:1 1 auto;
+  min-height:45px;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-footer{
+  box-sizing:border-box;
+  position:relative;
+  flex:0 0 auto;
+  align-self:stretch;
+  width:100%;
+  min-width:0;
+  min-height:64px;
+  margin-top:auto;
+  padding:6px 4px 5px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:4px;
+  overflow:visible;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-label,
+#showdown-roster-layer .roster-wall .fighter-slot.occupied .slot-label{
+  display:block;
+  box-sizing:border-box;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  height:auto;
+  max-height:none;
+  overflow:visible;
+  -webkit-line-clamp:unset;
+  -webkit-box-orient:initial;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  hyphens:none;
+  text-overflow:clip;
+  font-family:Impact,"Arial Narrow","Arial Black",system-ui,sans-serif;
+  font-size:clamp(.65rem,1vw,.86rem);
+  font-weight:900;
+  line-height:1.16;
+  letter-spacing:0;
+  text-align:center;
+}
+#showdown-roster-layer .roster-wall .fighter-slot .slot-status{
+  box-sizing:border-box;
+  display:block;
+  flex:0 0 auto;
+  width:auto;
+  max-width:100%;
+  margin:0;
+  padding:2px 4px;
+  font-size:.52rem;
+  line-height:1.2;
+  letter-spacing:.025em;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  text-align:center;
+}
+@media(max-width:750px){
+  #showdown-roster-layer .roster-wall .fighter-slot .slot-footer{
+    min-height:62px;
+    padding:5px 3px;
+    gap:3px;
+  }
+  #showdown-roster-layer .roster-wall .fighter-slot .slot-label,
+  #showdown-roster-layer .roster-wall .fighter-slot.occupied .slot-label{
+    font-size:clamp(.61rem,1.65vw,.75rem);
+    line-height:1.15;
+  }
+  #showdown-roster-layer .roster-wall .fighter-slot .slot-status{
+    font-size:.48rem;
+    letter-spacing:0;
+  }
+}
+@media(max-width:420px){
+  #showdown-roster-layer .roster-wall .fighter-slot .slot-footer{
+    min-height:66px;
+    padding:5px 2px;
+  }
+  #showdown-roster-layer .roster-wall .fighter-slot .slot-label,
+  #showdown-roster-layer .roster-wall .fighter-slot.occupied .slot-label{
+    font-size:.64rem;
+  }
+}
