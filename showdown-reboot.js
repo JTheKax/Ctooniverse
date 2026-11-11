@@ -69,11 +69,15 @@ const courage={slot:8,fighter_id:'courage',name:'Courage',series:'Courage the Co
  portrait:'/images/showdown/courage-portrait.png?v=20261111',
  preview_sheet:'/images/showdown/courage-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:false,unlock_method:'free'};
+const jeice={slot:9,fighter_id:'jeice',name:'Jeice',series:'Dragon Ball Z',accent:'#fa5252',
+ portrait:'/images/showdown/jeice-portrait.png?v=20261111',
+ preview_sheet:'/images/showdown/jeice-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
+ enabled:true,unlockable:false,unlock_method:'free'};
 const demoCPU={...demoHero};
 function addBuiltInFighters(){
- for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea,nigelUno,courage]){
+ for(const fighter of [demoHero,samuraiJack,kimPossible,perfectCell,burter,theFlea,nigelUno,courage,jeice]){
   const existing=[...selection.fighters.values()].find(item=>item.fighter_id===fighter.fighter_id);
-  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno'||fighter.fighter_id==='courage')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter','samurai-jack'].includes(fighter.fighter_id)?{unlockable:fighter.unlockable,unlock_method:fighter.unlock_method,unlock_cost:fighter.unlock_cost,unlock_hint:fighter.unlock_hint}:{unlockable:false})});continue;}
+  if(existing){if(fighter.fighter_id==='samurai-jack'||fighter.fighter_id==='kim-possible'||fighter.fighter_id==='perfect-cell'||fighter.fighter_id==='burter'||fighter.fighter_id==='the-flea'||fighter.fighter_id==='nigel-uno'||fighter.fighter_id==='courage'||fighter.fighter_id==='jeice')selection.fighters.set(existing.slot,{...existing,preview_sheet:fighter.preview_sheet,preview_columns:4,preview_rows:4,portrait:fighter.portrait,portrait_fallback:fighter.portrait_fallback,enabled:true,...(['perfect-cell','burter','samurai-jack'].includes(fighter.fighter_id)?{unlockable:fighter.unlockable,unlock_method:fighter.unlock_method,unlock_cost:fighter.unlock_cost,unlock_hint:fighter.unlock_hint}:{unlockable:false})});continue;}
   let slot=fighter.slot;
   while(selection.fighters.has(slot))slot++;
   selection.fighters.set(slot,{...fighter,slot});
@@ -254,6 +258,18 @@ const COURAGE_POSE_MAP=[
  [[0,3],[1,3],[2,3]],[[3,1],[0,1],[3,1]],[[3,2],[0,3],[2,3]],
  [[1,3],[2,3],[1,3]],[[1,3],[1,3],[1,3]]
 ];
+// Jeice's supplied 4x4 atlas mapped to the engine's eleven actions.
+const JEICE_POSE_MAP=[
+ [[0,0],[1,0],[2,0]],[[0,1],[1,1],[2,1]],[[1,1],[2,1],[3,1]],
+ [[0,2],[1,2],[2,2]],[[2,2],[3,2],[3,1]],[[3,0],[2,0],[3,0]],
+ [[0,3],[1,3],[2,3]],[[3,1],[0,1],[3,1]],[[3,2],[0,3],[2,3]],
+ [[1,3],[2,3],[1,3]],[[1,3],[1,3],[1,3]]
+];
+function jeiceSpriteCell(row,frame){
+ const poses=JEICE_POSE_MAP[Math.max(0,Math.min(10,row))];
+ const pose=poses[Math.max(0,frame)%poses.length];
+ return {frame:pose[0],row:pose[1]};
+}
 function courageSpriteCell(row,frame){
  const poses=COURAGE_POSE_MAP[Math.max(0,Math.min(10,row))];
  const pose=poses[Math.max(0,frame)%poses.length];
@@ -290,6 +306,7 @@ function spritePose(f,t,columns){
  if(columns===4&&f.profile?.fighter_id==='the-flea')return fleaSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='nigel-uno')return nigelSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='courage')return courageSpriteCell(row,frame);
+ if(columns===4&&f.profile?.fighter_id==='jeice')return jeiceSpriteCell(row,frame);
  return columns===4&&f.profile?.fighter_id==='johnny-bravo'?johnnySpriteCell(row,frame):{row,frame};
 }
 const validColor=color=>/^#[0-9a-f]{6}$/i.test(color||'')?color:'#8d8cff';
