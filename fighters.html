@@ -140,7 +140,7 @@
         <p class="sprite-comparison-note" id="johnny-art-notice" hidden>The new model uses your 16 supplied poses, mapped to all 11 fight actions. Compare it with the previous version.</p>
         <div class="preview-actions">
           <button type="button" class="arcade-btn main" id="start-match" disabled>Choose a fighter first</button>
-          <button type="button" class="arcade-btn alt" id="arcade-start" disabled>Start Arcade · 5 Matches</button><button type="button" class="arcade-btn main" id="arcade-next" hidden>Next Arcade Opponent</button><button type="button" class="arcade-btn alt" id="arcade-retry-save" hidden>Retry Saving Progress</button><button type="button" class="arcade-btn unlock-btn" id="unlock-fighter" hidden>Unlock this fighter</button>
+          <button type="button" class="arcade-btn alt" id="arcade-start" disabled>Start Arcade · 5 Matches</button><button type="button" class="arcade-btn unlock-btn" id="unlock-fighter" hidden>Unlock this fighter</button>
           <button type="button" class="arcade-btn alt" id="training-match">Johnny Bravo Mirror Match</button>
         </div>
       </aside>
@@ -213,7 +213,7 @@
         <button type="button" data-control="special" aria-label="Special attack">★</button>
       </div>
     </div>
-    <p class="notice" id="arcade-status" role="status" aria-live="polite">Arcade Mode: choose a fighter and complete a five-match ladder. Burter and Jeice can appear as CPU opponents while locked.</p><p class="notice" id="showdown-status" role="status" aria-live="polite">Practice mode is available even before any fighters are published.</p>
+    <div class="preview-actions" id="arcade-match-actions"><button type="button" class="arcade-btn main" id="arcade-next" hidden>Next Arcade Opponent</button><button type="button" class="arcade-btn alt" id="arcade-retry-save" hidden>Retry Saving Progress</button></div><p class="notice" id="arcade-status" role="status" aria-live="polite">Arcade Mode: choose a fighter and complete a five-match ladder. Burter and Jeice can appear as CPU opponents while locked.</p><p class="notice" id="showdown-status" role="status" aria-live="polite">Practice mode is available even before any fighters are published.</p>
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
