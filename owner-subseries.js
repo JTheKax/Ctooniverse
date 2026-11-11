@@ -19,13 +19,7 @@ async function load(){
 function draw(){
  list.replaceChildren();total.textContent="("+entries.length+")";
  if(!entries.length){const p=document.createElement("p");p.textContent="No subseries yet. Add your first one above.";list.append(p);return;}
- for(const groupName of ["Cartoon & Anime","Video Games","Uncategorized"]){
-  const members=entries.filter(item=>(item.category==="Video Games"?"Video Games":item.category==="Cartoon & Anime"?"Cartoon & Anime":"Uncategorized")===groupName);
-  const section=document.createElement("section");section.className="subseries-category-group";
-  const header=document.createElement("h3");header.textContent=groupName+" ("+members.length+")";
-  section.append(header);list.append(section);
-  if(!members.length){const empty=document.createElement("p");empty.textContent="No subseries in this category yet.";section.append(empty);}
-  for(const item of members){
+ for(const item of entries){
   const row=document.createElement("div");row.className="subseries-row";
   const info=document.createElement("div");info.className="subseries-info";
   const heading=document.createElement("strong");heading.textContent=item.name;
@@ -36,7 +30,7 @@ function draw(){
   const remove=document.createElement("button");remove.type="button";remove.className="subseries-delete";remove.textContent="Delete";
   const move=document.createElement("button");move.type="button";
   move.textContent=item.category==="Video Games"?"Move to Cartoon & Anime":"Move to Video Games";
-  actions.append(rename,move,remove);row.append(info,actions);section.append(row);
+  actions.append(rename,move,remove);row.append(info,actions);list.append(row);
   move.addEventListener("click",async()=>{
     if(busy)return;
     const target=item.category==="Video Games"?"Cartoon & Anime":"Video Games";
@@ -76,7 +70,6 @@ function draw(){
     await load();message("Deleted "+item.name+".");
    }catch(error){message(error.message,true);}finally{lock(false);}
   });
-  }
  }
 }
 form.addEventListener("submit",async event=>{
