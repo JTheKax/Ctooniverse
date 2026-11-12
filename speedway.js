@@ -184,6 +184,8 @@ function startRace(){
  };
  $("phase").textContent="COUNTDOWN";
  $("pause-btn").disabled=false;$("leave-btn").disabled=false;$("restart-btn").disabled=false;
+ $("speedway-lights").dataset.state="countdown";$("speedway-lights").dataset.count="0";
+ try{canvas.focus({preventScroll:true})}catch{canvas.focus()}
  $("pause-btn").textContent="PAUSE";
  $("race-panel").scrollIntoView({behavior:"smooth",block:"start"});
  renderOverlay("3","GET READY","Hold GAS or press W / ↑ when the lights turn green.");
@@ -193,6 +195,7 @@ function startRace(){
 }
 function stopRace(){
  race=null;clearInputs();$("pause-btn").disabled=true;$("leave-btn").disabled=true;$("restart-btn").disabled=true;
+ $("speedway-lights").dataset.state="ready";
  $("phase").textContent="PRE-RACE";$("hud-speed").textContent="0";
  $("hud-boost").textContent="72%";$("boost-bar").style.width="72%";$("speed-bar").style.width="0%";
  $("hud-lap").textContent="1 / "+save.laps;$("hud-position").textContent="1 / 4";$("hud-time").textContent="0:00.0";
@@ -207,11 +210,16 @@ function togglePause(){
  if(!race||!["countdown","running","paused"].includes(race.phase))return;
  if(race.phase==="running"||race.phase==="countdown"){
   race.resumePhase=race.phase;race.phase="paused";clearInputs();
+  $("speedway-lights").dataset.state="paused";
   $("pause-btn").textContent="RESUME";$("phase").textContent="PAUSED";
   renderOverlay("RACE PAUSED","TIME OUT","Resume when you are ready.");
   announce("Race paused.");
  }else{
-  race.phase=race.resumePhase||"running";$("pause-btn").textContent="PAUSE";$("phase").textContent=race.phase==="countdown"?"COUNTDOWN":"RACING";if(race.phase==="running")hideOverlay();else renderOverlay(String(Math.max(1,Math.ceil(race.countdown))),"GET READY","Race starting!");announce("Go!");}
+  race.phase=race.resumePhase||"running";$("pause-btn").textContent="PAUSE";$("phase").textContent=race.phase==="countdown"?"COUNTDOWN":"RACING";
+  $("speedway-lights").dataset.state=race.phase;
+  if(race.phase==="running")hideOverlay();
+  else renderOverlay(String(Math.max(1,Math.ceil(race.countdown))),"GET READY","Race starting!");
+  announce("Go!");}
 }
 function currentPlace(){
  if(!race)return 1;
@@ -242,7 +250,7 @@ function finishRace(){
    bestByLaps,lastPosition:place
  };
  persist();clearInputs();renderOptions();
- $("phase").textContent="FINISHED";
+ $("phase").textContent="FINISHED";$("speedway-lights").dataset.state="finished";
  $("pause-btn").disabled=true;
  renderOverlay(place===1?"CHAMPION!":"FINISH · #"+place,"CHECKERED FLAG",
  "Race time: "+timeFmt(race.time)+" · Best lap: "+(race.bestLap?timeFmt(race.bestLap):"—")+
@@ -256,7 +264,12 @@ function updateRace(dt){
   const before=Math.ceil(r.countdown);
   r.countdown-=dt;
   const after=Math.ceil(r.countdown);
-  if(r.countdown<=0){r.phase="running";$("phase").textContent="RACING";hideOverlay();announce("GO! Drift around corners and use your boost!");}
+  $("speedway-lights").dataset.count=String(clamp(4-after,0,3));
+  if(r.countdown<=0){
+   r.phase="running";$("phase").textContent="RACING";
+   $("speedway-lights").dataset.state="running";hideOverlay();
+   announce("GO! Drift around corners and use your boost!");
+  }
   else if(before!==after&&after>=1)renderOverlay(String(after),"GET READY","W / ↑ accelerate · A,D steer · Shift boost · Space drift");
   return;
  }
@@ -578,6 +591,7 @@ function frame(ms){
 }
 const controlMap={ArrowUp:"gas",KeyW:"gas",ArrowDown:"brake",KeyS:"brake",ArrowLeft:"left",KeyA:"left",ArrowRight:"right",KeyD:"right",Space:"drift",ShiftLeft:"boost",ShiftRight:"boost",KeyB:"boost"};
 document.addEventListener("keydown",e=>{
+ if(e.target?.closest?.('input,select,textarea,[contenteditable="true"],nav'))return;
  if(e.code==="KeyP"){if(!e.repeat)togglePause();return;}
  const key=controlMap[e.code];if(!key)return;
  if(race&&["running","countdown"].includes(race.phase)){e.preventDefault();ctrl[key]=true;}
@@ -625,10 +639,13 @@ $("pause-btn").addEventListener("click",togglePause);
 $("leave-btn").addEventListener("click",stopRace);
 $("overlay-action").addEventListener("click",()=>{stopRace();startRace();});
 document.addEventListener("visibilitychange",()=>{
- if(document.hidden&&race?.phase==="running")togglePause();
+ if(document.hidden&&race&&["countdown","running"].includes(race.phase))togglePause();
  clearInputs();
 });
-window.addEventListener("blur",clearInputs);
+window.addEventListener("blur",()=>{
+ if(race&&["countdown","running"].includes(race.phase))togglePause();
+ clearInputs();
+ });
 renderOverlay("START YOUR ENGINES","GET READY","Pick a driver and a track above to begin.");
 if(!ctx){announce("Your browser does not support HTML canvas. Try another browser.");return;}
 renderOptions();setView("race");requestAnimationFrame(frame);
