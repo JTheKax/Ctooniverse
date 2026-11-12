@@ -14,6 +14,9 @@
     neon:{title:"Neon Rush",bpm:118,bars:20,seed:1,root:52,wave:"sawtooth",scale:[0,3,5,7,10,12,15,17],progression:[0,5,3,7]},
     pixel:{title:"Pixel Thunder",bpm:146,bars:24,seed:3,root:50,wave:"square",scale:[0,2,5,7,9,12,14,17],progression:[0,7,5,3]},
     starlight:{title:"Starlight Solo",bpm:104,bars:20,seed:4,root:53,wave:"triangle",scale:[0,2,4,7,9,12,14,16],progression:[0,4,5,7]},
+    nebula:{title:"Nebula Drive",bpm:132,bars:24,seed:6,root:49,wave:"sawtooth",scale:[0,2,5,7,10,12,14,17],progression:[0,3,7,5]},
+    clockwork:{title:"Clockwork Chaos",bpm:155,bars:28,seed:7,root:55,wave:"square",scale:[0,3,5,8,10,12,15,17],progression:[0,7,2,5]},
+    sunset:{title:"Sunset Circuit",bpm:112,bars:24,seed:8,root:52,wave:"triangle",scale:[0,2,4,5,7,9,11,12],progression:[0,5,9,7]},
     golden:{title:"Golden · HUNTR/X",bpm:123,bars:95,seed:2,featured:true,
       path:"tracks/4c25e71528734dac8763825b46ed23d2.mp3"}
   };
@@ -40,7 +43,9 @@
   const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
   const fmt=x=>Math.round(x).toLocaleString("en-US");
   let chosen=songs[safeStorage.get("ctoon-jam-last-song-v1")]?safeStorage.get("ctoon-jam-last-song-v1"):"neon";
-  let difficulty="normal",style=safeStorage.get("ctoon-jam-play-style-v1")==="tap"?"tap":"strum";
+  let difficulty=["easy","normal","hard"].includes(safeStorage.get("ctoon-jam-last-difficulty-v1"))?
+    safeStorage.get("ctoon-jam-last-difficulty-v1"):"normal",
+    style=safeStorage.get("ctoon-jam-play-style-v1")==="tap"?"tap":"strum";
   if(!safeStorage.get("ctoon-jam-play-style-v1")&&window.matchMedia?.("(pointer: coarse)").matches)style="tap";
   let filter="all",phase="library",notes=[],cursor=0,held=new Set(),holds=[];
   let score=0,combo=0,maxCombo=0,judged=0,accuracyPoints=0,rock=75,charge=0,hypeEnd=0,eligible=true;
@@ -51,6 +56,30 @@
   const isFeatured=()=>!!songs[chosen].featured;
   const bestKey=()=> "ctoon-jam-best-v1-"+chosen+"-"+difficulty;
   const offsetKey=()=> "ctoon-jam-chart-offset-v1:"+chosen;
+  const localChartKey=()=> "ctoon-jam-local-chart-v1:"+chosen+":"+difficulty;
+  const customChart=()=>{
+    let data;try{data=JSON.parse(safeStorage.get(localChartKey())||"null")}catch{return null;}
+    if(!data||data.format!=="ctoon-jam-local-chart"||data.version!==1||
+       data.songId!==chosen||data.difficulty!==difficulty||
+       !Array.isArray(data.notes)||data.notes.length<1||data.notes.length>2500)return null;
+    const rows=[];
+    for(const n of data.notes){
+      if(!Array.isArray(n)||(n.length!==2&&n.length!==3)||!Number.isFinite(n[0])||n[0]<0||n[0]>900||
+         !Number.isInteger(n[1])||n[1]<0||n[1]>4||
+         (n.length===3&&(!Number.isFinite(n[2])||n[2]<0||n[2]>8)))return null;
+      rows.push({at:n[0]+offset,lane:n[1],duration:n[2]||0,judged:false});
+    }
+    return rows.filter(n=>n.at>=0).sort((a,b)=>a.at-b.at||a.lane-b.lane);
+  };
+  function notesForRun(){
+    const own=customChart();
+    if(own?.length){
+      eligible=false; // Editable charts are practice-only; protect existing ranked bests.
+      els.chartstatus.textContent="LOCAL CUSTOM CHART · "+own.length+" NOTES · PRACTICE ONLY";
+      return own;
+    }
+    return buildGenerated(songs[chosen]);
+  }
   const durationEstimate=track=>track.featured?192:(track.bars*4+4)*60/track.bpm;
   const time=()=>isFeatured()?nativeAudio.currentTime||0:synth?synth.currentTime-startAt:0;
   const isPlaying=()=>phase==="playing";
@@ -202,7 +231,8 @@
     songFilters.forEach(b=>{const on=b.dataset.songFilter===filter;b.classList.toggle("is-active",on);b.setAttribute("aria-pressed",String(on));});
     const track=songs[chosen];
     els.ptitle.textContent=track.title;
-    els.pmeta.textContent=(track.featured?"Featured recording · hosted MP3":"Original arcade music · generated in browser")+" · "+track.bpm+" BPM";
+    els.pmeta.textContent=(track.featured?"Featured recording · hosted MP3":"Original arcade music · generated in browser")+" · "+track.bpm+" BPM"+
+      (customChart()?.length?" · CUSTOM PRACTICE CHART SAVED":"");
     els.part.dataset.theme=chosen;els.part.textContent=track.featured?"★":"♫";
     els.pdiff.value=difficulty;els.pstyle.value=style;
     refreshBest();header();
@@ -223,6 +253,7 @@
   }
   function selectDifficulty(mode){
     difficulty=["easy","normal","hard"].includes(mode)?mode:"normal";
+    safeStorage.set("ctoon-jam-last-difficulty-v1",difficulty);
     els.diff.value=difficulty;els.pdiff.value=difficulty;
     refreshBest();renderLibrary();paint();
   }
@@ -394,7 +425,7 @@
       header();
     };
     media.onended=()=>{clearWatchdog();if(valid())finish();};
-    notes=buildGenerated(songs.golden);setChartForRun(ticket);
+    if(!customChart()?.length)setChartForRun(ticket);
     try{
       const attempt=media.play();
       if(attempt?.catch)attempt.catch(error=>{
@@ -414,7 +445,7 @@
     try{cv.focus({preventScroll:true})}catch{cv.focus()}
     els.song.disabled=true;els.diff.disabled=true;
     totalTime=durationEstimate(songs[chosen]);
-    notes=buildGenerated(songs[chosen]);
+    notes=notesForRun();
     setLoading(isFeatured()?"Connecting to recording…":"Starting arcade audio…");
     overlay("GET READY",isFeatured()?"The song begins when its audio is ready.":"Loading the stage.");
     header();paint();
@@ -645,10 +676,10 @@
   }
   // Explicit user actions. Nothing plays until a Play button is pressed.
   $("jam-picker-start").addEventListener("click",()=>{
-    difficulty=els.pdiff.value;setPlayStyle(els.pstyle.value);
-    els.diff.value=difficulty;start();
+    selectDifficulty(els.pdiff.value);setPlayStyle(els.pstyle.value);
+    start();
   });
-  els.play.addEventListener("click",()=>{if(!els.picker.hidden){difficulty=els.pdiff.value;setPlayStyle(els.pstyle.value);els.diff.value=difficulty;}start();});
+  els.play.addEventListener("click",()=>{if(!els.picker.hidden){selectDifficulty(els.pdiff.value);setPlayStyle(els.pstyle.value);}start();});
   els.pause.addEventListener("click",pause);
   els.hype.addEventListener("click",activateHype);
   els.overlayAction.addEventListener("click",()=>{
