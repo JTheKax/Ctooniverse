@@ -110,3 +110,25 @@ body{background-image:radial-gradient(ellipse at 12% 8%,#6631ad30,transparent 38
 .discord-panel{border-color:#7a9bff}
 @media(max-width:760px){.shop-department:hover,.ctoons-alphabet a:hover,.theater-shelf-tabs button:hover{transform:none}.ctoons-directory-hero,.games-hub-hero{border-radius:18px}}
 @media(prefers-reduced-motion:reduce){.shop-department,.ctoons-alphabet a,.theater-shelf-tabs button,#ctoons-search,#ctoons-category,#ctoons-subseries,.theater-search-wrap input,#player-search{transition:none!important}.shop-department:hover,.ctoons-alphabet a:hover,.theater-shelf-tabs button:hover{transform:none!important}}
+
+
+/* Phase 3: illustrated arcade landing page composition */
+.home-universe-page .welcome-panel{min-height:440px}
+.home-universe-page .welcome-copy{max-width:720px}
+.home-universe-page .welcome-copy h1{font-size:clamp(2.4rem,5.5vw,5.4rem);line-height:1.04;font-weight:950;letter-spacing:-.055em}
+.arcade-hero-break{display:block;color:#ffb9f5;-webkit-text-fill-color:#ffb9f5;text-shadow:0 0 30px #e961df55}
+.home-universe-page .welcome-panel::before{content:"✦";position:absolute;right:6%;top:7%;font-size:clamp(6rem,15vw,13rem);line-height:1;color:#84dfff20;text-shadow:0 0 50px #9a72ff35;pointer-events:none}
+.home-universe-page .welcome-copy .hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+.arcade-feature-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:24px 0 10px}
+.arcade-feature-strip>a{display:flex;align-items:center;gap:14px;min-width:0;padding:20px 18px;border:1px solid #6989f5;border-radius:19px;background:linear-gradient(140deg,#152c58,#241443);box-shadow:0 10px 30px #02061790,inset 0 1px #ffffff22;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.arcade-feature-strip>a>span:first-child{font-size:2.5rem;filter:drop-shadow(0 0 12px #7edbff80)}
+.arcade-feature-strip>a>span:nth-child(2){display:flex;flex-direction:column;min-width:0;line-height:1.35}
+.arcade-feature-strip small{font-size:.68rem;letter-spacing:.12em;font-weight:900;color:#78e9ff}
+.arcade-feature-strip strong{font-size:clamp(1rem,1.8vw,1.3rem);color:#fff}
+.arcade-feature-strip em{font-size:.82rem;font-style:normal;color:#c7c7f5}
+.arcade-feature-strip b{margin-left:auto;color:#8eeaff}
+.arcade-feature-strip>a:hover{transform:translateY(-5px);border-color:#9eeaff;box-shadow:0 15px 30px #020617a0,0 0 20px #936bff55}
+.arcade-feature-strip>a:focus-visible{outline:3px solid #ffe58a;outline-offset:3px}
+@media(max-width:850px){.arcade-feature-strip{grid-template-columns:1fr}.home-universe-page .welcome-panel{min-height:380px}}
+@media(max-width:650px){.home-universe-page .welcome-copy h1{font-size:clamp(2.1rem,9vw,3.2rem)}.arcade-feature-strip>a{padding:15px}.home-universe-page .welcome-panel::before{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.arcade-feature-strip>a{transition:none}.arcade-feature-strip>a:hover{transform:none}}
