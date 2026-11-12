@@ -1,0 +1,212 @@
+/* CTooniverse hand-drawn animated destination banners.
+   Purely decorative visual enhancement; no gameplay or access changes. */
+.ct-page-banner{
+  --ctb-ink:#f9fbff;
+  --ctb-a:#8feeff;
+  --ctb-b:#b49aff;
+  --ctb-c:#ff9bd5;
+  --ctb-shadow:#4154b9;
+  --ctb-bg-1:#141643;
+  --ctb-bg-2:#32195f;
+  position:relative;isolation:isolate;overflow:hidden;
+  width:100%;margin:0 0 clamp(22px,3.2vw,38px);
+  border:3px solid var(--ctb-a);border-radius:27px;
+  color:var(--ctb-ink);
+  background:
+    radial-gradient(circle at 83% 17%,color-mix(in srgb,var(--ctb-c) 28%,transparent),transparent 37%),
+    radial-gradient(circle at 4% 88%,color-mix(in srgb,var(--ctb-a) 20%,transparent),transparent 40%),
+    linear-gradient(118deg,var(--ctb-bg-1),var(--ctb-bg-2));
+  box-shadow:0 4px 0 #050720,0 15px 29px #02041ebd,
+    inset 0 0 0 3px #ffffff14,0 0 28px color-mix(in srgb,var(--ctb-a) 30%,transparent);
+}
+.ct-page-banner::before{
+  content:"";position:absolute;inset:8px;border:2px dashed #ffffff4b;
+  border-radius:20px;pointer-events:none;z-index:0;
+}
+.ct-page-banner::after{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(111deg,transparent 22%,#ffffff0f 38%,transparent 51%);
+  background-size:220% 100%;
+  animation:ct-banner-shimmer 14s ease-in-out infinite;
+}
+.ct-page-banner[data-ct-banner="home"]{
+  --ctb-a:#9fefff;--ctb-b:#bba3ff;--ctb-c:#ff91ca;
+  --ctb-bg-1:#121540;--ctb-bg-2:#381963;
+}
+.ct-page-banner[data-ct-banner="ctoons"]{
+  --ctb-a:#75e5ff;--ctb-b:#b19aff;--ctb-c:#ff98e3;
+  --ctb-bg-1:#132750;--ctb-bg-2:#352078;
+}
+.ct-page-banner[data-ct-banner="games"]{
+  --ctb-a:#7fd7ff;--ctb-b:#a795ff;--ctb-c:#ffe18a;
+  --ctb-bg-1:#131d49;--ctb-bg-2:#24215e;
+}
+.ct-page-banner[data-ct-banner="shop"]{
+  --ctb-a:#ffd78f;--ctb-b:#ff9ce5;--ctb-c:#a1d8ff;
+  --ctb-bg-1:#321044;--ctb-bg-2:#4e2160;
+}
+.ct-page-banner[data-ct-banner="theater"]{
+  --ctb-a:#ffe6ad;--ctb-b:#fda1a6;--ctb-c:#d2a5ff;
+  --ctb-bg-1:#3c153e;--ctb-bg-2:#261340;
+}
+.ct-page-banner[data-ct-banner="community"]{
+  --ctb-a:#a1ffe8;--ctb-b:#80c6ff;--ctb-c:#b8a5ff;
+  --ctb-bg-1:#102d4d;--ctb-bg-2:#242c65;
+}
+.ct-page-banner[data-ct-banner="account"]{
+  --ctb-a:#9de5ff;--ctb-b:#cfabff;--ctb-c:#ffb5e3;
+  --ctb-bg-1:#20224f;--ctb-bg-2:#3e2263;
+}
+.ct-page-banner[data-ct-banner="owner"]{
+  --ctb-a:#ffe09b;--ctb-b:#b9a1ff;--ctb-c:#a0eaff;
+  --ctb-bg-1:#2c214f;--ctb-bg-2:#43265c;
+}
+.ct-banner-body{
+  position:relative;z-index:2;min-width:0;
+  display:grid;grid-template-columns:minmax(0,1fr) clamp(152px,25%,270px);
+  align-items:center;gap:clamp(12px,3.5vw,36px);
+  min-height:210px;padding:clamp(24px,3.5vw,38px) clamp(22px,4.6vw,55px) clamp(24px,3vw,32px);
+}
+.ct-banner-copy{min-width:0;position:relative}
+.ct-banner-eyebrow{
+  color:var(--ctb-a)!important;
+  font:900 clamp(.65rem,1.25vw,.86rem)/1.35 "Trebuchet MS",system-ui,sans-serif!important;
+  letter-spacing:.19em!important;margin:0 0 12px!important;
+  text-transform:uppercase;text-shadow:0 0 9px var(--ctb-bg-2);
+}
+.ct-banner-title{
+  display:block;margin:0 0 10px!important;
+  font:1000 clamp(1.9rem,4.3vw,4.1rem)/.99 "Trebuchet MS","Arial Rounded MT Bold",system-ui,sans-serif!important;
+  letter-spacing:-.05em!important;max-width:19ch;
+  color:#fff!important;
+  text-shadow:2px 3px 0 #211047,4px 5px 0 #10091d,0 0 17px color-mix(in srgb,var(--ctb-a) 55%,transparent);
+  transform:rotate(-1.15deg);transform-origin:left center;
+}
+.ct-banner-description{
+  margin:0 0 14px!important;max-width:62ch;
+  font-size:clamp(.9rem,1.35vw,1.03rem)!important;line-height:1.5!important;
+  color:#e9eaff!important;text-wrap:pretty;
+}
+.ct-banner-chips{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.ct-banner-chip{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:27px;padding:5px 11px;border:1px solid #ffffff80;border-radius:7px 8px 6px 9px;
+  background:#101837cb;color:#fff!important;
+  font:900 clamp(.59rem,.9vw,.72rem)/1.1 "Trebuchet MS",system-ui,sans-serif;
+  letter-spacing:.07em;text-align:center;
+  box-shadow:2px 3px 0 #090b25,0 0 7px #ffffff18;
+  transform:rotate(-1deg);
+}
+.ct-banner-chip:nth-child(2){transform:rotate(1.6deg);color:var(--ctb-a)!important;border-color:var(--ctb-a)}
+.ct-banner-chip:nth-child(3){transform:rotate(-1.5deg);color:var(--ctb-c)!important;border-color:var(--ctb-c)}
+.ct-banner-art{
+  position:relative;display:grid;place-items:center;min-width:0;
+  width:100%;height:clamp(155px,17vw,209px);
+  justify-self:end;isolation:isolate;
+}
+.ct-banner-sunburst{
+  position:absolute;inset:0;border-radius:50%;z-index:0;opacity:.9;
+  background:repeating-conic-gradient(from -5deg,var(--ctb-b) 0 9deg,transparent 9deg 21deg);
+  -webkit-mask:radial-gradient(circle,transparent 0 32%,#000 35% 71%,transparent 75%);
+  mask:radial-gradient(circle,transparent 0 32%,#000 35% 71%,transparent 75%);
+  filter:drop-shadow(0 0 9px var(--ctb-b));
+  animation:ct-banner-spin 55s linear infinite;
+}
+.ct-banner-orbit{
+  position:absolute;width:94%;height:64%;z-index:1;
+  border:3px dashed var(--ctb-a);border-radius:50%;
+  box-shadow:0 0 15px color-mix(in srgb,var(--ctb-a) 38%,transparent);
+}
+.ct-banner-orbit-one{transform:rotate(-30deg)}
+.ct-banner-orbit-two{width:78%;height:86%;transform:rotate(36deg);border-color:var(--ctb-c);opacity:.54}
+.ct-banner-character{
+  position:relative;z-index:2;display:grid;place-items:center;
+  width:clamp(92px,11vw,137px);height:clamp(92px,11vw,137px);
+  border:4px solid var(--ctb-a);border-radius:43% 57% 49% 51%;
+  background:radial-gradient(circle at 32% 24%,#ffffff61,#7863cf80 35%,#1c1749 79%);
+  box-shadow:inset -10px -10px 20px #110c3775,0 8px 0 #130d2e,0 0 24px color-mix(in srgb,var(--ctb-a) 55%,transparent);
+  font-size:clamp(3.5rem,7vw,5.7rem);line-height:1;
+  text-shadow:0 5px 4px #120e2b88;
+  transform:rotate(-9deg);
+  animation:ct-banner-bounce 4.5s ease-in-out infinite;
+}
+.ct-banner-art-tag{
+  position:absolute;z-index:4;right:0;bottom:-4px;
+  padding:7px 10px;border:2px solid #fff7d4;border-radius:7px;
+  background:var(--ctb-c);color:#1e163d;
+  font:1000 clamp(.59rem,1vw,.73rem)/1.13 "Trebuchet MS",system-ui,sans-serif;
+  letter-spacing:.07em;text-align:center;max-width:85%;
+  box-shadow:3px 4px 0 #0c0929;
+  transform:rotate(7deg);
+  animation:ct-banner-wiggle 8s ease-in-out infinite;
+}
+.ct-banner-sparkle{position:absolute;z-index:3;color:#fff9d4;font-size:2.3rem;text-shadow:0 0 14px #fff8d599;animation:ct-banner-twinkle 3.8s ease-in-out infinite}
+.ct-banner-sparkle-a{top:0;left:6%}
+.ct-banner-sparkle-b{bottom:11%;right:4%;font-size:1.5rem;animation-delay:-2s;color:var(--ctb-a)}
+.ct-banner-sparkfield{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.ct-banner-spark{
+  position:absolute;left:calc(5% + var(--spark-index)*10%);
+  top:calc(16% + var(--spark-index)*6%);
+  color:#fff;opacity:.55;font-size:clamp(.8rem,1.4vw,1.3rem);
+  text-shadow:0 0 12px var(--ctb-a);
+  animation:ct-banner-twinkle 4.8s ease-in-out infinite;
+  animation-delay:calc(var(--spark-index)*-.52s);
+}
+.ct-banner-spark:nth-child(3n){top:11%;font-size:1.5rem}
+.ct-banner-spark:nth-child(3n + 1){top:75%;color:var(--ctb-a)}
+.ct-banner-bottom{
+  position:relative;z-index:2;display:flex;gap:12px;align-items:center;
+  min-height:33px;padding:6px clamp(22px,4.6vw,55px);
+  border-top:2px dashed #ffffff48;
+  background:linear-gradient(90deg,#080d2aa6,#3230646b,#080d2aa6);
+}
+.ct-banner-bottom-label{
+  color:#f6f0ff;font:900 .66rem/1.25 "Trebuchet MS",system-ui,sans-serif;
+  letter-spacing:.24em;white-space:nowrap;
+}
+.ct-banner-bottom-star{color:var(--ctb-a);font-size:.88rem}
+.ct-banner-bottom-line{height:1px;flex:1;background:linear-gradient(90deg,var(--ctb-a),transparent)}
+/* In Theater, do not cover or displace the existing illuminated marquee. */
+.watch-theater-page .ct-page-banner{margin-top:8px}
+@keyframes ct-banner-spin{to{transform:rotate(360deg)}}
+@keyframes ct-banner-bounce{0%,100%{transform:translateY(0) rotate(-9deg)}50%{transform:translateY(-8px) rotate(-4deg)}}
+@keyframes ct-banner-twinkle{0%,100%{opacity:.28;transform:scale(.77)}50%{opacity:.95;transform:scale(1.12)}}
+@keyframes ct-banner-wiggle{0%,100%{transform:rotate(7deg)}50%{transform:rotate(3deg)}}
+@keyframes ct-banner-shimmer{0%,100%{background-position:160% 0}50%{background-position:-70% 0}}
+@media(max-width:760px){
+ .ct-page-banner{border-radius:19px}
+ .ct-page-banner::before{inset:6px;border-radius:13px}
+ .ct-banner-body{grid-template-columns:minmax(0,1fr) minmax(105px,25%);min-height:165px;padding:20px 20px 16px;gap:9px}
+ .ct-banner-art{height:145px}
+ .ct-banner-character{width:100px;height:100px;font-size:4rem}
+ .ct-banner-title{font-size:clamp(1.75rem,6.3vw,2.8rem)!important}
+ .ct-banner-description{font-size:.85rem!important;line-height:1.45!important}
+ .ct-banner-bottom{padding:6px 20px}
+}
+@media(max-width:480px){
+ .ct-page-banner{margin-bottom:20px;border-width:2px}
+ .ct-banner-body{grid-template-columns:minmax(0,1fr) 80px;padding:18px 14px 14px;min-height:152px;gap:6px}
+ .ct-banner-eyebrow{font-size:.59rem!important;letter-spacing:.1em!important;margin-bottom:8px!important}
+ .ct-banner-title{font-size:clamp(1.48rem,7.3vw,2.1rem)!important;line-height:1.03!important}
+ .ct-banner-description{font-size:.78rem!important;margin-bottom:10px!important}
+ .ct-banner-chips{gap:5px}
+ .ct-banner-chip{font-size:.54rem;min-height:24px;padding:4px 6px}
+ .ct-banner-art{height:102px}
+ .ct-banner-character{width:70px;height:70px;font-size:2.7rem;border-width:3px;box-shadow:0 5px 0 #130d2e,0 0 16px var(--ctb-b)}
+ .ct-banner-orbit{border-width:2px}
+ .ct-banner-art-tag{font-size:.46rem;padding:4px 4px;bottom:1px}
+ .ct-banner-sparkle{font-size:1.25rem}
+ .ct-banner-bottom{gap:7px;min-height:25px;padding:4px 14px}
+ .ct-banner-bottom-label{font-size:.51rem;letter-spacing:.12em}
+}
+@media(prefers-reduced-motion:reduce){
+ .ct-page-banner::after,.ct-page-banner *{animation:none!important;transition:none!important}
+ .ct-banner-character{transform:rotate(-9deg)}
+ .ct-banner-sunburst{transform:none}
+}
+@media(forced-colors:active){
+ .ct-page-banner{border:2px solid CanvasText;background:Canvas;color:CanvasText;box-shadow:none}
+ .ct-banner-character,.ct-banner-chip,.ct-banner-art-tag{border:2px solid CanvasText;background:Canvas;color:CanvasText;box-shadow:none}
+ .ct-banner-title,.ct-banner-eyebrow,.ct-banner-description{color:CanvasText!important;text-shadow:none}
+}
+@media print{.ct-page-banner{display:none!important}}
