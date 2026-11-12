@@ -1,1 +1,56 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prize Wheel | CTooniverse</title><link rel="stylesheet" href="styles.css?v=cartoon-wheel-2"><script src="script.js?v=nav-icons-20261112-v2" defer></script><script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script><script type="module" src="account-menu.js?v=1"></script><script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script><script src="community-menu.js?v=2" defer></script><script src="music-player.js?v=random-autoplay-12" defer></script><script type="module" src="prize-wheel.js?v=3"></script></head><body class="games-arcade-page"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a><nav aria-label="Main navigation"><a href="index.html" class="nav-link">Home</a><a href="ctoons.html" class="nav-link">CToons</a><a href="shop.html" class="nav-link">Shop</a><a href="games.html" class="nav-link active">Games</a><a href="watch.html" class="nav-link">Watch</a></nav><div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div></header><main id="main"><section class="section prize-wheel-section"><p class="eyebrow">CTooniverse Arcade</p><h1>Cartoon Prize Wheel</h1><p class="lead">Spin the colorful cartoon wheel and see what you land on!</p><span class="coming-tag">REWARDS COMING SOON — PREVIEW ONLY</span><p id="prize-wheel-counter" role="status">Checking daily spins…</p><div class="prize-wheel-stage"><div class="prize-wheel-pointer" aria-hidden="true"></div><div class="prize-wheel-disc" id="prize-wheel-disc" role="img" aria-label="Eight-section arcade prize wheel"><div class="prize-wheel-labels" id="prize-wheel-labels"></div><div class="prize-wheel-hub">★</div></div></div><div class="hero-actions"><button type="button" class="button primary" id="prize-wheel-spin">SPIN THE WHEEL</button><a class="button secondary" href="prize-games.html">All Prize Games</a></div><p id="prize-wheel-result" class="prize-wheel-result" role="status" aria-live="polite">Ready to spin? This is a demonstration. No coins or CToons will be awarded.</p></section></main><footer><span>© 2026 CTooniverse</span><span>Built to collect.</span></footer></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Prize Wheel | CTooniverse</title><link rel="stylesheet" href="styles.css?v=cartoon-wheel-2"><link rel="stylesheet" href="prize-wheel-v2.css?v=20261112-arcade"><script src="script.js?v=nav-icons-20261112-v2" defer></script><script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script><script type="module" src="account-menu.js?v=1"></script><script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script><script src="community-menu.js?v=2" defer></script><script src="music-player.js?v=random-autoplay-12" defer></script><script type="module" src="prize-wheel.js?v=20261112-arcade"></script></head><body class="games-arcade-page prize-wheel-page"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a><nav aria-label="Main navigation"><a href="index.html" class="nav-link">Home</a><a href="ctoons.html" class="nav-link">CToons</a><a href="shop.html" class="nav-link">Shop</a><a href="games.html" class="nav-link active">Games</a><a href="watch.html" class="nav-link">Watch</a></nav><div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div></header><main id="main">
+  <section class="section prize-wheel-section" aria-labelledby="wheel-title">
+    <div class="wheel-heading">
+      <div>
+        <p class="eyebrow">🎪 CTooniverse · Prize Arcade</p>
+        <h1 id="wheel-title">CARTOON PRIZE WHEEL</h1>
+        <p class="lead">The neon wheel is back! Try your luck with three daily spins, discover all eight possible prize previews, and watch the pointer reveal your result.</p>
+      </div>
+      <span class="wheel-mode">DEMO MODE · NO REWARDS CREDITED</span>
+    </div>
+    <div class="wheel-layout">
+      <div class="wheel-machine" id="wheel-machine">
+        <div class="wheel-marquee" aria-hidden="true">★ LUCKY SPIN ★</div>
+        <div class="prize-wheel-stage">
+          <div class="prize-wheel-pointer" aria-hidden="true"></div>
+          <div class="prize-wheel-disc" id="prize-wheel-disc" role="img" aria-label="Eight colored prize preview sections">
+            <div class="prize-wheel-labels" id="prize-wheel-labels" aria-hidden="true"></div>
+          </div>
+          <div class="prize-wheel-hub" aria-hidden="true">★</div>
+        </div>
+        <div class="wheel-controls">
+          <button type="button" class="button primary" id="prize-wheel-spin" disabled>CHECKING SPINS…</button>
+          <button type="button" id="prize-wheel-sound" aria-pressed="false" aria-label="Toggle wheel sound effects">🔇 SOUND OFF</button>
+        </div>
+        <p class="wheel-smallprint">Preview only. Spins consume one daily attempt, but results do not add Cartoon Coins, CToons, or tickets to your account.</p>
+      </div>
+      <aside class="wheel-sidebar" aria-label="Prize Wheel information">
+        <section class="wheel-card" aria-labelledby="spins-title">
+          <h2 id="spins-title">⚡ Daily spins</h2>
+          <div class="wheel-counter-line">
+            <strong id="wheel-spins-number" aria-label="Spins remaining">0</strong>
+            <div class="wheel-counter-copy"><strong>SPINS LEFT</strong><small>3 daily preview spins per player</small></div>
+          </div>
+          <div class="wheel-spin-lights" aria-hidden="true">
+            <span class="wheel-spin-light"></span><span class="wheel-spin-light"></span><span class="wheel-spin-light"></span>
+          </div>
+          <p id="prize-wheel-counter" role="status">Checking your daily spins…</p>
+          <a id="wheel-account-link" class="button secondary wheel-account-link" href="login.html">Sign in to spin</a>
+        </section>
+        <section class="wheel-card" aria-labelledby="result-title">
+          <h2 id="result-title">🏆 Your spin result</h2>
+          <p id="prize-wheel-result" class="prize-wheel-result" role="status" aria-live="polite" aria-atomic="true">Ready to spin? These are demo rewards, not account prizes.</p>
+        </section>
+        <section class="wheel-card" aria-labelledby="possible-title">
+          <h2 id="possible-title">🎁 Eight prize previews</h2>
+          <ul id="wheel-prize-list" class="wheel-prize-list"></ul>
+        </section>
+        <section class="wheel-card" aria-labelledby="history-title">
+          <h2 id="history-title">✨ Recent previews</h2>
+          <ul id="wheel-recent" class="wheel-activity"><li data-empty="true">No spins yet this visit.</li></ul>
+        </section>
+        <a class="button secondary" href="prize-games.html">← All Prize Games</a>
+      </aside>
+    </div>
+  </section>
+</main><footer><span>© 2026 CTooniverse</span><span>Built to collect.</span></footer></body></html>
