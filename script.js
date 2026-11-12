@@ -35,10 +35,10 @@ if (year) year.textContent = String(new Date().getFullYear());
     if(page===url){a.classList.add('active');a.setAttribute('aria-current','page');}
     return a;
   };
-  const home=link('Home','index.html','⌂');
-  const ctoons=link('CToons','ctoons.html','▣');
-  const watch=link('Watch','watch.html','▶');
-  const shop=link('Shop','shop.html','🛒');
+  const home=link('Home','index.html','🏠');
+  const ctoons=link('CToons','ctoons.html','🎴');
+  const watch=link('Watch','watch.html','🎬');
+  const shop=link('Shop','shop.html','🛍️');
   // Highlight the parent tab while browsing a related subpage.
   if(['ctoon-set.html','anime.html','movies.html','misc.html','trades.html'].includes(page))ctoons.classList.add('active');
   if(['clothing.html'].includes(page))shop.classList.add('active');
@@ -91,6 +91,18 @@ if (year) year.textContent = String(new Date().getFullYear());
     root.innerHTML='<button type="button" class="nav-link owner-menu-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">♛</span><span>Owner</span><span aria-hidden="true">▾</span></button><div class="owner-menu-panel"></div>';
     return root;
   })();
+  // The markup on legacy pages uses older symbols; normalize both dropdown triggers.
+  community.querySelector('.community-dropdown-trigger .nav-icon')?.replaceChildren(document.createTextNode('👥'));
+  account.querySelector('.account-dropdown-trigger .nav-icon')?.replaceChildren(document.createTextNode('👤'));
+  const ownerIcon=owner.querySelector('.owner-menu-trigger .nav-icon');
+  if(ownerIcon)ownerIcon.textContent='👑';
+  // All dropdown items receive stable matching symbols through this shared stylesheet,
+  // including Owner entries rebuilt later by owner-menu.js.
+  if(!document.querySelector('link[data-nav-symbols]')){
+    const sheet=document.createElement('link');
+    sheet.rel='stylesheet';sheet.href='nav-symbols.css?v=20261112';
+    sheet.dataset.navSymbols='true';document.head.append(sheet);
+  }
   const activeGroups={
     community:['forums.html','guild.html','support.html','community.html'],
     account:['account.html','login.html','avatar-maker.html']
