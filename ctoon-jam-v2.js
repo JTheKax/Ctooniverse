@@ -52,6 +52,35 @@
   let totalTime=90,noticeUntil=0,lastHud=0,run=0,raf=0,beatTimer=0,beatIndex=0;
   let synth=null,gain=null,startAt=0,offset=0,chartReady=null,chartCache=null;
   let ignoreSeek=false,lastTime=0;
+  const stagePalettes={
+    neon:{top:"#101a52",mid:"#110b36",bottom:"#05071b",roadTop:"#191e59",roadBottom:"#121139",edge:"#70dfff"},
+    cyber:{top:"#092b42",mid:"#05274b",bottom:"#041020",roadTop:"#0c3658",roadBottom:"#06192b",edge:"#42f6ef"},
+    haunted:{top:"#341735",mid:"#240e2e",bottom:"#0c0819",roadTop:"#371331",roadBottom:"#190c24",edge:"#f8a466"},
+    sunset:{top:"#693155",mid:"#422349",bottom:"#140e2d",roadTop:"#4d2755",roadBottom:"#241037",edge:"#ffd28a"}
+  };
+  let stageTheme=stagePalettes[safeStorage.get("ctoon-jam-stage-theme-v1")]?
+    safeStorage.get("ctoon-jam-stage-theme-v1"):"neon";
+  const reducedMotion=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches||false;
+  let stageEffects=safeStorage.get("ctoon-jam-stage-fx-v1")==="on"||
+    (safeStorage.get("ctoon-jam-stage-fx-v1")!=="off"&&!reducedMotion);
+  let sparks=[];
+  function applyStageLook(){
+    els.stage.dataset.theme=stageTheme;
+    $("jam-stage-theme").value=stageTheme;
+    $("jam-stage-effects").checked=stageEffects;
+    document.body.classList.toggle("jam-fx-off",!stageEffects);
+    paint();
+  }
+  function addSparks(lane,n=9){
+    if(!stageEffects)return;
+    const now=performance.now();
+    for(let i=0;i<n;i++){
+      sparks.push({lane,created:now,life:350+Math.random()*310,
+        vx:(Math.random()-.5)*100,vy:-30-Math.random()*70,
+        radius:2+Math.random()*5,color:colors[lane]});
+    }
+    if(sparks.length>90)sparks=sparks.slice(-90);
+  }
   let songFilters=[...document.querySelectorAll("[data-song-filter]")];
   const isFeatured=()=>!!songs[chosen].featured;
   const bestKey=()=> "ctoon-jam-best-v1-"+chosen+"-"+difficulty;
@@ -276,7 +305,7 @@
   }
   function resetRun(){
     notes=[];cursor=0;score=0;combo=0;maxCombo=0;judged=0;accuracyPoints=0;
-    rock=75;charge=0;hypeEnd=0;eligible=true;lastHud=0;
+    rock=75;charge=0;hypeEnd=0;eligible=true;lastHud=0;sparks=[];
     clearHeld();els.judge.textContent="";totalTime=durationEstimate(songs[chosen]);
   }
   function openLibrary(focus=false){
@@ -460,6 +489,8 @@
     score+=Math.round(100*weight*boost);rock=clamp(rock+1.4,0,100);
     if(!hype)charge=clamp(charge+2.5,0,100);
     if(note.duration>=.2)holds.push({note,last:note.at});
+    addSparks(note.lane,quality==="PERFECT"?13:7);
+    if(combo>0&&combo%25===0)for(let lane=0;lane<5;lane++)addSparks(lane,7);
     say(quality+(combo>1?" · "+combo+" COMBO":""),quality==="PERFECT"?"#aafff1":quality==="GREAT"?"#ffe57b":"#fff");
   }
   function miss(){
@@ -514,7 +545,9 @@
   function release(lane){held.delete(lane);laneButtons[lane].classList.remove("is-held");paint();}
   function activateHype(){
     if(!isPlaying()||charge<50||time()<hypeEnd)return;
-    charge=0;hypeEnd=time()+8;say("HYPE MODE!","#ffe0ff");header();
+    charge=0;hypeEnd=time()+8;
+    for(let lane=0;lane<5;lane++)addSparks(lane,12);
+    say("HYPE MODE!","#ffe0ff");header();
   }
   function checkNotes(t){
     while(cursor<notes.length){
@@ -578,16 +611,27 @@
     const cw=Math.round(w*dpr),ch=Math.round(h*dpr);
     if(cv.width!==cw||cv.height!==ch){cv.width=cw;cv.height=ch;}
     ctx.setTransform(dpr,0,0,dpr,0,0);
+    const palette=stagePalettes[stageTheme];
     const bg=ctx.createLinearGradient(0,0,0,h);
-    bg.addColorStop(0,"#101a52");bg.addColorStop(.6,"#110b36");bg.addColorStop(1,"#05071b");
+    bg.addColorStop(0,palette.top);bg.addColorStop(.6,palette.mid);bg.addColorStop(1,palette.bottom);
     ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+    if(stageEffects&&phase==="playing"){
+      const beatProgress=(Math.max(0,time())*songs[chosen].bpm/60)%1;
+      ctx.globalAlpha=.075+(.13*(1-beatProgress));
+      for(let k=0;k<7;k++){
+        const x=w*(k+.5)/7;
+        ctx.fillStyle=k%2?"#a86cff":"#72dfff";
+        ctx.fillRect(x-3,0,6,h*.6);
+      }
+      ctx.globalAlpha=1;
+    }
     const center=w/2,far=h*.08,hitY=h*.78,topW=w*.28,bottomW=w*.91;
     function widthAt(y){return topW+(bottomW-topW)*clamp((y-far)/(hitY-far),0,1);}
     function xAt(lane,y){return center+(lane/5-.5)*widthAt(y);}
     ctx.beginPath();ctx.moveTo(xAt(0,far),far);ctx.lineTo(xAt(5,far),far);
     ctx.lineTo(xAt(5,h),h);ctx.lineTo(xAt(0,h),h);ctx.closePath();
     const road=ctx.createLinearGradient(0,far,0,h);
-    road.addColorStop(0,"#191e59");road.addColorStop(1,"#121139");
+    road.addColorStop(0,palette.roadTop);road.addColorStop(1,palette.roadBottom);
     ctx.fillStyle=road;ctx.fill();
     for(let lane=0;lane<5;lane++){
       ctx.beginPath();ctx.moveTo(xAt(lane,far),far);ctx.lineTo(xAt(lane+1,far),far);
@@ -597,7 +641,7 @@
     for(let lane=0;lane<=5;lane++){
       ctx.beginPath();ctx.moveTo(xAt(lane,far),far);ctx.lineTo(xAt(lane,h),h);
       ctx.lineWidth=lane===0||lane===5?2.4:1.4;
-      ctx.strokeStyle=lane===0||lane===5?"#70dfff":"#728be0aa";
+      ctx.strokeStyle=lane===0||lane===5?palette.edge:"#728be0aa";
       ctx.stroke();
     }
     const t=phase==="library"?0:time(),approach=2.0;
@@ -642,6 +686,19 @@
     }
     ctx.textAlign="center";ctx.fillStyle="#a8bdff99";ctx.font="800 12px system-ui";
     ctx.fillText("CTOON JAM • LIVE NOTE HIGHWAY",center,Math.max(24,far*.65));
+    if(stageEffects&&sparks.length){
+      const now=performance.now();
+      sparks=sparks.filter(p=>now-p.created<p.life);
+      for(const p of sparks){
+        const age=clamp((now-p.created)/p.life,0,1);
+        const x=xAt(p.lane+.5,hitY)+p.vx*age;
+        const y=hitY+p.vy*age+70*age*age;
+        ctx.globalAlpha=1-age;
+        ctx.fillStyle=p.color;
+        ctx.fillRect(x-p.radius/2,y-p.radius/2,p.radius,p.radius);
+      }
+      ctx.globalAlpha=1;
+    }
   }
   async function pause(){
     if(phase==="playing"){
@@ -706,6 +763,18 @@
     nativeAudio.muted=$("jam-mute").checked;
     if(gain&&synth)gain.gain.setTargetAtTime($("jam-mute").checked?0:.45,synth.currentTime,.015);
   });
+  $("jam-stage-theme").addEventListener("change",()=>{
+    const value=$("jam-stage-theme").value;
+    if(!stagePalettes[value])return;
+    stageTheme=value;safeStorage.set("ctoon-jam-stage-theme-v1",value);
+    applyStageLook();
+  });
+  $("jam-stage-effects").addEventListener("change",()=>{
+    stageEffects=$("jam-stage-effects").checked;
+    safeStorage.set("ctoon-jam-stage-fx-v1",stageEffects?"on":"off");
+    if(!stageEffects)sparks=[];
+    applyStageLook();
+  });
   els.sync.addEventListener("input",()=>{
     const old=offset;offset=clamp(Number(els.sync.value)||0,-2,2);
     els.syncvalue.textContent=(offset>=0?"+":"")+offset.toFixed(2)+"s";
@@ -766,6 +835,7 @@
   els.song.value=chosen;
   els.diff.value=difficulty;
   setPlayStyle(style);applyOffset();resetRun();phase="library";
+  applyStageLook();
   els.picker.hidden=false;els.radioPanel.hidden=true;clearLoading();hideOverlay();
   onScreen("Choose a song to start. Arcade originals load instantly; featured audio streams only when selected.");
   renderLibrary();paint();
