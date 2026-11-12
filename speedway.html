@@ -35,6 +35,7 @@
 <div class="race-settings" aria-label="Race settings">
  <label for="race-laps">Race length<select id="race-laps"><option value="1">⚡ Sprint · 1 lap</option><option value="3" selected>🏁 Grand Prix · 3 laps</option><option value="5">🏆 Endurance · 5 laps</option></select></label>
  <label for="race-skill">Rival difficulty<select id="race-skill"><option value="casual">🟢 Casual</option><option value="standard" selected>🟣 Standard</option><option value="expert">🔴 Expert</option></select></label>
+ <label class="race-auto-gas" for="race-auto-gas"><input type="checkbox" id="race-auto-gas"> <span>🚗 Auto-accelerate <small>Helpful on phones · steer, drift and brake as usual</small></span></label>
 </div>
 <div class="race-options"><div><strong id="race-format">GRAND PRIX · 3 LAPS · 4 KARTS</strong><span id="race-format-detail">Race against three standard AI rivals · Speedway Tickets rewarded</span></div><button class="primary-btn" id="start-race" type="button">🏁 START RACE</button></div>
 </section>
@@ -51,7 +52,7 @@
 </div>
 <div class="race-toolbar"><button type="button" id="restart-btn" class="secondary-btn" disabled>↻ RESTART</button><button type="button" id="pause-btn" class="secondary-btn" disabled>PAUSE</button><button type="button" id="leave-btn" class="secondary-btn" disabled>RETURN TO GARAGE</button><div id="race-standings" class="standings" aria-label="Current race standings"></div></div>
 <div class="touch-controls" aria-label="Mobile driving controls"><div class="controls-group"><button data-control="left" type="button" aria-label="Steer left">◀</button><button data-control="right" type="button" aria-label="Steer right">▶</button></div><div class="controls-group"><button data-control="gas" type="button">GAS</button><button data-control="brake" type="button">BRAKE</button><button data-control="drift" type="button">DRIFT</button><button data-control="boost" type="button" class="boost-button">⚡ BOOST</button></div></div>
-<p class="help"><b>Keyboard:</b> W / ↑ accelerate · S / ↓ brake · A,D / ←,→ steer · Space drift · Shift / B boost · P pause. <b>Mobile:</b> hold the buttons while driving. <span>*Display speed and track distances are stylized. Trophies, records and tickets stay in this browser.</span></p>
+<p class="help"><b>Keyboard:</b> W / ↑ accelerate · S / ↓ brake · A,D / ←,→ steer · Space drift · Shift / B boost · P pause. <b>Mobile:</b> hold the buttons while driving, or enable Auto-accelerate to steer without holding GAS. <span>*Display speed and track distances are stylized. Trophies, records and tickets stay in this browser.</span></p>
 </section>
 </section>
 <section id="view-garage" class="view" hidden>
