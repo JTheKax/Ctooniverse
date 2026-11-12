@@ -183,10 +183,12 @@ if (year) year.textContent = String(new Date().getFullYear());
     games.classList.toggle('is-open',open);
     gamesButton.setAttribute('aria-expanded',String(open));
   });
+  // Capture the click before legacy Community handlers stop propagation.
+  // This guarantees at most one open dropdown on phones and desktops.
   nav.addEventListener('click',event=>{
     const root=event.target.closest('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu');
     closeMenus(root);
-  });
+  },true);
   document.addEventListener('click',event=>{
     if(!nav.contains(event.target))closeMenus();
   });
