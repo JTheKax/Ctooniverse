@@ -132,3 +132,25 @@ body{background-image:radial-gradient(ellipse at 12% 8%,#6631ad30,transparent 38
 @media(max-width:850px){.arcade-feature-strip{grid-template-columns:1fr}.home-universe-page .welcome-panel{min-height:380px}}
 @media(max-width:650px){.home-universe-page .welcome-copy h1{font-size:clamp(2.1rem,9vw,3.2rem)}.arcade-feature-strip>a{padding:15px}.home-universe-page .welcome-panel::before{opacity:.35}}
 @media(prefers-reduced-motion:reduce){.arcade-feature-strip>a{transition:none}.arcade-feature-strip>a:hover{transform:none}}
+
+
+/* Illustrated CSS arcade machine — no external image dependency */
+.arcade-cabinet-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px}
+.arcade-cabinet{position:relative;width:min(100%,285px);margin:8px auto 18px;padding:12px 17px 14px;border:5px solid #7f5fff;border-radius:26px 26px 18px 18px;background:linear-gradient(110deg,#33225e,#6b3baf 45%,#25164b);box-shadow:inset 5px 0 #c8a3ff60,inset -7px 0 #160a36,0 16px 0 #150c35,0 23px 32px #0009,0 0 28px #a86cff55;transform:perspective(650px) rotateY(-5deg);transition:transform .3s ease,box-shadow .3s ease}
+.arcade-cabinet-card:hover .arcade-cabinet{transform:perspective(650px) rotateY(0) translateY(-5px);box-shadow:inset 5px 0 #c8a3ff60,inset -7px 0 #160a36,0 19px 0 #150c35,0 26px 38px #0009,0 0 42px #b77aff88}
+.arcade-cabinet-marquee{padding:9px 4px;margin-bottom:10px;border:3px solid #ffe69c;border-radius:10px 10px 4px 4px;background:linear-gradient(100deg,#ff57bb,#7c48ed,#2bd4ff);color:white;font-size:clamp(.9rem,2vw,1.25rem);font-weight:1000;letter-spacing:.05em;text-shadow:2px 2px #351455;box-shadow:0 0 17px #ff81e28c,inset 0 0 13px #ffffff55}
+.arcade-cabinet-screen{position:relative;display:flex;justify-content:center;align-items:end;gap:12px;height:195px;padding:18px 12px 13px;border:9px solid #141033;border-radius:13px;background:repeating-linear-gradient(0deg,#ffffff07 0 2px,transparent 2px 6px),radial-gradient(ellipse at 50% 30%,#76dcff,#254ca1 60%,#141348);box-shadow:inset 0 0 20px #060a35,0 0 0 2px #8c8eff;overflow:hidden}
+.arcade-cabinet-screen::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,#ffffff3b,transparent 35%);pointer-events:none}
+.arcade-plush{font-size:4.6rem;filter:drop-shadow(0 8px 4px #101d56);animation:arcade-plush-bob 3s ease-in-out infinite}
+.arcade-capsule{font-size:2.5rem;filter:drop-shadow(0 5px 3px #101d56)}
+.arcade-claw{position:absolute;top:6px;left:49%;color:#fff;font-size:3.1rem;font-weight:900;text-shadow:0 0 12px #9eeaff;animation:arcade-claw-sway 4s ease-in-out infinite}
+.arcade-claw::before{content:"";position:absolute;bottom:80%;left:48%;height:38px;border-left:3px solid #e4efff}
+.arcade-cabinet-controls{height:56px;margin-top:12px;border:3px solid #aa83f5;border-radius:9px;background:linear-gradient(#41206f,#201144);display:flex;align-items:center;justify-content:center;gap:23px;box-shadow:inset 0 2px #fff3}
+.arcade-joystick{position:relative;color:#ff78ce;font-size:28px;line-height:1;text-shadow:0 0 8px #ff60c6}
+.arcade-joystick::after{content:"";position:absolute;left:48%;top:22px;height:14px;border-left:4px solid #b5c2e7}
+.arcade-button-one,.arcade-button-two{width:22px;height:16px;border-radius:50%;border:2px solid #fff8;box-shadow:0 3px #140c33,inset 0 2px #fff8;background:#44e6ff}
+.arcade-button-two{background:#ff70c9}
+.arcade-cabinet-base{margin-top:12px;font-size:.6rem;font-weight:1000;letter-spacing:.19em;color:#e8caff}
+@keyframes arcade-plush-bob{50%{transform:translateY(-7px) rotate(3deg)}}
+@keyframes arcade-claw-sway{50%{transform:translateX(17px)}}
+@media(prefers-reduced-motion:reduce){.arcade-plush,.arcade-claw{animation:none}.arcade-cabinet{transition:none}.arcade-cabinet-card:hover .arcade-cabinet{transform:none}}
