@@ -39,7 +39,10 @@
   document.addEventListener("keydown",event=>{
    if(event.key==="Escape"&&!panel.hidden){close();toggle.focus();}
   });
-  root.addEventListener("keydown",event=>event.stopPropagation());
+  root.addEventListener("keydown",event=>{
+   if(event.key==="Escape"&&!panel.hidden){close();toggle.focus();}
+   event.stopPropagation();
+  });
   window.addEventListener("pageshow",close);
   const file=location.pathname.split("/").pop()||"index.html";
   for(const a of panel.querySelectorAll("a[href]")){
