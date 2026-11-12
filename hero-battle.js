@@ -54,7 +54,7 @@ function load(){
  }catch(_){return fresh();}
 }
 let state=load();
-let selectedHero="hercules", selectedStage=Math.min(18,state.highestCleared+1), active=null, ticker=null, autoSpecials=false, currentView="campaign", messages=[];
+let selectedHero="hercules", selectedStage=Math.min(18,state.highestCleared+1), active=null, ticker=null, autoSpecials=false, paused=false, battleSpeed=1, currentView="campaign", messages=[];
 const fmt=n=>Math.round(n).toLocaleString();
 const heroState=id=>state.roster[id];
 const hpOf=h=>Math.round((h.hp+(heroState(h.id).level-1)*24)*(1+(heroState(h.id).stars-1)*.12+heroState(h.id).rank*.1));
@@ -65,6 +65,22 @@ const levelCost=id=>Math.round(75*heroState(id).level+20*heroState(id).level**2)
 const promoteCost=id=>350*(heroState(id).rank+1);
 const starCost=id=>heroState(id).stars*12;
 const unlocked=id=>!!state.roster[id];
+const teamPower=()=>state.team.reduce((n,id)=>n+(unlocked(id)?power(id):0),0);
+const suggestedPower=stage=>1100+stage*220;
+/* Reuse saved heroes and progress; only change the lineup by explicit player action. */
+function autoBuildTeam(){
+ if(active){notice("Finish or retreat from battle before changing your team.");return;}
+ const available=heroes.filter(h=>unlocked(h.id)).sort((a,b)=>power(b.id)-power(a.id));
+ if(!available.length){notice("No unlocked heroes are available.");return;}
+ const picked=[];
+ for(const role of ["Tank","Support","Control","Damage"]){
+  const hero=available.find(h=>h.role===role&&!picked.includes(h.id));
+  if(hero)picked.push(hero.id);
+ }
+ for(const hero of available){if(picked.length>=5)break;if(!picked.includes(hero.id))picked.push(hero.id);}
+ state.team=picked;
+ save();render();notice("Balanced squad ready! "+picked.length+" heroes selected. Choose a stage and enter battle.");
+}
 const save=()=>{try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(_){notice("Storage unavailable. Progress may not persist after refresh.");}};
 function notice(message){$("hb-message").textContent=message;}
 function portrait(h){return '<div class="hb-portrait" style="--hero-color:'+h.color+'">'+(h.art?'<img src="'+h.art+'" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement(&quot;span&quot;),{textContent:&quot;'+h.icon+'&quot;}))">':'<span aria-hidden="true">'+h.icon+'</span>')+'</div>';}
@@ -72,7 +88,7 @@ function stars(n){return "★".repeat(n)+"☆".repeat(5-n);}
 function renderHeader(){
  $("hb-credits").textContent=fmt(state.credits);
  $("hb-wins").textContent=fmt(state.wins);
- $("hb-power").textContent=fmt(state.team.reduce((n,id)=>n+(unlocked(id)?power(id):0),0));
+ $("hb-power").textContent=fmt(teamPower());
  $("hb-team-count").textContent=state.team.length+" / 5";
 }
 function renderCampaign(){
@@ -80,10 +96,21 @@ function renderCampaign(){
  $("hb-current-stage").textContent="Stage "+selectedStage+": "+stageNames[selectedStage-1];
  $("hb-missions").innerHTML=stageNames.map((name,i)=>{
   const n=i+1,open=n<=state.highestCleared+1,done=n<=state.highestCleared;
-  return '<button type="button" class="hb-mission '+(selectedStage===n?"chosen ":"")+(done?"cleared":"")+'" data-stage="'+n+'" '+(!open?"disabled":"")+'><strong>'+(done?"✓ ":"")+'STAGE '+n+'</strong><small>'+name+'</small><span>'+(done?"CLEARED":open?"AVAILABLE":"🔒 LOCKED")+'</span></button>';
+  return '<button type="button" class="hb-mission '+(selectedStage===n?"chosen ":"")+(done?"cleared":"")+'" data-stage="'+n+'" '+(!open||!!active?"disabled":"")+'><strong>'+(done?"✓ ":"")+'STAGE '+n+'</strong><small>'+name+'</small><span>'+(done?"CLEARED":open?"AVAILABLE":"🔒 LOCKED")+'</span></button>';
  }).join("");
  $("hb-campaign-team").innerHTML=state.team.length?state.team.map(id=>'<div class="hb-mini"><b>'+byId[id].icon+'</b><span>'+byId[id].name+'</span><small>Lv '+heroState(id).level+'</small></div>').join(""):'<p class="hb-muted">Your team is empty. Open MY TEAM to choose your heroes.</p>';
+ const estimate=suggestedPower(selectedStage),strength=teamPower();
+ const risk=!state.team.length?"Pick a squad first":strength>=estimate?"Squad looks ready":"Consider training your squad";
+ const creditReward=200+selectedStage*70,shardReward=3+(selectedStage%3);
+ $("hb-stage-intel").innerHTML=
+  '<div class="hb-intel-heading"><strong>🎯 STAGE BRIEFING</strong><span>'+risk+'</span></div>'+
+  '<div class="hb-intel-grid"><div><small>YOUR TEAM POWER</small><strong>'+fmt(strength)+'</strong></div>'+
+  '<div><small>SUGGESTED POWER (EST.)</small><strong>'+fmt(estimate)+'</strong></div>'+
+  '<div><small>VICTORY CREDITS</small><strong>+'+fmt(creditReward)+'</strong></div>'+
+  '<div><small>RANDOM HERO SHARDS</small><strong>+'+shardReward+'</strong></div></div>'+
+  '<p class="hb-note">Three waves · stronger foes in later stages · replay cleared missions for rewards.</p>';
  $("hb-start").disabled=!!active||!state.team.length;
+ $("hb-quick-team").disabled=!!active||!heroes.some(h=>unlocked(h.id));
 }
 function heroCard(h,teamMode){
  const r=heroState(h.id),isIn=state.team.includes(h.id);
@@ -95,6 +122,7 @@ function renderTeam(){
  $("hb-team-slots").innerHTML=Array.from({length:5},(_,i)=>state.team[i]?'<div class="hb-mini"><b>'+byId[state.team[i]].icon+'</b><span>'+byId[state.team[i]].name+'</span><small>'+byId[state.team[i]].role+'</small></div>':'<div class="hb-mini"><b>＋</b><span>EMPTY SLOT</span></div>').join("");
  $("hb-team-roster").innerHTML=heroes.filter(h=>unlocked(h.id)).map(h=>heroCard(h,true)).join("");
  $("hb-clear-team").disabled=!!active||state.team.length===0;
+ $("hb-auto-team").disabled=!!active||!heroes.some(h=>unlocked(h.id));
 }
 function renderDetails(){
  const h=byId[selectedHero],r=heroState(h.id),shards=state.shards[h.id]||0;
@@ -166,7 +194,7 @@ function strike(source,victim,multiplier=1){
  return dealt;
 }
 function useSpecial(id,automatic=false){
- if(!active||active.phase!=="running")return;
+ if(!active||active.phase!=="running"||paused)return;
  const me=active.allies.find(u=>u.id===id&&u.hp>0&&u.energy>=100);if(!me)return;
  me.energy=0;const enemies=living(active.enemies),allies=living(active.allies);
  let message=me.name+" used "+me.skill+"!";
@@ -183,18 +211,27 @@ function renderUnit(u,enemy=false){
  const pct=Math.max(0,Math.round(100*u.hp/u.maxHp));
  const energy=Math.min(100,u.energy);
  return '<div class="hb-unit '+(enemy?"enemy ":"")+(u.hp<=0?"fallen":"")+'"><span class="icon" aria-hidden="true">'+u.icon+'</span><strong>'+u.name+'</strong><div class="hb-meter" title="Health"><span style="width:'+pct+'%"></span></div><small>'+fmt(u.hp)+' / '+fmt(u.maxHp)+'</small>'+
- (enemy?'<small>'+(u.boss?" ★ BOSS":"")+(u.stunned>0?" · STUNNED":"")+'</small>':'<div class="hb-meter energy" title="Special energy"><span style="width:'+energy+'%"></span></div><button data-action="special" data-id="'+u.id+'" '+(u.hp<=0||u.energy<100||!active||active.phase!=="running"?"disabled":"class=\"ready\"")+' aria-label="Use '+u.skill+'">'+(u.energy>=100?"★ "+u.skill:"SPECIAL "+u.energy+"%")+'</button>')+'</div>';
+ (enemy?'<small>'+(u.boss?" ★ BOSS":"")+(u.stunned>0?" · STUNNED":"")+'</small>':'<div class="hb-meter energy" title="Special energy"><span style="width:'+energy+'%"></span></div><button data-action="special" data-id="'+u.id+'" '+(u.hp<=0||u.energy<100||!active||active.phase!=="running"||paused?"disabled":"class=\"ready\"")+' aria-label="Use '+u.skill+'">'+(u.energy>=100?"★ "+u.skill:"SPECIAL "+u.energy+"%")+'</button>')+'</div>';
 }
 function renderBattle(){
  $("hb-battle").hidden=!active;
  if(!active)return;
  $("hb-battle-title").textContent="Stage "+active.stage+": "+stageNames[active.stage-1];
- $("hb-wave").textContent=active.phase==="running"?"WAVE "+active.wave+" / 3":active.phase.toUpperCase();
+ $("hb-wave").textContent=active.phase==="running"?(paused?"⏸ PAUSED · ":"")+"WAVE "+active.wave+" / 3":active.phase.toUpperCase();
+ $("hb-wave-track").innerHTML=[1,2,3].map(w=>{
+  const stateClass=active.phase==="victory"||w<active.wave?"cleared":w===active.wave?"current":"upcoming";
+  return '<span class="hb-wave-step '+stateClass+'">'+(stateClass==="cleared"?"✓ ":"")+"WAVE "+w+'</span>';
+ }).join("");
  $("hb-allies").innerHTML=active.allies.map(u=>renderUnit(u)).join("");
  $("hb-enemies").innerHTML=active.enemies.map(u=>renderUnit(u,true)).join("");
  $("hb-auto").textContent="AUTO SPECIALS: "+(autoSpecials?"ON":"OFF");
  $("hb-auto").setAttribute("aria-pressed",String(autoSpecials));
  $("hb-auto").disabled=active.phase!=="running";
+ $("hb-speed").textContent="⏩ SPEED: "+battleSpeed+"×";
+ $("hb-speed").disabled=active.phase!=="running";
+ $("hb-pause").textContent=paused?"▶ RESUME":"⏸ PAUSE";
+ $("hb-pause").setAttribute("aria-pressed",String(paused));
+ $("hb-pause").disabled=active.phase!=="running";
  $("hb-retreat").textContent=active.phase==="running"?"RETREAT":"RETURN TO CAMPAIGN";
  $("hb-log").innerHTML=messages.map(m=>"<li>"+m+"</li>").join("");
 }
@@ -204,13 +241,29 @@ function beginBattle(){
  const lineup=state.team.filter(id=>unlocked(id));
  if(!lineup.length){notice("Add at least one unlocked hero to your team.");return;}
  active={stage:selectedStage,wave:1,phase:"running",allies:lineup.map(unitFromHero),enemies:stageEnemies(selectedStage,1)};
- messages=[];log("Stage "+selectedStage+" begins. Fight through three waves!");
+ paused=false;messages=[];log("Stage "+selectedStage+" begins. Fight through three waves!");
  $("hb-battle").hidden=false;
  render();$("hb-battle").scrollIntoView({behavior:"smooth",block:"start"});
- if(ticker)clearInterval(ticker);
- ticker=setInterval(step,1150);
+ startTicker();
 }
 function stop(){if(ticker){clearInterval(ticker);ticker=null;}}
+function startTicker(){
+ stop();
+ if(active&&active.phase==="running"&&!paused)ticker=setInterval(step,Math.round(1150/battleSpeed));
+}
+function togglePause(){
+ if(!active||active.phase!=="running")return;
+ paused=!paused;
+ if(paused){stop();log("Battle paused. Your squad is safe while you plan the next special.");}
+ else {log("Battle resumed.");startTicker();}
+ renderBattle();
+}
+function toggleSpeed(){
+ if(!active||active.phase!=="running")return;
+ battleSpeed=battleSpeed===1?2:1;
+ if(!paused)startTicker();
+ renderBattle();
+}
 function resolveBattle(){
  if(!active||active.phase!=="running")return false;
  if(!living(active.allies).length){active.phase="defeat";stop();log("Defeat. Train your heroes and try again.");notice("Battle lost! Upgrade your team and retry.");render();return true;}
@@ -236,7 +289,7 @@ function resolveBattle(){
  return false;
 }
 function step(){
- if(!active||active.phase!=="running")return;
+ if(!active||active.phase!=="running"||paused)return;
  if(resolveBattle())return;
  const allies=living(active.allies);
  for(const u of allies){
@@ -256,7 +309,7 @@ function step(){
 }
 function retreat(){
  if(!active)return;
- stop();active=null;messages=[];render();notice("Returned to the campaign. No rewards were collected.");$("hb-view-campaign").scrollIntoView({behavior:"smooth",block:"start"});
+ stop();active=null;paused=false;messages=[];render();notice("Returned to the campaign. No rewards were collected.");$("hb-view-campaign").scrollIntoView({behavior:"smooth",block:"start"});
 }
 document.addEventListener("click",e=>{
  const view=e.target.closest("[data-view]");
@@ -272,6 +325,10 @@ document.addEventListener("click",e=>{
  }
 });
 $("hb-start").addEventListener("click",beginBattle);
+$("hb-quick-team").addEventListener("click",autoBuildTeam);
+$("hb-auto-team").addEventListener("click",autoBuildTeam);
+$("hb-speed").addEventListener("click",toggleSpeed);
+$("hb-pause").addEventListener("click",togglePause);
 $("hb-clear-team").addEventListener("click",()=>{
  if(active){notice("Finish or retreat before clearing your team.");return;}
  if(!state.team.length){notice("Your team is already empty.");return;}
@@ -279,6 +336,16 @@ $("hb-clear-team").addEventListener("click",()=>{
 });
 $("hb-retreat").addEventListener("click",retreat);
 $("hb-auto").addEventListener("click",()=>{autoSpecials=!autoSpecials;renderBattle();});
+document.addEventListener("visibilitychange",()=>{
+ if(document.hidden&&active&&active.phase==="running"&&!paused){
+  paused=true;stop();log("Battle paused when the tab was hidden.");renderBattle();
+ }
+});
 window.addEventListener("pagehide",stop);
+window.addEventListener("pageshow",event=>{
+ if(event.persisted&&active&&active.phase==="running"&&!paused){
+  paused=true;stop();renderBattle();notice("Battle paused after returning to this page. Tap Resume to continue.");
+ }
+});
 showView("campaign");render();
 })();
