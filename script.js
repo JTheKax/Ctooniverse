@@ -1,4 +1,15 @@
 "use strict";
+/* Apply the November page polish on every live page, including legacy pages
+   that only include the shared script. Status colors remain owner-controlled. */
+(() => {
+  if (document.querySelector('link[href^="sitewide-pages.css"]')) return;
+  const sheet = document.createElement('link');
+  sheet.rel = 'stylesheet';
+  sheet.href = 'sitewide-pages.css?v=20261112-sitewide-v1';
+  sheet.dataset.sitewidePages = 'true';
+  document.head.append(sheet);
+})();
+
 /* Shared visual layer: loaded after legacy styles, with operational colors intact. */
 (() => {
   if (document.querySelector('link[href^="display-refresh.css"]')) return;
