@@ -1,0 +1,177 @@
+/* CTooniverse · sitewide page polish · November 12, 2026
+   Shared presentation only. Do not replace operational live/maintenance colors,
+   authorization logic, balances, media controls, or retired game redirects. */
+:root{
+  --page-ice:#91e8ff;
+  --page-lavender:#c7b5ff;
+  --page-warm:#ffe6a2;
+  --page-stroke:rgba(146,150,246,.42);
+  --page-glass:linear-gradient(148deg,rgba(22,28,68,.94),rgba(23,17,59,.95));
+  --page-elevation:0 14px 34px rgba(2,5,26,.37),inset 0 1px rgba(255,255,255,.06);
+}
+html{scroll-padding-top:95px}
+body{font-kerning:normal}
+:where(main){min-width:0}
+:where(main) :is(h1,h2,h3){overflow-wrap:break-word}
+:where(main) :is(h1,h2){text-wrap:balance}
+:where(main) :is(p,li,small){overflow-wrap:anywhere}
+:where(main) :is(img,video,svg,canvas){max-width:100%}
+:where(main) :is(input,select,textarea,button){font:inherit}
+:where(main) :is(input,select,textarea){max-width:100%}
+:where(main) :is(input:not([type=checkbox]):not([type=radio]),select,textarea){min-height:44px}
+:where(main) :is(button,.button,[role=button]){touch-action:manipulation}
+:where(main) :is(button,a,input,textarea,select,[tabindex]):focus-visible{
+  outline:3px solid var(--page-ice);outline-offset:3px;
+}
+::selection{background:#7358e7;color:#fff}
+
+/* Identical masthead geometry on every public, account and owner page. */
+.site-header{width:min(100%,1360px);min-width:0}
+.site-header .brand{min-width:0}
+.site-header .brand-logo{height:auto;max-width:min(270px,65vw)}
+.site-header nav{min-width:0}
+.site-header nav .nav-link{white-space:normal;min-height:44px}
+.site-header nav .nav-link.active .nav-icon{filter:drop-shadow(0 0 7px #91e8ff75)}
+.site-header nav :is(.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel){
+  max-height:min(70vh,520px);overflow-y:auto;overscroll-behavior:contain;
+}
+.site-header .header-player{min-width:0;flex-shrink:0}
+.site-header .header-player-info{min-width:0}
+.site-header .header-player-info strong{overflow-wrap:anywhere}
+footer{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px 20px;
+  padding:24px clamp(12px,3vw,30px);text-align:center;line-height:1.5}
+footer a{overflow-wrap:anywhere}
+
+/* Consistent editorial panels, without flattening illustrated page backgrounds. */
+:where(main) :is(.page-placeholder,.owner-panel,.trade-box,.discord-panel,.global-chat,
+ .players-directory,.shop-department,.home-status-guide,.games-hub-card){
+  box-shadow:var(--page-elevation);
+}
+:where(main) :is(.page-placeholder,.owner-panel,.trade-box,.discord-panel){
+  border-radius:18px;
+}
+:where(main) :is(.page-placeholder,.owner-panel,.trade-box) :is(h1,h2,h3){
+  line-height:1.18;
+}
+:where(main) :is(.page-placeholder,.owner-panel,.trade-box) :is(p,li){
+  line-height:1.65;
+}
+:where(main) :is(.page-placeholder,.owner-panel,.trade-box) a:not(.button){
+  text-underline-offset:3px;
+}
+:where(main) :is(button,.button):not(:disabled){transition:filter .18s ease,box-shadow .18s ease,transform .18s ease}
+@media(hover:hover){
+  :where(main) :is(button,.button):not(:disabled):hover{filter:brightness(1.09)}
+}
+
+/* Home: organized destinations and announcement legibility. */
+.home-universe-page .simple-home{padding-inline:clamp(12px,3vw,28px)}
+.home-universe-page .welcome-panel{isolation:isolate}
+.home-universe-page .welcome-copy{max-width:65ch}
+.home-universe-page .welcome-copy>p:not(.eyebrow){line-height:1.65}
+.home-universe-page .announcement-panel{min-width:0}
+.home-universe-page .announcement-panel :is(h2,a){overflow-wrap:anywhere}
+.home-universe-page .home-tiles{align-items:stretch}
+.home-universe-page .home-tile{height:100%;justify-content:center}
+.home-universe-page .home-tile small{color:#dfddff}
+.home-universe-page .home-status-rule{min-width:0}
+
+/* CToons: collection search, A–Z index, window cards, and trading. */
+.ctoons-library-page :is(.ctoons-directory,.ctoon-set-main,.trade-page){width:min(100%,1240px);margin-inline:auto}
+.ctoons-library-page .ctoons-directory-hero{position:relative;overflow:hidden}
+.ctoons-library-page .ctoons-toolbar{align-items:end}
+.ctoons-library-page .ctoons-toolbar label{min-width:0}
+.ctoons-library-page .ctoons-alphabet{scroll-margin-top:85px}
+.ctoons-library-page :is(.ctoons-letter-grid,.ctoons-directory-card){min-width:0}
+.ctoons-library-page .ctoons-directory-card{height:100%}
+.ctoons-library-page .ctoons-directory-card img{max-width:100%;object-fit:contain}
+.ctoons-library-page .ctoons-directory-card-body{min-width:0}
+.ctoons-library-page .ctoons-empty{max-width:100%}
+.ctoons-library-page .trade-columns{min-width:0}
+.ctoons-library-page .trade-columns>*{min-width:0}
+
+/* Shop: departments remain recognizable, with consistent interactive targets. */
+.shop-cartoon-page .shop-main{width:min(100%,1280px);margin-inline:auto}
+.shop-cartoon-page .shop-intro{overflow:hidden}
+.shop-cartoon-page .shop-department-grid{align-items:stretch}
+.shop-cartoon-page .shop-department{min-width:0;height:100%;position:relative;overflow:hidden}
+.shop-cartoon-page .shop-department :is(h2,h3,p){overflow-wrap:anywhere}
+.shop-cartoon-page .shop-department a{min-height:44px}
+.shop-cartoon-page :is(.ctoon-shop-card,.ctoon-shop-art){min-width:0}
+
+/* Theater: honor existing marquee animation, scale artwork safely. */
+.watch-theater-page .theater-main{min-width:0;width:min(100%,1440px);margin-inline:auto}
+.watch-theater-page :is(.theater-intro,.theater-stage,.theater-screen,.theater-grand-marquee){max-width:100%;min-width:0}
+.watch-theater-page :is(.theater-marquee,.theater-marquee-title-line){overflow-wrap:anywhere}
+.watch-theater-page .theater-screen img{max-width:100%;height:auto}
+.watch-theater-page .theater-screen-controls{min-width:0;flex-wrap:wrap}
+
+/* Community: readable cards and forms across Forums, Guild and Support. */
+.community-neon-page :is(.page-placeholder,.community-main,.section){min-width:0}
+.community-neon-page :is(.global-chat,.players-directory,.discord-panel){min-width:0;max-width:100%}
+.community-neon-page :is(.global-chat,.players-directory,.discord-panel) :is(input,textarea){
+  max-width:100%;
+}
+.community-neon-page :is(.global-chat,.players-directory,.discord-panel) :is(h2,h3){
+  color:#f5f2ff;
+}
+
+/* Account and owner: high-contrast forms and long admin tables. */
+.account-neon-page :is(.owner-panel,.page-placeholder,form),
+.owner-neon-page :is(.owner-panel,.page-placeholder,form){min-width:0;max-width:100%}
+.account-neon-page :is(.owner-panel,.page-placeholder),
+.owner-neon-page :is(.owner-panel,.page-placeholder){
+  border-color:var(--page-stroke);
+}
+:is(.account-neon-page,.owner-neon-page) :is(label,.field-label){overflow-wrap:anywhere}
+:is(.account-neon-page,.owner-neon-page) :is(input,select,textarea){
+  max-width:100%;min-width:0;
+}
+:is(.account-neon-page,.owner-neon-page) :is(table,.table-wrap){
+  max-width:100%;
+}
+:is(.account-neon-page,.owner-neon-page) .table-wrap{overflow-x:auto}
+:is(.account-neon-page,.owner-neon-page) :is(.button,button){max-width:100%}
+
+/* Games is intentionally an empty arcade after the mode reset. */
+.games-arcade-page .games-hub-main{width:min(100%,1360px)}
+.games-arcade-page .games-hub-hero{min-width:0}
+.games-arcade-page .games-hub-card{max-width:100%;min-width:0}
+.games-arcade-page .games-hub-card p{max-width:58ch}
+
+/* Responsive fixes shared across every live page. */
+@media(max-width:960px){
+  .site-header{gap:12px}
+  .site-header nav{flex:1 1 100%;order:3}
+  .site-header .header-player{margin-left:auto}
+}
+@media(max-width:680px){
+  html{scroll-padding-top:25px}
+  .site-header{padding:10px 10px 14px}
+  .site-header .brand-logo{max-width:min(230px,55vw)}
+  .site-header nav{width:100%;display:flex;justify-content:center;gap:6px;overflow:visible}
+  .site-header nav .nav-link{min-height:45px;padding:9px 8px}
+  .site-header nav :is(.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel){
+    max-width:calc(100vw - 24px);max-height:58vh;
+  }
+  .site-header .header-player{max-width:42vw}
+  :where(main) :is(.page-placeholder,.owner-panel,.trade-box){padding-inline:clamp(12px,3vw,20px)}
+  .home-universe-page .home-top{grid-template-columns:minmax(0,1fr)}
+  .home-universe-page .welcome-panel{min-height:0;padding:25px 18px}
+  .home-universe-page .home-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ctoons-library-page .ctoons-toolbar{align-items:stretch}
+  .ctoons-library-page .ctoons-toolbar label{flex:1 1 100%}
+  .ctoons-library-page .trade-columns{grid-template-columns:minmax(0,1fr)}
+  .shop-cartoon-page .shop-department-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .games-arcade-page .games-hub-hero{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:420px){
+  .site-header .brand-logo{max-width:170px}
+  .site-header nav{gap:4px;padding:5px}
+  .site-header nav .nav-link{font-size:.78rem;padding:8px 6px}
+  .home-universe-page .home-tile{padding:14px 8px}
+  .shop-cartoon-page .shop-department-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+  :where(main) :is(button,.button):not(:disabled){transition:none!important;transform:none!important}
+}
