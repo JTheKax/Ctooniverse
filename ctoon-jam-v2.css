@@ -200,3 +200,13 @@ body{
 @media(max-width:780px){
  .jam-settings .jam-stage-effects,.jam-settings .jam-stage-theme-label,.jam-settings .jam-chart-studio-link{grid-column:1/-1}
 }
+
+
+.jam-picker-details .jam-chart-studio-link{
+ display:flex;align-items:center;justify-content:center;text-decoration:none;
+ min-height:46px;text-align:center;padding:10px;border-color:#f0d58c;
+ background:linear-gradient(110deg,#303e8c,#6c2a97);
+}
+.jam-picker-details .jam-chart-studio-link:is(:hover,:focus-visible){
+ filter:brightness(1.17);box-shadow:0 0 15px #bc90fd66;
+}
