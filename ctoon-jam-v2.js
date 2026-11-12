@@ -317,10 +317,22 @@
     els.chartstatus.textContent="Preparing practice chart…";
     const url=radioUrl+songs.golden.path;
     if(media.getAttribute("src")!==url){media.src=url;media.preload="auto";media.load();}
-    else {ignoreSeek=true;try{media.currentTime=0;}catch{}}
+    else if(media.error){media.load();}
+    else {ignoreSeek=true;try{media.currentTime=0;}catch{ignoreSeek=false}}
     media.muted=$("jam-mute").checked;
     const valid=()=>ticket===run&&chosen==="golden";
+    // A slow or blocked MP3 must never strand the player on a loading overlay.
+    let loadingTimer=setTimeout(()=>{
+      if(!valid()||phase!=="loading")return;
+      phase="error";clearLoading();
+      onScreen("Audio is taking longer than expected. Retry playback or use the audio controls.");
+      els.audioStatus.textContent="Still loading. Tap Play in the audio player or Retry Audio.";
+      overlay("AUDIO STILL LOADING","Check the connection, then try the audio player.","▶ Start Audio");
+      header();
+    },9000);
+    const clearWatchdog=()=>{if(loadingTimer){clearTimeout(loadingTimer);loadingTimer=0;}};
     media.onplaying=()=>{
+      clearWatchdog();
       if(!valid())return;
       if(phase==="playing")return;
       phase="playing";clearLoading();hideOverlay();
@@ -357,6 +369,7 @@
       header();paint();
     };
     media.onerror=()=>{
+      clearWatchdog();
       if(!valid())return;
       phase="error";cancelAnimationFrame(raf);raf=0;clearLoading();
       onScreen("The recording could not load. Check your connection, retry, or choose another song.");
@@ -364,7 +377,7 @@
       overlay("TRACK UNAVAILABLE","This recording could not load.","↻ Retry");
       header();
     };
-    media.onended=()=>{if(valid())finish();};
+    media.onended=()=>{clearWatchdog();if(valid())finish();};
     notes=buildGenerated(songs.golden);setChartForRun(ticket);
     try{
       const attempt=media.play();
@@ -389,7 +402,7 @@
     if(isFeatured())startFeatured(ticket);else startSynth(ticket);
   }
   function hitNote(note,difference){
-    note.judged=true;held;
+    note.judged=true;
     const quality=difference<=.085?"PERFECT":difference<=.15?"GREAT":"GOOD";
     const weight=quality==="PERFECT"?1:quality==="GREAT"?.75:.5;
     judged++;accuracyPoints+=weight;combo++;maxCombo=Math.max(maxCombo,combo);
@@ -622,6 +635,7 @@
   els.overlayAction.addEventListener("click",()=>{
     if(phase==="complete"){openLibrary(true);return;}
     if(isFeatured()&&phase==="error"){
+      if(nativeAudio.error){start();return;}
       nativeAudio.play().catch(()=>start());
       return;
     }
@@ -682,12 +696,16 @@
     if(lane>=0){event.preventDefault();if(!event.repeat)press(lane);}
   });
   document.addEventListener("keyup",event=>{
+    if(event.target.closest?.("input,select,textarea,button,nav")||!els.picker.hidden)return;
     const lane=keys.indexOf(event.key.toLowerCase());
     if(lane>=0){event.preventDefault();release(lane);}
   });
   window.addEventListener("blur",()=>{clearHeld();paint();});
   document.addEventListener("visibilitychange",()=>{if(document.hidden&&isPlaying())pause();});
   window.addEventListener("pagehide",()=>{++run;stopAudio();});
+  window.addEventListener("pageshow",event=>{
+    if(event.persisted&&phase!=="library")openLibrary();
+  });
   $("jam-expand").addEventListener("click",toggleFullscreen);
   document.addEventListener("fullscreenchange",fullscreenRefresh);
   window.addEventListener("resize",paint);
