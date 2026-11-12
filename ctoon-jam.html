@@ -9,9 +9,10 @@
   <link rel="preconnect" href="https://hsxdyxdazsdmpucyhqly.supabase.co" crossorigin>
   <link rel="stylesheet" href="ctoon-jam.css?v=jam-performance-20261109">
   <link rel="stylesheet" href="site-status.css?v=nav-colors-20261108">
-  <script src="ctoon-jam.js?v=jam-performance-20261109" defer></script>
+  <script src="ctoon-jam-v2.js?v=rebuild-20261112-1" defer></script>
   <script src="site-status.js?v=nav-colors-20261108" defer></script>
   <link rel="stylesheet" href="mobile-responsive.css?v=mobile-layout-20261109-v2">
+  <link rel="stylesheet" href="ctoon-jam-v2.css?v=rebuild-20261112-1">
   <link rel="stylesheet" href="standalone-nav.css?v=nav-icons-20261112-v2">
   <script src="standalone-nav.js?v=nav-icons-20261112-v2" defer></script>
 </head>
@@ -21,7 +22,7 @@
   <header class="jam-topbar">
     <a href="games.html" class="jam-back">← Back to Games</a>
     <span>CTOONIVERSE ARCADE</span>
-    <span class="jam-tag">RHYTHM GAME · BETA</span>
+    <span class="jam-tag">RHYTHM GAME · REBUILT ARCADE</span>
   </header>
   <main id="main">
     <section class="jam-stage" id="jam-game-screen" aria-label="CToon Jam game screen">
@@ -53,7 +54,7 @@
         <canvas id="jam-board" width="960" height="640" aria-label="Five-lane perspective note highway. Hold colored frets A S D J K and strum with Arrow Up, Arrow Down or Enter."></canvas>
         <section id="jam-song-picker" class="jam-song-picker" aria-labelledby="jam-picker-heading">
           <div class="jam-picker-top">
-            <div><p class="jam-picker-eyebrow">CTOONIVERSE • SETLIST</p><h2 id="jam-picker-heading">CHOOSE YOUR SONG</h2><p class="jam-picker-intro">Pick a track, set your difficulty, then hit the stage.</p></div>
+            <div><p class="jam-picker-eyebrow">CTOONIVERSE • SETLIST</p><h2 id="jam-picker-heading">CHOOSE YOUR SONG</h2><p class="jam-picker-intro">Select an original arcade track or the featured practice recording. Choose a difficulty and jump straight into the note highway.</p></div>
             <span id="jam-picker-count" class="jam-picker-count">4 TRACKS</span>
           </div>
           <div class="jam-picker-toolbar">
@@ -83,11 +84,11 @@
               </div>
               <p id="jam-picker-best" class="jam-picker-best">No personal best yet</p>
               <button id="jam-picker-start" class="jam-button jam-primary jam-picker-start" type="button">▶ PLAY SONG</button>
-              <p class="jam-picker-hint">Your selected track starts here without leaving the game.</p>
+              <p class="jam-picker-hint">The arcade tracks are generated locally. Golden streams from the existing CTooniverse audio library when you press Play.</p>
             </div>
           </div>
         </section>
-        <div id="jam-overlay" class="jam-overlay" role="status" aria-live="polite"><strong>READY TO ROCK?</strong><span>Select a song and press Start Song.</span><button id="jam-overlay-action" class="jam-button jam-primary jam-overlay-action" type="button" hidden>▶ Start Audio</button></div>
+        <div id="jam-overlay" class="jam-overlay" role="status" aria-live="polite"><strong>READY TO ROCK?</strong><span>Select a song and press Play.</span><button id="jam-overlay-action" class="jam-button jam-primary jam-overlay-action" type="button" hidden>▶ Start Audio</button></div>
         <div id="jam-judgement" class="jam-judgement" aria-live="off"></div>
         <div class="jam-highway-caption" aria-hidden="true"><span>CTOON JAM</span><span>LIVE STAGE</span></div>
       </div>
@@ -132,9 +133,9 @@
       </div>
           <p id="jam-message" class="jam-message" role="status" aria-live="polite">Choose your track and difficulty to begin.</p>
           <section class="jam-results" aria-label="Song record">
-      <h2>YOUR BEST RUN</h2><p id="jam-best">Play a song to set your local high score.</p><small>Scores are saved only in this browser. No coins or account rewards are awarded.</small><button id="jam-results-library" class="jam-button jam-next-song" type="button">♫ Choose Another Song</button>
+      <h2>YOUR BEST RUN</h2><p id="jam-best">Play a song to set your local high score.</p><small>Personal bests are stored in this browser, using your previous CToon Jam scores. No coins or account rewards are awarded.</small><button id="jam-results-library" class="jam-button jam-next-song" type="button">♫ Choose Another Song</button>
     </section>
-          <details class="jam-help-details"><summary>Controls and tips</summary><p class="jam-help"><b>Guitar Style:</b> Hold <b>A · S · D · J · K</b> and strum <b>↑ / ↓ / Enter</b>. Keep frets held for sustains; hit multiple frets for chords. <b>Space:</b> Hype Mode. <b>Tap Style:</b> Press colored frets directly (mobile-friendly). Adjust note timing for each track. Seeking through the featured recording turns that run into practice mode without a high score.</p></details>
+          <details class="jam-help-details"><summary>Controls and tips</summary><p class="jam-help"><b>Guitar Style:</b> Hold <b>A · S · D · J · K</b> and strum <b>↑ / ↓ / Enter</b>. Keep frets held for sustains; hit multiple frets for chords. <b>Space:</b> Hype Mode. <b>Tap Style:</b> Press colored frets directly (mobile-friendly). <b>Pause:</b> use the Pause button or Escape. Adjust note timing for featured audio. Seeking through the featured recording turns that run into practice mode without a high score.</p></details>
         </aside>
       </div>
     </section>
