@@ -25,7 +25,7 @@ const tracks=[
 ];
 const driverById=Object.fromEntries(drivers.map(x=>[x.id,x]));
 const trackById=Object.fromEntries(tracks.map(x=>[x.id,x]));
-const newSave=()=>({tickets:500,driver:"nova",track:"neon",laps:DEFAULT_LAPS,skill:"standard",upgrades:{},records:{},races:0,wins:0});
+const newSave=()=>({tickets:500,driver:"nova",track:"neon",laps:DEFAULT_LAPS,skill:"standard",autoGas:false,upgrades:{},records:{},races:0,wins:0});
 function readSave(){
  const s=newSave();
  try{
@@ -36,6 +36,7 @@ function readSave(){
   if(trackById[r.track])s.track=r.track;
   if([1,3,5].includes(r.laps))s.laps=r.laps;
   if(["casual","standard","expert"].includes(r.skill))s.skill=r.skill;
+  if(typeof r.autoGas==="boolean")s.autoGas=r.autoGas;
   if(r.upgrades&&typeof r.upgrades==="object"){
    for(const d of drivers){
     const u=r.upgrades[d.id];if(!u||typeof u!=="object")continue;
@@ -88,6 +89,7 @@ function renderOptions(){
  $("start-race").disabled=!!race;
  $("race-laps").value=String(save.laps);$("race-laps").disabled=!!race;
  $("race-skill").value=save.skill;$("race-skill").disabled=!!race;
+ $("race-auto-gas").checked=save.autoGas;$("race-auto-gas").disabled=!!race;
  const labels={1:"SPRINT",3:"GRAND PRIX",5:"ENDURANCE"};
  $("race-format").textContent=labels[save.laps]+" · "+save.laps+" LAP"+(save.laps>1?"S":"")+" · 4 KARTS";
  $("race-format-detail").textContent=save.skill.toUpperCase()+" rivals · Speedway Tickets and lap records";
@@ -174,7 +176,7 @@ function startRace(){
    pickups.push({id:lap+"-"+i,z,lane:[-.58,0,.58][(i+lap)%3]});
  }
  race={
- track:t,driver:d,laps:save.laps,skill:save.skill,phase:"countdown",countdown:3.3,time:0,elapsed:0,position:0,speed:0,lane:0,
+ track:t,driver:d,laps:save.laps,skill:save.skill,autoGas:save.autoGas,phase:"countdown",countdown:3.3,time:0,elapsed:0,position:0,speed:0,lane:0,
  lapStartTime:0,lapTimes:[],bestLap:null,skillFactor:skill,pickupList:pickups,
  energy:72,driftCharge:0,wasDrifting:false,boosting:false,impactTimer:0,pickups:new Set(),
  rivals:opponents.map((v,i)=>({id:v.id,name:v.name,icon:v.icon,color:v.color,position:26+i*20,
@@ -276,7 +278,7 @@ function updateRace(dt){
  if(r.phase!=="running")return;
  r.time+=dt;
  const steer=(ctrl.right?1:0)-(ctrl.left?1:0),base=maxSpeed(d);
- const throttle=ctrl.gas,braking=ctrl.brake;
+ const throttle=ctrl.gas||(r.autoGas&&!ctrl.brake),braking=ctrl.brake;
  const drifting=ctrl.drift&&steer!==0&&r.speed>65;
  if(r.wasDrifting&&!drifting&&r.driftCharge>0.45){
   r.energy=clamp(r.energy+Math.min(28,r.driftCharge*16),0,100);
@@ -629,6 +631,11 @@ $("race-laps").addEventListener("change",()=>{
  $("race-skill").addEventListener("change",()=>{
    if(race)return;const v=$("race-skill").value;
    if(!["casual","standard","expert"].includes(v))return;save.skill=v;persist();renderOptions();
+ });
+ $("race-auto-gas").addEventListener("change",()=>{
+   if(race)return;
+   save.autoGas=!!$("race-auto-gas").checked;persist();renderOptions();
+   announce(save.autoGas?"Auto-acceleration enabled. Steer and brake to race!":"Manual acceleration enabled. Hold W / ↑ or GAS.");
  });
  $("start-race").addEventListener("click",startRace);
  $("restart-btn").addEventListener("click",()=>{
