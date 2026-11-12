@@ -1,0 +1,65 @@
+/* CTooniverse menu symbols: shared across every standard site header.
+   CSS icons keep link text, aria labels, and existing JS/auth selectors unchanged. */
+.site-header nav :is(
+  .ctoons-dropdown-panel,.games-dropdown-panel,.community-dropdown-panel,
+  .account-dropdown-panel,.owner-menu-panel
+) > :is(a,button) {
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  text-align:left!important;
+  white-space:normal!important;
+  overflow-wrap:anywhere;
+}
+.site-header nav :is(
+  .ctoons-dropdown-panel,.games-dropdown-panel,.community-dropdown-panel,
+  .account-dropdown-panel,.owner-menu-panel
+) > :is(a,button)::before {
+  content:"✦";
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 1.55em;
+  width:1.55em;
+  font:normal 18px/1.15 system-ui,"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+.site-header nav .nav-link .nav-icon {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  font-family:system-ui,"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+.site-header nav .games-dropdown-panel > a[href="games.html"]::before{content:"🕹️";}
+.site-header nav .games-dropdown-panel > a[href="clash.html"]::before{content:"⚔️";}
+.site-header nav .games-dropdown-panel > a[href="hero-battle.html"]::before{content:"🦸";}
+.site-header nav .games-dropdown-panel > a[href="ctoon-jam.html"]::before{content:"🎸";}
+.site-header nav .games-dropdown-panel > a[href="fighters.html"]::before{content:"🥊";}
+.site-header nav .games-dropdown-panel > a[href="speedway.html"]::before{content:"🏎️";}
+.site-header nav .games-dropdown-panel > a[href="emulator.html"]::before{content:"💾";}
+.site-header nav .games-dropdown-panel > a[href="prize-games.html"]::before{content:"🎁";}
+.site-header nav .community-dropdown-panel > a[href="community.html"]::before{content:"🏘️";}
+.site-header nav .community-dropdown-panel > a[href="forums.html"]::before{content:"💬";}
+.site-header nav .community-dropdown-panel > a[href="guild.html"]::before{content:"🛡️";}
+.site-header nav .community-dropdown-panel > a[href="support.html"]::before{content:"🛟";}
+.site-header nav .account-dropdown-panel > a[href="login.html"]::before{content:"🔑";}
+.site-header nav .account-dropdown-panel > a[href="account.html"]::before{content:"👤";}
+.site-header nav .account-dropdown-panel > a[href="account.html#redeem-codes"]::before{content:"🎟️";}
+.site-header nav .owner-menu-panel > a[href="owner.html"]::before{content:"📊";}
+.site-header nav .owner-menu-panel > a[href="owner.html#site-operating-controls"]::before{content:"🚦";}
+.site-header nav .owner-menu-panel > a[href="coin-management.html"]::before{content:"🪙";}
+.site-header nav .owner-menu-panel > a[href="owner-redeem-codes.html"]::before{content:"🎟️";}
+.site-header nav .owner-menu-panel > a[href="owner-music-management.html"]::before{content:"🎵";}
+.site-header nav .owner-menu-panel > a[href="owner-subseries.html"]::before{content:"🗂️";}
+.site-header nav .owner-menu-panel > a[href="emulator.html#emu-owner"]::before{content:"📤";}
+.site-header nav .owner-menu-panel > a[href="owner-clash-card-maker.html"]::before{content:"🃏";}
+.site-header nav .owner-menu-panel > a[href="owner-fighters.html"]::before{content:"🥊";}
+.site-header nav .account-dropdown-panel > a[data-account-guest][href="account.html"]::before{content:"✨";}
+.site-header nav .account-dropdown-panel > button[data-account-logout]::before{content:"🚪";}
+/* Allow long game names and owner tools to wrap on narrow screens. */
+@media(max-width:700px){
+  .site-header nav :is(.games-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) > :is(a,button){
+    gap:8px!important;
+    min-height:44px;
+  }
+}
