@@ -18,7 +18,7 @@ const result=$('prize-wheel-result'),counter=$('prize-wheel-counter'),number=$('
 const lights=[...document.querySelectorAll('.wheel-spin-light')],machine=$('wheel-machine');
 const recent=$('wheel-recent'),sound=$('prize-wheel-sound'),accountLink=$('wheel-account-link');
 const MAX_SPINS=3;
-let rotation=0,busy=false,remaining=0,signedIn=false,verified=false,requestId=0,soundOn=false,audioContext=null,checkError=null,pendingSpinRequestId=null;
+let rotation=0,busy=false,remaining=0,signedIn=false,verified=false,requestId=0,soundOn=false,audioContext=null,checkError=null,pendingSpinRequestId=null,currentUserId=null;
 const formatCount=n=>Math.max(0,Math.min(MAX_SPINS,Number(n)||0));
 const setMessage=(message,tone='info')=>{result.textContent=message;result.dataset.tone=tone;};
 const setButton=()=>{
@@ -87,7 +87,7 @@ async function loadHistory(userId){
    .select('outcome_index,outcome_label,award_description,created_at')
    .eq('user_id',userId).order('created_at',{ascending:false}).limit(4);
   if(error)throw error;
-  if(!Array.isArray(data))return;
+  if(!Array.isArray(data)||currentUserId!==userId)return;
   recent.replaceChildren();
   if(!data.length){
    const li=document.createElement('li');li.dataset.empty='true';
@@ -110,8 +110,14 @@ async function check(){
   if(id!==requestId||busy)return;
   if(auth.error)throw auth.error;
   const user=auth.data?.user;
-  if(!user){verified=true;setMessage('Sign in to win Cartoon Coins and CToons with three daily spins.');return;}
-  signedIn=true;
+  if(!user){
+   currentUserId=null;pendingSpinRequestId=null;recent.replaceChildren();
+   const notice=document.createElement('li');notice.dataset.empty='true';
+   notice.textContent='Sign in to view your prize history.';recent.append(notice);
+   verified=true;setMessage('Sign in to win Cartoon Coins and CToons with three daily spins.');return;
+  }
+  if(currentUserId&&currentUserId!==user.id)pendingSpinRequestId=null;
+  currentUserId=user.id;signedIn=true;
   const today=new Date().toISOString().slice(0,10);
   const {data,error}=await db.from('prize_wheel_daily_spins').select('used').eq('user_id',user.id).eq('spin_date',today).maybeSingle();
   if(id!==requestId||busy)return;
