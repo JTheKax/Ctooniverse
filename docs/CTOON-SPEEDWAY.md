@@ -32,3 +32,7 @@ The Game page links directly to \`speedway.html\`. All project changes are commi
 ## Buggy the Clown playable racer (November 12, 2026)
 
 Buggy is a selectable racer with his own pirate kart artwork (`images/speedway/buggy-the-clown-kart.png`), Speed 4, Handling 3, Nitro 4 and the normal upgrade path. He is available immediately in the racer roster. The supplied pixel-art pose is animated procedurally during play with bouncing, turning, drifting, boost flames, collision shake and victory motion; these are visual transforms and effects, **not** separate directional sprite animations. Existing local saves, tracks and other game modes remain unchanged.
+
+## Racing repair (November 12, 2026)
+
+Fixed race setup remaining visible during a race, on-screen touch controls scrolling out of reach, races continuing in the background on other tabs, brake/boost conflicts, repeated AI collision trapping, and stale race progress/standings after returning to the pit lane. Added an in-game fullscreen mode, touch-friendly auto acceleration for new players (existing saved preferences preserved), and lighter road drawing for mobile. All pre-existing racers, tracks and saved progress remain available.

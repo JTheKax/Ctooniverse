@@ -1,7 +1,7 @@
 "use strict";
 (() => {
 const $=id=>document.getElementById(id);
-const canvas=$("race-canvas"),ctx=canvas.getContext("2d");
+const canvas=$("race-canvas"),ctx=canvas?.getContext("2d");
 const W=960,H=540,HORIZON=184,DEFAULT_LAPS=3,KEY="ctoon-speedway-save-v1";
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const drivers=[
@@ -34,7 +34,7 @@ for(const d of drivers){
 }
 const driverById=Object.fromEntries(drivers.map(x=>[x.id,x]));
 const trackById=Object.fromEntries(tracks.map(x=>[x.id,x]));
-const newSave=()=>({tickets:500,driver:"nova",track:"neon",laps:DEFAULT_LAPS,skill:"standard",autoGas:false,upgrades:{},records:{},races:0,wins:0});
+const newSave=()=>({tickets:500,driver:"nova",track:"neon",laps:DEFAULT_LAPS,skill:"standard",autoGas:!!window.matchMedia?.("(pointer:coarse)")?.matches,upgrades:{},records:{},races:0,wins:0});
 function readSave(){
  const s=newSave();
  try{
@@ -96,6 +96,7 @@ function driverButton(d,garage=false){
  (!garage?'<small>Speed '+d.speed+' / 5</small>'+statBar(d.speed)+'<small>Control '+d.handling+' · Nitro '+d.boost+'</small>':'<small>Engine +'+upgrade(d.id,"engine")+' · Nitro +'+upgrade(d.id,"nitro")+'</small>')+'</button>';
 }
 function renderOptions(){
+ $("race-setup").hidden=!!race;
  $("ticket-count").textContent=cash(save.tickets);
  $("driver-grid").innerHTML=drivers.map(d=>driverButton(d)).join("");
  $("garage-drivers").innerHTML=drivers.map(d=>driverButton(d,true)).join("");
@@ -137,6 +138,7 @@ function renderRecords(){
  }).join('')+'<article class="record-card"><span class="eyebrow">ALL-TIME STATS</span><h3>Your Career</h3><p>Total races: <b>'+save.races+'</b></p><p>First-place finishes: <b>'+save.wins+'</b></p><p>Current tickets: <b>'+cash(save.tickets)+'</b></p></article>';
 }
 function setView(next){
+ if(next!=="race"&&race&&["running","countdown"].includes(race.phase))togglePause();
  view=next;
  document.querySelectorAll("[data-view]").forEach(b=>{const on=b.dataset.view===next;b.classList.toggle("active",on);b.setAttribute("aria-pressed",String(on));});
  for(const name of ["race","garage","records"])$("view-"+name).hidden=name!==next;
@@ -215,9 +217,9 @@ function stopRace(){
  $("speedway-lights").dataset.state="ready";
  $("phase").textContent="PRE-RACE";$("hud-speed").textContent="0";
  $("hud-boost").textContent="72%";$("boost-bar").style.width="72%";$("speed-bar").style.width="0%";
- $("hud-lap").textContent="1 / "+save.laps;$("hud-position").textContent="1 / 4";$("hud-time").textContent="0:00.0";
+ $("hud-lap").textContent="1 / "+save.laps;$("hud-position").textContent="— / 4";$("hud-time").textContent="0:00.0";
  $("hud-current-lap").textContent="0:00.0";$("hud-best-lap").textContent="—";$("hud-drift").textContent="—";
- $("speedway-progress-fill").style.width="0%";$("speedway-progress").setAttribute("aria-valuenow","0");
+ $("speedway-progress-fill").style.width="0%";$("speedway-progress").setAttribute("aria-valuenow","0");$("speedway-progress-label").textContent="START";$("race-standings").innerHTML="";
  renderOverlay("START YOUR ENGINES","GET READY","Pick a driver and a track above to begin.");
  renderOptions();
  announce("Back in the pit lane. Choose a racer or upgrade your kart.");
@@ -293,7 +295,8 @@ function updateRace(dt){
  if(r.phase!=="running")return;
  r.time+=dt;
  const steer=(ctrl.right?1:0)-(ctrl.left?1:0),base=maxSpeed(d);
- const throttle=ctrl.gas||(r.autoGas&&!ctrl.brake),braking=ctrl.brake;
+ const braking=ctrl.brake;
+ const throttle=!braking&&(ctrl.gas||r.autoGas);
  const drifting=ctrl.drift&&steer!==0&&r.speed>65;
  if(r.wasDrifting&&!drifting&&r.driftCharge>0.45){
   r.energy=clamp(r.energy+Math.min(28,r.driftCharge*16),0,100);
@@ -301,7 +304,7 @@ function updateRace(dt){
  }
  r.wasDrifting=drifting;
  r.driftCharge=drifting?Math.min(2.6,r.driftCharge+dt):0;
- r.boosting=ctrl.boost&&r.energy>0&&r.speed>30;
+ r.boosting=ctrl.boost&&!braking&&r.energy>0&&r.speed>30;
  const bonus=boostMultiplier(d);
  const desiredMax=base*(r.boosting?bonus:1);
  if(throttle){
@@ -340,7 +343,11 @@ function updateRace(dt){
   if(bot.finish!==null)continue;
   const wobble=Math.sin(r.time*.47+bot.seed)*.11;
   bot.laneTarget=[-.60,.05,.61][i]+wobble;
-  bot.lane+=(bot.laneTarget-bot.lane)*Math.min(1,dt*1.7);
+  // Avoid collision locks by steering CPU opponents away from nearby player lanes.
+  if(Math.abs(bot.position-r.position)<90&&Math.abs(bot.lane-r.lane)<.42){
+   bot.laneTarget=bot.lane>=r.lane?.75:-.75;
+  }
+  bot.lane+=(bot.laneTarget-bot.lane)*Math.min(1,dt*2.5);
   bot.speed=Math.min(bot.baseSpeed,bot.speed+150*dt);
   bot.position=Math.min(totalDistance(),bot.position+bot.speed*dt);
   if(bot.position>=totalDistance())bot.finish=r.time;
@@ -422,15 +429,16 @@ function drawBackdrop(t,world){
  ctx.fillStyle=t.grass[1];ctx.fillRect(0,HORIZON,W,H-HORIZON);
 }
 function drawRoad(t,world){
- for(let y=HORIZON;y<H;y+=5){
-  const n=sampleRoad(y,world,t),b=sampleRoad(Math.min(H,y+6),world,t);
+ const step=window.matchMedia?.("(pointer:coarse)")?.matches?9:6;
+ for(let y=HORIZON;y<H;y+=step){
+  const n=sampleRoad(y,world,t),b=sampleRoad(Math.min(H,y+step),world,t);
   const stripe=Math.floor((world+n.z)/85)%2===0;
-  ctx.fillStyle=stripe?t.grass[0]:t.grass[1];ctx.fillRect(0,y,W,6);
-  polygon([[n.x-n.half*1.08,y],[n.x+n.half*1.08,y],[b.x+b.half*1.08,y+6],[b.x-b.half*1.08,y+6]],stripe?"#ffe8fa":"#c95c85");
-  polygon([[n.x-n.half,y],[n.x+n.half,y],[b.x+b.half,y+6],[b.x-b.half,y+6]],t.road);
+  ctx.fillStyle=stripe?t.grass[0]:t.grass[1];ctx.fillRect(0,y,W,step+1);
+  polygon([[n.x-n.half*1.08,y],[n.x+n.half*1.08,y],[b.x+b.half*1.08,y+step+1],[b.x-b.half*1.08,y+step+1]],stripe?"#ffe8fa":"#c95c85");
+  polygon([[n.x-n.half,y],[n.x+n.half,y],[b.x+b.half,y+step+1],[b.x-b.half,y+step+1]],t.road);
   if(Math.floor((world+n.z)/62)%2===0){
    for(const at of [-1/3,1/3]){
-    polygon([[n.x+n.half*at-2,y],[n.x+n.half*at+2,y],[b.x+b.half*at+4,y+6],[b.x+b.half*at-4,y+6]],"#d6dcff");
+    polygon([[n.x+n.half*at-2,y],[n.x+n.half*at+2,y],[b.x+b.half*at+4,y+step+1],[b.x+b.half*at-4,y+step+1]],"#d6dcff");
    }
   }
  }
@@ -689,6 +697,17 @@ $("race-laps").addEventListener("change",()=>{
 $("pause-btn").addEventListener("click",togglePause);
 $("leave-btn").addEventListener("click",stopRace);
 $("overlay-action").addEventListener("click",()=>{stopRace();startRace();});
+const fullscreenBtn=$("speedway-fullscreen");
+fullscreenBtn?.addEventListener("click",async()=>{
+ try{
+  if(document.fullscreenElement)await document.exitFullscreen();
+  else if($("race-panel").requestFullscreen)await $("race-panel").requestFullscreen();
+  else announce("Fullscreen is unavailable in this browser.");
+ }catch(_){announce("Fullscreen could not open. You can keep racing normally.");}
+});
+document.addEventListener("fullscreenchange",()=>{
+ if(fullscreenBtn)fullscreenBtn.textContent=document.fullscreenElement?"⤢ EXIT FULLSCREEN":"⛶ FULLSCREEN";
+});
 document.addEventListener("visibilitychange",()=>{
  if(document.hidden&&race&&["countdown","running"].includes(race.phase))togglePause();
  clearInputs();
