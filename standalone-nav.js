@@ -5,7 +5,18 @@
   if(document.querySelector(".site-header nav, .ctoon-standalone-nav"))return;
   const root=document.createElement("div");
   root.className="ctoon-standalone-nav";
-  const link=(label,url,attrs)=>'<a href="'+url+'" '+(attrs||"")+'>'+label+'</a>';
+  const navIcons={
+    Home:"🏠",CToons:"🎴",Watch:"🎬",Shop:"🛍️",
+    "Games Hub":"🕹️","CToon Clash":"⚔️","CToon Heroes: Battle Quest":"🦸",
+    "CToon Jam":"🎸","CToon Showdown":"🥊","CToon Speedway":"🏎️",
+    "Video Game Emulator":"💾","Prize Games":"🎁",
+    "Community Home":"🏘️",Forums:"💬",Guild:"🛡️",Support:"🛟",
+    Login:"🔑",Register:"✨","My Profile":"👤","Redeem Code":"🎟️",
+    Dashboard:"📊","Website Status":"🚦","Coin Management":"🪙",
+    "Redeem Codes":"🎟️","Music Management":"🎵","CToon Subseries Manager":"🗂️",
+    "Upload Game":"📤","Clash Card Maker":"🃏","Fighter Manager":"🥊"
+  };
+  const link=(label,url,attrs)=>'<a href="'+url+'" '+(attrs||"")+'><span class="ctoon-nav-symbol" aria-hidden="true">'+(navIcons[label]||"✦")+'</span><span>'+label+'</span></a>';
   const group=(label,items,attrs)=>'<details class="ctoon-nav-group" '+(attrs||"")+'><summary>'+label+'</summary>'+items.map(item=>link(item[0],item[1],item[2])).join("")+'</details>';
   const games=[["Games Hub","games.html"],["CToon Clash","clash.html"],["CToon Heroes: Battle Quest","hero-battle.html"],["CToon Jam","ctoon-jam.html"],["CToon Showdown","fighters.html"],["CToon Speedway","speedway.html"],["Video Game Emulator","emulator.html"],["Prize Games","prize-games.html"]];
   const community=[["Community Home","community.html"],["Forums","forums.html"],["Guild","guild.html"],["Support","support.html"]];
@@ -13,10 +24,10 @@
   const owner=[["Dashboard","owner.html"],["Website Status","owner.html#site-operating-controls"],["Coin Management","coin-management.html"],["Redeem Codes","owner-redeem-codes.html"],["Music Management","owner-music-management.html"],["CToon Subseries Manager","owner-subseries.html"],["Upload Game","emulator.html#emu-owner"],["Clash Card Maker","owner-clash-card-maker.html"],["Fighter Manager","owner-fighters.html"]];
   root.innerHTML='<div class="ctoon-standalone-bar"><a class="ctoon-standalone-brand" href="index.html">✦ CTooniverse</a><button type="button" class="ctoon-standalone-toggle" aria-expanded="false" aria-controls="ctoon-standalone-panel">☰ Site Menu</button></div>'
    +'<nav id="ctoon-standalone-panel" class="ctoon-standalone-panel" aria-label="CTooniverse navigation" hidden>'
-   +link("⌂ Home","index.html")+link("▣ CToons","ctoons.html")+group("🎮 Games",games)
-   +link("▶ Watch","watch.html")+link("🛒 Shop","shop.html")+group("♧ Community",community)
-   +group("● Account",account).replace("</details>",'<button type="button" data-nav-signed data-nav-logout hidden>Log Out</button></details>')
-   +group("♛ Owner",owner,'id="ctoon-standalone-owner" hidden')+'</nav>';
+   +link("Home","index.html")+link("CToons","ctoons.html")+group("🎮 Games",games)
+   +link("Watch","watch.html")+link("Shop","shop.html")+group("👥 Community",community)
+   +group("👤 Account",account).replace("</details>",'<button type="button" data-nav-signed data-nav-logout hidden><span class="ctoon-nav-symbol" aria-hidden="true">🚪</span><span>Log Out</span></button></details>')
+   +group("👑 Owner",owner,'id="ctoon-standalone-owner" hidden')+'</nav>';
   document.body.insertBefore(root,document.body.firstChild);
   const toggle=root.querySelector(".ctoon-standalone-toggle");
   const panel=root.querySelector(".ctoon-standalone-panel");
