@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#100f2b">
 <meta name="description" content="CToon Speedway, a fast-paced arcade kart racing prototype in CTooniverse. Race, drift, boost, and upgrade your ride.">
 <title>CToon Speedway | CTooniverse</title>
-<link rel="stylesheet" href="speedway.css?v=1">
-<script src="speedway.js?v=1" defer></script>
+<link rel="stylesheet" href="speedway.css?v=speedway-v2-20261112">
+<script src="speedway.js?v=speedway-v2-20261112" defer></script>
   <link rel="stylesheet" href="mobile-responsive.css?v=mobile-layout-20261109-v2">
   <link rel="stylesheet" href="standalone-nav.css?v=nav-icons-20261112-v2">
   <script src="standalone-nav.js?v=nav-icons-20261112-v2" defer></script>
@@ -15,10 +15,10 @@
 <body>
 <a class="skip-link" href="#main">Skip to game</a>
 <div class="shell">
-<header class="topbar"><a class="back" href="games.html">← GAMES ARCADE</a><strong>CTOONIVERSE <span>RACING</span></strong><span class="top-status">ARCADE PROTOTYPE</span></header>
+<header class="topbar"><a class="back" href="games.html">← GAMES ARCADE</a><strong>CTOONIVERSE <span>RACING</span></strong><span class="top-status">SPEEDWAY · UPGRADED</span></header>
 <main id="main">
 <section class="hero">
-<div><p class="eyebrow">✦ READY · SET · BOOST ✦</p><h1>CTOON <span>SPEEDWAY</span></h1><p>Race through neon worlds, drift around curves, blast your nitro and upgrade your kart. More racers and worlds can join the grid later.</p></div>
+<div><p class="eyebrow">✦ READY · SET · BOOST ✦</p><h1>CTOON <span>SPEEDWAY</span></h1><p>Choose from nine racers and six tracks. Drift for nitro, challenge smarter rivals, record your laps, and upgrade every kart in your garage.</p></div>
 <div class="wallet"><small>SPEEDWAY TICKETS</small><strong id="ticket-count">500</strong><span>Earned through races · not Cartoon Coins</span></div>
 </section>
 <nav class="tabs" aria-label="CToon Speedway sections">
@@ -29,28 +29,35 @@
 <p id="status" class="notice" role="status" aria-live="polite">Choose your racer and track, then start a race.</p>
 <section id="view-race" class="view">
 <div class="setup" id="race-setup">
-<section class="panel"><div class="section-heading"><div><p class="eyebrow">01 / CHOOSE A PILOT</p><h2>Racer Roster</h2></div><span class="tag">6 PLAYABLE</span></div><div id="driver-grid" class="drivers"></div></section>
-<section class="panel"><div class="section-heading"><div><p class="eyebrow">02 / CHOOSE A COURSE</p><h2>Race Tracks</h2></div><span class="tag">3 WORLDS</span></div><div id="track-grid" class="tracks"></div>
-<div class="race-options"><div><strong>3 LAPS · 4 KARTS</strong><span>Single-player race against three AI rivals</span></div><button class="primary-btn" id="start-race" type="button">START RACE ⚡</button></div>
+<section class="panel"><div class="section-heading"><div><p class="eyebrow">01 / CHOOSE A PILOT</p><h2>Racer Roster</h2></div><span class="tag">9 PLAYABLE</span></div><div id="driver-grid" class="drivers"></div></section>
+<section class="panel"><div class="section-heading"><div><p class="eyebrow">02 / CHOOSE A COURSE</p><h2>Race Tracks</h2></div><span class="tag">6 TRACKS</span></div><div id="track-grid" class="tracks"></div>
+<div class="race-settings" aria-label="Race settings">
+ <label for="race-laps">Race length<select id="race-laps"><option value="1">⚡ Sprint · 1 lap</option><option value="3" selected>🏁 Grand Prix · 3 laps</option><option value="5">🏆 Endurance · 5 laps</option></select></label>
+ <label for="race-skill">Rival difficulty<select id="race-skill"><option value="casual">🟢 Casual</option><option value="standard" selected>🟣 Standard</option><option value="expert">🔴 Expert</option></select></label>
+</div>
+<div class="race-options"><div><strong id="race-format">GRAND PRIX · 3 LAPS · 4 KARTS</strong><span id="race-format-detail">Race against three standard AI rivals · Speedway Tickets rewarded</span></div><button class="primary-btn" id="start-race" type="button">🏁 START RACE</button></div>
 </section>
 </div>
 <section class="race-panel panel" id="race-panel" aria-label="Speedway race arena">
 <div class="arena-heading"><div><p class="eyebrow">LIVE SPEEDWAY</p><h2 id="race-title">Neon Boulevard</h2></div><span class="tag" id="phase">PRE-RACE</span></div>
 <div id="game-frame" class="game-frame">
+<div class="speedway-lights" id="speedway-lights" aria-hidden="true"><span></span><span></span><span></span></div>
 <canvas id="race-canvas" width="960" height="540" aria-label="Racing game view with a road, competitors, and your kart">Your browser needs canvas support for this racing game.</canvas>
-<div class="race-hud" aria-live="off"><div class="hud-row"><div class="hud-pill">POSITION <b id="hud-position">1 / 4</b></div><div class="hud-pill">LAP <b id="hud-lap">1 / 3</b></div><div class="hud-pill">TIME <b id="hud-time">0:00.0</b></div></div><div class="hud-bottom"><div class="hud-pill"><strong><span id="hud-speed">0</span> <small>KM/H*</small></strong><div class="meter"><span id="speed-bar"></span></div></div><div class="hud-pill boost-pill"><small>BOOST</small><div class="meter"><span id="boost-bar"></span></div><strong id="hud-boost">70%</strong></div></div></div>
+<div class="race-hud" aria-live="off"><div class="hud-row"><div class="hud-pill">POSITION <b id="hud-position">1 / 4</b></div><div class="hud-pill">LAP <b id="hud-lap">1 / 3</b></div><div class="hud-pill">TIME <b id="hud-time">0:00.0</b></div></div>
+<div class="hud-splits"><div class="hud-pill">CURRENT LAP <b id="hud-current-lap">0:00.0</b></div><div class="hud-pill">BEST LAP <b id="hud-best-lap">—</b></div><div class="hud-pill">DRIFT <b id="hud-drift">—</b></div></div><div class="speedway-progress" id="speedway-progress" role="progressbar" aria-label="Race progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="speedway-progress-fill"></div><span id="speedway-progress-label">START</span><span>FINISH</span></div>
+<div class="hud-bottom"><div class="hud-pill"><strong><span id="hud-speed">0</span> <small>KM/H*</small></strong><div class="meter"><span id="speed-bar"></span></div></div><div class="hud-pill boost-pill"><small>BOOST</small><div class="meter"><span id="boost-bar"></span></div><strong id="hud-boost">70%</strong></div></div></div>
 <div id="race-overlay" class="overlay"><div class="overlay-card"><p id="overlay-kicker" class="eyebrow">GET READY</p><h3 id="overlay-title">START YOUR ENGINES</h3><p id="overlay-description">Pick a driver and a track above to begin.</p><button id="overlay-action" class="primary-btn" type="button" hidden>RACE AGAIN</button></div></div>
 </div>
-<div class="race-toolbar"><button type="button" id="pause-btn" class="secondary-btn" disabled>PAUSE</button><button type="button" id="leave-btn" class="secondary-btn" disabled>RETURN TO GARAGE</button><div id="race-standings" class="standings" aria-label="Current race standings"></div></div>
+<div class="race-toolbar"><button type="button" id="restart-btn" class="secondary-btn" disabled>↻ RESTART</button><button type="button" id="pause-btn" class="secondary-btn" disabled>PAUSE</button><button type="button" id="leave-btn" class="secondary-btn" disabled>RETURN TO GARAGE</button><div id="race-standings" class="standings" aria-label="Current race standings"></div></div>
 <div class="touch-controls" aria-label="Mobile driving controls"><div class="controls-group"><button data-control="left" type="button" aria-label="Steer left">◀</button><button data-control="right" type="button" aria-label="Steer right">▶</button></div><div class="controls-group"><button data-control="gas" type="button">GAS</button><button data-control="brake" type="button">BRAKE</button><button data-control="drift" type="button">DRIFT</button><button data-control="boost" type="button" class="boost-button">⚡ BOOST</button></div></div>
-<p class="help"><b>Keyboard:</b> W / ↑ accelerate · S / ↓ brake · A,D / ←,→ steer · Space drift · Shift / B boost · P pause. <b>Mobile:</b> hold the buttons while driving. <span>*Display speed is stylized for this arcade prototype.</span></p>
+<p class="help"><b>Keyboard:</b> W / ↑ accelerate · S / ↓ brake · A,D / ←,→ steer · Space drift · Shift / B boost · P pause. <b>Mobile:</b> hold the buttons while driving. <span>*Display speed and track distances are stylized. Trophies, records and tickets stay in this browser.</span></p>
 </section>
 </section>
 <section id="view-garage" class="view" hidden>
 <div class="two-cols"><section class="panel"><div class="section-heading"><div><p class="eyebrow">YOUR GARAGE</p><h2>Upgrade Your Ride</h2></div><span class="tag">UP TO LEVEL 5</span></div><p class="muted">Each pilot has a separate kart build. Upgrades persist in this browser and affect the races you drive.</p><div id="garage-drivers" class="drivers garage-drivers"></div></section>
 <section class="panel" id="garage-details" aria-live="polite"></section></div>
 </section>
-<section id="view-records" class="view" hidden><section class="panel"><div class="section-heading"><div><p class="eyebrow">PERSONAL RESULTS</p><h2>Speedway Records</h2></div><span class="tag">LOCAL SAVE</span></div><div id="records" class="records"></div><p class="muted">This prototype saves driver upgrades, tickets and records on this device. Account syncing, tournaments and online races are not active yet.</p></section></section>
+<section id="view-records" class="view" hidden><section class="panel"><div class="section-heading"><div><p class="eyebrow">PERSONAL RESULTS</p><h2>Speedway Records</h2></div><span class="tag">LOCAL SAVE · LAP RECORDS</span></div><div id="records" class="records"></div><p class="muted">Your tickets, driver upgrades, three-lap records and best laps are saved locally. One-lap, three-lap and five-lap records are tracked separately. Online multiplayer is not enabled.</p></section></section>
 </main>
 <footer><span>CTOON SPEEDWAY · ORIGINAL RACING FOUNDATION</span><a href="games.html">← BACK TO GAMES</a></footer>
 </div>
