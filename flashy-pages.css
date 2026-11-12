@@ -1,0 +1,309 @@
+/* CTooniverse // Neon Spectacle visual pass
+   Additive artwork and animation only. Do not alter authentication, page
+   state, operating-status colors, game availability or user content. */
+
+/* Each destination gets its own lighting rig without replacing its artwork. */
+body{
+  --ct-spectacle-a:#7fe9ff;
+  --ct-spectacle-b:#ae80ff;
+  --ct-spectacle-c:#ff8fea;
+  --ct-spectacle-line:rgba(133,197,255,.76);
+  --ct-spectacle-glow:rgba(109,100,255,.26);
+}
+body.home-universe-page{--ct-spectacle-a:#a7f4ff;--ct-spectacle-b:#a58cff;--ct-spectacle-c:#ff9be5;--ct-spectacle-line:rgba(121,231,255,.83);--ct-spectacle-glow:rgba(125,104,255,.3)}
+body.ctoons-library-page{--ct-spectacle-a:#81edff;--ct-spectacle-b:#c0a1ff;--ct-spectacle-c:#ff98dd;--ct-spectacle-line:rgba(116,211,255,.85);--ct-spectacle-glow:rgba(139,98,248,.32)}
+body.games-arcade-page{--ct-spectacle-a:#9beaff;--ct-spectacle-b:#bd91ff;--ct-spectacle-c:#ffcd81;--ct-spectacle-line:rgba(122,211,255,.83);--ct-spectacle-glow:rgba(83,124,247,.3)}
+body.shop-cartoon-page{--ct-spectacle-a:#ffd18c;--ct-spectacle-b:#ff92dc;--ct-spectacle-c:#a994ff;--ct-spectacle-line:rgba(255,179,225,.85);--ct-spectacle-glow:rgba(245,107,202,.24)}
+body.watch-theater-page{--ct-spectacle-a:#ffe5a4;--ct-spectacle-b:#ff9fa1;--ct-spectacle-c:#be9cff;--ct-spectacle-line:rgba(255,213,128,.85);--ct-spectacle-glow:rgba(239,137,95,.25)}
+body.community-neon-page{--ct-spectacle-a:#8cf8dc;--ct-spectacle-b:#85ccff;--ct-spectacle-c:#b1a0ff;--ct-spectacle-line:rgba(125,246,223,.8);--ct-spectacle-glow:rgba(61,202,201,.22)}
+body.account-neon-page{--ct-spectacle-a:#91ddff;--ct-spectacle-b:#cca2ff;--ct-spectacle-c:#ffabd9;--ct-spectacle-line:rgba(147,210,255,.78);--ct-spectacle-glow:rgba(143,118,246,.25)}
+body.owner-neon-page{--ct-spectacle-a:#ffe2a2;--ct-spectacle-b:#94e7ff;--ct-spectacle-c:#eab1ff;--ct-spectacle-line:rgba(255,209,120,.82);--ct-spectacle-glow:rgba(233,173,82,.2)}
+
+/* Light rail around the shared masthead. Navigation keeps green/yellow state. */
+.site-header{position:relative}
+.site-header::before{
+  content:"";position:absolute;top:0;left:4%;right:4%;height:4px;
+  pointer-events:none;border-radius:0 0 999px 999px;
+  background:linear-gradient(90deg,transparent,var(--ct-spectacle-a) 15%,var(--ct-spectacle-b) 49%,var(--ct-spectacle-c) 80%,transparent);
+  background-size:200% 100%;
+  box-shadow:0 0 20px var(--ct-spectacle-glow),0 0 10px var(--ct-spectacle-a);
+  animation:ct-spectacle-gradient 9s linear infinite;
+}
+body[data-site-mode="online"] .site-header::before{
+  background:linear-gradient(90deg,transparent,#74e9b2 20%,#c2ffe3 55%,#36cb83 80%,transparent);
+  box-shadow:0 0 14px #34d47b55;
+}
+body[data-site-mode="maintenance"] .site-header::before{
+  background:linear-gradient(90deg,transparent,#ffcf5f 20%,#fff3ba 55%,#e5a42d 80%,transparent);
+  box-shadow:0 0 14px #f0bf3d66;
+}
+.site-header .brand-logo{
+  filter:drop-shadow(0 2px 10px rgba(135,109,255,.45));
+  transition:transform .25s ease,filter .25s ease;
+}
+.site-header .brand:hover .brand-logo,.site-header .brand:focus-visible .brand-logo{
+  transform:translateY(-2px) scale(1.018);
+  filter:drop-shadow(0 0 16px var(--ct-spectacle-a));
+}
+.site-header nav{backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
+.site-header nav .nav-link{transition:transform .17s ease,filter .17s ease}
+@media(hover:hover){
+ .site-header nav .nav-link:hover{transform:translateY(-3px)}
+}
+.site-header .header-player{box-shadow:0 0 0 1px var(--ct-spectacle-line),0 8px 26px var(--ct-spectacle-glow)}
+.site-header nav :is(.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel){
+  backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);
+}
+
+/* Hero stages use colorful edge lighting and small moving stars, not
+   full-screen filters that would obscure the hand-drawn backgrounds. */
+:is(.home-universe-page .welcome-panel,
+    .ctoons-library-page .ctoons-directory-hero,
+    .shop-cartoon-page .shop-intro,
+    .games-arcade-page .games-hub-hero,
+    .community-neon-page .page-placeholder,
+    .account-neon-page .page-placeholder,
+    .owner-neon-page .page-placeholder){
+  position:relative;isolation:isolate;
+  border-color:var(--ct-spectacle-line);
+  box-shadow:0 0 0 1px rgba(255,255,255,.07) inset,0 18px 38px rgba(4,4,28,.62),
+             0 0 35px var(--ct-spectacle-glow);
+  animation:ct-spectacle-stage-breathe 8s ease-in-out infinite;
+}
+:is(.home-universe-page .welcome-panel,
+    .ctoons-library-page .ctoons-directory-hero,
+    .shop-cartoon-page .shop-intro,
+    .community-neon-page .page-placeholder,
+    .account-neon-page .page-placeholder,
+    .owner-neon-page .page-placeholder)::before{
+  content:"";position:absolute;inset:0;
+  pointer-events:none;border-radius:inherit;z-index:0;
+  background:
+    radial-gradient(circle at 5% 17%,rgba(255,255,255,.83) 0 1.2px,transparent 3px),
+    radial-gradient(circle at 83% 21%,rgba(255,255,255,.78) 0 1px,transparent 3px),
+    radial-gradient(circle at 39% 80%,rgba(255,255,255,.65) 0 1.1px,transparent 3px),
+    linear-gradient(115deg,transparent 10%,rgba(152,188,255,.055) 45%,transparent 72%);
+  background-size:100% 100%,100% 100%,100% 100%,200% 100%;
+  animation:ct-spectacle-twinkle 7.5s ease-in-out infinite alternate;
+}
+:is(.ctoons-library-page .ctoons-directory-hero,
+    .shop-cartoon-page .shop-intro,
+    .community-neon-page .page-placeholder,
+    .account-neon-page .page-placeholder,
+    .owner-neon-page .page-placeholder)>*{
+  position:relative;z-index:1;
+}
+:where(main) .eyebrow{
+  color:var(--ct-spectacle-a);
+  text-shadow:0 0 13px var(--ct-spectacle-glow),0 0 24px var(--ct-spectacle-glow);
+  font-weight:900;letter-spacing:.15em;
+}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .home-universe-page .welcome-copy h1,
+  .ctoons-library-page .ctoons-directory-hero h1,
+  .shop-cartoon-page .shop-intro h1,
+  .games-arcade-page .games-hub-hero h1 span,
+  .community-neon-page .page-placeholder h1,
+  .account-neon-page .page-placeholder h1,
+  .owner-neon-page .page-placeholder h1{
+    background:linear-gradient(110deg,#fff 0%,var(--ct-spectacle-a) 30%,var(--ct-spectacle-b) 58%,#fff 83%,var(--ct-spectacle-c) 100%);
+    background-size:250% 100%;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+    animation:ct-spectacle-gradient 11s linear infinite;
+    text-shadow:none;
+  }
+}
+:where(main) :is(.explore-heading,.games-hub-section-heading,.shop-departments>h2,
+ .ctoons-letter-heading,.home-new-ctoons-heading) h2{
+  text-shadow:0 0 18px var(--ct-spectacle-glow);
+}
+
+/* Micro-reflection: sweep across destination cards only on deliberate hover. */
+:is(.home-tile,.shop-department,.ctoons-directory-card,.games-hub-card){
+  position:relative;isolation:isolate;
+  transition:transform .24s ease,border-color .24s ease,box-shadow .24s ease;
+}
+:is(.home-tile,.shop-department,.ctoons-directory-card,.games-hub-card)::after{
+  content:"";position:absolute;inset:-70% -55%;
+  pointer-events:none;z-index:4;opacity:0;
+  background:linear-gradient(100deg,transparent 38%,rgba(255,255,255,.16) 47%,rgba(255,255,255,.32) 50%,transparent 60%);
+  transform:translateX(-85%) rotate(12deg);
+  transition:transform .72s cubic-bezier(.18,.7,.25,1),opacity .24s ease;
+}
+@media(hover:hover){
+ :is(.home-tile,.shop-department,.ctoons-directory-card,.games-hub-card):hover::after{
+   transform:translateX(85%) rotate(12deg);opacity:1;
+ }
+ :is(.home-tile,.shop-department,.ctoons-directory-card,.games-hub-card):hover{
+   border-color:var(--ct-spectacle-a)!important;
+   box-shadow:0 15px 30px rgba(4,5,28,.65),0 0 25px var(--ct-spectacle-glow),inset 0 0 0 1px rgba(255,255,255,.18);
+   transform:translateY(-5px);
+ }
+}
+.home-tile .tile-symbol,.shop-department-icon,.games-hub-card-icon{
+  box-shadow:0 9px 18px #04081b99,0 0 0 1px var(--ct-spectacle-line),
+             0 0 25px var(--ct-spectacle-glow);
+  transition:transform .28s ease,box-shadow .28s ease;
+}
+@media(hover:hover){
+ .home-tile:hover .tile-symbol,
+ .shop-department:hover .shop-department-icon,
+ .games-hub-card:hover .games-hub-card-icon{
+   transform:translateY(-3px) rotate(-5deg) scale(1.08);
+   box-shadow:0 12px 22px #04081bbb,0 0 25px var(--ct-spectacle-glow);
+ }
+}
+
+/* Home: premium arcade doorway with energized buttons. */
+.home-universe-page .welcome-panel{border-width:2px}
+.home-universe-page .hero-actions .button{
+  border:1px solid var(--ct-spectacle-line);
+  box-shadow:0 5px 16px rgba(6,3,30,.4),0 0 16px rgba(119,88,255,.24);
+}
+.home-universe-page .announcement-panel{
+  border-color:var(--ct-spectacle-line);
+  box-shadow:0 15px 33px #04041c99,0 0 24px var(--ct-spectacle-glow);
+}
+.home-universe-page .announcement-panel h2{color:#fff2fc;text-shadow:0 0 15px rgba(173,125,255,.5)}
+.home-universe-page .home-tile:nth-child(3n + 1){--ct-tile-glow:rgba(92,214,255,.32)}
+.home-universe-page .home-tile:nth-child(3n + 2){--ct-tile-glow:rgba(168,99,255,.36)}
+.home-universe-page .home-tile:nth-child(3n){--ct-tile-glow:rgba(255,122,221,.25)}
+.home-universe-page .home-tile{
+  border-color:var(--ct-spectacle-line)!important;
+  box-shadow:0 10px 25px rgba(2,5,25,.6),0 0 22px var(--ct-tile-glow);
+}
+.home-universe-page .home-status-guide{
+  border-color:rgba(164,167,255,.67);
+  box-shadow:0 0 25px rgba(123,100,255,.16),0 17px 32px #04061f88;
+}
+/* Operational guide squares remain green and yellow. */
+
+/* CToons: showcase windows with luminous display glass and search field halos. */
+.ctoons-library-page .ctoons-directory-card{
+  border-color:rgba(127,143,255,.86);
+  box-shadow:inset 0 0 0 2px rgba(139,229,255,.4),5px 7px 0 #070921,0 0 21px var(--ct-spectacle-glow);
+}
+.ctoons-library-page .ctoons-directory-art{position:relative;border-radius:12px;box-shadow:inset 0 0 21px rgba(128,209,255,.2)}
+.ctoons-library-page .ctoons-directory-art img{transition:transform .25s ease,filter .25s ease}
+@media(hover:hover){
+ .ctoons-library-page .ctoons-directory-card:hover img{
+   transform:scale(1.045);filter:drop-shadow(0 0 9px rgba(139,216,255,.25));
+ }
+}
+.ctoons-library-page :is(#ctoons-search,#ctoons-subseries,#ctoons-category):focus{
+  border-color:var(--ct-spectacle-a);
+  box-shadow:0 0 0 3px rgba(136,210,255,.18),0 0 18px var(--ct-spectacle-glow);
+}
+.ctoons-library-page .ctoons-letter-heading{border-bottom-color:var(--ct-spectacle-line)}
+.ctoons-library-page .ctoons-letter-heading h2{text-shadow:0 0 22px rgba(119,211,255,.48)}
+.ctoons-library-page .ctoons-alphabet{
+  border-color:rgba(151,144,249,.8);
+  box-shadow:inset 0 0 20px rgba(112,97,246,.12),0 10px 22px #03051c88;
+}
+
+/* Games: empty arcade looks like a dramatic closed portal, not a broken game. */
+.games-arcade-page .games-hub-hero{
+  border-color:var(--ct-spectacle-line);
+  box-shadow:0 20px 48px #040624b3,0 0 32px var(--ct-spectacle-glow);
+}
+.games-arcade-page .games-hub-hero-mark{
+  border-color:var(--ct-spectacle-line);
+  box-shadow:inset 0 0 46px rgba(104,87,244,.32),0 0 34px rgba(109,147,255,.35);
+  animation:ct-spectacle-mark 5s ease-in-out infinite;
+}
+.games-arcade-page .games-hub-card{
+  border-color:rgba(135,157,255,.82);
+  box-shadow:0 14px 25px #03071db0,0 0 28px var(--ct-spectacle-glow);
+}
+.games-arcade-page .games-hub-count{border-color:var(--ct-spectacle-line);box-shadow:0 0 16px var(--ct-spectacle-glow)}
+
+/* Shop: warm marquee lighting to set the marketplace apart from the arcade. */
+.shop-cartoon-page .shop-intro,
+.shop-cartoon-page .shop-departments{box-shadow:0 17px 35px #05031f99,0 0 25px rgba(255,124,214,.2)}
+.shop-cartoon-page .shop-department{
+  border-color:var(--ct-spectacle-line)!important;
+  box-shadow:0 13px 26px #060422a3,0 0 19px var(--ct-spectacle-glow);
+}
+.shop-cartoon-page .shop-department-icon{filter:drop-shadow(0 0 11px rgba(255,184,223,.28))}
+
+/* Theater: spotlight and lit marquee, while leaving the stage/player mechanics alone. */
+.watch-theater-page .theater-grand-marquee{
+  filter:drop-shadow(0 0 15px rgba(255,210,129,.32));
+  animation:ct-spectacle-theater-glow 6s ease-in-out infinite;
+}
+.watch-theater-page .theater-marquee-sign{box-shadow:0 0 23px rgba(255,209,138,.21),inset 0 0 24px rgba(255,222,168,.09)}
+.watch-theater-page .theater-intro h1{text-shadow:0 0 22px rgba(255,189,123,.44),0 3px 14px #0b041e}
+.watch-theater-page .theater-stage{
+  box-shadow:0 0 0 3px rgba(255,189,122,.4),0 0 36px rgba(148,105,251,.4),0 18px 40px #020319aa;
+}
+.watch-theater-page .theater-marquee{box-shadow:0 0 20px rgba(255,212,137,.18)}
+
+/* Community: chat + player cards glow like arcade communication terminals. */
+.community-neon-page :is(.global-chat,.players-directory,.discord-panel){
+  border-color:var(--ct-spectacle-line);
+  box-shadow:0 15px 29px #05031f9c,0 0 21px var(--ct-spectacle-glow);
+}
+.community-neon-page :is(.global-chat,.players-directory,.discord-panel) h2{
+  text-shadow:0 0 14px rgba(110,229,220,.3);
+}
+
+/* Account and Owner: cleaner control-room lighting, without changing permissions. */
+:is(.account-neon-page,.owner-neon-page) :is(.owner-panel,.coin-panel,.page-placeholder){
+  box-shadow:0 15px 32px #05051e9c,0 0 19px var(--ct-spectacle-glow);
+}
+:is(.account-neon-page,.owner-neon-page) :is(input,select,textarea):focus-visible{
+  box-shadow:0 0 0 3px rgba(140,204,255,.12),0 0 16px var(--ct-spectacle-glow);
+}
+.owner-neon-page .owner-collectible-card{filter:drop-shadow(0 0 13px rgba(255,212,147,.21))}
+
+/* Respect both energy-limited devices and reduced-motion preferences. */
+@keyframes ct-spectacle-gradient{
+  from{background-position:160% 0}
+  to{background-position:-60% 0}
+}
+@keyframes ct-spectacle-stage-breathe{
+  0%,100%{filter:drop-shadow(0 0 0 transparent)}
+  50%{filter:drop-shadow(0 0 6px var(--ct-spectacle-glow))}
+}
+@keyframes ct-spectacle-twinkle{
+  0%{opacity:.33;background-position:0 0,0 0,0 0,100% 0}
+  100%{opacity:.68;background-position:0 0,0 0,0 0,-100% 0}
+}
+@keyframes ct-spectacle-mark{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+@keyframes ct-spectacle-theater-glow{
+  0%,100%{filter:drop-shadow(0 0 9px rgba(255,210,129,.21))}
+  50%{filter:drop-shadow(0 0 21px rgba(255,210,129,.42))}
+}
+@media(max-width:700px){
+  .site-header::before{left:8%;right:8%}
+  :is(.home-tile,.shop-department,.ctoons-directory-card,.games-hub-card)::after{display:none}
+  .home-universe-page .home-tile{box-shadow:0 8px 18px #04041e99,0 0 12px var(--ct-tile-glow)}
+  .games-arcade-page .games-hub-hero-mark{animation:none}
+  .watch-theater-page .theater-grand-marquee{animation:none;filter:drop-shadow(0 0 9px rgba(255,210,129,.23))}
+}
+@media(prefers-reduced-motion:reduce){
+  .site-header::before,
+  :is(.home-universe-page .welcome-panel,.ctoons-library-page .ctoons-directory-hero,
+      .shop-cartoon-page .shop-intro,.games-arcade-page .games-hub-hero,
+      .community-neon-page .page-placeholder,.account-neon-page .page-placeholder,
+      .owner-neon-page .page-placeholder),
+  :is(.home-universe-page .welcome-panel,.ctoons-library-page .ctoons-directory-hero,
+      .shop-cartoon-page .shop-intro,.community-neon-page .page-placeholder,
+      .account-neon-page .page-placeholder,.owner-neon-page .page-placeholder)::before,
+  .games-arcade-page .games-hub-hero-mark,
+  .watch-theater-page .theater-grand-marquee{animation:none!important}
+  :is(.home-universe-page .welcome-copy h1,.ctoons-library-page .ctoons-directory-hero h1,
+      .shop-cartoon-page .shop-intro h1,.games-arcade-page .games-hub-hero h1 span,
+      .community-neon-page .page-placeholder h1,.account-neon-page .page-placeholder h1,
+      .owner-neon-page .page-placeholder h1){animation:none!important}
+  :is(.home-tile,.shop-department,.ctoons-directory-card,.games-hub-card)::after{display:none}
+  .site-header .brand-logo,
+  .site-header nav .nav-link,
+  .home-tile .tile-symbol,
+  .shop-department-icon,
+  .games-hub-card-icon{transition:none!important;transform:none!important}
+}
