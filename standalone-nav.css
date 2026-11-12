@@ -29,3 +29,19 @@ body[data-site-mode="maintenance"] .ctoon-standalone-nav{--ctnav-bg:#57410b;--ct
 
 /* Yellow maintenance controls need dark ink for readable contrast. */
 body[data-site-mode="maintenance"] .ctoon-standalone-nav :is(.ctoon-standalone-toggle,.ctoon-standalone-panel a,.ctoon-standalone-panel button,.ctoon-standalone-panel summary){color:#302102}
+
+/* Keep each menu symbol aligned and readable in narrow game layouts. */
+.ctoon-standalone-panel .ctoon-nav-symbol {
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ width:1.55em;
+ min-width:1.55em;
+ flex:0 0 1.55em;
+ font:normal 18px/1.1 system-ui,"Segoe UI Emoji","Apple Color Emoji",sans-serif;
+}
+.ctoon-standalone-panel a > span:last-child,
+.ctoon-standalone-panel button > span:last-child {
+ min-width:0;
+ overflow-wrap:anywhere;
+}
