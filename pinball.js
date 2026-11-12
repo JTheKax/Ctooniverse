@@ -46,6 +46,7 @@
   let accumulated = 0;
   let lastSound = 0;
   let audioContext = null;
+  let inLaunchLane = false;
 
   try {
     const stored = Number(localStorage.getItem(STORAGE_KEY));
@@ -66,6 +67,7 @@
   function say(text) { messageEl.textContent = text; }
 
   function parkBall() {
+    inLaunchLane = false;
     ball.x = 379;
     ball.y = 607;
     ball.vx = 0;
@@ -92,8 +94,12 @@
     playing = true;
     paused = false;
     parkBall();
-    ball.vx = -2.5;
-    ball.vy = -16;
+    // Travel up the dedicated plunger lane before entering the bumpers.
+    // Without this, the right rail immediately deflects launches into the drain.
+    ball.x = 374;
+    ball.vx = 0;
+    ball.vy = -17;
+    inLaunchLane = true;
     updateHud();
     say('Ball in play! Use both flippers to keep it alive.');
     sound(420, 0.09);
@@ -239,16 +245,25 @@
       ball.y += ball.vy / 3;
       ball.vx *= 0.9996;
       ball.vy *= 0.9997;
+      if (inLaunchLane) {
+        ball.x = 374;
+        if (ball.y < 121) {
+          inLaunchLane = false;
+          ball.vx = -5.2;
+        }
+      }
 
       if (ball.x < 30 + ball.r) { ball.x = 30 + ball.r; ball.vx = Math.abs(ball.vx) * 0.88; }
       if (ball.x > 390 - ball.r) { ball.x = 390 - ball.r; ball.vx = -Math.abs(ball.vx) * 0.88; }
       if (ball.y < 29 + ball.r) { ball.y = 29 + ball.r; ball.vy = Math.abs(ball.vy) * 0.86; }
 
-      for (const bumper of bumpers) bounceBumper(bumper);
-      bumperRail(31, 498, 94, 557);
-      bumperRail(389, 498, 326, 557);
-      flipper(true, left);
-      flipper(false, right);
+      if (!inLaunchLane) {
+        for (const bumper of bumpers) bounceBumper(bumper);
+        bumperRail(31, 498, 94, 557);
+        bumperRail(389, 498, 326, 557);
+        flipper(true, left);
+        flipper(false, right);
+      }
 
       ball.vx = Math.max(-12, Math.min(12, ball.vx));
       ball.vy = Math.max(-17, Math.min(17, ball.vy));
