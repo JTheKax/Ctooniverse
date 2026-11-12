@@ -238,7 +238,8 @@
     stopLoops();
     nativeAudio.pause();
     nativeAudio.onplaying=nativeAudio.onwaiting=nativeAudio.onpause=nativeAudio.onended=
-      nativeAudio.onerror=nativeAudio.onseeked=nativeAudio.onloadedmetadata=null;
+      nativeAudio.onerror=nativeAudio.onseeked=nativeAudio.onloadedmetadata=
+      nativeAudio.onprogress=null;
     if(synth){const old=synth;synth=null;old.close().catch(()=>{});}
     gain=null;
   }
@@ -353,9 +354,24 @@
         overlay("PAUSED","Press Resume or Play on the audio controls.");header();
       }
     };
+    function bufferedProgress(){
+      if(!valid()||phase!=="loading"||!Number.isFinite(media.duration)||media.duration<=0)return;
+      let buffered=0;
+      try{for(let k=0;k<media.buffered.length;k++){
+        if(media.buffered.start(k)<.25)buffered=Math.max(buffered,media.buffered.end(k));
+      }}catch{return;}
+      const percent=clamp(Math.round(100*buffered/media.duration),0,100);
+      els.loadbar.classList.remove("is-indeterminate");
+      els.loadfill.style.width=percent+"%";
+      els.loadvalue.textContent=percent+"%";
+      els.loadbar.setAttribute("aria-valuenow",String(percent));
+      els.loadstatus.textContent="Buffering audio · "+percent+"%";
+    }
+    media.onprogress=bufferedProgress;
     media.onloadedmetadata=()=>{
       if(!valid())return;
       if(Number.isFinite(media.duration)&&media.duration>0)totalTime=media.duration;
+      bufferedProgress();
       header();
     };
     media.onseeked=()=>{
@@ -393,6 +409,9 @@
     const ticket=++run;
     stopAudio();resetRun();
     phase="loading";els.picker.hidden=true;
+    // Move focus from the Play button to the playable highway so guitar
+    // keys work immediately after pressing Play with mouse or keyboard.
+    try{cv.focus({preventScroll:true})}catch{cv.focus()}
     els.song.disabled=true;els.diff.disabled=true;
     totalTime=durationEstimate(songs[chosen]);
     notes=buildGenerated(songs[chosen]);
