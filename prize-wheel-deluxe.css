@@ -1,0 +1,396 @@
+/* CTooniverse haunted casino deluxe layer.
+   Visual-only upgrade; reward odds, backend settlement, and daily limits stay untouched. */
+.oogie-wheel-page{
+ --casino-acid:#b9ff63;
+ --casino-gold:#f4ca68;
+ --casino-pink:#ff659c;
+ --casino-night:#100b19;
+}
+.oogie-wheel-page .prize-wheel-section{
+ max-width:1240px;
+ padding:clamp(16px,3vw,35px);
+ border:4px solid #667d36;
+ border-radius:28px;
+ background:
+  radial-gradient(circle at 14% 3%,#68417e5c 0,transparent 37%),
+  radial-gradient(circle at 88% 32%,#3b274d 0,transparent 38%),
+  repeating-linear-gradient(0deg,transparent 0 42px,#d2fc2c09 43px 44px),
+  linear-gradient(145deg,#231530,#0d0b18 78%);
+ box-shadow:0 0 0 6px #150d20,0 16px 0 #080610,0 30px 65px #000c,inset 0 0 0 3px #b7ff6730,inset 0 20px 80px #a767c012;
+}
+.oogie-wheel-page .wheel-heading{
+ position:relative;
+ gap:12px 26px;
+ padding:2px 5px 23px;
+ border-bottom:3px double #a1e35a;
+}
+.oogie-wheel-page .wheel-heading::after{
+ content:"✦  ✧  ☠  ✧  ✦";
+ position:absolute;
+ left:50%;
+ bottom:-12px;
+ transform:translateX(-50%);
+ padding:0 18px;
+ background:#1a1125;
+ color:var(--casino-gold);
+ font-size:14px;
+ letter-spacing:.28em;
+ white-space:nowrap;
+ text-shadow:0 0 12px #c1ec4f;
+}
+.oogie-wheel-page .wheel-heading .eyebrow{
+ color:#f5dc89;
+ font-size:clamp(.7rem,1.6vw,.85rem);
+ letter-spacing:.24em;
+}
+.oogie-wheel-page .wheel-heading h1{
+ max-width:770px;
+ font-size:clamp(2.4rem,5.5vw,5rem);
+ line-height:.99;
+ color:#caff82;
+ -webkit-text-stroke:1.2px #19210d;
+ text-shadow:0 3px 0 #274814,3px 5px 0 #8a225c,6px 9px 0 #0c0816,0 0 24px #a1fc6199;
+ transform:rotate(-.5deg);
+}
+.oogie-wheel-page .wheel-heading .lead{max-width:720px;color:#eee0f5;font-size:clamp(.91rem,1.5vw,1.05rem)}
+.oogie-wheel-page .wheel-mode{
+ border:2px solid #d2ef8c;
+ border-radius:100px;
+ background:linear-gradient(180deg,#47204c,#25132c);
+ box-shadow:0 4px 0 #0b0811,inset 0 0 12px #8fff6729,0 0 16px #8cff5229;
+ color:#ecffc2;
+ white-space:normal;
+}
+.oogie-wheel-page .wheel-mode::before{background:#cfff6f;box-shadow:0 0 0 3px #59762b,0 0 13px #c2ff57}
+.oogie-wheel-page .wheel-layout{grid-template-columns:minmax(0,1.28fr) minmax(270px,.72fr);gap:clamp(22px,3vw,34px)}
+.oogie-wheel-page .wheel-machine{
+ overflow:visible;
+ border:5px solid #8aaf4a;
+ border-radius:34px 34px 26px 26px;
+ padding:20px clamp(10px,2vw,23px) 26px;
+ background:
+  radial-gradient(ellipse at 50% 36%,#714277aa 0,transparent 48%),
+  repeating-linear-gradient(90deg,#26182a 0 16px,#1e1328 16px 32px),
+  linear-gradient(#2e1a39,#130f20);
+ box-shadow:inset 0 0 0 3px #d1ff84,inset 0 0 38px #05030f,0 8px 0 #3e204a,0 13px 0 #0b0814,0 0 33px #82d94b55;
+}
+.oogie-wheel-page .wheel-machine::before{
+ inset:10px;
+ border:2px dashed #d5ff8b54;
+ border-radius:22px 22px 18px 18px;
+}
+.oogie-wheel-page .wheel-machine::after{
+ content:"";
+ position:absolute;
+ inset:auto 21px 10px;
+ height:9px;
+ background:repeating-linear-gradient(90deg,#ccff75 0 8px,transparent 8px 17px);
+ border-radius:12px;
+ opacity:.65;
+ box-shadow:0 0 15px #aaff4850;
+ pointer-events:none;
+}
+.oogie-wheel-page .wheel-marquee{
+ width:min(100%,540px);
+ margin-bottom:14px;
+ position:relative;
+ padding:14px 11px;
+ border:5px ridge #f9d57a;
+ border-radius:18px 18px 10px 10px;
+ background:
+  radial-gradient(ellipse at 50% -30%,#9a5494 0,transparent 68%),
+  linear-gradient(180deg,#461341,#251126 75%,#160e22);
+ color:#d2ff84;
+ font-size:clamp(1.1rem,2.9vw,1.9rem);
+ letter-spacing:.14em;
+ text-shadow:2px 3px 0 #100612,0 0 8px #b5ff67,0 0 22px #b3ff5685;
+ box-shadow:inset 0 0 0 3px #281226,0 6px 0 #0d0810,0 0 30px #f8ac6990;
+}
+.oogie-wheel-page .wheel-marquee::before,
+.oogie-wheel-page .wheel-marquee::after{
+ content:"★";
+ position:absolute;
+ top:50%;
+ transform:translateY(-50%);
+ font-size:clamp(12px,2.5vw,19px);
+ color:var(--casino-gold);
+ text-shadow:0 0 14px #f8c257;
+}
+.oogie-wheel-page .wheel-marquee::before{left:9px}
+.oogie-wheel-page .wheel-marquee::after{right:9px}
+.oogie-wheel-page .boogie-fortune-strip{
+ margin:12px auto 0;
+ padding:7px 8px;
+ width:fit-content;
+ max-width:100%;
+ border-top:1px solid #d5fb7c7a;
+ border-bottom:1px solid #d5fb7c7a;
+ color:#f5dca4;
+ letter-spacing:.15em;
+ font-size:clamp(.55rem,1.2vw,.72rem);
+}
+.oogie-wheel-page .prize-wheel-stage{
+ width:min(100%,510px);
+ margin:27px auto 32px;
+ filter:drop-shadow(0 9px 0 #070611) drop-shadow(0 0 23px #a3ff5e8f);
+}
+.oogie-wheel-page .prize-wheel-stage::before{
+ content:"";
+ position:absolute;
+ inset:-21px;
+ z-index:1;
+ border:0;
+ border-radius:50%;
+ background:repeating-conic-gradient(from 2deg,#fff7c0 0 3deg,#abff5c 3deg 5deg,#583b47 5deg 7deg,transparent 7deg 10deg);
+ -webkit-mask:radial-gradient(circle,transparent 0 91.5%,#000 92.4% 96.2%,transparent 97%);
+ mask:radial-gradient(circle,transparent 0 91.5%,#000 92.4% 96.2%,transparent 97%);
+ filter:drop-shadow(0 0 5px #e2ff98);
+ animation:casino-lights 2.2s ease-in-out infinite;
+ pointer-events:none;
+}
+.oogie-wheel-page .prize-wheel-stage::after{
+ content:"";
+ position:absolute;
+ inset:-26px;
+ z-index:0;
+ border:4px dashed #ceff6e8a;
+ border-radius:50%;
+ box-shadow:0 0 14px #8dff5c5e,inset 0 0 12px #9dff505e;
+ pointer-events:none;
+}
+.oogie-wheel-page .prize-wheel-disc{
+ border:14px solid #1d1727;
+ background:
+  radial-gradient(circle at 29% 21%,#ffffff29 0,transparent 33%),
+  radial-gradient(circle,#0a091200 24%,#11112025 59%,#05020a6e 100%),
+  conic-gradient(from 0deg,
+   #dd3151 0 43deg,#b6f467 43deg 45deg,
+   #16121d 45deg 88deg,#b6f467 88deg 90deg,
+   #7e39b0 90deg 133deg,#b6f467 133deg 135deg,
+   #dd5641 135deg 178deg,#b6f467 178deg 180deg,
+   #1e1929 180deg 223deg,#b6f467 223deg 225deg,
+   #773fac 225deg 268deg,#b6f467 268deg 270deg,
+   #c52b64 270deg 313deg,#b6f467 313deg 315deg,
+   #13151e 315deg 358deg,#b6f467 358deg 360deg);
+ box-shadow:
+  inset 0 0 0 4px #dcf7a1,
+  inset 0 0 0 10px #452450,
+  0 0 0 3px #f5d179,
+  0 0 0 10px #211328,
+  0 0 0 16px #81508b,
+  0 0 0 21px #0e0916,
+  0 0 33px #9bff5bd6;
+}
+.oogie-wheel-page .prize-wheel-disc::before{
+ inset:2%;
+ background:repeating-conic-gradient(from 1deg,#d1ff86 0 1.5deg,transparent 1.5deg 6deg);
+ -webkit-mask:radial-gradient(circle,transparent 0 80%,#000 81% 84%,transparent 85%);
+ mask:radial-gradient(circle,transparent 0 80%,#000 81% 84%,transparent 85%);
+}
+.oogie-wheel-page .prize-wheel-disc::after{
+ inset:3%;
+ background:repeating-conic-gradient(from 0deg,#f8d789 0 2deg,transparent 2deg 11.25deg);
+ -webkit-mask:radial-gradient(circle,transparent 0 94%,#000 94.5% 97%,transparent 97.5%);
+ mask:radial-gradient(circle,transparent 0 94%,#000 94.5% 97%,transparent 97.5%);
+}
+.oogie-wheel-page .prize-wheel-pointer{
+ top:-52px;
+ z-index:8;
+ border-left:23px solid transparent;
+ border-right:23px solid transparent;
+ border-top:61px solid #d2ff7d;
+ filter:drop-shadow(2px 4px 0 #150b1e) drop-shadow(0 0 9px #e0ff96);
+}
+.oogie-wheel-page .prize-wheel-label{
+ width:29%;
+ padding:4px 2px;
+ color:#fffcee;
+ font-size:clamp(9px,1.3vw,12px);
+ line-height:1.08;
+ letter-spacing:.02em;
+ text-shadow:1px 2px 0 #050308,-1px -1px 0 #080511,0 0 7px #08040d;
+}
+.oogie-wheel-page .prize-wheel-label span:last-child{
+ display:block;
+ max-width:100%;
+ padding:3px 5px 2px;
+ border-radius:5px;
+ background:#1009177d;
+ box-shadow:0 0 0 1px #fbf1c841;
+}
+.oogie-wheel-page .prize-wheel-label .wheel-icon{
+ margin-bottom:2px;
+ font-size:clamp(18px,2.6vw,27px);
+ filter:drop-shadow(0 2px 3px #09030f);
+}
+.oogie-wheel-page .prize-wheel-hub.boogie-hub{
+ width:26%;
+ height:26%;
+ min-width:76px;
+ min-height:76px;
+ border:7px ridge #f5d47d;
+ background:radial-gradient(circle at 27% 23%,#fff4bf,#ac712c 62%,#42201e);
+ box-shadow:inset 0 0 8px #7c4425,0 0 0 5px #190e1f,0 0 0 9px #d0ff76,0 4px 14px #040208,0 0 35px #a9ff6688;
+}
+.oogie-wheel-page .boogie-face .sack{stroke-width:3.5}
+.oogie-wheel-page .boogie-face .eyes,
+.oogie-wheel-page .boogie-face .smile{filter:drop-shadow(0 0 2px #281b29)}
+.oogie-wheel-page .boogie-13{
+ width:51px;height:51px;
+ font-size:1.75rem;
+ box-shadow:0 0 0 3px #e8d77f,0 0 18px #bcff68;
+}
+.oogie-wheel-page .boogie-dice{
+ text-shadow:0 0 15px #d1ff86;
+ font-size:clamp(2rem,4vw,2.8rem);
+}
+.oogie-wheel-page .wheel-controls{
+ position:relative;
+ gap:12px;
+ padding-top:3px;
+}
+.oogie-wheel-page #prize-wheel-spin{
+ border:3px solid #e9fdae;
+ border-radius:16px;
+ padding:15px 24px;
+ min-height:64px;
+ background:linear-gradient(180deg,#e5ff9b 0%,#adf854 43%,#78ad2a 100%);
+ box-shadow:inset 0 2px 0 #f6ffd2,0 6px 0 #315a19,0 10px 0 #130b1b,0 0 22px #aeff5a8e;
+ color:#141b0b;
+ font-size:1.25rem;
+ letter-spacing:.08em;
+}
+.oogie-wheel-page #prize-wheel-spin:hover:not(:disabled){
+ transform:translateY(-2px);
+ box-shadow:inset 0 2px 0 #f6ffd2,0 8px 0 #315a19,0 12px 0 #130b1b,0 0 33px #c4ff87;
+}
+.oogie-wheel-page #prize-wheel-spin:active:not(:disabled){transform:translateY(3px)}
+.oogie-wheel-page #prize-wheel-sound{
+ border:2px solid #c4fb7b;
+ border-radius:13px;
+ background:linear-gradient(#42204c,#24172d);
+ color:#f0ffc9;
+}
+.oogie-wheel-page #prize-wheel-sound[aria-pressed="true"]{background:#305333;color:#f7ffcd}
+.oogie-wheel-page .wheel-smallprint{
+ position:relative;
+ max-width:480px;
+ margin-top:22px;
+ padding:12px 12px 0;
+ border-top:1px dashed #c1ef7b77;
+ color:#cfbfd5;
+}
+.oogie-wheel-page .wheel-sidebar{gap:18px}
+.oogie-wheel-page .wheel-card{
+ position:relative;
+ overflow:hidden;
+ border:2px solid #9ab65d;
+ border-radius:17px;
+ padding:20px;
+ background:radial-gradient(circle at 95% 0,#63446c55 0,transparent 45%),linear-gradient(160deg,#2b1c3b,#120f1d 85%);
+ box-shadow:0 6px 0 #0b0911,inset 0 0 0 2px #c3e88524,0 0 16px #baff3823;
+}
+.oogie-wheel-page .wheel-card::before{
+ content:"";
+ position:absolute;
+ inset:7px;
+ border:1px dashed #bdf4753d;
+ border-radius:10px;
+ pointer-events:none;
+}
+.oogie-wheel-page .wheel-card h2{
+ position:relative;
+ margin-bottom:14px;
+ color:#d8ff97;
+ font:900 1.17rem/1.2 Impact,"Arial Black",sans-serif;
+ letter-spacing:.095em;
+ text-shadow:2px 2px 0 #1e1124,0 0 12px #abff5480;
+}
+.oogie-wheel-page #wheel-spins-number{color:#efffc2;text-shadow:3px 4px #416729,0 0 17px #95fd57}
+.oogie-wheel-page .wheel-spin-light{
+ width:29px;height:29px;
+ border:3px solid #4f3c55;
+ background:radial-gradient(circle at 40% 35%,#493954,#1e172a);
+ box-shadow:inset 0 1px 5px #000c;
+}
+.oogie-wheel-page .wheel-spin-light.is-available{
+ border-color:#f4d987;
+ background:radial-gradient(circle at 34% 29%,#f9ffd9,#a8fa58 54%,#629a2d);
+ box-shadow:0 0 15px #baff65,inset 0 0 3px #eaffb1;
+}
+.oogie-wheel-page #prize-wheel-counter{color:#e4ebd2;font-size:.85rem}
+.oogie-wheel-page #prize-wheel-result{
+ border:2px dashed #c9e78d;
+ border-radius:12px;
+ padding:17px;
+ min-height:92px;
+ font-size:1rem;
+ background:linear-gradient(145deg,#191125,#1a1520);
+}
+.oogie-wheel-page #prize-wheel-result[data-tone="success"]{
+ border-style:solid;
+ border-color:#d7ff87;
+ color:#f5ffce;
+ background:linear-gradient(145deg,#23472a,#162b25);
+ box-shadow:0 0 20px #baff5440;
+}
+.oogie-wheel-page .wheel-prize-list{gap:9px}
+.oogie-wheel-page .wheel-prize-list li{
+ position:relative;
+ display:flex;
+ align-items:center;
+ gap:8px;
+ border:1px solid #75588c;
+ border-radius:11px;
+ padding:10px 8px;
+ background:#23182f;
+ font-size:.77rem;
+}
+.oogie-wheel-page .wheel-prize-list li:nth-child(4n + 1){border-left:4px solid #ed5168}
+.oogie-wheel-page .wheel-prize-list li:nth-child(4n + 2){border-left:4px solid #b4e565}
+.oogie-wheel-page .wheel-prize-list li:nth-child(4n + 3){border-left:4px solid #a66bd4}
+.oogie-wheel-page .wheel-prize-list li:nth-child(4n + 4){border-left:4px solid #e5bc79}
+.oogie-wheel-page .wheel-activity li{padding:10px 11px;background:#21172f;color:#e9e0f5;border-left:4px solid #c6ef7a}
+.oogie-wheel-page .wheel-sidebar>.button{
+ min-height:48px;
+ border:2px solid #a6e36b;
+ border-radius:12px;
+ color:#e5ffc6;
+}
+.oogie-wheel-page .wheel-machine.is-spinning .prize-wheel-stage::before{animation:casino-lights .27s steps(2) infinite}
+.oogie-wheel-page .wheel-machine.is-spinning .wheel-marquee{animation:casino-sign .35s ease-in-out infinite alternate}
+@keyframes casino-lights{0%,100%{opacity:1;filter:drop-shadow(0 0 7px #d7ffa2)}50%{opacity:.58;filter:drop-shadow(0 0 2px #abd369)}}
+@keyframes casino-sign{from{filter:brightness(1)}to{filter:brightness(1.35)}}
+@media(max-width:900px){
+ .oogie-wheel-page .wheel-layout{grid-template-columns:1fr}
+ .oogie-wheel-page .wheel-sidebar{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .oogie-wheel-page .wheel-sidebar .wheel-card:first-child{grid-column:1/-1}
+}
+@media(max-width:560px){
+ .oogie-wheel-page .prize-wheel-section{padding:16px 11px;border-radius:19px}
+ .oogie-wheel-page .wheel-heading{padding-bottom:22px}
+ .oogie-wheel-page .wheel-heading h1{font-size:clamp(2.15rem,9vw,3.2rem)}
+ .oogie-wheel-page .wheel-machine{padding:14px 9px 25px;border-width:3px;border-radius:24px}
+ .oogie-wheel-page .wheel-marquee{font-size:clamp(.95rem,5vw,1.35rem);padding:12px 21px;letter-spacing:.085em}
+ .oogie-wheel-page .boogie-fortune-strip{font-size:.55rem;letter-spacing:.05em;gap:6px}
+ .oogie-wheel-page .prize-wheel-stage{width:min(100%,calc(100vw - 93px));margin:27px auto 30px}
+ .oogie-wheel-page .prize-wheel-stage::before{inset:-14px}
+ .oogie-wheel-page .prize-wheel-stage::after{inset:-18px;border-width:3px}
+ .oogie-wheel-page .prize-wheel-disc{border-width:8px}
+ .oogie-wheel-page .prize-wheel-pointer{top:-38px;border-left-width:17px;border-right-width:17px;border-top-width:46px}
+ .oogie-wheel-page .prize-wheel-label{width:31%;font-size:clamp(6.8px,2vw,9px);padding:0;letter-spacing:0}
+ .oogie-wheel-page .prize-wheel-label span:last-child{padding:2px 2px}
+ .oogie-wheel-page .prize-wheel-label .wheel-icon{font-size:clamp(13px,4.3vw,20px)}
+ .oogie-wheel-page .prize-wheel-hub.boogie-hub{width:25%;height:25%;min-width:49px;min-height:49px;border-width:3px}
+ .oogie-wheel-page .boogie-13{width:30px;height:30px;font-size:1rem}
+ .oogie-wheel-page .boogie-dice{font-size:1.55rem}
+ .oogie-wheel-page .wheel-sidebar{grid-template-columns:1fr}
+ .oogie-wheel-page .wheel-card{padding:16px}
+ .oogie-wheel-page .wheel-prize-list li{font-size:.7rem;padding:8px 6px}
+ .oogie-wheel-page #prize-wheel-spin{min-height:58px;font-size:1.1rem}
+}
+@media(prefers-reduced-motion:reduce){
+ .oogie-wheel-page .prize-wheel-stage::before,
+ .oogie-wheel-page .wheel-machine.is-spinning .prize-wheel-stage::before,
+ .oogie-wheel-page .wheel-machine.is-spinning .wheel-marquee{animation:none}
+}
