@@ -351,3 +351,22 @@ if (year) year.textContent = String(new Date().getFullYear());
   sheet.dataset.ctoonSpectacle = 'true';
   document.head.append(sheet);
 })();
+
+/* Cartoon section banners: augment page headings without rewriting any
+   existing page or changing the maintenance/operational site status. */
+(() => {
+  if (!document.querySelector('link[href^="page-banners.css"]')) {
+    const sheet=document.createElement('link');
+    sheet.rel='stylesheet';
+    sheet.href='page-banners.css?v=20261112-toon-banners-v1';
+    sheet.dataset.ctoonSectionBanners='true';
+    document.head.append(sheet);
+  }
+  if (!document.querySelector('script[src^="page-banners.js"]')) {
+    const script=document.createElement('script');
+    script.src='page-banners.js?v=20261112-toon-banners-v1';
+    script.defer=true;
+    script.dataset.ctoonSectionBanners='true';
+    document.head.append(script);
+  }
+})();
