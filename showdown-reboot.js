@@ -71,7 +71,7 @@ const jeice={slot:9,fighter_id:'jeice',name:'Jeice',series:'Dragon Ball Z',accen
  preview_sheet:'/images/showdown/jeice-4x4.png?v=20261111',preview_columns:4,preview_rows:4,
  enabled:true,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.'};
 const oogieBoogie={slot:10,fighter_id:'oogie-boogie',name:'Oogie Boogie',series:'The Nightmare Before Christmas',accent:'#a6e45c',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:'/images/showdown/oogie-boogie-4x4.png?v=20261111',preview_sheet:'/images/showdown/oogie-boogie-4x4.png?v=20261111',preview_columns:4,preview_rows:4};
-const buggyTheClown={slot:11,fighter_id:'buggy-the-clown',name:'Buggy the Clown',series:'One Piece',accent:'#e64d8d',enabled:true,coming_soon:false,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.',portrait:'/images/showdown/buggy-the-clown-portrait.png',preview_sheet:'/images/showdown/buggy-the-clown-4x4.png',preview_columns:4,preview_rows:4};
+const buggyTheClown={slot:11,fighter_id:'buggy-the-clown',name:'Buggy the Clown',series:'One Piece',accent:'#e64d8d',enabled:true,coming_soon:false,unlockable:true,unlock_method:'owner',unlock_cost:0,unlock_hint:'Locked fighter · unlock requirements coming soon.',portrait:'/images/showdown/buggy-the-clown-portrait.png',preview_sheet:'/images/showdown/buggy-the-clown-4x4.png?v=buggy-pose-map-20261112',preview_columns:4,preview_rows:4};
 const drDrakken={slot:12,fighter_id:'dr-drakken',name:'Dr. Drakken',series:'Kim Possible',accent:'#4d9bdb',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
 const captainHook={slot:13,fighter_id:'captain-hook',name:'Captain Hook',series:'Peter Pan',accent:'#cf414e',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
 const baymax={slot:14,fighter_id:'baymax',name:'Baymax',series:'Big Hero 6',accent:'#e2e9f3',enabled:false,coming_soon:true,unlockable:false,unlock_hint:'Coming Soon · Fighter in development',portrait:null,preview_sheet:null};
@@ -212,7 +212,7 @@ function spriteSources(profile){
 // Support both Johnny's padded 6x11 rig and the legacy 3x11 backups.
 function spriteLayout(profile,source){
  const johnny=profile?.fighter_id==='johnny-bravo';
- const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter|the-flea|nigel-uno)-4x4\.png/i.test(source);
+ const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter|the-flea|nigel-uno|buggy-the-clown)-4x4\.(?:png|webp)/i.test(source);
  const polished=johnny&&/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(source);
   const legacyJack=/samurai-jack-atlas\.svg/i.test(source);
  return {columns:uploaded?4:polished?6:(johnny||legacyJack)?3:Math.max(1,Number(profile?.preview_columns)||3),
@@ -374,6 +374,26 @@ function jeiceSpriteCell(row,frame){
  const pose=poses[Math.max(0,frame)%poses.length];
  return {frame:pose[0],row:pose[1]};
 }
+// Buggy's 4x4 sheet: four standing variations, four movement poses,
+// four attacks/reactions and four hurt/knockdown frames.
+const BUGGY_POSE_MAP=[
+ [[0,0],[1,0],[2,0]],              // idle
+ [[0,1],[1,1],[2,1]],              // walk
+ [[1,1],[2,1],[3,1]],              // run
+ [[0,2],[1,2],[2,2]],              // punch
+ [[2,1],[3,1],[1,3]],              // kick
+ [[0,0],[1,2],[0,0]],              // guard
+ [[1,1],[2,1],[3,1]],              // jump
+ [[0,3],[1,1],[0,3]],              // crouch
+ [[1,2],[2,2],[3,2]],              // special
+ [[3,2],[0,3],[1,3]],              // hurt
+ [[2,3],[3,3],[3,3]]               // KO
+];
+function buggySpriteCell(row,frame){
+ const poses=BUGGY_POSE_MAP[Math.max(0,Math.min(10,row))];
+ const cell=poses[Math.max(0,frame)%poses.length];
+ return {frame:cell[0],row:cell[1]};
+}
 function courageSpriteCell(row,frame){
  const poses=COURAGE_POSE_MAP[Math.max(0,Math.min(10,row))];
  const pose=poses[Math.max(0,frame)%poses.length];
@@ -411,6 +431,7 @@ function spritePose(f,t,columns){
  if(columns===4&&f.profile?.fighter_id==='nigel-uno')return nigelSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='courage')return courageSpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='jeice')return jeiceSpriteCell(row,frame);
+  if(columns===4&&f.profile?.fighter_id==='buggy-the-clown')return buggySpriteCell(row,frame);
  if(columns===4&&f.profile?.fighter_id==='oogie-boogie')return oogieSpriteCell(row,frame);
  return columns===4&&f.profile?.fighter_id==='johnny-bravo'?johnnySpriteCell(row,frame):{row,frame};
 }
@@ -568,8 +589,8 @@ function renderPreviewFrame(timestamp){
  const isLoop=['idle','walk','run','guard','crouch'].includes(previewAnimation.pose);
  const interval=previewAnimation.pose==='run'?85:previewAnimation.pose==='walk'?115:190;
  const actionFrame=isLoop?Math.floor(age/interval)%cols:Math.min(cols-1,Math.floor((age%1400)/(1400/cols)));
- const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter|the-flea)-4x4\.png/i.test(previewAnimation.source||'');
- const {row,frame}=uploaded?(selection.fighters.get(selection.slot)?.fighter_id==='samurai-jack'?jackSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='kim-possible'?kimSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='perfect-cell'?cellSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='burter'?burterSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='the-flea'?fleaSpriteCell(actionRow,actionFrame):johnnySpriteCell(actionRow,actionFrame)):{row:actionRow,frame:actionFrame};
+ const uploaded=/(?:johnny-bravo-new|samurai-jack|kim-possible|perfect-cell|burter|the-flea|buggy-the-clown)-4x4\.(?:png|webp)/i.test(previewAnimation.source||'');
+ const {row,frame}=uploaded?(selection.fighters.get(selection.slot)?.fighter_id==='samurai-jack'?jackSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='kim-possible'?kimSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='perfect-cell'?cellSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='burter'?burterSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='the-flea'?fleaSpriteCell(actionRow,actionFrame):selection.fighters.get(selection.slot)?.fighter_id==='buggy-the-clown'?buggySpriteCell(actionRow,actionFrame):johnnySpriteCell(actionRow,actionFrame)):{row:actionRow,frame:actionFrame};
  const polished=/johnny-bravo-(?:polished-atlas|limbs-v3)\.svg/i.test(previewAnimation.source||'');
  p.clearRect(0,0,canvas.width,canvas.height);
  p.save();p.imageSmoothingEnabled=!polished&&!uploaded;p.imageSmoothingQuality='high';
