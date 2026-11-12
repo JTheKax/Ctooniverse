@@ -77,7 +77,7 @@
  function switchChart(nextSong,nextMode){
   if(dirty&&!confirm("Discard unsaved changes to this chart?")){refreshSelection();return;}
   song=nextSong;mode=nextMode;start=0;$("cs-start").value="0";
-  loadSerial++;
+  loadSerial++;$("cs-base").disabled=false;
   refreshSelection();
   const saved=readSaved();
   notes=saved||[];dirty=false;
