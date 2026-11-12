@@ -19,7 +19,7 @@ const result=$('prize-wheel-result'),counter=$('prize-wheel-counter'),number=$('
 const lights=[...document.querySelectorAll('.wheel-spin-light')],machine=$('wheel-machine');
 const recent=$('wheel-recent'),sound=$('prize-wheel-sound'),accountLink=$('wheel-account-link');
 const MAX_SPINS=3;
-let rotation=0,busy=false,remaining=0,signedIn=false,verified=false,requestId=0,soundOn=false,audioContext=null;
+let rotation=0,busy=false,remaining=0,signedIn=false,verified=false,requestId=0,soundOn=false,audioContext=null,checkError=null;
 const formatCount=n=>Math.max(0,Math.min(MAX_SPINS,Number(n)||0));
 const setMessage=(message,tone='info')=>{result.textContent=message;result.dataset.tone=tone;};
 const setButton=()=>{
@@ -29,9 +29,9 @@ const setButton=()=>{
 function displayCounter(){
  number.textContent=String(verified&&signedIn?remaining:0);
  for(let i=0;i<lights.length;i++)lights[i].classList.toggle('is-available',verified&&signedIn&&i<remaining);
- counter.textContent=!verified?'Checking your daily spins…':!signedIn?
+ counter.textContent=checkError||(!verified?'Checking your daily spins…':!signedIn?
   'Sign in to claim your 3 daily preview spins.':
-  remaining+' of '+MAX_SPINS+' spins available today · Reset: 00:00 UTC.';
+  remaining+' of '+MAX_SPINS+' spins available today · Reset: 00:00 UTC.');
  accountLink.hidden=!!signedIn;
  setButton();
 }
@@ -85,7 +85,7 @@ function showRecent(prize){
 async function check(){
  if(busy)return;
  const id=++requestId;
- verified=false;signedIn=false;remaining=0;displayCounter();
+ verified=false;signedIn=false;remaining=0;checkError=null;displayCounter();
  try{
   const auth=await db.auth.getUser();
   if(id!==requestId||busy)return;
@@ -99,11 +99,11 @@ async function check(){
   if(error)throw error;
   remaining=formatCount(MAX_SPINS-Number(data?.used||0));
   verified=true;
-  if(!remaining)setMessage('All three preview spins have been used today. They reset at midnight UTC.');
+  if(!remaining&&result.dataset.tone!=='success')setMessage('All three preview spins have been used today. They reset at midnight UTC.');
  }catch(error){
   if(id!==requestId)return;
   remaining=0;signedIn=false;verified=false;
-  counter.textContent='Could not verify daily spins: '+(error?.message||'Connection error');
+  checkError='Could not verify daily spins: '+(error?.message||'Connection error');
   setMessage('Unable to verify spins. Reload the page and try again.','error');
  }finally{if(id===requestId&&!busy)displayCounter();}
 }
