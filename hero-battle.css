@@ -75,3 +75,56 @@ footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;paddin
 @media(max-width:800px){.hb-columns,.hb-hero-columns{grid-template-columns:1fr}.hb-details{position:static}.hb-hero{align-items:stretch}.hb-stats{width:100%}}
 @media(max-width:500px){.hb-shell{padding-left:9px;padding-right:9px}.hb-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.hb-tabs button{padding:10px 3px;font-size:.7rem}.hb-missions{grid-template-columns:repeat(2,minmax(0,1fr))}.hb-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.hb-team-preview,.hb-team-slots{gap:3px}.hb-mini{font-size:.56rem;min-height:79px}.hb-mini b{font-size:1.25rem}.hb-unit{min-width:65px;width:calc(20% - 7px);padding:4px}.hb-unit strong{font-size:.63rem}.hb-unit small{font-size:.59rem}.hb-unit button{font-size:.56rem}.hb-arena{padding:6px}.hb-portrait{font-size:2.5rem}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Battle Quest v2: mission briefing, quick squad tools and active wave indicator. */
+.hb-intel{
+  margin:14px 0;padding:14px;border:1px solid #7466c0;border-radius:14px;
+  background:linear-gradient(155deg,#262257,#122547);
+  box-shadow:inset 0 1px #ffffff20;
+}
+.hb-intel-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.hb-intel-heading strong{font-size:.82rem;letter-spacing:1px;color:#ffdc90}
+.hb-intel-heading span{font-size:.72rem;color:#bbf1ff}
+.hb-intel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.hb-intel-grid>div{min-width:0;border:1px solid #515aa3;background:#10173899;border-radius:10px;padding:11px 10px}
+.hb-intel-grid small{display:block;font-weight:750;font-size:.62rem;letter-spacing:.7px;color:#b9caff;line-height:1.4}
+.hb-intel-grid strong{display:block;font-size:clamp(.95rem,2.5vw,1.3rem);color:#f3e8ff;margin-top:3px;font-variant-numeric:tabular-nums}
+.hb-intel .hb-note{margin:10px 0 0}
+.hb-ready #hb-quick-team{
+  display:block;width:100%;margin:12px 0 9px;min-height:46px;
+  border-color:#8dcaff;background:linear-gradient(115deg,#1a5671,#333483);
+}
+.hb-team-actions{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 20px}
+.hb-team-actions>.hb-btn{flex:1 1 180px;min-height:46px}
+.hb-team-actions .hb-primary{
+  width:auto;background:linear-gradient(120deg,#314a98,#3e70a9);
+}
+.hb-wave-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0 16px}
+.hb-wave-step{
+  min-width:0;text-align:center;border-radius:10px;padding:8px 6px;
+  border:2px solid #55518d;background:#17183d;color:#bfb7df;
+  font-size:.78rem;font-weight:900;letter-spacing:.3px;
+}
+.hb-wave-step.current{
+  border-color:#8be3ff;color:#effcff;
+  background:linear-gradient(120deg,#203e83,#492e9e);
+  box-shadow:0 0 14px #46bffd55;
+}
+.hb-wave-step.cleared{border-color:#48b798;color:#d0ffea;background:#184d4a}
+.hb-battle-actions>.hb-btn{
+  min-height:44px;
+  flex:1 1 140px;
+  white-space:normal;
+}
+.hb-battle-actions #hb-pause[aria-pressed="true"]{background:#246453;border-color:#71f6be;color:#eafff5}
+.hb-battle-actions #hb-speed{border-color:#7ca9ea}
+.hb-battle-actions #hb-retreat{flex:1 1 175px}
+@media(max-width:540px){
+ .hb-intel{padding:10px}
+ .hb-intel-grid{gap:5px}
+ .hb-intel-grid>div{padding:9px 8px}
+ .hb-wave-track{gap:4px}
+ .hb-wave-step{padding:8px 2px;font-size:.7rem}
+ .hb-battle-actions{gap:7px}
+ .hb-battle-actions>.hb-btn{flex:1 1 calc(50% - 8px);font-size:.75rem;padding:11px 7px}
+}
