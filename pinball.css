@@ -1,0 +1,33 @@
+/* CTooniverse Pinball: responsive arcade controls and cabinet. */
+.pinball-page{max-width:900px;text-align:center;padding-top:clamp(22px,5vw,52px)}
+.pinball-page h1{margin-bottom:10px}
+.pinball-page>p{margin-left:auto;margin-right:auto}
+.pinball-stats{gap:10px;margin:20px auto 24px}
+.pinball-stats strong{min-width:116px;font-variant-numeric:tabular-nums;letter-spacing:.2px}
+.pinball-cabinet{width:min(100%,466px);padding:10px;border:8px solid #f8ce59;border-radius:29px;background:linear-gradient(145deg,#451ba0,#100a38);box-shadow:0 0 0 5px #1e143a,0 0 24px #58d8ff88,0 12px 28px #030719cc}
+.pinball-cabinet canvas{width:100%;height:auto;display:block;border:2px solid #7462dc;border-radius:15px;background:#191454;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer}
+.pinball-controls{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin:22px auto 10px}
+.pinball-controls button{min-height:54px;min-width:150px;font-size:.95rem;letter-spacing:.4px;touch-action:none;user-select:none;-webkit-user-select:none}
+.pinball-controls #pinball-left{background:#62e6fb}
+.pinball-controls #pinball-right{background:#ff86db}
+.pinball-controls #pinball-launch{background:#ffe06a}
+.pinball-controls button.is-pressed,.pinball-controls button:active{transform:translateY(4px);box-shadow:0 1px #2b438d}
+.pinball-secondary-controls{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:14px auto}
+.pinball-secondary-controls button{min-width:110px;padding:10px 17px;border:2px solid #a38aff;border-radius:12px;background:#24164e;color:#f8f2ff;font:800 14px system-ui,sans-serif;cursor:pointer}
+.pinball-secondary-controls button:disabled{opacity:.45;cursor:not-allowed}
+.pinball-secondary-controls button:not(:disabled):hover{background:#3f2680}
+.pinball-controls button:focus-visible,.pinball-secondary-controls button:focus-visible,.pinball-cabinet canvas:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.pinball-page #pinball-message{min-height:2em;margin:15px auto;font-weight:800;color:#fff5b0}
+.pinball-page .pinball-instructions{max-width:660px;line-height:1.6}
+.pinball-mobile-tip{color:#9aeeff;font-size:.93rem}
+@media(max-width:600px){
+  .pinball-page{padding:20px 10px 38px}
+  .pinball-page h1{font-size:clamp(32px,8vw,46px)}
+  .pinball-stats strong{min-width:0;padding:9px 10px;font-size:.86rem;flex:1 1 90px}
+  .pinball-cabinet{width:min(100%,440px);padding:6px;border-width:5px;border-radius:19px}
+  .pinball-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:16px}
+  .pinball-controls button{min-width:0;padding:12px 8px;font-size:.82rem;min-height:56px}
+  .pinball-controls #pinball-launch{grid-column:1/-1;grid-row:1}
+  .pinball-secondary-controls button{flex:1 1 110px}
+}
+@media(max-height:500px) and (min-width:601px){.pinball-cabinet{width:min(100%,340px)}}
