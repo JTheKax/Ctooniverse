@@ -22,7 +22,7 @@ for(const link of document.querySelectorAll('.site-header nav a.owner-nav, .site
  trigger.type='button';trigger.className='nav-link owner-menu-trigger';
  if(ownerLinks.some(([,url])=>location.pathname.endsWith('/'+url.split('#')[0])))trigger.classList.add('active');
  trigger.setAttribute('aria-haspopup','true');trigger.setAttribute('aria-expanded','false');
- trigger.innerHTML='<span class="nav-icon" aria-hidden="true">♛</span><span>Owner</span><span aria-hidden="true">▾</span>';
+ trigger.innerHTML='<span class="nav-icon" aria-hidden="true">👑</span><span>Owner</span><span aria-hidden="true">▾</span>';
  const panel=document.createElement('div');panel.className='owner-menu-panel';
  for(const [label,url] of ownerLinks){const a=document.createElement('a');a.href=url;a.textContent=label;panel.append(a)}
  menu.append(trigger,panel);link.replaceWith(menu);
