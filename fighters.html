@@ -38,7 +38,7 @@
     <div class="command-grid">
       <div class="command-intro"><span class="command-overline">WELCOME TO THE ARENA</span><h2>YOUR NEXT<br><em>CHALLENGER</em> AWAITS.</h2><p>Pick your fighter, unlock new rivals, and take the battle across six arenas. Your 2D fighting game starts below.</p><a class="command-cta" href="#showdown-roster-layer">⚡ ENTER CHARACTER SELECT <span aria-hidden="true">→</span></a></div>
       <div class="command-news"><div class="command-news-title"><span>✦</span> SHOWDOWN BULLETIN <span class="command-live">LATEST</span></div>
-        <div class="news-entry"><b>01</b><span><strong>SAMURAI JACK</strong><small>Unlockable for 2,000 Cartoon Coins</small></span><span class="news-status locked">LOCKED</span></div>
+        <div class="news-entry"><b>01</b><span><strong>SAMURAI JACK</strong><small>Unlock by winning 10 Arcade matches</small></span><span class="news-status locked">LOCKED</span></div>
         <div class="news-entry"><b>02</b><span><strong>NIGEL UNO</strong><small>Now part of the fighter roster</small></span><span class="news-status">READY</span></div>
         <div class="news-entry"><b>03</b><span><strong>ROSTER EXPANSION</strong><small>200 slots · alphabetical selection</small></span><span class="news-status">ACTIVE</span></div>
       </div>
@@ -88,12 +88,12 @@
 <section id="showdown-roster-layer" class="showdown-panel roster-showcase" aria-labelledby="roster-title">
     <div class="panel-header">
       <div><p class="eyebrow">01 / ARCADE CHARACTER SELECT</p><h2 id="roster-title">SELECT YOUR FIGHTER</h2><p class="roster-subtitle">200 starting spots · new challengers unlock as the roster grows</p></div>
-      <span class="roster-tally" id="roster-tally">0 / 200 published</span>
+      <span class="roster-tally" id="roster-tally">0 / 200 listed</span>
     </div>
     <div class="roster-marquee" aria-hidden="true"><span>1P / CHARACTER SELECT</span><strong>CHOOSE YOUR CHAMPION</strong><span>★ READY TO BATTLE ★</span></div>
     <div class="roster-scoreboard" aria-label="Roster progress">
       <div class="roster-score"><strong id="roster-ready">0</strong><span>Playable</span></div>
-      <div class="roster-score"><strong id="roster-locked">0</strong><span>Unlockable <span aria-hidden="true">🔒</span></span></div>
+      <div class="roster-score"><strong id="roster-locked">0</strong><span>Still locked <span aria-hidden="true">🔒</span></span></div>
       <div class="roster-score"><strong id="roster-open">200</strong><span>Open Slots</span></div>
     </div>
     <div class="fighter-account-bar"><span id="fighter-account-status" role="status">Checking player account…</span><span id="fighter-balance" class="fighter-wallet" hidden>0 Cartoon Coins</span><a href="login.html" id="fighter-signin" hidden>Sign in to unlock fighters</a></div>
@@ -101,7 +101,7 @@
     <div class="roster-controls">
       <label>Search fighter or slot <input id="roster-search" type="search" placeholder="Name, series, or slot 025" autocomplete="off"></label>
       <label>Series <select id="roster-series"><option value="all">All series</option></select></label>
-      <label>Show <select id="roster-state"><option value="all">All roster slots</option><option value="ready">All published</option><option value="playable">Playable now</option><option value="unlockable">🔒 Unlockable fighters</option><option value="owned">✓ My unlocked fighters</option><option value="empty">Open slots</option></select></label>
+      <label>Show <select id="roster-state"><option value="all">All roster slots</option><option value="ready">All listed fighters</option><option value="playable">Playable now</option><option value="unlockable">🔒 Unlockable fighters</option><option value="owned">✓ My unlocked fighters</option><option value="empty">Open slots</option></select></label>
       <label>Sort by <select id="roster-sort"><option value="name" selected>Fighter A–Z</option><option value="series">Series A–Z</option><option value="slot">Roster slot</option></select></label>
     </div>
     <div class="roster-shortcuts" role="group" aria-label="Quick roster filters">
@@ -219,6 +219,6 @@
   </section>
   <footer class="footer"><span>CTOON SHOWDOWN · 200 STARTING SLOTS · EXPANDABLE</span><a href="owner-fighters.html" id="owner-fighter-link" hidden>Owner Fighter Manager</a><a href="games.html">Back to Games</a></footer>
 </main>
-<script type="module" src="showdown-reboot.js?v=buggy-owner-art-20261112"></script>
+<script type="module" src="showdown-reboot.js?v=roster-fix-20261112-v1"></script>
 </body>
 </html>
