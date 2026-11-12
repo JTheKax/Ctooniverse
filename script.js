@@ -178,7 +178,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   ]){
     if(hasScript(filename))continue;
     const script=document.createElement('script');
-    script.src=filename+'?v=nav-unified-20261112';
+    script.src=filename+'?v=nav-icons-20261112-v2';
     if(type)script.type=type;
     document.head.append(script);
   }
