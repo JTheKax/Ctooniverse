@@ -9,10 +9,10 @@
   <link rel="preconnect" href="https://hsxdyxdazsdmpucyhqly.supabase.co" crossorigin>
   <link rel="stylesheet" href="ctoon-jam.css?v=jam-performance-20261109">
   <link rel="stylesheet" href="site-status.css?v=nav-colors-20261108">
-  <script src="ctoon-jam-v2.js?v=rebuild-20261112-1" defer></script>
+  <script src="ctoon-jam-v2.js?v=studio-tracks-fx-20261112" defer></script>
   <script src="site-status.js?v=nav-colors-20261108" defer></script>
   <link rel="stylesheet" href="mobile-responsive.css?v=mobile-layout-20261109-v2">
-  <link rel="stylesheet" href="ctoon-jam-v2.css?v=rebuild-20261112-1">
+  <link rel="stylesheet" href="ctoon-jam-v2.css?v=studio-tracks-fx-20261112">
   <link rel="stylesheet" href="standalone-nav.css?v=nav-icons-20261112-v2">
   <script src="standalone-nav.js?v=nav-icons-20261112-v2" defer></script>
 </head>
@@ -54,8 +54,8 @@
         <canvas id="jam-board" width="960" height="640" tabindex="0" aria-label="Five-lane perspective note highway. Hold colored frets A S D J K and strum with Arrow Up, Arrow Down or Enter."></canvas>
         <section id="jam-song-picker" class="jam-song-picker" aria-labelledby="jam-picker-heading">
           <div class="jam-picker-top">
-            <div><p class="jam-picker-eyebrow">CTOONIVERSE • SETLIST</p><h2 id="jam-picker-heading">CHOOSE YOUR SONG</h2><p class="jam-picker-intro">Select an original arcade track or the featured practice recording. Choose a difficulty and jump straight into the note highway.</p></div>
-            <span id="jam-picker-count" class="jam-picker-count">4 TRACKS</span>
+            <div><p class="jam-picker-eyebrow">CTOONIVERSE • SETLIST</p><h2 id="jam-picker-heading">CHOOSE YOUR SONG</h2><p class="jam-picker-intro">Choose from six original arcade tracks and one featured practice recording, or create your own local note pattern in Chart Studio.</p></div>
+            <span id="jam-picker-count" class="jam-picker-count">7 TRACKS</span>
           </div>
           <div class="jam-picker-toolbar">
             <label for="jam-picker-search" class="jam-picker-search-label">Find a song
@@ -84,7 +84,7 @@
               </div>
               <p id="jam-picker-best" class="jam-picker-best">No personal best yet</p>
               <button id="jam-picker-start" class="jam-button jam-primary jam-picker-start" type="button">▶ PLAY SONG</button>
-              <p class="jam-picker-hint">The arcade tracks are generated locally. Golden streams from the existing CTooniverse audio library when you press Play.</p>
+              <p class="jam-picker-hint">Original tracks start in-browser. Golden streams only when selected. Visit Chart Studio to make local custom practice charts.</p>
             </div>
           </div>
         </section>
@@ -107,12 +107,15 @@
         </div>
         <aside class="jam-game-sidebar" aria-label="Settings, player, progress and scores">
           <section class="jam-settings" aria-label="Song setup">
-      <label for="jam-song" class="jam-settings-native" hidden>Song<select id="jam-song"><optgroup label="Original Arcade Tracks"><option value="neon">Neon Rush · 118 BPM</option><option value="pixel">Pixel Thunder · 146 BPM</option><option value="starlight">Starlight Solo · 104 BPM</option></optgroup><optgroup label="Featured Songs"><option value="golden">Golden · HUNTR/X</option></optgroup></select></label>
+      <label for="jam-song" class="jam-settings-native" hidden>Song<select id="jam-song"><optgroup label="Original Arcade Tracks"><option value="neon">Neon Rush · 118 BPM</option><option value="pixel">Pixel Thunder · 146 BPM</option><option value="starlight">Starlight Solo · 104 BPM</option><option value="nebula">Nebula Drive · 132 BPM</option><option value="clockwork">Clockwork Chaos · 155 BPM</option><option value="sunset">Sunset Circuit · 112 BPM</option></optgroup><optgroup label="Featured Songs"><option value="golden">Golden · HUNTR/X</option></optgroup></select></label>
       <label for="jam-difficulty" class="jam-settings-native" hidden>Difficulty<select id="jam-difficulty"><option value="easy">Easy</option><option value="normal" selected>Normal</option><option value="hard">Hard</option></select></label>
       <label for="jam-play-style">Play style<select id="jam-play-style"><option value="strum">Guitar · Fret + Strum</option><option value="tap">Tap · Mobile / Classic</option></select></label>
       <label class="jam-sync-label" for="jam-sync-offset">Note timing adjustment <output id="jam-sync-value" for="jam-sync-offset">+0.00s</output><input id="jam-sync-offset" type="range" min="-2" max="2" step="0.05" value="0" aria-label="Adjust note timing for the selected song by up to two seconds"></label>
       <label class="jam-mute"><input id="jam-mute" type="checkbox"> Mute music &amp; effects</label>
+      <label for="jam-stage-theme" class="jam-stage-theme-label">Stage look<select id="jam-stage-theme"><option value="neon">🌌 Neon Galaxy</option><option value="cyber">🕹️ Cyber Arcade</option><option value="haunted">🎃 Haunted Tour</option><option value="sunset">🌇 Sunset Tour</option></select></label>
+      <label class="jam-stage-effects"><input id="jam-stage-effects" type="checkbox" checked> Enable beat lights &amp; hit sparks</label>
       <button id="jam-song-library" class="jam-button" type="button">♫ Song Library</button>
+      <a id="jam-chart-studio-link" class="jam-button jam-chart-studio-link" href="ctoon-jam-studio.html">🎼 Chart Studio</a>
       <button id="jam-play" class="jam-button jam-primary" type="button">▶ Play Selected Song</button>
       <button id="jam-pause" class="jam-button" type="button" disabled>Pause</button>
     </section>
@@ -135,7 +138,7 @@
           <section class="jam-results" aria-label="Song record">
       <h2>YOUR BEST RUN</h2><p id="jam-best">Play a song to set your local high score.</p><small>Personal bests are stored in this browser, using your previous CToon Jam scores. No coins or account rewards are awarded.</small><button id="jam-results-library" class="jam-button jam-next-song" type="button">♫ Choose Another Song</button>
     </section>
-          <details class="jam-help-details"><summary>Controls and tips</summary><p class="jam-help"><b>Guitar Style:</b> Hold <b>A · S · D · J · K</b> and strum <b>↑ / ↓ / Enter</b>. Keep frets held for sustains; hit multiple frets for chords. <b>Space:</b> Hype Mode. <b>Tap Style:</b> Press colored frets directly (mobile-friendly). <b>Pause:</b> use the Pause button or Escape. Adjust note timing for featured audio. Seeking through the featured recording turns that run into practice mode without a high score.</p></details>
+          <details class="jam-help-details"><summary>Controls and tips</summary><p class="jam-help"><b>Chart Studio:</b> Edit, save and import a personal practice chart for each song and difficulty. Custom charts never replace official charts or ranked best scores. <b>Guitar Style:</b> Hold <b>A · S · D · J · K</b> and strum <b>↑ / ↓ / Enter</b>. Keep frets held for sustains; hit multiple frets for chords. <b>Space:</b> Hype Mode. <b>Tap Style:</b> Press colored frets directly (mobile-friendly). <b>Pause:</b> use the Pause button or Escape. Adjust note timing for featured audio. Seeking through the featured recording turns that run into practice mode without a high score.</p></details>
         </aside>
       </div>
     </section>
