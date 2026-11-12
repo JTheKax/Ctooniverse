@@ -39,6 +39,9 @@ if (year) year.textContent = String(new Date().getFullYear());
   const ctoons=link('CToons','ctoons.html','▣');
   const watch=link('Watch','watch.html','▶');
   const shop=link('Shop','shop.html','🛒');
+  // Highlight the parent tab while browsing a related subpage.
+  if(['ctoon-set.html','anime.html','movies.html','misc.html','trades.html'].includes(page))ctoons.classList.add('active');
+  if(['clothing.html'].includes(page))shop.classList.add('active');
 
   const games=document.createElement('div');
   games.className='ctoons-dropdown games-dropdown';
@@ -90,7 +93,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   })();
   const activeGroups={
     community:['forums.html','guild.html','support.html','community.html'],
-    account:['account.html','login.html']
+    account:['account.html','login.html','avatar-maker.html']
   };
   for(const [root,pages] of [[community,activeGroups.community],[account,activeGroups.account]]){
     if(pages.includes(page))root.querySelector('.nav-link')?.classList.add('active');
@@ -100,6 +103,15 @@ if (year) year.textContent = String(new Date().getFullYear());
   }
   nav.replaceChildren(home,ctoons,games,watch,shop,community,account,owner);
   nav.dataset.navigationVersion='2026-11-12';
+  const header=nav.closest('.site-header');
+  if(header&&!header.querySelector('#header-player')){
+    const player=document.createElement('div');
+    player.id='header-player';
+    player.className='header-player';
+    player.setAttribute('aria-label','Player and Cartoon Coin balance');
+    player.innerHTML='<span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span>';
+    header.insertBefore(player,header.querySelector('.header-tag'));
+  }
 
   function closeMenus(except){
     for(const root of nav.querySelectorAll('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu')){
@@ -149,7 +161,8 @@ if (year) year.textContent = String(new Date().getFullYear());
   for(const [filename,type] of [
     ['community-menu.js',''],
     ['owner-menu.js',''],
-    ['account-menu.js','module']
+    ['account-menu.js','module'],
+    ['header-profile.js','module']
   ]){
     if(hasScript(filename))continue;
     const script=document.createElement('script');
