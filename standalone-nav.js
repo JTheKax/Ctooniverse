@@ -53,7 +53,7 @@
   const setUser=user=>{
    guests.forEach(el=>el.hidden=!!user);
    signed.forEach(el=>el.hidden=!user);
-   if(!user)ownerPanel.hidden=true;
+   ownerPanel.hidden=true; // Verify each signed-in account before showing Owner.
   };
   setUser(null);
   (async()=>{
