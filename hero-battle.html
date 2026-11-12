@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#100e2c">
 <meta name="description" content="CToon Heroes: Battle Quest, a team-building RPG in the CTooniverse arcade.">
 <title>CToon Heroes: Battle Quest | CTooniverse</title>
-<link rel="stylesheet" href="hero-battle.css?v=1">
-<script src="hero-battle.js?v=1" defer></script>
+<link rel="stylesheet" href="hero-battle.css?v=battle-quest-v2-20261112">
+<script src="hero-battle.js?v=battle-quest-v2-20261112" defer></script>
   <link rel="stylesheet" href="mobile-responsive.css?v=mobile-layout-20261109-v2">
   <link rel="stylesheet" href="standalone-nav.css?v=nav-icons-20261112-v2">
   <script src="standalone-nav.js?v=nav-icons-20261112-v2" defer></script>
@@ -37,6 +37,8 @@
     <section class="hb-panel hb-ready"><div class="hb-panel-head"><div><p class="hb-eyebrow">NEXT MISSION</p><h2 id="hb-current-stage">Stage 1</h2></div><span class="hb-chip">5 HERO TEAM</span></div>
       <div class="hb-team-preview" id="hb-campaign-team"></div>
       <p class="hb-muted">Battles play automatically. Tap a glowing hero special when its energy fills, or enable Auto Specials.</p>
+      <div class="hb-intel" id="hb-stage-intel" aria-live="polite"></div>
+      <button id="hb-quick-team" class="hb-btn hb-secondary" type="button">✨ AUTO-BUILD SQUAD</button>
       <button id="hb-start" class="hb-btn hb-primary" type="button">ENTER BATTLE ⚔</button>
       <p class="hb-note">Credits and shards are Battle Quest rewards, separate from site-wide Cartoon Coins.</p>
     </section>
@@ -45,7 +47,7 @@
 <section id="hb-view-team" class="hb-view" hidden>
   <section class="hb-panel"><div class="hb-panel-head"><div><p class="hb-eyebrow">PICK YOUR LINEUP</p><h2>Your five-hero squad</h2></div><span id="hb-team-count" class="hb-chip">0 / 5</span></div>
   <p class="hb-muted">Tap an unlocked hero below to add or remove them. Tanks protect your team, supports heal, and damage dealers defeat enemies.</p>
-  <div id="hb-team-slots" class="hb-team-slots"></div><button type="button" id="hb-clear-team" class="hb-btn hb-secondary" aria-label="Clear all selected team heroes">CLEAR TEAM</button><h3>Unlocked heroes</h3><div id="hb-team-roster" class="hb-grid"></div></section>
+  <div id="hb-team-slots" class="hb-team-slots"></div><div class="hb-team-actions"><button type="button" id="hb-auto-team" class="hb-btn hb-primary" aria-label="Automatically build a balanced team from unlocked heroes">✨ AUTO-BUILD TEAM</button><button type="button" id="hb-clear-team" class="hb-btn hb-secondary" aria-label="Clear all selected team heroes">CLEAR TEAM</button></div><h3>Unlocked heroes</h3><div id="hb-team-roster" class="hb-grid"></div></section>
 </section>
 <section id="hb-view-heroes" class="hb-view" hidden>
   <div class="hb-columns hb-hero-columns"><section class="hb-panel"><div class="hb-panel-head"><div><p class="hb-eyebrow">HERO GALLERY</p><h2>Collect &amp; evolve</h2></div><span class="hb-chip">SHARD UNLOCKS</span></div><div id="hb-roster" class="hb-grid"></div></section>
@@ -53,8 +55,9 @@
 </section>
 <section class="hb-panel hb-battle" id="hb-battle" hidden aria-label="Live battle">
  <div class="hb-panel-head"><div><p class="hb-eyebrow">LIVE BATTLE</p><h2 id="hb-battle-title">Arcade City</h2></div><strong id="hb-wave" class="hb-chip">WAVE 1 / 3</strong></div>
+ <div id="hb-wave-track" class="hb-wave-track" aria-label="Battle wave progress"></div>
  <div class="hb-arena"><div class="hb-arena-title">YOUR HEROES</div><div class="hb-fighters" id="hb-allies"></div><div class="hb-versus">VS</div><div class="hb-arena-title enemy-label">CORRUPTED ENEMIES</div><div class="hb-fighters" id="hb-enemies"></div></div>
- <div class="hb-battle-actions"><button type="button" id="hb-auto" class="hb-btn" aria-pressed="false">AUTO SPECIALS: OFF</button><button type="button" id="hb-retreat" class="hb-btn hb-secondary">RETREAT</button></div>
+ <div class="hb-battle-actions"><button type="button" id="hb-auto" class="hb-btn" aria-pressed="false">AUTO SPECIALS: OFF</button><button type="button" id="hb-speed" class="hb-btn" aria-label="Change battle speed">⏩ SPEED: 1×</button><button type="button" id="hb-pause" class="hb-btn" aria-pressed="false">⏸ PAUSE</button><button type="button" id="hb-retreat" class="hb-btn hb-secondary">RETREAT</button></div>
  <h3>Battle log</h3><ol id="hb-log" class="hb-log" aria-live="polite"></ol>
 </section>
 </main>
