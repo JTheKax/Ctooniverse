@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111037">
+<meta name="description" content="Play CToon Claw Craze at the CTooniverse Arcade.">
+<title>Claw Craze | CTooniverse Arcade</title>
+<link rel="stylesheet" href="styles.css?v=mobile-layout-20261107">
+<link rel="stylesheet" href="display-refresh.css?v=arcade-ui-20261112">
+<link rel="stylesheet" href="claw-machine.css?v=1">
+<script src="script.js?v=display-refresh-20261112" defer></script>
+<script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
+<script type="module" src="account-menu.js?v=1"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=random-autoplay-12" defer></script>
+</head>
+<body class="games-arcade-page claw-page">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a>
+<nav aria-label="Main navigation"><a class="nav-link" href="index.html">Home</a><a class="nav-link" href="ctoons.html">CToons</a><a class="nav-link active" href="games.html">Games</a><a class="nav-link" href="watch.html">Theater</a><a class="nav-link" href="shop.html">Shop</a></nav>
+<div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div><span class="header-tag">ARCADE</span>
+</header>
+<main id="main" class="claw-main">
+<a href="games.html" class="claw-back">‹ Back to Games</a>
+<section class="claw-hero">
+<p class="claw-kicker">✦ CTOONIVERSE PRIZE ARCADE ✦</p>
+<h1>CTOON <span>CLAW CRAZE</span></h1>
+<p>Line up your favorite toy, lower the claw, and see if the grip holds. Every paid win is yours to keep!</p>
+<div class="claw-facts"><span>🪙 100 coins / play</span><span>🎯 55% grip chance</span><span>🧸 6 plush prizes + coin capsule</span></div>
+</section>
+<div class="claw-layout">
+<section class="claw-machine-panel" aria-labelledby="claw-machine-title">
+<div class="claw-cabinet">
+<div class="claw-marquee" id="claw-machine-title"><span aria-hidden="true">★</span> THE PLUSH PALACE <span aria-hidden="true">★</span></div>
+<div class="claw-toplights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div class="claw-glass" id="claw-glass" aria-label="Seven prizes. Use left and right to select a toy and Drop Claw to play.">
+<div class="claw-glass-stars" aria-hidden="true">✦ &nbsp;&nbsp; ✧ &nbsp;&nbsp; ✦ &nbsp;&nbsp; ✧</div>
+<div class="claw-rail" aria-hidden="true"></div>
+<div class="claw-carriage" id="claw-carriage" aria-hidden="true">
+<div class="claw-trolley"></div><div class="claw-cable"></div>
+<div class="claw-grabber"><span class="claw-finger left"></span><span class="claw-core">✦</span><span class="claw-finger right"></span><span class="claw-carried" id="claw-carried"></span></div>
+</div>
+<div class="claw-toys" id="claw-toys" aria-label="Prizes inside the cabinet"></div>
+<div class="claw-floor" aria-hidden="true"></div>
+</div>
+<div class="claw-cabinet-base"><div class="claw-base-plate"><span>CTOONIVERSE</span><span>★ COLLECT THEM ALL ★</span></div>
+<div class="claw-coin-slot" aria-hidden="true"><span>🪙</span><small>COINS</small></div>
+<div class="claw-chute" id="claw-chute" aria-hidden="true"><span>PRIZE OUT</span><div class="claw-chute-door">✦</div></div>
+</div>
+</div>
+<div class="claw-controls" aria-label="Claw controls">
+<button type="button" class="claw-control claw-move" id="claw-left" aria-label="Move claw left">◀ <span>LEFT</span></button>
+<div class="claw-console">
+<div class="claw-target-name">AIMING FOR <strong id="claw-target-name">Cosmic Cat</strong></div>
+<button type="button" class="claw-drop" id="claw-drop" disabled>CHECKING MACHINE…</button>
+</div>
+<button type="button" class="claw-control claw-move" id="claw-right" aria-label="Move claw right"><span>RIGHT</span> ▶</button>
+</div>
+<p id="claw-status" class="claw-status" data-tone="info" role="status" aria-live="polite">Checking your arcade account…</p>
+<p class="claw-instructions">Use <kbd>←</kbd> <kbd>→</kbd> and <kbd>Space</kbd> on keyboard, or tap the controls. You can also tap a toy to aim. Paid rounds are chance-based; aiming chooses the prize, not the win probability.</p>
+</section>
+<aside class="claw-side">
+<section class="claw-info-card">
+<h2>🪙 Player Wallet</h2>
+<p class="claw-balance" id="claw-balance">Checking…</p>
+<p id="claw-signin-note">Sign in to earn prizes and build your collection. Guests can practice for free.</p>
+<a class="claw-signin-link" id="claw-signin-link" href="login.html" hidden>Sign in to keep prizes</a>
+</section>
+<section class="claw-info-card">
+<h2>🧸 Prize Showcase</h2><p>Choose any toy. The rare coin capsule awards 200 Cartoon Coins when caught.</p>
+<div class="claw-prize-key" id="claw-prize-key"></div>
+</section>
+<section class="claw-info-card">
+<h2>🏆 My Plush Shelf</h2>
+<p class="claw-note">Saved wins from your CTooniverse account.</p>
+<div id="claw-shelf" class="claw-shelf" aria-live="polite">Sign in to see your prizes.</div>
+</section>
+<section class="claw-info-card"><h2>🎟️ Recent Drops</h2><ul id="claw-history" class="claw-history"><li>No drops yet.</li></ul></section>
+</aside>
+</div>
+</main>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>Built from scratch. Built to collect.</span></footer>
+<script type="module" src="claw-machine.js?v=1"></script>
+<script type="module" src="site-chat-widget.js?v=1"></script>
+</body></html>

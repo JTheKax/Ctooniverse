@@ -1,0 +1,115 @@
+/* CTooniverse Claw Craze — compact arcade cabinet for desktop + mobile */
+.claw-page{background-color:#090b24;color:#f7f5ff}
+.claw-main{max-width:1280px;margin:0 auto;padding:24px 22px 80px}
+.claw-back{display:inline-flex;padding:8px 15px;margin-bottom:12px;color:#9cefff;font-weight:900;border:1px solid #66def5;border-radius:11px;background:#16153dbb;text-decoration:none}
+.claw-hero{text-align:center;padding:12px 0 27px}
+.claw-kicker{letter-spacing:.19em;color:#8feaff;font-weight:900;font-size:.76rem}
+.claw-hero h1{margin:.3rem 0;font-size:clamp(2.05rem,6.5vw,4.2rem);font-weight:1000;letter-spacing:.035em;line-height:1.06;color:#fff3c4;text-shadow:3px 4px 0 #3d176d,0 0 27px #9c4eff}
+.claw-hero h1 span{color:#ff8bcf;text-shadow:3px 4px 0 #35206c,0 0 24px #f363cb}
+.claw-hero>p:not(.claw-kicker){color:#f1e9ff;max-width:760px;margin:12px auto;line-height:1.5}
+.claw-facts{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+.claw-facts span{border:1px solid #a577ff;border-radius:50px;background:#191c50dc;padding:7px 12px;color:#e6e2ff;font-size:.82rem;font-weight:800}
+.claw-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(270px,.88fr);gap:26px;align-items:start}
+.claw-machine-panel{min-width:0}
+.claw-cabinet{padding:11px 11px 0;border:8px solid #412188;border-radius:35px 35px 22px 22px;position:relative;background:linear-gradient(145deg,#7148f1,#371e8e 25%,#1e267b 80%,#412288);box-shadow:0 15px 0 #140f43,0 22px 40px #040317d9,inset 0 0 0 3px #ff8fc8,0 0 33px #9a5ce988}
+.claw-marquee{text-align:center;background:linear-gradient(130deg,#ff64b8,#dc59ff 32%,#8244e9 62%,#4fc9ff);border:4px solid #fff0aa;border-radius:25px 25px 14px 14px;padding:14px 8px;font-size:clamp(1.1rem,3vw,1.75rem);font-weight:1000;letter-spacing:.1em;color:white;text-shadow:2px 3px #42195c;box-shadow:0 6px #1c1154,0 0 22px #ee79e5}
+.claw-marquee span{color:#fff1a0}
+.claw-toplights{display:flex;justify-content:space-around;padding:12px 8px 9px}
+.claw-toplights i{height:10px;width:10px;border-radius:50%;background:#ffdf7d;box-shadow:0 0 10px #ffd88d;animation:claw-blink 1.3s infinite alternate}
+.claw-toplights i:nth-child(even){background:#74efff;box-shadow:0 0 10px #74efff;animation-delay:-.65s}
+.claw-glass{height:clamp(270px,36vw,420px);position:relative;overflow:hidden;border:7px solid #a88df5;border-radius:14px 14px 7px 7px;background:radial-gradient(circle at 50% 18%,#7f5edb55,transparent 45%),radial-gradient(circle at 85% 45%,#50dcff20,transparent 35%),linear-gradient(155deg,#1b1d5a 1%,#161952 52%,#0b1753);box-shadow:inset 0 0 40px #99cfff30,inset 0 0 0 3px #d3caff45}
+.claw-glass::after{content:"";z-index:8;pointer-events:none;position:absolute;inset:0;background:linear-gradient(108deg,#ffffff1a,transparent 18%,transparent 75%,#d9fcff17 85%,transparent);border-radius:7px}
+.claw-glass-stars{position:absolute;top:25%;left:0;width:100%;text-align:center;font-size:clamp(.9rem,2vw,1.5rem);letter-spacing:1em;color:#fff6ba55;pointer-events:none}
+.claw-rail{height:10px;position:absolute;top:6px;left:7%;right:7%;border:2px solid #b0e5fa;border-radius:20px;background:linear-gradient(#3dd5ee,#4358a6);box-shadow:0 0 15px #7befff}
+.claw-carriage{position:absolute;z-index:7;top:2px;left:50%;width:68px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;transition:left .48s cubic-bezier(.22,.66,.26,1)}
+.claw-trolley{width:66px;height:24px;position:relative;border:4px solid #fff0b8;border-radius:9px;background:linear-gradient(#ff7fd0,#aa44df);box-shadow:0 3px 5px #040c27}
+.claw-trolley::before,.claw-trolley::after{content:"";position:absolute;top:-10px;width:10px;height:10px;border:2px solid #d4faff;border-radius:50%;background:#253e80}
+.claw-trolley::before{left:7px}.claw-trolley::after{right:7px}
+.claw-cable{width:5px;height:var(--cable,52px);background:repeating-linear-gradient(to bottom,#ced4e1 0 4px,#435584 4px 7px);border:1px solid #c8d6f9;transition:height .84s ease-in-out;box-shadow:0 0 8px #bbccff88}
+.claw-grabber{position:relative;width:64px;height:34px;display:flex;align-items:start;justify-content:center}
+.claw-core{height:27px;width:29px;display:grid;place-items:center;border:4px solid #ebffff;border-radius:40%;background:linear-gradient(#a9b8e8,#4768bb);color:#ffe685;font-size:12px}
+.claw-finger{position:absolute;z-index:1;top:18px;width:7px;height:41px;border:2px solid #d8edff;background:linear-gradient(#74ddf9,#344998);border-radius:8px;transform-origin:top;transition:transform .2s}
+.claw-finger.left{left:15px;transform:rotate(27deg)}.claw-finger.right{right:15px;transform:rotate(-27deg)}
+.claw-carriage.gripping .claw-finger.left{transform:rotate(-3deg)}
+.claw-carriage.gripping .claw-finger.right{transform:rotate(3deg)}
+.claw-carried{position:absolute;top:37px;left:50%;transform:translateX(-50%);font-size:clamp(32px,4vw,51px);filter:drop-shadow(0 5px 3px #0d0a47);white-space:nowrap}
+.claw-toys{position:absolute;inset:0}
+.claw-toy{position:absolute;left:var(--spot);bottom:43px;transform:translateX(-50%);padding:0;background:none!important;border:0!important;box-shadow:none!important;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;z-index:3;min-width:0;min-height:90px;color:white!important;transition:transform .18s,filter .18s}
+.claw-toy .claw-toy-body{display:block;font-size:clamp(29px,4.5vw,53px);line-height:1.2;filter:drop-shadow(0 5px 3px #000a);transition:transform .2s}
+.claw-toy .claw-toy-label{display:block;font-size:clamp(8px,1.2vw,11px);max-width:75px;background:#241450dd;border:1px solid #c9bbff80;border-radius:8px;padding:3px 5px;color:#fff;line-height:1.1}
+.claw-toy.selected .claw-toy-body{transform:translateY(-10px) scale(1.1)}
+.claw-toy.selected .claw-toy-label{background:#fff0aa;color:#311157;border-color:#fff}
+.claw-toy:focus-visible{outline:3px solid #fff0aa;outline-offset:5px;border-radius:9px}
+.claw-toy.caught{opacity:0;pointer-events:none}
+.claw-floor{position:absolute;z-index:2;bottom:0;left:0;right:0;height:48px;border-top:5px solid #cdb7ff;background:repeating-linear-gradient(95deg,#784cd8,#784cd8 26px,#6542be 27px,#6542be 47px);box-shadow:inset 0 8px #2e205e}
+.claw-cabinet-base{position:relative;min-height:112px;border-top:4px solid #ffe598;margin-top:10px;display:grid;grid-template-columns:1fr 85px 120px;align-items:center;gap:10px}
+.claw-base-plate{display:flex;flex-direction:column;font-size:clamp(.75rem,2vw,1rem);font-weight:1000;letter-spacing:.08em;color:#ffe5a8;text-shadow:0 2px #27145e;line-height:1.7}
+.claw-base-plate span+span{font-size:.62rem;letter-spacing:.07em;color:#dbf6ff}
+.claw-coin-slot{background:#201041;border:3px solid #d0b4ff;border-radius:12px;min-height:72px;display:flex;align-items:center;justify-content:center;flex-direction:column;font-weight:900;font-size:.75rem}
+.claw-coin-slot span{font-size:24px}
+.claw-chute{background:#150f3c;border:4px solid #fff0a8;border-radius:12px;min-height:77px;padding:4px;text-align:center;color:#ffebae;font-weight:1000;font-size:.72rem;box-shadow:inset 0 0 12px #000c}
+.claw-chute-door{font-size:31px;color:#90f5ff;min-height:40px;display:grid;place-items:center;border-radius:6px;background:linear-gradient(#17113a,#322568)}
+.claw-chute.celebrate{box-shadow:0 0 22px #fff0a8,inset 0 0 15px #84f6ff;animation:claw-jackpot .5s 3 alternate}
+.claw-controls{display:flex;gap:12px;align-items:stretch;margin:32px 3px 0;padding:15px;border:3px solid #8b6cde;border-radius:20px;background:linear-gradient(145deg,#27245c,#171c51)}
+.claw-control,.claw-drop{min-height:58px;cursor:pointer;font-weight:1000;letter-spacing:.07em;touch-action:manipulation}
+.claw-control{flex:1 1 17%;border:3px solid #a8f7ff;border-radius:14px;background:linear-gradient(#4ddbf7,#1d7eb7);color:#08224b;box-shadow:0 5px #0f466d;font-size:1.15rem}
+.claw-control span{display:block;font-size:.7rem}
+.claw-console{flex:2 1 58%;display:flex;flex-direction:column;gap:9px;min-width:0}
+.claw-target-name{font-size:.72rem;letter-spacing:.09em;text-align:center;color:#c2deff}
+.claw-target-name strong{display:block;font-size:.95rem;color:#fff7bb}
+.claw-drop{width:100%;border-radius:15px;border:4px solid #ffe9a8;background:linear-gradient(#ff8ad1,#ed4f9b);color:#2e114c;box-shadow:0 6px #95305c;font-size:clamp(.85rem,1.8vw,1.15rem);padding:8px}
+.claw-control:hover:not(:disabled),.claw-drop:hover:not(:disabled){filter:brightness(1.1)}
+.claw-control:active:not(:disabled),.claw-drop:active:not(:disabled){transform:translateY(3px);box-shadow:none}
+.claw-control:disabled,.claw-drop:disabled{opacity:.54;cursor:not-allowed}
+.claw-status{text-align:center;color:#bcecfb;background:#15183dcf;border:1px solid #7c77d0;border-radius:12px;margin:18px 0 12px;padding:13px;font-weight:800;line-height:1.4}
+.claw-status[data-tone="success"]{color:#b9ffe2;border-color:#43b978;background:#123c35}
+.claw-status[data-tone="error"]{color:#ffd0d7;border-color:#ff8298;background:#4c1b37}
+.claw-instructions{color:#e3daf9;text-align:center;font-size:.87rem;line-height:1.65}
+.claw-instructions kbd{border:1px solid #a69cf5;padding:2px 6px;border-radius:4px;background:#242150;color:#fff;font-family:inherit}
+.claw-side{display:grid;gap:16px;align-content:start}
+.claw-info-card{border:2px solid #7a67dc;border-radius:18px;padding:17px;background:linear-gradient(142deg,#211c55ed,#111a3cf2);box-shadow:0 10px 23px #03071980,0 0 18px #6b59f833}
+.claw-info-card h2{margin:0 0 8px;font-size:1.17rem;color:#fff1b8;text-shadow:0 2px 10px #983cda}
+.claw-info-card p{font-size:.88rem;line-height:1.5;color:#dcd8fa;margin:8px 0}
+.claw-balance{font-size:1.5rem!important;font-weight:1000;color:#93f4ff!important}
+.claw-signin-link{display:inline-block;margin-top:6px;border-radius:10px;background:#ffda81;color:#23164d;font-weight:900;padding:10px 12px}
+.claw-prize-key{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:14px}
+.claw-prize-key>div{display:flex;align-items:center;gap:8px;background:#282364;border:1px solid #8c80d0;border-radius:9px;padding:8px 6px;font-size:.73rem;line-height:1.2;color:#f8f4ff}
+.claw-prize-key .emoji{font-size:1.55rem;flex:none}
+.claw-shelf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;color:#e8e3ff}
+.claw-shelf .shelf-prize{text-align:center;border:1px solid #6d6aaf;border-radius:12px;padding:10px 4px;background:#171945}
+.claw-shelf .shelf-prize .emoji{display:block;font-size:1.7rem}
+.claw-shelf .shelf-prize strong{display:block;color:#fff4b9;font-size:.69rem;margin-top:5px}
+.claw-shelf .shelf-prize small{font-size:.67rem;color:#c1c7f6}
+.claw-history{margin:10px 0 0;padding-left:20px;color:#e7e1fa;font-size:.85rem;line-height:1.7}
+@keyframes claw-blink{from{opacity:.4;transform:scale(.8)}to{opacity:1;transform:scale(1.1)}}
+@keyframes claw-jackpot{to{filter:brightness(1.45)}}
+@media(max-width:940px){.claw-layout{grid-template-columns:1fr}.claw-side{grid-template-columns:repeat(2,minmax(0,1fr))}.claw-glass{height:clamp(285px,50vw,430px)}}
+@media(max-width:590px){
+ .claw-main{padding:16px 9px 55px}
+ .claw-hero{padding-bottom:18px}
+ .claw-hero h1{font-size:clamp(1.8rem,8vw,2.6rem)}
+ .claw-hero>p:not(.claw-kicker){font-size:.91rem}
+ .claw-cabinet{border-width:5px;padding:7px 7px 0;border-radius:24px}
+ .claw-marquee{letter-spacing:.04em;padding:10px 2px;border-width:3px}
+ .claw-glass{height:290px;border-width:4px}
+ .claw-toy{bottom:36px;min-height:75px}
+ .claw-toy .claw-toy-body{font-size:clamp(24px,7.3vw,40px)}
+ .claw-toy .claw-toy-label{font-size:7px;max-width:42px;padding:2px}
+ .claw-floor{height:39px}
+ .claw-cabinet-base{min-height:84px;grid-template-columns:1fr 57px 82px;gap:4px}
+ .claw-base-plate{font-size:.6rem}
+ .claw-base-plate span+span{font-size:.47rem}
+ .claw-coin-slot{min-height:55px;font-size:.52rem;border-width:2px}
+ .claw-coin-slot span{font-size:19px}
+ .claw-chute{min-height:55px;font-size:.56rem;border-width:2px}
+ .claw-chute-door{min-height:25px;font-size:18px}
+ .claw-controls{gap:7px;padding:10px 6px;margin-top:25px}
+ .claw-control{font-size:.85rem;border-width:2px}
+ .claw-control span{font-size:.58rem}
+ .claw-drop{font-size:.85rem;border-width:3px}
+ .claw-side{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .claw-toplights i,.claw-chute.celebrate{animation:none}
+ .claw-carriage,.claw-cable,.claw-toy,.claw-toy .claw-toy-body{transition-duration:.01ms}
+}
