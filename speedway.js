@@ -110,7 +110,13 @@ function renderGarage(){
 function renderRecords(){
  $("records").innerHTML=tracks.map(t=>{
  const r=save.records[t.id]||{};
- return '<article class="record-card"><span class="eyebrow">'+t.icon+' '+t.location+'</span><h3>'+t.name+'</h3><p>Races: <b>'+(r.races||0)+'</b> · Wins: <b>'+(r.wins||0)+'</b></p><p>Best time: <b>'+(r.best?timeFmt(r.best):"—")+'</b></p><p>Last finish: <b>'+(r.lastPosition?"#"+r.lastPosition:"—")+'</b></p></article>';
+ const byLaps=r.bestByLaps||{};
+ return '<article class="record-card"><span class="eyebrow">'+t.icon+' '+t.location+'</span><h3>'+t.name+'</h3><p>Races: <b>'+(r.races||0)+'</b> · Wins: <b>'+(r.wins||0)+'</b></p>'+
+ '<div class="record-laps"><span>⚡ Sprint (1 lap) <b>'+(byLaps[1]?timeFmt(byLaps[1]):"—")+'</b></span>'+
+ '<span>🏁 Grand Prix (3 laps) <b>'+(byLaps[3]?timeFmt(byLaps[3]):r.best?timeFmt(r.best):"—")+'</b></span>'+
+ '<span>🏆 Endurance (5 laps) <b>'+(byLaps[5]?timeFmt(byLaps[5]):"—")+'</b></span></div>'+
+ '<p>Fastest lap: <b>'+(r.bestLap?timeFmt(r.bestLap):"—")+'</b></p>'+
+ '<p>Last finish: <b>'+(r.lastPosition?"#"+r.lastPosition:"—")+'</b></p></article>';
  }).join('')+'<article class="record-card"><span class="eyebrow">ALL-TIME STATS</span><h3>Your Career</h3><p>Total races: <b>'+save.races+'</b></p><p>First-place finishes: <b>'+save.wins+'</b></p><p>Current tickets: <b>'+cash(save.tickets)+'</b></p></article>';
 }
 function setView(next){
