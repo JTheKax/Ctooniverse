@@ -1,7 +1,7 @@
 "use strict";
 /* Shared visual layer: loaded after legacy styles, with operational colors intact. */
 (() => {
-  if (document.querySelector('link[data-ctoon-display-refresh]')) return;
+  if (document.querySelector('link[href^="display-refresh.css"]')) return;
   const sheet = document.createElement('link');
   sheet.rel = 'stylesheet';
   sheet.href = 'display-refresh.css?v=arcade-ui-20261112';
