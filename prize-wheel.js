@@ -1,6 +1,5 @@
-/* CTooniverse Prize Wheel — preview-only arcade experience.
- * The authenticated Supabase RPC atomically enforces the 3-spin UTC-day limit.
- * The displayed prize is a demonstration: no coins or CToons are credited. */
+/* CTooniverse Oogie Boogie Prize Wheel — actual account rewards.
+ * The server atomically picks and awards prizes; client only animates the result. */
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const prizes=[
@@ -9,7 +8,7 @@ const prizes=[
  {name:'RANDOM CTOON',short:'RANDOM',icon:'❔'},
  {name:'250 COINS',short:'250 COINS',icon:'🪙'},
  {name:'MYSTERY PRIZE',short:'MYSTERY',icon:'🌟'},
- {name:'SPIN TICKET',short:'TICKET',icon:'🎟️'},
+ {name:'750 COINS',short:'750 COINS',icon:'🪙'},
  {name:'100 COINS',short:'100 COINS',icon:'🪙'},
  {name:'BONUS PRIZE',short:'BONUS',icon:'🎁'}
 ];
@@ -24,13 +23,13 @@ const formatCount=n=>Math.max(0,Math.min(MAX_SPINS,Number(n)||0));
 const setMessage=(message,tone='info')=>{result.textContent=message;result.dataset.tone=tone;};
 const setButton=()=>{
  button.disabled=busy||!verified||!signedIn||remaining<=0;
- button.textContent=busy?'🎡 SPINNING…':!verified?'CHECKING SPINS…':!signedIn?'SIGN IN TO SPIN':remaining===0?'NO SPINS LEFT':'🎡 SPIN THE WHEEL';
+ button.textContent=busy?'☠ SPINNING…':!verified?'CHECKING SPINS…':!signedIn?'SIGN IN TO SPIN':remaining===0?'NO SPINS LEFT':'☠ ROLL THE DICE';
 };
 function displayCounter(){
  number.textContent=String(verified&&signedIn?remaining:0);
  for(let i=0;i<lights.length;i++)lights[i].classList.toggle('is-available',verified&&signedIn&&i<remaining);
  counter.textContent=checkError||(!verified?'Checking your daily spins…':!signedIn?
-  'Sign in to claim your 3 daily preview spins.':
+  'Sign in to claim your 3 daily prize spins.':
   remaining+' of '+MAX_SPINS+' spins available today · Reset: 00:00 UTC.');
  accountLink.hidden=!!signedIn;
  setButton();
@@ -75,12 +74,32 @@ sound.addEventListener('click',()=>{
  sound.textContent=soundOn?'🔊 SOUND ON':'🔇 SOUND OFF';
  if(soundOn)tone(660);
 });
-function showRecent(prize){
+function showRecent(prize,award){
  if(recent.children.length===1&&recent.firstElementChild?.dataset.empty)recent.replaceChildren();
  const li=document.createElement('li');
- li.textContent=prize.icon+' '+prize.name+' · Preview only';
+ li.textContent=prize.icon+' '+prize.name+' · '+award;
  recent.prepend(li);
  while(recent.children.length>4)recent.lastElementChild.remove();
+}
+async function loadHistory(userId){
+ try{
+  const {data,error}=await db.from('prize_wheel_reward_history')
+   .select('outcome_index,outcome_label,award_description,created_at')
+   .eq('user_id',userId).order('created_at',{ascending:false}).limit(4);
+  if(error)throw error;
+  if(!Array.isArray(data))return;
+  recent.replaceChildren();
+  if(!data.length){
+   const li=document.createElement('li');li.dataset.empty='true';
+   li.textContent='No spins recorded yet.';recent.append(li);return;
+  }
+  for(const entry of data){
+   const li=document.createElement('li');
+   const icon=prizes[entry.outcome_index]?.icon||'🎲';
+   li.textContent=icon+' '+entry.outcome_label+' · '+entry.award_description;
+   recent.append(li);
+  }
+ }catch(e){console.warn('Prize Wheel history unavailable',e);}
 }
 async function check(){
  if(busy)return;
@@ -91,7 +110,7 @@ async function check(){
   if(id!==requestId||busy)return;
   if(auth.error)throw auth.error;
   const user=auth.data?.user;
-  if(!user){verified=true;setMessage('Sign in to use your three daily preview spins. No rewards are credited.');return;}
+  if(!user){verified=true;setMessage('Sign in to win Cartoon Coins and CToons with three daily spins.');return;}
   signedIn=true;
   const today=new Date().toISOString().slice(0,10);
   const {data,error}=await db.from('prize_wheel_daily_spins').select('used').eq('user_id',user.id).eq('spin_date',today).maybeSingle();
@@ -99,7 +118,8 @@ async function check(){
   if(error)throw error;
   remaining=formatCount(MAX_SPINS-Number(data?.used||0));
   verified=true;
-  if(!remaining&&result.dataset.tone!=='success')setMessage('All three preview spins have been used today. They reset at midnight UTC.');
+  if(!remaining&&result.dataset.tone!=='success')setMessage('All three prize spins have been used today. They reset at midnight UTC.');
+  loadHistory(user.id);
  }catch(error){
   if(id!==requestId)return;
   remaining=0;signedIn=false;verified=false;
@@ -107,45 +127,46 @@ async function check(){
   setMessage('Unable to verify spins. Reload the page and try again.','error');
  }finally{if(id===requestId&&!busy)displayCounter();}
 }
-function randomIndex(){
- const bits=new Uint32Array(1);
- if(window.crypto?.getRandomValues){window.crypto.getRandomValues(bits);return bits[0]%prizes.length;}
- return Math.floor(Math.random()*prizes.length);
-}
 async function spin(){
  if(busy||!verified||!signedIn||remaining<=0)return;
  busy=true;button.disabled=true;setButton();
- setMessage('Confirming your daily spin…');machine.classList.add('is-spinning');
+ setMessage('The casino is confirming your spin…');machine.classList.add('is-spinning');
  try{
-  // This RPC increments the signed-in user's spin count only when fewer than 3 were used.
-  const {data,error}=await db.rpc('use_prize_wheel_spin');
+  if(!window.crypto?.randomUUID)throw new Error('A secure browser connection is required to claim prizes');
+  const requestId=window.crypto.randomUUID();
+  // Prize selection, three-spin enforcement, coin ledger and inventory writes
+  // happen together in a single authenticated database transaction.
+  const {data,error}=await db.rpc('spin_prize_wheel',{p_request_id:requestId});
   if(error)throw error;
-  if(!Number.isInteger(Number(data))||Number(data)<0||Number(data)>=MAX_SPINS)
-   throw new Error('Unexpected remaining spin count');
-  remaining=formatCount(data);
-  displayCounter();
-  const index=randomIndex(),prize=prizes[index];
+  const index=Number(data?.outcome_index),remainingFromServer=Number(data?.remaining);
+  if(!Number.isInteger(index)||index<0||index>=prizes.length||
+     !Number.isInteger(remainingFromServer)||remainingFromServer<0||remainingFromServer>=MAX_SPINS||
+     typeof data.award_description!=='string')
+    throw new Error('Prize was recorded but the confirmation was incomplete. Check recent spins and reload.');
+  const prize=prizes[index];
+  remaining=remainingFromServer;displayCounter();
+  const balance=$('header-player-coins');
+  if(balance&&Number.isFinite(Number(data.balance)))
+   balance.textContent=new Intl.NumberFormat('en-US').format(Number(data.balance))+' Cartoon Coins';
   const finalAngle=(360-(index*45+22.5))%360;
   const currentAngle=((rotation%360)+360)%360;
   rotation+=360*5+((finalAngle-currentAngle+360)%360);
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const duration=reduced?150:5200;
   wheel.style.transitionDuration=duration+'ms';
-  setMessage('The wheel is spinning… 🎡');tone(523,.2);tone(659,.2,.24);
-  // Render the starting position before animating to the new one.
+  setMessage('The Oogie Boogie wheel is spinning… 🎲');tone(523,.2);tone(659,.2,.24);
   await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   wheel.style.transform='rotate('+rotation+'deg)';
   await new Promise(resolve=>setTimeout(resolve,duration+130));
-  setMessage('🎉 '+prize.name+'! This is a preview result only — no coins, CToons, tickets or other rewards were added.','success');
-  showRecent(prize);
+  setMessage('🎉 '+prize.name+'! '+data.award_description+'.','success');
+  showRecent(prize,data.award_description);
   tone(784,.17);tone(988,.18,.18);tone(1175,.27,.36);
  }catch(error){
   console.warn('Prize Wheel spin failed',error);
-  setMessage('Spin unavailable: '+(error?.message||'Connection error')+'. Your daily balance will be checked again.','error');
+  setMessage('Spin could not be confirmed: '+(error?.message||'Connection error')+'. Check recent prizes to see whether a reward was credited.','error');
  }finally{
   busy=false;machine.classList.remove('is-spinning');
-  await check();
-  setButton();
+  await check();setButton();
  }
 }
 button.addEventListener('click',spin);
