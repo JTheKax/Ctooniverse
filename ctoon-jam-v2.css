@@ -144,3 +144,59 @@ body{
 @media(prefers-reduced-motion:reduce){
  .jam-song-picker,.jam-judgement,.jam-controls button,.jam-meter>*{transition:none!important;animation:none!important}
 }
+
+
+/* Chart Studio link and persisted stage-look settings. */
+.jam-settings .jam-chart-studio-link{
+ display:flex;align-items:center;justify-content:center;text-align:center;
+ grid-column:1/-1;min-height:46px;text-decoration:none;
+ background:linear-gradient(110deg,#3b4c9c,#673298);border-color:#ffd98e;
+}
+.jam-settings .jam-chart-studio-link:is(:hover,:focus-visible){background:linear-gradient(110deg,#4d70b8,#8050c6)}
+.jam-settings .jam-stage-theme-label{grid-column:1/-1}
+.jam-settings .jam-stage-theme-label select{min-height:45px}
+.jam-settings .jam-stage-effects{
+ grid-column:1/-1;display:flex!important;flex-direction:row!important;
+ align-items:center;justify-content:flex-start;gap:8px!important;
+ min-height:39px;color:#dce6ff;font-size:.78rem;font-weight:800;
+ letter-spacing:0;text-transform:none;
+}
+.jam-settings .jam-stage-effects input{accent-color:#8deeff;width:19px;height:19px;flex:0 0 19px;margin:0}
+.jam-stage[data-theme="cyber"]{
+ border-color:#56dbea;box-shadow:0 0 23px #15d2e855,inset 0 1px #ffffff32;
+ background:linear-gradient(150deg,#061f3c,#092537 65%,#071624);
+}
+.jam-stage[data-theme="cyber"] .jam-game-header{
+ border-color:#40e5ee;background:linear-gradient(110deg,#083c51,#11355e);
+}
+.jam-stage[data-theme="haunted"]{
+ border-color:#e09bff;box-shadow:0 0 28px #ce6afb44;
+ background:linear-gradient(145deg,#261033,#0c0d24 68%,#301336);
+}
+.jam-stage[data-theme="haunted"] .jam-game-header{
+ border-color:#faab7c;background:linear-gradient(100deg,#492035,#1d164b);
+}
+.jam-stage[data-theme="haunted"] .jam-game-brand h1 span{color:#ffd098}
+.jam-stage[data-theme="sunset"]{
+ border-color:#ffc59d;box-shadow:0 0 24px #f6916755;
+ background:linear-gradient(145deg,#4c2552,#1e174a 60%,#2f1734);
+}
+.jam-stage[data-theme="sunset"] .jam-game-header{
+ border-color:#f7c28b;background:linear-gradient(112deg,#6a3854,#403a73);
+}
+.jam-stage[data-theme="sunset"] .jam-game-brand h1 span{color:#ffe3a3}
+.jam-stage[data-theme="cyber"] .jam-board-wrap{border-color:#5bf6ff}
+.jam-stage[data-theme="haunted"] .jam-board-wrap{border-color:#edaaf5}
+.jam-stage[data-theme="sunset"] .jam-board-wrap{border-color:#ffcda6}
+.jam-song-item-art[data-theme="nebula"],.jam-picker-cover[data-theme="nebula"]{
+ background:linear-gradient(125deg,#7530dd,#188cc9 75%,#15155b)
+}
+.jam-song-item-art[data-theme="clockwork"],.jam-picker-cover[data-theme="clockwork"]{
+ background:linear-gradient(125deg,#cf803e,#8a35b3 60%,#261e57)
+}
+.jam-song-item-art[data-theme="sunset"],.jam-picker-cover[data-theme="sunset"]{
+ background:linear-gradient(115deg,#ed6846,#c24d91,#423b9b)
+}
+@media(max-width:780px){
+ .jam-settings .jam-stage-effects,.jam-settings .jam-stage-theme-label,.jam-settings .jam-chart-studio-link{grid-column:1/-1}
+}
