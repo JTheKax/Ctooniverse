@@ -5,20 +5,137 @@ const stage=document.querySelector('.theater-stage');
 function openCurtains(){stage?.classList.add('curtains-open');document.body.classList.add('theater-lights-dimmed')}
 function closeCurtains(){stage?.classList.remove('curtains-open');document.body.classList.remove('theater-lights-dimmed')}
 const video=el('theater-video'),embed=el('theater-embed'),empty=el('theater-empty'),status=el('theater-playback-status');
+const stopButton=el('theater-stop'),fullscreenButton=el('theater-fullscreen');
+const currentTitle=el('theater-current-title'),currentDetail=el('theater-current-detail');
+function syncScreenControls(){
+  const active=!!currentItem;
+  stopButton.disabled=!active;fullscreenButton.disabled=!active;
+  currentTitle.textContent=active?currentItem.title:'Choose a feature below';
+  currentDetail.textContent=active?(currentItem.kind==='series'?'Season '+(currentItem.season||1)+' · Episode '+(currentItem.episode||1):'Now showing on the big screen'):'The big screen is ready for movie night.';
+}
+function markActiveEpisode(){
+  for(const button of document.querySelectorAll('#theater-episode-list [data-episode-id]')){
+    const active=String(currentItem?.id)===button.dataset.episodeId;
+    button.classList.toggle('is-playing',active);
+    button.setAttribute('aria-current',active?'true':'false');
+  }
+}
+function stopPlayback(){
+  video.pause();video.removeAttribute('src');video.load();video.hidden=true;
+  embed.replaceChildren();embed.hidden=true;empty.hidden=false;
+  currentItem=null;selected=null;closeCurtains();
+  el('theater-now').textContent='THE BIG SCREEN';
+  status.textContent='Screen cleared. Choose a DVD case to start watching.';
+  syncScreenControls();markActiveEpisode();render();
+}
+stopButton.addEventListener('click',stopPlayback);
+fullscreenButton.addEventListener('click',async()=>{
+  const screen=document.querySelector('.theater-screen');
+  try{
+    if(document.fullscreenElement){await document.exitFullscreen();return;}
+    if(screen?.requestFullscreen){await screen.requestFullscreen();return;}
+    if(!video.hidden&&video.webkitEnterFullscreen){video.webkitEnterFullscreen();return;}
+    status.textContent='Fullscreen is not supported by this browser.';
+  }catch{status.textContent='Fullscreen is unavailable. You can still watch using the player controls.';}
+});
 function playable(url){try{const u=new URL(url);return ['https:','http:'].includes(u.protocol)}catch{return false}}
 function coverUrl(value){const raw=String(value||'').trim();if(!raw)return null;try{const input=/^www\./i.test(raw)?'https://'+raw:raw;const u=new URL(input,window.location.href);return ['https:','http:'].includes(u.protocol)?u.href:null}catch{return null}}
 function updateCoverPreview(){const preview=el('theater-cover-preview'),note=el('theater-cover-preview-status');preview.replaceChildren();const raw=el('theater-cover-url').value.trim();if(!raw){note.textContent='Paste an image URL or a local image filename to preview the DVD cover.';return}const src=coverUrl(raw);if(!src){note.textContent='Invalid image address. Use https://… or an image filename from this site.';return}const img=document.createElement('img');img.alt='DVD cover preview';img.onload=()=>{note.textContent='Cover image loaded successfully.'};img.onerror=()=>{img.remove();note.textContent='Image could not load. Use a direct public image URL (JPG, PNG, WebP) or a site image filename.'};img.src=src;preview.append(img);note.textContent='Checking image…'}
 el('theater-cover-url').addEventListener('input',updateCoverPreview);
 el('theater-cover-file').addEventListener('change',()=>{const file=el('theater-cover-file').files?.[0];if(!file)return;el('theater-cover-preview-status').textContent='Selected: '+file.name+' (uploads when you save).';const preview=el('theater-cover-preview');preview.replaceChildren();const img=document.createElement('img');img.alt='Selected DVD artwork';const objectUrl=URL.createObjectURL(file);img.onload=()=>URL.revokeObjectURL(objectUrl);img.onerror=()=>URL.revokeObjectURL(objectUrl);img.src=objectUrl;preview.append(img)});
 function embedUrl(url){try{const u=new URL(url);const host=u.hostname.toLowerCase();let id=null;if(['youtube.com','www.youtube.com','m.youtube.com','youtube-nocookie.com','www.youtube-nocookie.com'].includes(host)){if(u.pathname.startsWith('/embed/'))id=u.pathname.split('/')[2];else if(u.pathname.startsWith('/shorts/'))id=u.pathname.split('/')[2];else id=u.searchParams.get('v')}else if(host==='youtu.be')id=u.pathname.slice(1).split('/')[0];if(id&&/^[\w-]{11}$/.test(id)){const player=new URL('https://www.youtube-nocookie.com/embed/'+id);player.searchParams.set('autoplay','1');player.searchParams.set('playsinline','1');player.searchParams.set('rel','0');player.searchParams.set('iv_load_policy','3');player.searchParams.set('fs','1');player.searchParams.set('controls','1');return player.href}if(host==='player.vimeo.com')return url;if(host==='vimeo.com'&&/^\/\d+$/.test(u.pathname))return 'https://player.vimeo.com/video'+u.pathname}catch{}return null}
-function play(item){if(!item||!playable(item.video_url)){status.textContent='No playable video is available for this title.';return}currentItem=item;video.pause();video.removeAttribute('src');video.load();embed.replaceChildren();video.hidden=true;embed.hidden=true;empty.hidden=true;openCurtains();const src=embedUrl(item.video_url);if(src){const frame=document.createElement('iframe');frame.src=src;frame.title=item.title;frame.allow='autoplay; fullscreen; picture-in-picture';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';embed.append(frame);embed.hidden=false}else{video.src=item.video_url;video.hidden=false;video.play().catch(()=>{status.textContent='Autoplay was blocked by your browser. Press Play to begin.'})}el('theater-now').textContent=item.title;status.textContent='Now showing: '+item.title}
-function episodes(item){selected=item;const section=el('theater-episodes'),list=el('theater-episode-list');list.replaceChildren();const eps=entries.filter(x=>x.title===item.title&&x.category===item.category&&x.kind==='series').sort((a,b)=>(a.season-b.season)||(a.episode-b.episode));section.hidden=!eps.length;if(eps.length)play(eps[0]);for(const ep of eps){const b=document.createElement('button');b.textContent='S'+(ep.season||1)+' · E'+(ep.episode||1);b.addEventListener('click',()=>play(ep));list.append(b);if(owner){const edit=document.createElement('button');edit.type='button';edit.className='theater-edit-episode';edit.textContent='✎ Edit S'+(ep.season||1)+' E'+(ep.episode||1);edit.addEventListener('click',()=>editItem(ep));list.append(edit)}}}
+function play(item){
+  if(!item||!playable(item.video_url)){status.textContent='No playable video is available for this title.';return;}
+  currentItem=item;
+  video.pause();video.removeAttribute('src');video.load();
+  embed.replaceChildren();video.hidden=true;embed.hidden=true;empty.hidden=true;
+  openCurtains();
+  const src=embedUrl(item.video_url);
+  if(src){
+    const frame=document.createElement('iframe');
+    frame.src=src;frame.title=item.title;
+    frame.allow='autoplay; fullscreen; picture-in-picture';
+    frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';
+    embed.append(frame);embed.hidden=false;
+  }else{
+    video.src=item.video_url;video.hidden=false;
+    video.play().catch(()=>{status.textContent='Autoplay was blocked by your browser. Press Play to begin.';});
+  }
+  el('theater-now').textContent=item.title;
+  status.textContent='Now showing: '+item.title;
+  syncScreenControls();markActiveEpisode();render();
+}
+function episodes(item){
+  selected=item;
+  const section=el('theater-episodes'),list=el('theater-episode-list');
+  list.replaceChildren();
+  const eps=entries.filter(x=>x.title===item.title&&x.category===item.category&&x.kind==='series').sort((a,b)=>(a.season-b.season)||(a.episode-b.episode));
+  section.hidden=!eps.length;
+  if(eps.length)play(eps[0]);
+  for(const ep of eps){
+    const b=document.createElement('button');
+    b.type='button';b.dataset.episodeId=String(ep.id);
+    b.textContent='S'+(ep.season||1)+' · E'+(ep.episode||1);
+    b.setAttribute('aria-label','Play '+item.title+', season '+(ep.season||1)+', episode '+(ep.episode||1));
+    b.addEventListener('click',()=>play(ep));list.append(b);
+    if(owner){
+      const edit=document.createElement('button');edit.type='button';edit.className='theater-edit-episode';
+      edit.textContent='✎ Edit S'+(ep.season||1)+' E'+(ep.episode||1);
+      edit.addEventListener('click',()=>editItem(ep));list.append(edit);
+    }
+  }
+  markActiveEpisode();
+}
 function editItem(item){if(!owner)return;editingId=item.id;const f=el('theater-form');for(const field of ['title','category','kind','cover_url','season','episode','video_url']){const input=f.elements.namedItem(field);if(input)input.value=item[field]??''}el('theater-submit').textContent='Save changes';el('theater-cancel-edit').hidden=false;el('theater-edit-notice').textContent='Editing: '+item.title+(item.kind==='series'?' · Season '+item.season+', Episode '+item.episode:'');el('theater-owner-status').textContent='Edit the fields below, then save.';updateCoverPreview();el('theater-owner').scrollIntoView({behavior:'smooth',block:'start'})}
 function resetEditor(){editingId=null;el('theater-form').reset();el('theater-submit').textContent='Publish to theater';el('theater-cancel-edit').hidden=true;el('theater-edit-notice').textContent='';updateCoverPreview()}
 el('theater-cancel-edit').addEventListener('click',()=>{resetEditor();el('theater-owner-status').textContent='Editing cancelled.'});
-function render(){const grid=el('theater-cases');grid.replaceChildren();const q=el('theater-search').value.trim().toLowerCase();const matches=entries.filter(x=>x.category===shelf&&x.title.toLowerCase().includes(q));const distinct=new Map();for(const item of matches)if(!distinct.has(item.title))distinct.set(item.title,item);for(const item of [...distinct.values()].sort((a,b)=>a.title.localeCompare(b.title))){const card=document.createElement('div');card.className='theater-case';const btn=document.createElement('button');btn.type='button';btn.className='theater-case-main';const cover=document.createElement('div');cover.className='theater-cover';if(coverUrl(item.cover_url)){const img=document.createElement('img');img.src=coverUrl(item.cover_url);img.alt='Cover artwork for '+item.title;img.loading='lazy';img.addEventListener('error',()=>{img.remove();cover.classList.add('is-placeholder');cover.textContent='🎬'});cover.append(img)}else{cover.classList.add('is-placeholder');cover.textContent='🎬'}const name=document.createElement('strong');name.className='theater-case-title';name.textContent=item.title;btn.append(cover,name);btn.addEventListener('click',()=>{if(item.kind==='series')episodes(item);else{selected=null;el('theater-episodes').hidden=true;play(item)}});card.append(btn);if(owner){const edit=document.createElement('button');edit.type='button';edit.className='theater-edit-case';edit.textContent='✎ Edit';edit.setAttribute('aria-label','Edit '+item.title);edit.addEventListener('click',()=>editItem(item));card.append(edit)}grid.append(card)}el('theater-library-status').textContent=distinct.size?distinct.size+' title(s) on this shelf.':'No titles added to this shelf yet.'}
+function render(){
+  const grid=el('theater-cases');grid.replaceChildren();
+  const q=el('theater-search').value.trim().toLocaleLowerCase();
+  const clear=el('theater-clear-search');clear.hidden=!q;
+  for(const tab of document.querySelectorAll('[data-shelf]')){
+    const unique=new Set(entries.filter(x=>x.category===tab.dataset.shelf).map(x=>x.title));
+    const number=tab.querySelector('.theater-shelf-count');
+    if(number){number.textContent=String(unique.size);number.setAttribute('aria-label',unique.size+' titles');}
+    tab.classList.toggle('selected',tab.dataset.shelf===shelf);
+    tab.setAttribute('aria-pressed',String(tab.dataset.shelf===shelf));
+  }
+  const matches=entries.filter(x=>x.category===shelf&&x.title.toLocaleLowerCase().includes(q));
+  const distinct=new Map();
+  for(const item of matches)if(!distinct.has(item.title))distinct.set(item.title,item);
+  for(const item of [...distinct.values()].sort((a,b)=>a.title.localeCompare(b.title))){
+    const card=document.createElement('div');card.className='theater-case';
+    const active=!!currentItem&&currentItem.title===item.title&&currentItem.category===item.category;
+    card.classList.toggle('is-playing',active);
+    const btn=document.createElement('button');btn.type='button';btn.className='theater-case-main';
+    btn.setAttribute('aria-label','Watch '+item.title);
+    if(active)btn.setAttribute('aria-current','true');
+    const cover=document.createElement('div');cover.className='theater-cover';
+    const src=coverUrl(item.cover_url);
+    if(src){
+      const img=document.createElement('img');img.src=src;img.alt='Cover artwork for '+item.title;img.loading='lazy';
+      img.addEventListener('error',()=>{img.remove();cover.classList.add('is-placeholder');cover.textContent='🎬';});
+      cover.append(img);
+    }else{cover.classList.add('is-placeholder');cover.textContent='🎬';}
+    const name=document.createElement('strong');name.className='theater-case-title';name.textContent=item.title;
+    const detail=document.createElement('span');detail.className='theater-case-type';
+    const episodesCount=item.kind==='series'?entries.filter(x=>x.title===item.title&&x.category===item.category&&x.kind==='series').length:0;
+    detail.textContent=episodesCount?episodesCount+' EPISODE'+(episodesCount===1?'':'S'):'FEATURE';
+    btn.append(cover,name,detail);
+    btn.addEventListener('click',()=>{if(item.kind==='series')episodes(item);else{selected=null;el('theater-episodes').hidden=true;play(item);}});
+    card.append(btn);
+    if(owner){
+      const edit=document.createElement('button');edit.type='button';edit.className='theater-edit-case';
+      edit.textContent='✎ Edit';edit.setAttribute('aria-label','Edit '+item.title);
+      edit.addEventListener('click',()=>editItem(item));card.append(edit);
+    }
+    grid.append(card);
+  }
+  el('theater-library-status').textContent=distinct.size?distinct.size+' title'+(distinct.size===1?'':'s')+' available on this shelf.':q?'No matching titles on this shelf. Try another search or category.':'No titles added to this shelf yet.';
+}
 for(const btn of document.querySelectorAll('[data-shelf]'))btn.addEventListener('click',()=>{shelf=btn.dataset.shelf;document.querySelectorAll('[data-shelf]').forEach(x=>x.classList.toggle('selected',x===btn));el('theater-episodes').hidden=true;render()});
 el('theater-search').addEventListener('input',render);
+el('theater-clear-search').addEventListener('click',()=>{el('theater-search').value='';render();el('theater-search').focus();});
 async function load(){const {data,error}=await db.from('theater_titles').select('*').eq('published',true).order('title');if(error){el('theater-library-status').textContent='Theater catalog is not configured yet.';return}entries=data||[];render()}
 async function checkOwner(){const {data:{user}}=await db.auth.getUser();if(!user){owner=false;el('theater-owner').hidden=true;render();return}const {data,error}=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();owner=!error&&!!data;el('theater-owner').hidden=!owner;render()}
 el('theater-form').addEventListener('submit',async e=>{e.preventDefault();if(!owner)return;const f=e.currentTarget,feedback=el('theater-owner-status'),form=new FormData(f);feedback.textContent=editingId?'Saving changes…':'Publishing…';let url=String(form.get('video_url')||'').trim();const file=form.get('video_file');if(file&&file.size){if(!['video/mp4','video/webm'].includes(file.type)){feedback.textContent='Choose MP4 or WebM.';return}const {data:{user}}=await db.auth.getUser();if(!user){feedback.textContent='Sign in again.';return}const path=user.id+'/'+crypto.randomUUID()+'-'+file.name.replace(/[^a-zA-Z0-9._-]/g,'_');const {data,error}=await db.storage.from('theater-videos').upload(path,file,{contentType:file.type});if(error){feedback.textContent='Upload failed: '+error.message;return}url=db.storage.from('theater-videos').getPublicUrl(data.path).data.publicUrl}if(!playable(url)){feedback.textContent='Enter a valid video link or upload a video.';return}const coverFile=form.get('cover_file');let cover=coverUrl(form.get('cover_url'));if(coverFile&&coverFile.size){const valid=['image/png','image/jpeg'].includes(coverFile.type)&&/\.(png|jpe?g)$/i.test(coverFile.name);if(!valid){feedback.textContent='Choose a PNG or JPG image.';return}if(coverFile.size>5*1024*1024){feedback.textContent='Cover image must be 5 MB or smaller.';return}const {data:{user}}=await db.auth.getUser();if(!user){feedback.textContent='Sign in again.';return}const extension=coverFile.type==='image/png'?'png':'jpg';const path=user.id+'/'+crypto.randomUUID()+'.'+extension;const uploaded=await db.storage.from('theater-covers').upload(path,coverFile,{contentType:coverFile.type});if(uploaded.error){feedback.textContent='Cover upload failed: '+uploaded.error.message;return}cover=db.storage.from('theater-covers').getPublicUrl(uploaded.data.path).data.publicUrl}const payload={title:String(form.get('title')).trim(),category:String(form.get('category')),kind:String(form.get('kind')),cover_url:cover,season:Number(form.get('season'))||1,episode:Number(form.get('episode'))||1,video_url:url,published:true};const query=db.from('theater_titles');const {error}=editingId?await query.update(payload).eq('id',editingId):await query.insert(payload);if(error){feedback.textContent='Could not save: '+error.message;return}resetEditor();await load();feedback.textContent='Saved successfully!'});
