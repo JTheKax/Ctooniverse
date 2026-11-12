@@ -2,7 +2,7 @@
 (() => {
 const $=id=>document.getElementById(id);
 const canvas=$("race-canvas"),ctx=canvas.getContext("2d");
-const W=960,H=540,HORIZON=184,LAPS=3,KEY="ctoon-speedway-save-v1";
+const W=960,H=540,HORIZON=184,DEFAULT_LAPS=3,KEY="ctoon-speedway-save-v1";
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const drivers=[
 {id:"nova",name:"Nova",role:"Boost Specialist",icon:"🚀",color:"#b463fa",speed:3,handling:3,boost:5},
@@ -10,16 +10,22 @@ const drivers=[
 {id:"comet",name:"Comet",role:"Drift Master",icon:"🌠",color:"#43c2f2",speed:3,handling:5,boost:3},
 {id:"ember",name:"Ember",role:"All-Rounder",icon:"🔥",color:"#f06471",speed:4,handling:3,boost:3},
 {id:"gizmo",name:"Gizmo",role:"Tech Racer",icon:"🤖",color:"#4ac6a1",speed:2,handling:4,boost:5},
-{id:"ripple",name:"Ripple",role:"Corner Cutter",icon:"🌊",color:"#5f97ff",speed:3,handling:5,boost:2}
+{id:"ripple",name:"Ripple",role:"Corner Cutter",icon:"🌊",color:"#5f97ff",speed:3,handling:5,boost:2},
+{id:"vortex",name:"Vortex",role:"Nitro Ace",icon:"🌀",color:"#9a65ff",speed:4,handling:2,boost:5},
+{id:"pixel",name:"Pixel",role:"Precision Driver",icon:"👾",color:"#63eadb",speed:3,handling:5,boost:4},
+{id:"luna",name:"Luna",role:"Night Rider",icon:"🌙",color:"#ed93c5",speed:4,handling:4,boost:3}
 ];
 const tracks=[
 {id:"neon",name:"Neon Boulevard",icon:"🌆",location:"Cyber City",length:3600,phase:.5,curves:1.2,sky:["#14123d","#f565af"],grass:["#26376d","#181a52"],road:"#3e405a",accent:"#d784ff"},
 {id:"meadow",name:"Starfall Gardens",icon:"🌳",location:"Fantasy Meadows",length:3950,phase:2.2,curves:1.55,sky:["#153c6d","#8cbada"],grass:["#30755c","#17494f"],road:"#424655",accent:"#83ffca"},
-{id:"cosmic",name:"Cosmic Causeway",icon:"🪐",location:"Outer Orbit",length:4300,phase:4.1,curves:1.9,sky:["#0d123e","#4c41a8"],grass:["#262354","#181333"],road:"#343b61",accent:"#ffe38d"}
+{id:"cosmic",name:"Cosmic Causeway",icon:"🪐",location:"Outer Orbit",length:4300,phase:4.1,curves:1.9,sky:["#0d123e","#4c41a8"],grass:["#262354","#181333"],road:"#343b61",accent:"#ffe38d"},
+{id:"haunted",name:"Haunted Highway",icon:"🎃",location:"Phantom Forest",length:4000,phase:3.7,curves:1.6,sky:["#1a1038","#99547c"],grass:["#253044","#111d37"],road:"#424254",accent:"#ffa665"},
+{id:"candy",name:"Candy Carnival",icon:"🍬",location:"Sugar Circuit",length:3650,phase:1.7,curves:1.4,sky:["#4233a0","#ff9aba"],grass:["#8a5a9f","#664288"],road:"#5f5977",accent:"#ffd680"},
+{id:"sunset",name:"Sunset Harbor",icon:"🌅",location:"Coastal Raceway",length:3850,phase:2.8,curves:1.5,sky:["#40255e","#fbaa78"],grass:["#31668c","#1c4764"],road:"#44485e",accent:"#ffcd86"}
 ];
 const driverById=Object.fromEntries(drivers.map(x=>[x.id,x]));
 const trackById=Object.fromEntries(tracks.map(x=>[x.id,x]));
-const newSave=()=>({tickets:500,driver:"nova",track:"neon",upgrades:{},records:{},races:0,wins:0});
+const newSave=()=>({tickets:500,driver:"nova",track:"neon",laps:DEFAULT_LAPS,skill:"standard",upgrades:{},records:{},races:0,wins:0});
 function readSave(){
  const s=newSave();
  try{
@@ -28,6 +34,8 @@ function readSave(){
   if(Number.isSafeInteger(r.tickets))s.tickets=clamp(r.tickets,0,1000000);
   if(driverById[r.driver])s.driver=r.driver;
   if(trackById[r.track])s.track=r.track;
+  if([1,3,5].includes(r.laps))s.laps=r.laps;
+  if(["casual","standard","expert"].includes(r.skill))s.skill=r.skill;
   if(r.upgrades&&typeof r.upgrades==="object"){
    for(const d of drivers){
     const u=r.upgrades[d.id];if(!u||typeof u!=="object")continue;
@@ -38,7 +46,16 @@ function readSave(){
   if(r.records&&typeof r.records==="object"){
    for(const t of tracks){
     const v=r.records[t.id];if(!v||typeof v!=="object")continue;
-    s.records[t.id]={races:clamp(Number(v.races)||0,0,100000),wins:clamp(Number(v.wins)||0,0,100000),best:Number.isFinite(v.best)&&v.best>0?Math.min(99999,v.best):null,lastPosition:clamp(Number(v.lastPosition)||4,1,4)};
+    const oldBest=Number.isFinite(v.best)&&v.best>0?Math.min(99999,v.best):null;
+    const bestByLaps={};
+    for(const laps of [1,3,5]){
+      const value=v.bestByLaps?.[laps];
+      if(Number.isFinite(value)&&value>0)bestByLaps[laps]=Math.min(99999,value);
+    }
+    if(oldBest&&!bestByLaps[3])bestByLaps[3]=oldBest;
+    s.records[t.id]={races:clamp(Number(v.races)||0,0,100000),wins:clamp(Number(v.wins)||0,0,100000),
+      best:oldBest,bestLap:Number.isFinite(v.bestLap)&&v.bestLap>0?Math.min(99999,v.bestLap):null,
+      bestByLaps,lastPosition:clamp(Number(v.lastPosition)||4,1,4)};
    }
   }
   s.races=clamp(Number(r.races)||0,0,100000);
@@ -69,6 +86,11 @@ function renderOptions(){
  $("track-grid").innerHTML=tracks.map(t=>'<button type="button" class="track-card '+(save.track===t.id?"chosen":"")+'" data-track="'+t.id+'" aria-pressed="'+(save.track===t.id)+'" '+(race?"disabled":"")+'><span class="track-icon">'+t.icon+'</span><span><strong>'+t.name+'</strong><small>'+t.location+' · '+Math.round(t.length/1000*10)/10+' km*</small></span></button>').join("");
  $("race-title").textContent=selectedTrack().name;
  $("start-race").disabled=!!race;
+ $("race-laps").value=String(save.laps);$("race-laps").disabled=!!race;
+ $("race-skill").value=save.skill;$("race-skill").disabled=!!race;
+ const labels={1:"SPRINT",3:"GRAND PRIX",5:"ENDURANCE"};
+ $("race-format").textContent=labels[save.laps]+" · "+save.laps+" LAP"+(save.laps>1?"S":"")+" · 4 KARTS";
+ $("race-format-detail").textContent=save.skill.toUpperCase()+" rivals · Speedway Tickets and lap records";
  renderGarage();renderRecords();
 }
 const upgradeTypes=[
