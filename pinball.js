@@ -222,6 +222,9 @@
     const radius = ball.r + 10;
     // Only strike the playing side of a flipper. Never teleport a drained ball
     // upward when it passes underneath, which caused unwanted saves/loops.
+    // The inner ends must leave a real drain gap when the flippers are down.
+    // Otherwise a ball can pinball forever between the two resting tips.
+    if (!raised && (isLeft ? ball.x > 188 : ball.x < 232)) return;
     if (distance >= radius || ball.y > p.y + 5 || ball.vy < -1) return;
     ball.y = p.y - Math.sqrt(Math.max(0, radius * radius - (ball.x - p.x) ** 2)) - 0.5;
     if (raised) {
