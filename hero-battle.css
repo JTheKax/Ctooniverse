@@ -128,3 +128,16 @@ footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;paddin
  .hb-battle-actions{gap:7px}
  .hb-battle-actions>.hb-btn{flex:1 1 calc(50% - 8px);font-size:.75rem;padding:11px 7px}
 }
+
+
+/* Active defensive and offensive effects are visible on each fighter. */
+.hb-unit-flags{
+ display:flex;min-height:20px;gap:3px;align-items:center;justify-content:center;flex-wrap:wrap;margin:5px 0 2px;
+}
+.hb-unit-flags span{
+ display:inline-flex;align-items:center;justify-content:center;
+ padding:3px 5px;background:#3a3379;border:1px solid #9b8cf0;
+ border-radius:6px;color:#fff0c6;font-size:.61rem;font-weight:900;line-height:1.2;
+}
+.hb-unit.enemy .hb-unit-flags span{background:#662b56;border-color:#e188a4}
+@media(max-width:500px){.hb-unit-flags span{font-size:.54rem;padding:3px}}
