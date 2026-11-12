@@ -2,7 +2,7 @@
 (() => {
   // The owner-defined operational mode now colors the navigation itself.
   // No separate Online / Maintenance widget or extra header row is created.
-  if(!document.querySelector(".site-header nav, .jam-topbar"))return;
+  if(!document.querySelector(".site-header nav, .jam-topbar, .ctoon-standalone-nav"))return;
   document.getElementById("site-status-strip")?.remove();
 
   const api="https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/site_operational_status?select=mode,updated_at&id=eq.1";
