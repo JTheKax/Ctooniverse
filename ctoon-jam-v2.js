@@ -686,7 +686,10 @@
     button.addEventListener("click",event=>{if(event.detail===0)strum();});
   }
   document.addEventListener("keydown",event=>{
-    if(event.target.closest?.("input,select,textarea,button,nav")||!els.picker.hidden)return;
+    // A Play button often keeps keyboard focus; fret keys must still respond.
+    // Preserve ordinary Space/Enter activation on focused buttons.
+    if(event.target.closest?.('input,select,textarea,[contenteditable="true"],nav')||!els.picker.hidden)return;
+    if(event.target.tagName==="BUTTON"&&["Space","Enter"].includes(event.code))return;
     if(event.code==="Escape"){event.preventDefault();if(document.body.classList.contains("jam-theater-view")){document.body.classList.remove("jam-theater-view");fullscreenRefresh();}else if(!event.repeat)pause();return;}
     if(event.code==="Space"){event.preventDefault();if(!event.repeat)activateHype();return;}
     if(["ArrowUp","ArrowDown","Enter"].includes(event.code)){
@@ -696,7 +699,7 @@
     if(lane>=0){event.preventDefault();if(!event.repeat)press(lane);}
   });
   document.addEventListener("keyup",event=>{
-    if(event.target.closest?.("input,select,textarea,button,nav")||!els.picker.hidden)return;
+    if(event.target.closest?.('input,select,textarea,[contenteditable="true"],nav')||!els.picker.hidden)return;
     const lane=keys.indexOf(event.key.toLowerCase());
     if(lane>=0){event.preventDefault();release(lane);}
   });
