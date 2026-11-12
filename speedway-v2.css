@@ -127,3 +127,15 @@
 @media(prefers-reduced-motion:reduce){
  .speedway-progress>div,.driver-card,.track-card{transition:none!important}
 }
+
+
+.race-settings .race-auto-gas{
+ display:flex;align-items:center;gap:10px;grid-column:1/-1;min-height:47px;
+ padding:9px 11px;border-radius:11px;border:1px solid #5c8fc5;
+ background:linear-gradient(110deg,#1b3d68,#242d65);
+ color:#f4faff;text-transform:none;letter-spacing:0;font-size:.86rem;
+}
+.race-auto-gas input{accent-color:#68e2af;width:22px;height:22px;flex:0 0 22px}
+.race-auto-gas span{display:grid;gap:2px}
+.race-auto-gas small{font-size:.69rem;color:#bbd7ef;font-weight:650}
+.race-auto-gas:has(input:disabled){opacity:.65}
