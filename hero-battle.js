@@ -210,7 +210,12 @@ function useSpecial(id,automatic=false){
 function renderUnit(u,enemy=false){
  const pct=Math.max(0,Math.round(100*u.hp/u.maxHp));
  const energy=Math.min(100,u.energy);
- return '<div class="hb-unit '+(enemy?"enemy ":"")+(u.hp<=0?"fallen":"")+'"><span class="icon" aria-hidden="true">'+u.icon+'</span><strong>'+u.name+'</strong><div class="hb-meter" title="Health"><span style="width:'+pct+'%"></span></div><small>'+fmt(u.hp)+' / '+fmt(u.maxHp)+'</small>'+
+ const flags=[
+  u.shield>0?'<span title="Damage shield">🛡 '+fmt(u.shield)+'</span>':'',
+  u.boost>0?'<span title="Attack boost">⚡ ATK UP</span>':'',
+  u.stunned>0?'<span title="Stunned">💫 STUN</span>':''
+ ].filter(Boolean).join("");
+ return '<div class="hb-unit '+(enemy?"enemy ":"")+(u.hp<=0?"fallen":"")+'"><span class="icon" aria-hidden="true">'+u.icon+'</span><strong>'+u.name+'</strong><div class="hb-meter" title="Health"><span style="width:'+pct+'%"></span></div><small>'+fmt(u.hp)+' / '+fmt(u.maxHp)+'</small>'+'<div class="hb-unit-flags">'+flags+'</div>'+
  (enemy?'<small>'+(u.boss?" ★ BOSS":"")+(u.stunned>0?" · STUNNED":"")+'</small>':'<div class="hb-meter energy" title="Special energy"><span style="width:'+energy+'%"></span></div><button data-action="special" data-id="'+u.id+'" '+(u.hp<=0||u.energy<100||!active||active.phase!=="running"||paused?"disabled":"class=\"ready\"")+' aria-label="Use '+u.skill+'">'+(u.energy>=100?"★ "+u.skill:"SPECIAL "+u.energy+"%")+'</button>')+'</div>';
 }
 function renderBattle(){
