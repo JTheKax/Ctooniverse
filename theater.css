@@ -172,3 +172,119 @@
 }
 @media(max-width:360px){.theater-library .theater-cases{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 @media(prefers-reduced-motion:reduce){.theater-screen-controls *,.theater-library .theater-case *{transition:none!important}}
+
+
+/* Grand premiere marquee: Art Deco frame, warm moving bulbs, and a striped cinema canopy. */
+.theater-grand-marquee{
+  width:min(100%,1160px);margin:42px auto 28px;
+  position:relative;isolation:isolate;transform:none;
+  padding:15px 15px 0;border:4px solid #49204f;border-radius:30px 30px 23px 23px;
+  background:linear-gradient(155deg,#fff0b0 0%,#cd8939 19%,#6c2d39 33%,#f0c778 55%,#95502c 79%,#fff1b0 100%);
+  box-shadow:0 0 0 3px #180b30,0 0 0 8px #7141ab,0 0 0 11px #241038,0 23px 45px #000c,0 0 65px #ffc75b4d;
+}
+.theater-grand-marquee::before{
+  content:"";position:absolute;inset:5px 5px 14px;pointer-events:none;
+  border:2px solid #ffefb7a0;border-radius:23px 23px 13px 13px;z-index:1;
+}
+.theater-marquee-crown{
+  position:absolute;z-index:3;top:-28px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  width:max-content;max-width:90%;padding:8px 22px;
+  border:3px solid #ffe4a3;border-radius:60px 60px 12px 12px;
+  background:linear-gradient(180deg,#6f3676,#28133e);
+  box-shadow:0 5px 0 #1e0d30,0 0 22px #f1b24d75;
+  color:#fff2b6;font:900 clamp(.65rem,1.8vw,.96rem)/1.1 system-ui,sans-serif;letter-spacing:.12em;text-align:center;
+}
+.theater-marquee-crown strong{font:inherit;color:inherit;-webkit-text-stroke:0;text-shadow:0 0 11px #ffd87a;overflow-wrap:normal}
+.theater-marquee-crown>span{color:#ffe09a;font-size:1.15rem}
+.theater-grand-marquee-lights{
+  position:relative;min-height:250px;padding:37px 55px 33px;
+  overflow:hidden;border:3px solid #3b1b59;border-radius:19px 19px 8px 8px;gap:0;
+  background:
+    radial-gradient(ellipse at 50% 45%,#592b76aa,transparent 60%),
+    repeating-linear-gradient(90deg,#100d34 0,#251344 28px,#100d34 56px);
+  box-shadow:inset 0 0 0 2px #a65a65,inset 0 0 55px #030515,0 0 20px #ffe19b;
+}
+.theater-grand-marquee-lights::before{
+  content:"";position:absolute;inset:18px;z-index:0;pointer-events:none;
+  border:2px solid #d69b62b3;border-radius:8px;
+  background:repeating-linear-gradient(120deg,transparent 0 29px,#ffe2ac08 30px 31px,transparent 32px 60px);
+}
+.theater-marquee-sign{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;width:100%;text-align:center}
+.theater-marquee-title-line{width:100%;display:flex;align-items:center;justify-content:center;gap:clamp(4px,1.6vw,22px);min-width:0}
+.theater-marquee-title-line>strong{
+  font-family:Georgia,'Trebuchet MS',serif;font-weight:950;
+  font-size:clamp(1.55rem,6.7vw,5.8rem);line-height:1.03;letter-spacing:clamp(0px,.55vw,6px);
+  color:#fff5d6;-webkit-text-stroke:1px #6a2c69;
+  text-shadow:0 3px 0 #8d3764,0 6px 0 #3e2356,0 0 24px #ffce75,0 0 44px #f1b85485;
+  overflow-wrap:normal;white-space:nowrap;
+  animation:theater-letter-glow 5s ease-in-out infinite;
+}
+.theater-marquee-flourish{flex:0 0 auto;font-size:clamp(1rem,3.2vw,3rem);color:#ffeab1;text-shadow:0 0 16px #ffb956;opacity:.92}
+.theater-grand-marquee-kicker{
+  font-size:clamp(.66rem,1.7vw,.96rem);font-weight:950;letter-spacing:clamp(.09em,.4vw,.24em);
+  color:#9cefff;text-shadow:0 0 13px #2fdcff,0 0 24px #158ac4;
+}
+.theater-grand-marquee-subtitle{
+  font-family:system-ui,sans-serif;font-size:clamp(.95rem,3.5vw,2.15rem);font-weight:1000;letter-spacing:clamp(.09em,.55vw,.33em);
+  color:#ffe0a0;text-shadow:0 3px 0 #76385c,0 0 16px #f5b352;
+}
+.theater-marquee-tagline{
+  width:min(100%,550px);display:flex;justify-content:center;align-items:center;gap:clamp(8px,2vw,23px);
+  margin-top:7px;padding:8px 13px;border-top:1px solid #c8a37570;border-bottom:1px solid #c8a37570;
+  color:#e9d8fa;font-size:clamp(.59rem,1.45vw,.8rem);font-weight:900;letter-spacing:.1em;
+}
+.theater-marquee-tagline>span:first-child,.theater-marquee-tagline>span:last-child{color:#ffd77e;text-shadow:0 0 8px #ffc85f}
+.theater-marquee-bulbs{
+  position:absolute;display:block;z-index:4;pointer-events:none;
+  background-image:radial-gradient(circle,#fffbe4 0 14%,#ffd577 21%,#db843c 34%,#633334 45%,transparent 52%);
+  filter:drop-shadow(0 0 4px #ffb954);
+}
+.theater-marquee-bulbs-top,.theater-marquee-bulbs-bottom{
+  left:18px;right:18px;height:26px;
+  background-size:27px 26px;background-repeat:repeat-x;
+  animation:theater-marquee-chase-x 5s linear infinite;
+}
+.theater-marquee-bulbs-top{top:3px}.theater-marquee-bulbs-bottom{bottom:3px;animation-direction:reverse}
+.theater-marquee-bulbs-left,.theater-marquee-bulbs-right{
+  top:23px;bottom:23px;width:26px;
+  background-size:26px 27px;background-repeat:repeat-y;
+  animation:theater-marquee-chase-y 5s linear infinite;
+}
+.theater-marquee-bulbs-left{left:2px;animation-direction:reverse}.theater-marquee-bulbs-right{right:2px}
+.theater-marquee-awning{
+  position:relative;z-index:2;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
+  height:26px;margin:0 -12px -17px;border-top:4px solid #e5a756;
+  border-radius:0 0 18px 18px;overflow:hidden;
+  box-shadow:0 5px 0 #2b143c,0 10px 18px #0009;
+}
+.theater-marquee-awning>span:nth-child(odd){background:linear-gradient(180deg,#b42c61,#5b173e)}
+.theater-marquee-awning>span:nth-child(even){background:linear-gradient(180deg,#fce3a3,#bc844b)}
+@keyframes theater-marquee-chase-x{to{background-position:27px 0}}
+@keyframes theater-marquee-chase-y{to{background-position:0 27px}}
+@keyframes theater-letter-glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.10)}}
+@media(max-width:650px){
+ .theater-grand-marquee{margin:32px auto 22px;padding:7px 7px 0;border-width:3px;border-radius:19px 19px 13px 13px}
+ .theater-grand-marquee::before{inset:3px 3px 9px;border-radius:14px}
+ .theater-marquee-crown{top:-23px;gap:6px;padding:6px 11px;border-width:2px;font-size:.62rem;letter-spacing:.08em}
+ .theater-marquee-crown>span{font-size:.85rem}
+ .theater-grand-marquee-lights{min-height:161px;padding:30px 16px 23px;border-width:2px;border-radius:12px 12px 6px 6px}
+ .theater-grand-marquee-lights::before{inset:11px}
+ .theater-marquee-sign{gap:6px}
+ .theater-marquee-title-line>strong{font-size:clamp(1.32rem,6.45vw,2.55rem);letter-spacing:0;-webkit-text-stroke:.5px #6a2c69;text-shadow:0 2px 0 #8d3764,0 0 12px #ffc86c}
+ .theater-marquee-flourish{font-size:clamp(.85rem,2.8vw,1.5rem)}
+ .theater-grand-marquee-kicker{font-size:clamp(.55rem,1.85vw,.72rem);letter-spacing:.07em}
+ .theater-grand-marquee-subtitle{font-size:clamp(.85rem,3.4vw,1.45rem);letter-spacing:.12em}
+ .theater-marquee-tagline{font-size:clamp(.52rem,1.55vw,.65rem);letter-spacing:0;gap:7px;padding:5px 4px;margin-top:2px}
+ .theater-marquee-bulbs-top,.theater-marquee-bulbs-bottom{left:10px;right:10px;height:17px;background-size:18px 17px;animation-name:theater-marquee-chase-x-mobile}
+ .theater-marquee-bulbs-left,.theater-marquee-bulbs-right{top:14px;bottom:14px;width:17px;background-size:17px 18px;animation-name:theater-marquee-chase-y-mobile}
+ .theater-marquee-bulbs-top{top:1px}.theater-marquee-bulbs-bottom{bottom:1px}
+ .theater-marquee-bulbs-left{left:1px}.theater-marquee-bulbs-right{right:1px}
+ .theater-marquee-awning{height:16px;margin:0 -5px -9px;border-top-width:2px}
+}
+@keyframes theater-marquee-chase-x-mobile{to{background-position:18px 0}}
+@keyframes theater-marquee-chase-y-mobile{to{background-position:0 18px}}
+@media(max-width:340px){.theater-marquee-flourish{display:none}.theater-marquee-tagline>span:first-child,.theater-marquee-tagline>span:last-child{display:none}}
+@media(prefers-reduced-motion:reduce){
+ .theater-marquee-bulbs,.theater-marquee-title-line>strong{animation:none!important}
+}
