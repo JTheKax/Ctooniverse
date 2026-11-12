@@ -89,79 +89,124 @@ if (year) year.textContent = String(new Date().getFullYear());
 })();
 
 
-/* Shop dropdown shared across desktop and mobile navigation. */
+/* Consistent CTooniverse navigation on every main site page.
+   Keep the existing account, community and owner controls so their auth
+   handlers and permission checks continue to work. */
 (() => {
- const nav=document.querySelector('.site-header nav');
- if(!nav||nav.querySelector('.shop-dropdown'))return;
- const original=[...nav.querySelectorAll('a.nav-link')].find(a=>{try{return new URL(a.href,location.href).pathname.endsWith('/shop.html')}catch{return false}});
- if(!original)return;
- const wrap=document.createElement('div');wrap.className='ctoons-dropdown shop-dropdown';
- const btn=document.createElement('button');btn.type='button';btn.className='nav-link ctoons-dropdown-trigger';
- if(location.pathname.endsWith('/shop.html'))btn.classList.add('active');
- btn.setAttribute('aria-haspopup','true');btn.setAttribute('aria-expanded','false');
- btn.innerHTML='<span class="nav-icon" aria-hidden="true">🛒</span><span>Shop</span><span aria-hidden="true">▾</span>';
- const panel=document.createElement('div');panel.className='ctoons-dropdown-panel';
- for(const [label,url] of [['Shop','shop.html']]){
-  const link=document.createElement('a');link.href=url;link.textContent=label;
-  if(location.pathname.endsWith('/'+url))link.setAttribute('aria-current','page');
-  panel.append(link);
- }
- const close=()=>{wrap.classList.remove('is-open');btn.setAttribute('aria-expanded','false')};
- btn.addEventListener('click',()=>{const open=!wrap.classList.contains('is-open');wrap.classList.toggle('is-open',open);btn.setAttribute('aria-expanded',String(open))});
- wrap.addEventListener('keydown',e=>{if(e.key==='Escape'){close();btn.focus()}});
- document.addEventListener('click',e=>{if(!wrap.contains(e.target))close()});
- wrap.append(btn,panel);original.replaceWith(wrap);
-})();
+  const nav=document.querySelector('.site-header nav');
+  if(!nav)return;
+  const page=location.pathname.split('/').pop().toLowerCase()||'index.html';
+  const link=(label,url,icon)=>{
+    const a=document.createElement('a');
+    a.href=url;a.className='nav-link';
+    a.innerHTML='<span class="nav-icon" aria-hidden="true">'+icon+'</span><span>'+label+'</span>';
+    if(page===url){a.classList.add('active');a.setAttribute('aria-current','page');}
+    return a;
+  };
+  const home=link('Home','index.html','⌂');
+  const ctoons=link('CToons','ctoons.html','▣');
+  const watch=link('Watch','watch.html','▶');
+  const shop=link('Shop','shop.html','🛒');
 
-/* Games dropdown: every game stays linked from the shared site navigation. */
-(() => {
- const nav=document.querySelector('.site-header nav');
- if(!nav||nav.querySelector('.games-dropdown'))return;
- const original=[...nav.querySelectorAll('a.nav-link')].find(a=>{
-  try{return new URL(a.href,location.href).pathname.endsWith('/games.html')}catch{return false}
- });
- if(!original)return;
- const entries=[
-  ['Games Home','games.html'],
-  ['CToon Clash','clash.html'],
-  ['CToon Heroes: Battle Quest','hero-battle.html'],
-  ['CToon Jam','ctoon-jam.html'],
-  ['CToon Showdown','fighters.html'],
-  ['CToon Speedway','speedway.html'],
-  ['Video Game Emulator','emulator.html'],
-  ['Prize Games','prize-games.html']
- ];
- const wrap=document.createElement('div');wrap.className='ctoons-dropdown games-dropdown';
- const btn=document.createElement('button');btn.type='button';btn.className='nav-link ctoons-dropdown-trigger';
- btn.setAttribute('aria-haspopup','true');btn.setAttribute('aria-expanded','false');
- btn.setAttribute('aria-controls','games-navigation-panel');
- btn.innerHTML='<span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span><span aria-hidden="true">▾</span>';
- const panel=document.createElement('div');panel.className='ctoons-dropdown-panel games-dropdown-panel';panel.id='games-navigation-panel';
- for(const [label,url] of entries){
-  const link=document.createElement('a');link.href=url;link.textContent=label;
-  if(location.pathname.endsWith('/'+url))link.setAttribute('aria-current','page');
-  if(location.pathname.endsWith('/'+url)||(url==='prize-games.html'&&['pinball.html','prize-wheel.html'].some(page=>location.pathname.endsWith('/'+page))))btn.classList.add('active');
-  panel.append(link);
- }
- const close=()=>{wrap.classList.remove('is-open');btn.setAttribute('aria-expanded','false')};
- btn.addEventListener('click',()=>{const open=!wrap.classList.contains('is-open');wrap.classList.toggle('is-open',open);btn.setAttribute('aria-expanded',String(open))});
- wrap.addEventListener('keydown',event=>{if(event.key==='Escape'){close();btn.focus()}});
- document.addEventListener('click',event=>{if(!wrap.contains(event.target))close()});
- wrap.append(btn,panel);original.replaceWith(wrap);
-})();
+  const games=document.createElement('div');
+  games.className='ctoons-dropdown games-dropdown';
+  const gamesButton=document.createElement('button');
+  gamesButton.type='button';
+  gamesButton.className='nav-link ctoons-dropdown-trigger';
+  gamesButton.setAttribute('aria-haspopup','true');
+  gamesButton.setAttribute('aria-expanded','false');
+  gamesButton.setAttribute('aria-controls','games-navigation-panel');
+  gamesButton.innerHTML='<span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span><span aria-hidden="true">▾</span>';
+  const gamesPanel=document.createElement('div');
+  gamesPanel.className='ctoons-dropdown-panel games-dropdown-panel';
+  gamesPanel.id='games-navigation-panel';
+  const entries=[
+    ['Games Hub','games.html'],
+    ['CToon Clash','clash.html'],
+    ['CToon Heroes: Battle Quest','hero-battle.html'],
+    ['CToon Jam','ctoon-jam.html'],
+    ['CToon Showdown','fighters.html'],
+    ['CToon Speedway','speedway.html'],
+    ['Video Game Emulator','emulator.html'],
+    ['Prize Games','prize-games.html']
+  ];
+  const gamesPages=new Set(entries.map(([,url])=>url).concat(['pinball.html','prize-wheel.html']));
+  if(gamesPages.has(page))gamesButton.classList.add('active');
+  for(const [label,url] of entries){
+    const a=document.createElement('a');a.href=url;a.textContent=label;
+    if(page===url){a.setAttribute('aria-current','page');}
+    if(url==='prize-games.html'&&['pinball.html','prize-wheel.html'].includes(page))a.classList.add('nav-parent-active');
+    gamesPanel.append(a);
+  }
+  games.append(gamesButton,gamesPanel);
 
-/* Dedicated top-level CToon Clash tab on every standard site page. */
-(() => {
- const nav=document.querySelector('.site-header nav');
- if(!nav||nav.querySelector('.clash-nav-link'))return;
- const link=document.createElement('a');link.href='clash.html';link.className='nav-link clash-nav-link';
- if(location.pathname.endsWith('/clash.html')){link.classList.add('active');link.setAttribute('aria-current','page')}
- const icon=document.createElement('span');icon.className='nav-icon';icon.setAttribute('aria-hidden','true');icon.textContent='⚔';
- const label=document.createElement('span');label.textContent='Cards';link.append(icon,label);
- const games=[...nav.querySelectorAll('a.nav-link')].find(a=>a.getAttribute('href')==='games.html');
- const dropdown=nav.querySelector('.games-dropdown');
- const anchor=dropdown||games;
- if(anchor)anchor.after(link);else nav.append(link);
+  const community=nav.querySelector('.community-dropdown')||(()=>{
+    const root=document.createElement('div');root.className='community-dropdown';
+    root.innerHTML='<button type="button" class="nav-link community-dropdown-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">♧</span><span>Community</span><span aria-hidden="true">▾</span></button><div class="community-dropdown-panel"><a href="forums.html">Forums</a><a href="guild.html">Guild</a><a href="support.html">Support</a></div>';
+    return root;
+  })();
+  const account=nav.querySelector('.account-dropdown')||(()=>{
+    const root=document.createElement('div');root.className='account-dropdown';
+    root.innerHTML='<button type="button" class="nav-link account-dropdown-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">●</span><span>Account</span><span aria-hidden="true">▾</span></button><div class="account-dropdown-panel"><a href="login.html" data-account-guest hidden>Login</a><a href="account.html" data-account-guest hidden>Register</a><a href="account.html" data-account-signed hidden>My Profile</a><a href="account.html#redeem-codes" data-account-signed hidden>Redeem Code</a><button type="button" data-account-signed data-account-logout hidden>Log Out</button></div>';
+    return root;
+  })();
+  const owner=nav.querySelector('.owner-menu.owner-nav, a.owner-nav')||(()=>{
+    const root=document.createElement('div');root.className='owner-menu owner-nav';
+    root.style.setProperty('display','none','important');
+    root.innerHTML='<button type="button" class="nav-link owner-menu-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">♛</span><span>Owner</span><span aria-hidden="true">▾</span></button><div class="owner-menu-panel"></div>';
+    return root;
+  })();
+  const activeGroups={
+    community:['forums.html','guild.html','support.html','community.html'],
+    account:['account.html','login.html']
+  };
+  for(const [root,pages] of [[community,activeGroups.community],[account,activeGroups.account]]){
+    if(pages.includes(page))root.querySelector('.nav-link')?.classList.add('active');
+    for(const a of root.querySelectorAll('a[href]')){
+      if(a.getAttribute('href')?.split('#')[0]===page)a.setAttribute('aria-current','page');
+    }
+  }
+  nav.replaceChildren(home,ctoons,games,watch,shop,community,account,owner);
+  nav.dataset.navigationVersion='2026-11-12';
+
+  function closeMenus(except){
+    for(const root of nav.querySelectorAll('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu')){
+      if(root===except)continue;
+      root.classList.remove('is-open');
+      root.querySelector('button[aria-expanded]')?.setAttribute('aria-expanded','false');
+    }
+  }
+  gamesButton.addEventListener('click',event=>{
+    event.preventDefault();
+    const open=gamesButton.getAttribute('aria-expanded')!=='true';
+    closeMenus(games);
+    games.classList.toggle('is-open',open);
+    gamesButton.setAttribute('aria-expanded',String(open));
+  });
+  nav.addEventListener('click',event=>{
+    const root=event.target.closest('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu');
+    closeMenus(root);
+  });
+  document.addEventListener('click',event=>{
+    if(!nav.contains(event.target))closeMenus();
+  });
+  nav.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){
+      const trigger=event.target.closest('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu')?.querySelector('button[aria-expanded]');
+      closeMenus();
+      trigger?.focus();
+      return;
+    }
+    if(event.key!=='ArrowDown')return;
+    const trigger=event.target.closest('button[aria-haspopup="true"]');
+    if(!trigger||!nav.contains(trigger))return;
+    event.preventDefault();
+    if(trigger.getAttribute('aria-expanded')!=='true')trigger.click();
+    const root=trigger.parentElement;
+    const first=[...root.querySelectorAll('a,button')].find(el=>el!==trigger&&!el.hidden&&!el.disabled&&el.getClientRects().length);
+    first?.focus();
+  });
+  window.addEventListener('pageshow',()=>closeMenus());
 })();
 
 /* Load the shared mobile stylesheet on every page that uses site navigation. */
@@ -265,17 +310,4 @@ if (year) year.textContent = String(new Date().getFullYear());
   const filename=a.getAttribute('href').split(/[?#]/)[0].split('/').pop();
   if(obsolete.has(filename)) a.remove();
  }
-})();
-
-/* Restore the CToons tab on all shared site headers. Do not recreate old sets. */
-(() => {
- const add=()=>{
-  const nav=document.querySelector('.site-header nav');
-  if(!nav||nav.querySelector('a[href="ctoons.html"]'))return;
-  const link=document.createElement('a');link.href='ctoons.html';link.className='nav-link';
-  link.innerHTML='<span class="nav-icon" aria-hidden="true">▣</span><span>CToons</span>';
-  const shop=[...nav.querySelectorAll('a.nav-link')].find(a=>a.getAttribute('href')==='shop.html');
-  if(shop)shop.before(link);else nav.append(link);
- };
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',add,{once:true});else add();
 })();
