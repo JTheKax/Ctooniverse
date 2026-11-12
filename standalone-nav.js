@@ -16,7 +16,7 @@
   const root=document.createElement("div");
   root.className="ctoon-standalone-nav";
   const navIcons={
-    Home:"🏠",CToons:"🎴",Watch:"🎬",Shop:"🛍️",
+    Home:"🏠",CToons:"🎴",Theater:"🎬",Shop:"🛍️",
     "Games Hub":"🕹️","CToon Clash":"⚔️","CToon Heroes: Battle Quest":"🦸",
     "CToon Jam":"🎸","CToon Showdown":"🥊","CToon Speedway":"🏎️",
     "Video Game Emulator":"💾","Prize Games":"🎁",
@@ -35,7 +35,7 @@
   root.innerHTML='<div class="ctoon-standalone-bar"><a class="ctoon-standalone-brand" href="index.html">✦ CTooniverse</a><button type="button" class="ctoon-standalone-toggle" aria-expanded="false" aria-controls="ctoon-standalone-panel">☰ Site Menu</button></div>'
    +'<nav id="ctoon-standalone-panel" class="ctoon-standalone-panel" aria-label="CTooniverse navigation" hidden>'
    +link("Home","index.html")+link("CToons","ctoons.html")+group("🎮 Games",games)
-   +link("Watch","watch.html")+link("Shop","shop.html")+group("👥 Community",community)
+   +link("Theater","watch.html")+link("Shop","shop.html")+group("👥 Community",community)
    +group("👤 Account",account).replace("</details>",'<button type="button" data-nav-signed data-nav-logout hidden><span class="ctoon-nav-symbol" aria-hidden="true">🚪</span><span>Log Out</span></button></details>')
    +group("👑 Owner",owner,'id="ctoon-standalone-owner" hidden')+'</nav>';
   document.body.insertBefore(root,document.body.firstChild);

@@ -47,7 +47,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   };
   const home=link('Home','index.html','🏠');
   const ctoons=link('CToons','ctoons.html','🎴');
-  const watch=link('Watch','watch.html','🎬');
+  const watch=link('Theater','watch.html','🎬');
   const shop=link('Shop','shop.html','🛍️');
   // Highlight the parent tab while browsing a related subpage.
   if(['ctoon-set.html','anime.html','movies.html','misc.html','trades.html'].includes(page))ctoons.classList.add('active');
