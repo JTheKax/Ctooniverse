@@ -26,3 +26,6 @@ body[data-site-mode="maintenance"] .ctoon-standalone-nav{--ctnav-bg:#57410b;--ct
 .ctoon-standalone-panel details[data-current="true"]>summary{border-color:var(--ctnav-border)}
 .ctoon-standalone-nav :is(a,summary,button):focus-visible{outline:3px solid #ffda78;outline-offset:2px}
 @media(max-width:520px){.ctoon-standalone-bar{min-height:44px}.ctoon-standalone-panel{right:4px;width:calc(100vw - 8px)}}
+
+/* Yellow maintenance controls need dark ink for readable contrast. */
+body[data-site-mode="maintenance"] .ctoon-standalone-nav :is(.ctoon-standalone-toggle,.ctoon-standalone-panel a,.ctoon-standalone-panel button,.ctoon-standalone-panel summary){color:#302102}
