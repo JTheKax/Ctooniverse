@@ -21,74 +21,6 @@ if (year) year.textContent = String(new Date().getFullYear());
   else mount();
 })();
 
-/* Keep the Owner navigation stable across refreshes while verifying membership.
-   A cached hint never grants access: the signed-in user must match and the
-   Owner dashboard independently verifies permissions on every visit. */
-(async () => {
-  const links=[...document.querySelectorAll('.owner-nav')];
-  if(!links.length)return;
-  const cacheKey='ctooniverse-verified-owner-id';
-  const setVisible=visible=>document.querySelectorAll('.owner-nav').forEach(link=>{
-    link.classList.toggle('owner-visible',visible);
-    link.style.setProperty('display',visible?'inline-flex':'none','important');
-  });
-  try{
-    const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
-    const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
-    let checkId=0,confirmedUserId=null;
-    async function verify(){
-      const id=++checkId;
-      try{
-        const {data:{user},error}=await db.auth.getUser();
-        if(id!==checkId)return;
-        if(error||!user){
-          confirmedUserId=null;sessionStorage.removeItem(cacheKey);setVisible(false);return;
-        }
-        const sameUser=confirmedUserId===user.id||sessionStorage.getItem(cacheKey)===user.id;
-        setVisible(sameUser);
-        const {data,error:membershipError}=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();
-        if(id!==checkId)return;
-        if(!membershipError){
-          if(data){
-            confirmedUserId=user.id;sessionStorage.setItem(cacheKey,user.id);setVisible(true);
-          }else{
-            confirmedUserId=null;sessionStorage.removeItem(cacheKey);setVisible(false);
-          }
-        }else if(!sameUser)setVisible(false);
-      }catch(_){
-        if(id===checkId&&confirmedUserId===null)setVisible(false);
-      }
-    }
-    let lastAuthUserId;
-    db.auth.onAuthStateChange((event,session)=>{
-      if(event!=='SIGNED_IN'&&event!=='SIGNED_OUT')return;
-      const next=session?.user?.id||null;
-      if(lastAuthUserId===next)return;
-      lastAuthUserId=next;
-      setTimeout(verify,100);
-    });
-    await verify();
-  }catch(_){setVisible(false);}
-})();
-
-/* Decorative Saturn layers; no impact on authentication or page controls. */
-(() => {
-  if (!document.querySelector('.saturn-scene')) {
-    const scene = document.createElement('div');
-    scene.className = 'saturn-scene';
-    scene.setAttribute('aria-hidden', 'true');
-    scene.innerHTML = '<div class="saturn-rings"></div><div class="saturn-planet"></div><div class="saturn-rings saturn-rings-front"></div>';
-    document.body.prepend(scene);
-  }
-})();
-
-/* Sparse, decorative shooting stars (no network or user data). */
-(() => {
- if (document.querySelector('.shooting-star')) return;
- for(let i=0;i<2;i++){const star=document.createElement('span');star.className='shooting-star';star.setAttribute('aria-hidden','true');document.body.prepend(star);}
-})();
-
-
 /* Consistent CTooniverse navigation on every main site page.
    Keep the existing account, community and owner controls so their auth
    handlers and permission checks continue to work. */
@@ -209,7 +141,92 @@ if (year) year.textContent = String(new Date().getFullYear());
     first?.focus();
   });
   window.addEventListener('pageshow',()=>closeMenus());
+
+  // Older game and prize pages omit the dropdown controller imports.
+  // Install only missing controllers after the shared markup exists.
+  const hasScript=filename=>[...document.querySelectorAll('script[src]')]
+    .some(script=>script.getAttribute('src').split('?')[0].split('/').pop()===filename);
+  for(const [filename,type] of [
+    ['community-menu.js',''],
+    ['owner-menu.js',''],
+    ['account-menu.js','module']
+  ]){
+    if(hasScript(filename))continue;
+    const script=document.createElement('script');
+    script.src=filename+'?v=nav-unified-20261112';
+    if(type)script.type=type;
+    document.head.append(script);
+  }
 })();
+
+
+/* Keep the Owner navigation stable across refreshes while verifying membership.
+   A cached hint never grants access: the signed-in user must match and the
+   Owner dashboard independently verifies permissions on every visit. */
+(async () => {
+  const links=[...document.querySelectorAll('.owner-nav')];
+  if(!links.length)return;
+  const cacheKey='ctooniverse-verified-owner-id';
+  const setVisible=visible=>document.querySelectorAll('.owner-nav').forEach(link=>{
+    link.classList.toggle('owner-visible',visible);
+    link.style.setProperty('display',visible?'inline-flex':'none','important');
+  });
+  try{
+    const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
+    const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
+    let checkId=0,confirmedUserId=null;
+    async function verify(){
+      const id=++checkId;
+      try{
+        const {data:{user},error}=await db.auth.getUser();
+        if(id!==checkId)return;
+        if(error||!user){
+          confirmedUserId=null;sessionStorage.removeItem(cacheKey);setVisible(false);return;
+        }
+        const sameUser=confirmedUserId===user.id||sessionStorage.getItem(cacheKey)===user.id;
+        setVisible(sameUser);
+        const {data,error:membershipError}=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();
+        if(id!==checkId)return;
+        if(!membershipError){
+          if(data){
+            confirmedUserId=user.id;sessionStorage.setItem(cacheKey,user.id);setVisible(true);
+          }else{
+            confirmedUserId=null;sessionStorage.removeItem(cacheKey);setVisible(false);
+          }
+        }else if(!sameUser)setVisible(false);
+      }catch(_){
+        if(id===checkId&&confirmedUserId===null)setVisible(false);
+      }
+    }
+    let lastAuthUserId;
+    db.auth.onAuthStateChange((event,session)=>{
+      if(event!=='SIGNED_IN'&&event!=='SIGNED_OUT')return;
+      const next=session?.user?.id||null;
+      if(lastAuthUserId===next)return;
+      lastAuthUserId=next;
+      setTimeout(verify,100);
+    });
+    await verify();
+  }catch(_){setVisible(false);}
+})();
+
+/* Decorative Saturn layers; no impact on authentication or page controls. */
+(() => {
+  if (!document.querySelector('.saturn-scene')) {
+    const scene = document.createElement('div');
+    scene.className = 'saturn-scene';
+    scene.setAttribute('aria-hidden', 'true');
+    scene.innerHTML = '<div class="saturn-rings"></div><div class="saturn-planet"></div><div class="saturn-rings saturn-rings-front"></div>';
+    document.body.prepend(scene);
+  }
+})();
+
+/* Sparse, decorative shooting stars (no network or user data). */
+(() => {
+ if (document.querySelector('.shooting-star')) return;
+ for(let i=0;i<2;i++){const star=document.createElement('span');star.className='shooting-star';star.setAttribute('aria-hidden','true');document.body.prepend(star);}
+})();
+
 
 /* Load the shared mobile stylesheet on every page that uses site navigation. */
 (function(){
