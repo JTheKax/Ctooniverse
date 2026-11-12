@@ -1,0 +1,28 @@
+/* Shared navigation on full-screen pages without a standard header. */
+.ctoon-standalone-nav{
+ --ctnav-bg:#161b4b;--ctnav-surface:#232261;--ctnav-fg:#fff4ff;--ctnav-border:#9181ff;--ctnav-hover:#4b39a1;
+ position:sticky;top:0;z-index:99999;isolation:isolate;box-sizing:border-box;width:100%;
+ color:var(--ctnav-fg);background:var(--ctnav-bg);border-bottom:2px solid var(--ctnav-border);
+ box-shadow:0 3px 18px #070b2dbb;font:700 14px/1.4 system-ui,-apple-system,Segoe UI,sans-serif
+}
+body[data-site-mode="online"] .ctoon-standalone-nav{--ctnav-bg:#113222;--ctnav-surface:#1b5a37;--ctnav-fg:#f2fff7;--ctnav-border:#7bebaa;--ctnav-hover:#266e43}
+body[data-site-mode="maintenance"] .ctoon-standalone-nav{--ctnav-bg:#57410b;--ctnav-surface:#ecc34c;--ctnav-fg:#fff8e5;--ctnav-border:#f3d875;--ctnav-hover:#b7891d}
+.ctoon-standalone-nav *,.ctoon-standalone-nav *::before,.ctoon-standalone-nav *::after{box-sizing:border-box}
+.ctoon-standalone-bar{min-height:48px;display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;padding:5px clamp(10px,3vw,22px)}
+.ctoon-standalone-brand{text-decoration:none;color:var(--ctnav-fg);font-weight:950;font-size:17px;letter-spacing:.05em;text-shadow:none}
+.ctoon-standalone-toggle{cursor:pointer;min-height:36px;padding:6px 14px;color:var(--ctnav-fg);background:var(--ctnav-surface);border:2px solid var(--ctnav-border);border-radius:10px;font:inherit;white-space:nowrap}
+.ctoon-standalone-toggle:hover,.ctoon-standalone-toggle[aria-expanded="true"]{background:var(--ctnav-hover)}
+.ctoon-standalone-panel{position:absolute;top:100%;right:8px;width:min(360px,calc(100vw - 16px));max-height:min(76dvh,620px);overflow-y:auto;overscroll-behavior:contain;display:grid;gap:5px;padding:10px;background:var(--ctnav-bg);border:2px solid var(--ctnav-border);border-radius:0 0 15px 15px;box-shadow:0 18px 28px #020614c9}
+.ctoon-standalone-panel[hidden],#ctoon-standalone-owner[hidden],.ctoon-standalone-panel [hidden]{display:none!important}
+.ctoon-standalone-panel a,.ctoon-standalone-panel button,.ctoon-standalone-panel summary{min-height:39px;display:flex;align-items:center;gap:9px;cursor:pointer;padding:9px 12px;border:1px solid transparent;border-radius:7px;text-decoration:none;text-align:left;color:var(--ctnav-fg);background:var(--ctnav-surface);font:750 14px/1.35 system-ui,sans-serif}
+.ctoon-standalone-panel a:is(:hover,:focus-visible),.ctoon-standalone-panel summary:is(:hover,:focus-visible),.ctoon-standalone-panel button:is(:hover,:focus-visible){background:var(--ctnav-hover);border-color:var(--ctnav-border)}
+.ctoon-standalone-panel a[aria-current="page"]{outline:2px solid var(--ctnav-border)}
+.ctoon-standalone-panel details{margin:0}
+.ctoon-standalone-panel summary{list-style:none;justify-content:space-between}
+.ctoon-standalone-panel summary::-webkit-details-marker{display:none}
+.ctoon-standalone-panel summary::after{content:"▾";padding-left:10px}
+.ctoon-standalone-panel details[open] summary::after{content:"▴"}
+.ctoon-standalone-panel details>a,.ctoon-standalone-panel details>button{width:calc(100% - 16px);margin:4px 0 4px 16px;background:transparent;border-left:2px solid var(--ctnav-border)}
+.ctoon-standalone-panel details[data-current="true"]>summary{border-color:var(--ctnav-border)}
+.ctoon-standalone-nav :is(a,summary,button):focus-visible{outline:3px solid #ffda78;outline-offset:2px}
+@media(max-width:520px){.ctoon-standalone-bar{min-height:44px}.ctoon-standalone-panel{right:4px;width:calc(100vw - 8px)}}
