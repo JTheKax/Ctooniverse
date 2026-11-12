@@ -1,0 +1,129 @@
+/* CToon Speedway v2 — race studio polish, new tracks, lap telemetry,
+   responsive racer grid and countdown. Original styles remain intact. */
+:root{--track-cyan:#83eeff;--track-gold:#ffe29a}
+.shell{max-width:1580px;padding:clamp(9px,1.5vw,24px)}
+.hero{
+ background:radial-gradient(ellipse at 96% 0,#308aca3c,transparent 53%),linear-gradient(115deg,#27165b,#121b50 72%,#152e62);
+ border-color:#a18bf4;box-shadow:4px 5px #060a24,0 0 30px #8141d633;
+}
+.hero h1{font-style:italic;font-size:clamp(2.6rem,6.3vw,5.5rem)}
+.hero h1 span{color:#ffe09e;text-shadow:4px 4px #643987,0 0 20px #ffdf9b44}
+.wallet{min-width:220px;border-color:#9b9ee9;background:#171c4bdc}
+.tabs{gap:11px}
+.tabs button{min-height:49px;white-space:normal}
+.panel{
+ border-color:#6a67c0;
+ background:linear-gradient(165deg,#1a1a4b,#10132f);
+ box-shadow:3px 4px #04071d,inset 0 1px #ffffff11
+}
+.drivers{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.driver-card{
+ background:linear-gradient(155deg,#2a256b,#161b4a);
+ transition:transform .16s ease,box-shadow .16s ease;
+}
+.driver-card.chosen{background:linear-gradient(150deg,#343075,#192755);box-shadow:0 0 0 1px #ffe28577,0 0 19px #fcd67922}
+.driver-card .driver-art{font-size:2.65rem;aspect-ratio:8/5;box-shadow:inset 0 0 24px #0004}
+.driver-card:disabled,.track-card:disabled{transform:none}
+.tracks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.track-card{min-height:87px}
+.track-card.chosen{background:linear-gradient(115deg,#252a6d,#352460)}
+.track-card .track-icon{background:radial-gradient(circle,#4b4fa7,#282357);font-size:2rem;min-width:55px}
+.race-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:17px;padding:15px;border-radius:13px;background:linear-gradient(145deg,#191b51,#151a42);border:1px solid #5757a7}
+.race-settings label{font-size:.73rem;letter-spacing:.5px;font-weight:950;text-transform:uppercase;color:#d7dcff;min-width:0}
+.race-settings select{display:block;margin-top:6px;width:100%;min-width:0;min-height:47px;padding:10px 8px;border-radius:10px;border:1px solid #9b8de6;background:#22245a;color:white;font:750 .82rem system-ui,Segoe UI,sans-serif}
+.race-settings select:disabled{opacity:.5}
+.race-options .primary-btn{min-height:54px;font-size:.92rem}
+.race-options strong{color:#ffe59f}
+.race-options span{margin-top:4px}
+.race-panel{padding:clamp(10px,2vw,24px)}
+.game-frame{border-color:#a09bf2;box-shadow:0 0 30px #633dce44,inset 0 0 26px #060c2a}
+.game-frame canvas{outline-offset:-4px}
+.race-hud{z-index:2;inset:10px 13px 12px}
+.hud-row{gap:8px}
+.hud-row .hud-pill{font-size:clamp(.7rem,1.5vw,.94rem)}
+.hud-splits{display:flex;justify-content:space-between;align-items:flex-start;gap:7px;flex-wrap:wrap;margin-top:0;pointer-events:none}
+.hud-splits .hud-pill{background:#0b1134c8;border-color:#7e79c5;font-size:.68rem;padding:5px 9px;white-space:nowrap}
+.hud-splits .hud-pill b{color:#a7f8ff}
+.speedway-progress{
+ position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;
+ height:21px;min-height:21px;padding:1px 8px;overflow:hidden;margin-top:auto;margin-bottom:7px;
+ border:1px solid #b9adf7;border-radius:10px;background:#060c2cd9;
+ color:#e9f9ff;font-size:.59rem;letter-spacing:1px;font-weight:900;text-shadow:0 1px 3px #000
+}
+.speedway-progress>div{
+ position:absolute;inset:0 auto 0 0;width:0%;
+ background:linear-gradient(90deg,#574dd5,#35a4d5,#75e8ce);opacity:.65;transition:width .11s linear
+}
+.speedway-progress>span{z-index:1;white-space:nowrap}
+.hud-bottom .hud-pill{box-shadow:0 0 13px #09134470}
+.speedway-lights{
+ position:absolute;left:50%;top:26%;transform:translateX(-50%);
+ z-index:5;display:none;align-items:center;justify-content:center;gap:14px;
+ padding:8px 18px;border:2px solid #a69bff;border-radius:28px;background:#111333df;
+ box-shadow:0 0 25px #0009;pointer-events:none
+}
+.speedway-lights[data-state="countdown"]{display:flex}
+.speedway-lights span{width:28px;height:28px;background:#291f43;border-radius:50%;border:2px solid #6f5382;box-shadow:inset 0 1px #ffffff30}
+.speedway-lights[data-count="1"] span:nth-child(1),
+.speedway-lights[data-count="2"] span:nth-child(-n+2),
+.speedway-lights[data-count="3"] span:nth-child(-n+3){
+ background:#f35a74;border-color:#ffc8b0;box-shadow:0 0 15px #f8727fa6,inset 0 2px #ffe5d3
+}
+.race-toolbar{background:#10143b;border:1px solid #4d4991;border-radius:13px;padding:12px}
+.race-toolbar .secondary-btn{min-height:46px}
+#restart-btn{border-color:#f5cc83;background:#422f69}
+.standings{justify-content:flex-end}
+.standings span{border-radius:11px;padding:8px 10px;font-size:.75rem}
+.standings .me{background:#51417a;border-color:#f9d88b}
+.touch-controls{border:1px solid #5257a2;background:#151a48;border-radius:14px;padding:9px}
+.controls-group button{min-height:66px;border-radius:13px}
+.controls-group button[data-control="gas"]{background:linear-gradient(125deg,#116951,#258a71);border-color:#9affcc}
+.controls-group button[data-control="brake"]{background:linear-gradient(125deg,#72314e,#9d355c);border-color:#fab2c4}
+.controls-group button.boost-button{background:linear-gradient(125deg,#a66526,#8735ba);border-color:#ffeab0}
+.controls-group button.pressed{filter:brightness(1.28);box-shadow:0 0 17px #f4a9ee77}
+.record-laps{display:grid;gap:7px;border-block:1px solid #545397;padding:10px 0;margin:10px 0}
+.record-laps span{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.79rem;color:#c9d9f8}
+.record-laps b{font-variant-numeric:tabular-nums;color:#ffebae;white-space:nowrap}
+.records{grid-template-columns:repeat(3,minmax(0,1fr))}
+.record-card{background:linear-gradient(160deg,#26265d,#151943);border-color:#7772c5}
+@media(max-width:1100px){
+ .setup{grid-template-columns:1fr 1fr}
+ .drivers{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .tracks{grid-template-columns:1fr}
+ .records{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:850px){
+ .setup{grid-template-columns:1fr}
+ .tracks{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .race-hud{inset:8px}
+}
+@media(max-width:590px){
+ .hero{padding:16px}
+ .hero h1{font-size:clamp(2.4rem,12vw,3.7rem)}
+ .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ .tabs button{padding:10px 5px;font-size:.73rem}
+ .drivers{gap:6px}
+ .driver-card .driver-art{font-size:1.9rem}
+ .driver-card{padding:7px}
+ .tracks{grid-template-columns:1fr}
+ .track-card{min-height:66px;padding:8px}
+ .race-settings{grid-template-columns:1fr 1fr;padding:9px;gap:8px}
+ .race-settings select{font-size:.75rem;padding:8px 5px}
+ .race-hud{inset:4px}
+ .hud-row .hud-pill{font-size:.58rem;padding:4px 6px}
+ .hud-splits{gap:3px}
+ .hud-splits .hud-pill{font-size:.53rem;padding:3px 5px}
+ .speedway-progress{height:16px;min-height:16px;margin-bottom:4px;font-size:.47rem}
+ .hud-bottom .hud-pill{padding:4px 6px}
+ .speedway-lights{top:23%;gap:7px;padding:6px 10px}
+ .speedway-lights span{width:17px;height:17px}
+ .touch-controls{padding:6px;gap:5px}
+ .controls-group{gap:4px}
+ .controls-group button{font-size:.68rem;min-height:56px;padding:8px 5px}
+ .controls-group button[data-control="drift"]{font-size:.65rem}
+ .record-card{padding:13px}
+ .records{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){
+ .speedway-progress>div,.driver-card,.track-card{transition:none!important}
+}
