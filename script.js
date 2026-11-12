@@ -341,3 +341,13 @@ if (year) year.textContent = String(new Date().getFullYear());
   document.head.append(sheet);
 })();
 
+/* Neon Spectacle visual layer loads after the foundational mobile and
+   page styles. Operational navigation colors are preserved by the status CSS. */
+(() => {
+  if (document.querySelector('link[href^="flashy-pages.css"]')) return;
+  const sheet = document.createElement('link');
+  sheet.rel = 'stylesheet';
+  sheet.href = 'flashy-pages.css?v=20261112-spectacle-v1';
+  sheet.dataset.ctoonSpectacle = 'true';
+  document.head.append(sheet);
+})();
