@@ -1,0 +1,146 @@
+/* CToon Jam Rebuilt — focused arcade cabinet and clearer song library.
+   Loaded after the original stylesheet to keep legacy selectors compatible. */
+:root{--jam-accent:#71efff;--jam-gold:#ffe47f;--jam-purple:#b877ff}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(circle at 8% 12%,#753ae655,transparent 25%),
+    radial-gradient(circle at 90% 18%,#105fba66,transparent 28%),
+    linear-gradient(165deg,#050a20,#0b092d 45%,#06172f);
+}
+.jam-shell{max-width:1840px;padding:clamp(8px,1.3vw,22px)}
+.jam-topbar{margin-bottom:12px;padding:8px 5px 12px;border-bottom:1px solid #7384df33}
+.jam-topbar>.jam-tag{background:linear-gradient(105deg,#31176b,#145593);color:#fcf7ff}
+.jam-stage{
+  position:relative;gap:13px;border:2px solid #756ef2;
+  background:linear-gradient(155deg,#101344,#0b0e28 65%,#14113e);
+  box-shadow:0 14px 38px #000a,inset 0 1px 0 #bdccff3b,0 0 35px #7742e32c;
+}
+.jam-game-header{
+  border:1px solid #7784ea;border-radius:17px;
+  background:
+    radial-gradient(ellipse at 75% 30%,#7b35c74d,transparent 52%),
+    linear-gradient(115deg,#19154b,#0d2a62);
+  box-shadow:inset 0 1px #d1bdff4d,0 4px 12px #0006;
+}
+.jam-game-brand h1{
+  font-size:clamp(2.1rem,4.7vw,4.15rem);letter-spacing:-2.4px;
+  color:#fff;font-style:italic;
+  text-shadow:3px 3px #301b86,0 0 22px #9d52ff55;
+}
+.jam-game-brand h1 span{
+  color:var(--jam-accent);
+  text-shadow:2px 2px #135fa3,0 0 18px #1bd1ff6f;
+}
+.jam-game-brand p{color:#cbbaff}
+.jam-stage-current{border-left:2px solid #6a83d65c;padding:8px 15px}
+.jam-stage-current strong{color:#fffbe7;font-size:clamp(1rem,1.8vw,1.5rem)}
+.jam-stage-current span{color:#83edfe}
+.jam-game-layout{grid-template-columns:minmax(0,1fr) minmax(275px,330px);gap:14px}
+.jam-game-main{gap:12px}
+.jam-hud{gap:9px}
+.jam-hud>div{
+  padding:10px 8px;border:1px solid #5c7ec2;border-radius:12px;
+  background:linear-gradient(155deg,#26275d,#101b42);
+  box-shadow:inset 0 1px #e2f3ff14;
+}
+.jam-hud strong{color:#fff4d5}
+.jam-hud small{font-size:.67rem;color:#b9d9ff}
+.jam-meters .jam-meter{height:13px;border-color:#8f79dc}
+.jam-rock-fill{background:linear-gradient(90deg,#ff5279,#ffd76d,#75f7ac)}
+.jam-board-wrap{
+  height:clamp(490px,69dvh,850px);border:3px solid #8d7cfc;
+  border-radius:20px;
+  box-shadow:0 0 27px #6144ed66,inset 0 0 35px #6945c15c;
+}
+#jam-board{display:block;width:100%;height:100%;touch-action:none}
+.jam-overlay{background:#070d26cc;backdrop-filter:blur(4px)}
+.jam-overlay strong{color:#ffe8a2;letter-spacing:.8px}
+.jam-overlay span{color:#def8ff}
+.jam-judgement{top:18%;z-index:2;filter:drop-shadow(0 0 14px #090728)}
+.jam-controls button{
+  position:relative;min-height:70px;border-width:2px;border-bottom-width:6px;
+  border-radius:15px;color:#160d28;font-weight:1000;
+  box-shadow:inset 0 2px #ffffffb3,0 4px #020715,0 0 13px #9d73ff22;
+}
+.jam-controls button:nth-child(5){background:#ffae50}
+.jam-controls button.is-held{box-shadow:inset 0 2px #ffffffcc,0 0 18px currentColor;transform:translateY(2px)}
+.jam-strum-controls{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.jam-strum-controls>button{min-width:130px}
+.jam-strum-controls>span{color:#bdc6ef;font-size:.73rem;text-align:center}
+.jam-game-sidebar{
+  border-color:#514ea4;background:linear-gradient(165deg,#17194a,#0a1231);
+  box-shadow:inset 0 1px #ffffff1a;
+  padding:12px;
+}
+.jam-settings{border-color:#6f62bd;background:linear-gradient(180deg,#201a50,#15163d)}
+.jam-settings .jam-button{font-size:.83rem}
+.jam-settings #jam-song-library{
+  background:linear-gradient(120deg,#4160b9,#6032ad);border-color:#a1dfff;
+}
+.jam-message{padding:10px 12px;border:1px solid #4e6a9e;border-left:4px solid #7be8ff;border-radius:9px;background:#12234b;font-size:.83rem}
+.jam-game-sidebar .jam-results{border:1px solid #7068c8;background:#211c54;padding:14px}
+.jam-game-sidebar .jam-results h2{color:#ffdc8f}
+.jam-game-sidebar .jam-song-loading{border:1px solid #7970c9}
+.jam-song-picker{
+  border-radius:15px;
+  background:linear-gradient(150deg,#110f39fa,#21104dfa 60%,#081d45fa);
+  box-shadow:0 0 40px #08071ed8;backdrop-filter:blur(8px);
+}
+.jam-picker-top h2{color:#ffe495;text-shadow:2px 3px #20124c}
+.jam-picker-intro{color:#c6d9fc}
+.jam-picker-content{gap:14px}
+.jam-picker-details{
+  border:1px solid #8780dc;
+  background:linear-gradient(145deg,#182f61,#24154e);
+}
+.jam-picker-start,.jam-primary{
+  border-color:#a5f2ff;
+  background:linear-gradient(115deg,#2378c9,#792bd6);
+}
+.jam-picker-start{min-height:56px;box-shadow:0 5px 0 #140e34,0 0 20px #359df455}
+.jam-song-item.is-selected{box-shadow:0 0 0 2px #ffde81 inset}
+.jam-song-item:focus-visible,.jam-controls button:focus-visible{outline:3px solid #ffe282;outline-offset:3px}
+.jam-highway-caption{pointer-events:none}
+.jam-stage:fullscreen .jam-game-layout,.jam-theater-view .jam-stage .jam-game-layout{grid-template-columns:minmax(0,1fr) minmax(275px,330px)}
+@media(max-width:1060px){
+ .jam-game-layout{grid-template-columns:minmax(0,1fr) minmax(245px,285px)}
+ .jam-game-sidebar{padding:9px}
+ .jam-game-brand h1{font-size:clamp(1.8rem,4vw,3rem)}
+}
+@media(max-width:780px){
+ .jam-game-layout,.jam-stage:fullscreen .jam-game-layout,.jam-theater-view .jam-stage .jam-game-layout{grid-template-columns:minmax(0,1fr)}
+ .jam-board-wrap{height:clamp(420px,67dvh,720px)}
+ .jam-controls button{min-height:64px}
+ .jam-stage-current{border:0;padding:2px 0}
+ .jam-game-sidebar{display:grid;grid-template-columns:1fr 1fr}
+}
+@media(max-width:520px){
+ .jam-shell{padding:5px 5px 18px}
+ .jam-stage{padding:7px;gap:8px}
+ .jam-game-header{padding:9px}
+ .jam-game-brand h1{font-size:clamp(1.65rem,6vw,2.4rem)}
+ .jam-game-brand p{font-size:.53rem}
+ .jam-stage-current strong{font-size:.96rem}
+ .jam-board-wrap,.jam-stage:fullscreen .jam-board-wrap,.jam-theater-view .jam-stage .jam-board-wrap{
+   height:clamp(350px,55dvh,570px);border-radius:12px;
+ }
+ .jam-hud{gap:4px}
+ .jam-hud>div{padding:7px 2px}
+ .jam-hud small{font-size:.52rem;letter-spacing:0}
+ .jam-hud strong{font-size:clamp(1rem,4vw,1.3rem)}
+ .jam-controls{gap:5px}
+ .jam-controls button{min-height:62px;font-size:.59rem;padding:7px 0;border-radius:10px}
+ .jam-controls button span{font-size:1.45rem}
+ .jam-strum-controls{gap:5px}
+ .jam-strum-controls>button{min-width:0;flex:1 1 40%;padding:8px 5px;font-size:.7rem}
+ .jam-strum-controls>span{display:none}
+ .jam-game-sidebar{grid-template-columns:minmax(0,1fr)}
+ .jam-song-picker{padding:9px}
+ .jam-picker-content{grid-template-columns:minmax(0,1fr)}
+ .jam-picker-details{padding:12px}
+ .jam-picker-start{min-height:52px}
+}
+@media(prefers-reduced-motion:reduce){
+ .jam-song-picker,.jam-judgement,.jam-controls button,.jam-meter>*{transition:none!important;animation:none!important}
+}
