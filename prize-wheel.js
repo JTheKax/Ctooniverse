@@ -18,7 +18,7 @@ const result=$('prize-wheel-result'),counter=$('prize-wheel-counter'),number=$('
 const lights=[...document.querySelectorAll('.wheel-spin-light')],machine=$('wheel-machine');
 const recent=$('wheel-recent'),sound=$('prize-wheel-sound'),accountLink=$('wheel-account-link');
 const MAX_SPINS=3;
-let rotation=0,busy=false,remaining=0,signedIn=false,verified=false,requestId=0,soundOn=false,audioContext=null,checkError=null;
+let rotation=0,busy=false,remaining=0,signedIn=false,verified=false,requestId=0,soundOn=false,audioContext=null,checkError=null,pendingSpinRequestId=null;
 const formatCount=n=>Math.max(0,Math.min(MAX_SPINS,Number(n)||0));
 const setMessage=(message,tone='info')=>{result.textContent=message;result.dataset.tone=tone;};
 const setButton=()=>{
@@ -133,7 +133,8 @@ async function spin(){
  setMessage('The casino is confirming your spin…');machine.classList.add('is-spinning');
  try{
   if(!window.crypto?.randomUUID)throw new Error('A secure browser connection is required to claim prizes');
-  const requestId=window.crypto.randomUUID();
+  pendingSpinRequestId??=window.crypto.randomUUID();
+  const requestId=pendingSpinRequestId;
   // Prize selection, three-spin enforcement, coin ledger and inventory writes
   // happen together in a single authenticated database transaction.
   const {data,error}=await db.rpc('spin_prize_wheel',{p_request_id:requestId});
@@ -144,6 +145,7 @@ async function spin(){
      typeof data.award_description!=='string')
     throw new Error('Prize was recorded but the confirmation was incomplete. Check recent spins and reload.');
   const prize=prizes[index];
+  pendingSpinRequestId=null; // The server confirmed settlement and stored the idempotent result.
   remaining=remainingFromServer;displayCounter();
   const balance=$('header-player-coins');
   if(balance&&Number.isFinite(Number(data.balance)))
