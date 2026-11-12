@@ -5,6 +5,7 @@ const canvas=$("race-canvas"),ctx=canvas.getContext("2d");
 const W=960,H=540,HORIZON=184,DEFAULT_LAPS=3,KEY="ctoon-speedway-save-v1";
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const drivers=[
+{id:"buggy",name:"Buggy the Clown",role:"Pirate Kart Captain",icon:"🏴‍☠️",color:"#e94e5b",speed:4,handling:3,boost:4,sprite:"images/speedway/buggy-the-clown-kart.png"},
 {id:"nova",name:"Nova",role:"Boost Specialist",icon:"🚀",color:"#b463fa",speed:3,handling:3,boost:5},
 {id:"bolt",name:"Bolt",role:"Speedster",icon:"⚡",color:"#efae36",speed:5,handling:2,boost:3},
 {id:"comet",name:"Comet",role:"Drift Master",icon:"🌠",color:"#43c2f2",speed:3,handling:5,boost:3},
@@ -23,6 +24,14 @@ const tracks=[
 {id:"candy",name:"Candy Carnival",icon:"🍬",location:"Sugar Circuit",length:3650,phase:1.7,curves:1.4,sky:["#4233a0","#ff9aba"],grass:["#8a5a9f","#664288"],road:"#5f5977",accent:"#ffd680"},
 {id:"sunset",name:"Sunset Harbor",icon:"🌅",location:"Coastal Raceway",length:3850,phase:2.8,curves:1.5,sky:["#40255e","#fbaa78"],grass:["#31668c","#1c4764"],road:"#44485e",accent:"#ffcd86"}
 ];
+// Preload optional kart artwork; preserve generic karts when images are unavailable.
+const driverSprites=Object.create(null);
+for(const d of drivers){
+ if(!d.sprite)continue;
+ const image=new Image();
+ image.src=d.sprite;
+ driverSprites[d.id]=image;
+}
 const driverById=Object.fromEntries(drivers.map(x=>[x.id,x]));
 const trackById=Object.fromEntries(tracks.map(x=>[x.id,x]));
 const newSave=()=>({tickets:500,driver:"nova",track:"neon",laps:DEFAULT_LAPS,skill:"standard",autoGas:false,upgrades:{},records:{},races:0,wins:0});
@@ -74,10 +83,16 @@ function persist(){
 }
 function announce(s){$("status").textContent=s;}
 function statBar(value){return '<div class="statbar"><span style="width:'+(Math.min(5,value)/5*100)+'%"></span></div>';}
+function driverArt(d){
+ const contents=d.sprite
+  ?'<img src="'+d.sprite+'" alt="'+d.name+' racing kart" width="128" height="128" loading="lazy">'
+  :d.icon;
+ return '<span class="driver-art" style="--kart:'+d.color+'">'+contents+'</span>';
+}
 function driverButton(d,garage=false){
  const chosen=save.driver===d.id;
  return '<button type="button" class="driver-card '+(chosen?"chosen":"")+'" data-driver="'+d.id+'" aria-pressed="'+chosen+'" '+(race?"disabled":"")+'>'+
- '<span class="driver-art" style="--kart:'+d.color+'">'+d.icon+'</span><strong>'+d.name+'</strong><small>'+d.role+'</small>'+
+ driverArt(d)+'<strong>'+d.name+'</strong><small>'+d.role+'</small>'+
  (!garage?'<small>Speed '+d.speed+' / 5</small>'+statBar(d.speed)+'<small>Control '+d.handling+' · Nitro '+d.boost+'</small>':'<small>Engine +'+upgrade(d.id,"engine")+' · Nitro +'+upgrade(d.id,"nitro")+'</small>')+'</button>';
 }
 function renderOptions(){
@@ -103,7 +118,7 @@ const upgradeTypes=[
 function upgradeCost(d,stat){return 250+(upgrade(d.id,stat))*250;}
 function renderGarage(){
  const d=selectedDriver();
- $("garage-details").innerHTML='<div class="upgrade-summary"><p class="eyebrow">KART BUILD · '+d.role.toUpperCase()+'</p><div class="driver-art" style="--kart:'+d.color+'">'+d.icon+'</div><h2>'+d.name+'’s Kart</h2><p>Speed '+d.speed+' · Handling '+d.handling+' · Nitro '+d.boost+'</p></div>'+
+ $("garage-details").innerHTML='<div class="upgrade-summary"><p class="eyebrow">KART BUILD · '+d.role.toUpperCase()+'</p>'+driverArt(d)+'<h2>'+d.name+'’s Kart</h2><p>Speed '+d.speed+' · Handling '+d.handling+' · Nitro '+d.boost+'</p></div>'+
  upgradeTypes.map(x=>{
   const level=upgrade(d.id,x.id),cap=level===5,cost=upgradeCost(d,x.id);
   return '<div class="upgrade-row"><div><strong>'+x.label+' · LV '+level+'/5</strong><small>'+x.description+'</small>'+statBar(level)+'</div><button type="button" data-upgrade="'+x.id+'" '+(race||cap||save.tickets<cost?"disabled":"")+'>'+(cap?"MAXED":cash(cost)+" TICKETS")+'</button></div>';
@@ -490,7 +505,36 @@ function drawPickups(t,world){
   ctx.restore();
  }
 }
-function drawKart(x,y,scale,color,icon,boost=false,player=false){
+// Render the supplied kart art and animate it according to the racing state.
+function drawSpriteKart(x,y,scale,driver,boost,player){
+ const art=driver&&driverSprites[driver.id];
+ if(!art||!art.complete||!art.naturalWidth)return false;
+ const steering=player&&race?(Number(ctrl.right)-Number(ctrl.left)):0;
+ const drifting=!!(player&&race&&race.wasDrifting);
+ const crashing=!!(player&&race&&race.impactTimer>0);
+ const winning=!!(player&&race&&race.phase==="finished"&&race.finishPlace===1);
+ const motion=(race?.speed||0)>10?1:.45;
+ ctx.save();ctx.translate(x,y);ctx.scale(scale*.83,scale*.83);
+ if(drifting)for(let i=0;i<4;i++){
+   ctx.fillStyle="rgba(228,235,255,"+(.42-i*.08)+")";
+   ctx.beginPath();ctx.arc(55+i*8,2+i*2,7+i*3,0,Math.PI*2);ctx.fill();
+ }
+ if(boost){
+   ctx.shadowBlur=15;ctx.shadowColor="#74ecff";ctx.fillStyle="#8ceeff";
+   ctx.beginPath();ctx.moveTo(47,-40);ctx.lineTo(87+Math.sin(clock*17)*12,-38);
+   ctx.lineTo(51,-29);ctx.fill();ctx.shadowBlur=0;
+ }
+ const bounce=Math.sin(clock*(motion?13:5))*2.0*motion;
+ ctx.translate(0,bounce+(winning?Math.sin(clock*8)*5:0));
+ ctx.rotate(steering*.075+(drifting?steering*.085:0)+(crashing?Math.sin(clock*29)*.21:0));
+ ctx.imageSmoothingEnabled=false;
+ ctx.drawImage(art,-64,-118,128,128);
+ if(crashing){ctx.fillStyle="#ffe1a1";ctx.font="bold 20px system-ui";ctx.fillText("✦",35,-110);}
+ if(winning){ctx.fillStyle="#ffe788";ctx.font="bold 19px system-ui";ctx.fillText("★",38,-120);}
+ ctx.restore();return true;
+}
+function drawKart(x,y,scale,color,icon,boost=false,player=false,driver=null){
+ if(drawSpriteKart(x,y,scale,driver,boost,player))return;
  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);
  ctx.fillStyle="#05081799";ctx.beginPath();ctx.ellipse(0,7,33,11,0,0,Math.PI*2);ctx.fill();
  ctx.fillStyle="#121326";ctx.fillRect(-36,-14,13,33);ctx.fillRect(23,-14,13,33);
@@ -513,13 +557,13 @@ function drawKarts(t,world){
   for(const bot of sorted){
    const p=project(bot.position,bot.lane,world,t);
    if(!p)continue;
-   drawKart(p.x,p.y-13*p.u,clamp(.19+p.u*1.2,.2,1.5),bot.color,bot.icon,false,false);
+   drawKart(p.x,p.y-13*p.u,clamp(.19+p.u*1.2,.2,1.5),bot.color,bot.icon,false,false,driverById[bot.id]);
   }
  }
  const d=race?race.driver:selectedDriver();
  const lane=race?race.lane:Math.sin(clock*.5)*.04;
  const off=race&&Math.abs(race.lane)>1;
- drawKart(W/2+lane*312,488,2.15,d.color,d.icon,race?.boosting||false,true);
+ drawKart(W/2+lane*312,488,2.15,d.color,d.icon,race?.boosting||false,true,d);
  if(off){
   ctx.fillStyle="#fff2bb";ctx.font="900 20px system-ui";ctx.textAlign="center";ctx.fillText("OFF-ROAD — SLOW DOWN",W/2,404);
  }

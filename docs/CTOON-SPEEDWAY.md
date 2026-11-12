@@ -28,3 +28,7 @@ This phase is an **original 2.5D browser racing prototype**, not a copy of Disne
 Progress is stored **only in the current browser** under \`ctoon-speedway-save-v1\`. Speedway Tickets are an independent demonstration currency. They are **not** CTooniverse Cartoon Coins, and should not be exchangeable until secure server-side storage, anti-cheat, and economy rules are implemented. Local browser storage is player-editable, so records are not authoritative.
 
 The Game page links directly to \`speedway.html\`. All project changes are committed to GitHub \`main\`.
+
+## Buggy the Clown playable racer (November 12, 2026)
+
+Buggy is a selectable racer with his own pirate kart artwork (`images/speedway/buggy-the-clown-kart.png`), Speed 4, Handling 3, Nitro 4 and the normal upgrade path. He is available immediately in the racer roster. The supplied pixel-art pose is animated procedurally during play with bouncing, turning, drifting, boost flames, collision shake and victory motion; these are visual transforms and effects, **not** separate directional sprite animations. Existing local saves, tracks and other game modes remain unchanged.
