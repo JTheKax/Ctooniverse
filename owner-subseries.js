@@ -3,7 +3,7 @@ import {createClient} from "https://esm.sh/@supabase/supabase-js@2.58.0";
 const db=createClient("https://hsxdyxdazsdmpucyhqly.supabase.co","sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS");
 const $=id=>document.getElementById(id);
 const status=$("subseries-auth-status"),tools=$("subseries-owner-tools"),feedback=$("subseries-feedback");
-const list=$("subseries-list"),form=$("subseries-create-form"),nameInput=$("subseries-name"),categoryInput=$("subseries-category"),total=$("subseries-total");
+const list=$("subseries-list"),form=$("subseries-create-form"),nameInput=$("subseries-name"),total=$("subseries-total");
 const collator=new Intl.Collator(undefined,{sensitivity:"base",numeric:true});
 let entries=[],busy=false;
 function message(value,error=false){feedback.textContent=value;feedback.style.color=error?"#ff9aab":"#8af4cf";}
@@ -13,7 +13,7 @@ async function countCards(name){const {count,error}=await db.from("ctoon_catalog
 function lock(value){busy=value;form.querySelectorAll("input,select,button").forEach(el=>el.disabled=value);list.querySelectorAll("button,input").forEach(el=>el.disabled=value);}
 async function load(){
  const {data,error}=await db.from("ctoon_series").select("id,name,category,slug").order("name",{ascending:true});
- if(error)throw error;entries=(data||[]).sort((a,b)=>collator.compare(a.name,b.name)||collator.compare(a.category,b.category));
+ if(error)throw error;entries=(data||[]).sort((a,b)=>collator.compare(a.name,b.name));
  draw();
 }
 function draw(){
@@ -23,33 +23,16 @@ function draw(){
   const row=document.createElement("div");row.className="subseries-row";
   const info=document.createElement("div");info.className="subseries-info";
   const heading=document.createElement("strong");heading.textContent=item.name;
-  const category=document.createElement("small");category.textContent=item.category;
-  info.append(heading,category);
+  info.append(heading);
   const actions=document.createElement("div");actions.className="subseries-actions";
   const rename=document.createElement("button");rename.type="button";rename.textContent="Rename";
   const remove=document.createElement("button");remove.type="button";remove.className="subseries-delete";remove.textContent="Delete";
-  const move=document.createElement("button");move.type="button";
-  move.textContent=item.category==="Video Games"?"Move to Cartoon & Anime":"Move to Video Games";
-  actions.append(rename,move,remove);row.append(info,actions);list.append(row);
-  move.addEventListener("click",async()=>{
-    if(busy)return;
-    const target=item.category==="Video Games"?"Cartoon & Anime":"Video Games";
-    if(!confirm('Move "'+item.name+'" to '+target+'?'))return;
-    if(entries.some(other=>other.id!==item.id&&other.name.toLowerCase()===item.name.toLowerCase()&&other.category===target)){
-      message("A subseries with this name already exists in "+target+".",true);return;
-    }
-    lock(true);
-    try{
-      const {data,error}=await db.from("ctoon_series").update({category:target}).eq("id",item.id).select("id");
-      if(error)throw error;if(!data?.length)throw new Error("Category change was not saved.");
-      await load();message(item.name+" moved to "+target+".");
-    }catch(error){message(error.message,true);}finally{lock(false);}
-  });
+  actions.append(rename,remove);row.append(info,actions);list.append(row);
   rename.addEventListener("click",async()=>{
    if(busy)return;
    const next=prompt("Rename subseries:",item.name);if(next===null)return;
    const title=clean(next);if(!title||title.length>90){message("Enter a name between 1 and 90 characters.",true);return;}
-   if(entries.some(other=>other.id!==item.id&&other.category===item.category&&other.name.toLowerCase()===title.toLowerCase())){message("That subseries already exists.",true);return;}
+   if(entries.some(other=>other.id!==item.id&&other.name.toLowerCase()===title.toLowerCase())){message("That subseries already exists.",true);return;}
    const slug=slugify(title);if(!slug){message("Use a name containing letters or numbers.",true);return;}
    lock(true);
    try{
@@ -74,13 +57,13 @@ function draw(){
 }
 form.addEventListener("submit",async event=>{
  event.preventDefault();if(busy)return;
- const name=clean(nameInput.value),category=categoryInput.value;
+ const name=clean(nameInput.value);
  if(!name||name.length>90){message("Enter a subseries name up to 90 characters.",true);return;}
  const slug=slugify(name);if(!slug){message("Use a name containing letters or numbers.",true);return;}
- if(entries.some(item=>item.category===category&&item.name.toLowerCase()===name.toLowerCase())){message("That subseries already exists.",true);return;}
+ if(entries.some(item=>item.name.toLowerCase()===name.toLowerCase())){message("That subseries already exists.",true);return;}
  lock(true);
  try{
-  const {data,error}=await db.from("ctoon_series").insert({name,category,slug}).select("id");
+  const {data,error}=await db.from("ctoon_series").insert({name,category:"Cartoon & Anime",slug}).select("id");
   if(error)throw error;if(!data?.length)throw new Error("Subseries was not saved.");
   await load();nameInput.value="";message("Added "+name+". It now appears in the CToons subseries dropdown.");
  }catch(error){message(error.message,true);}finally{lock(false);}
