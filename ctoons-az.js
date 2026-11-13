@@ -107,8 +107,8 @@
   clearFilters.addEventListener("click",()=>{search.value="";subseries.value="";render();search.focus();});
   async function load() {
     const api="https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/";
-    const endpoint=api+"ctoon_catalog?select=id,name,series,parent_series,rarity,image_path&order=name.asc";
-    const seriesEndpoint=api+"ctoon_series?select=name,category&order=name.asc";
+    const endpoint=api+"ctoon_catalog?select=id,name,series,rarity,image_path&order=name.asc";
+    const seriesEndpoint=api+"ctoon_series?select=name&order=name.asc";
     const key="sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS";
     try{
       const headers={apikey:key,Authorization:"Bearer "+key};
@@ -123,7 +123,7 @@
         const seriesRows=await seriesResponse.json();
         if(Array.isArray(seriesRows)){
           availableSubseries=seriesRows.filter(item=>typeof item.name==="string" && item.name.trim())
-            .map(item=>({name:item.name.trim(),category:item.category}));
+            .map(item=>({name:item.name.trim()}));
         }
       }
       all=rows.filter(row=>row && typeof row.name==="string" && row.name.trim())
