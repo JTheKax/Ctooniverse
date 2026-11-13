@@ -8,6 +8,7 @@ const ownerLinks=[
  ['Redeem Codes','owner-redeem-codes.html'],
  ['Music Management','owner-music-management.html'],
  ['CToon Subseries Manager','owner-subseries.html'],
+ ['CToon Maker & Editor','owner-ctoon-maker.html'],
 ]; 
 ownerLinks.sort((a,b)=>a[0].localeCompare(b[0]));
 for(const link of document.querySelectorAll('.site-header nav a.owner-nav, .site-header nav .owner-menu.owner-nav')){
