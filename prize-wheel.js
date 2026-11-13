@@ -22,14 +22,15 @@ let rotation=0,busy=false,remaining=0,signedIn=false,verified=false,requestId=0,
 const formatCount=n=>Math.max(0,Math.min(MAX_SPINS,Number(n)||0));
 const setMessage=(message,tone='info')=>{result.textContent=message;result.dataset.tone=tone;};
 const setButton=()=>{
- button.disabled=busy||!verified||!signedIn||remaining<=0;
- button.textContent=busy?'☠ SPINNING…':!verified?'CHECKING SPINS…':!signedIn?'SIGN IN TO SPIN':remaining===0?'NO SPINS LEFT':'☠ ROLL THE DICE';
+ button.disabled=busy||!verified||!signedIn||(!pendingSpinRequestId&&remaining<=0);
+ button.textContent=busy?'☠ SPINNING…':!verified?'CHECKING SPINS…':!signedIn?'SIGN IN TO SPIN':pendingSpinRequestId?'↻ RECOVER LAST SPIN':remaining===0?'NO SPINS LEFT':'☠ ROLL THE DICE';
 };
 function displayCounter(){
  number.textContent=String(verified&&signedIn?remaining:0);
  for(let i=0;i<lights.length;i++)lights[i].classList.toggle('is-available',verified&&signedIn&&i<remaining);
  counter.textContent=checkError||(!verified?'Checking your daily spins…':!signedIn?
   'Sign in to claim your 3 daily prize spins.':
+  pendingSpinRequestId?'Recover your last spin without spending another spin.':
   remaining+' of '+MAX_SPINS+' spins available today · Reset: 00:00 UTC.');
  accountLink.hidden=!!signedIn;
  setButton();
@@ -124,7 +125,7 @@ async function check(){
   if(error)throw error;
   remaining=formatCount(MAX_SPINS-Number(data?.used||0));
   verified=true;
-  if(!remaining&&result.dataset.tone!=='success')setMessage('All three prize spins have been used today. They reset at midnight UTC.');
+  if(!remaining&&!pendingSpinRequestId&&result.dataset.tone!=='success')setMessage('All three prize spins have been used today. They reset at midnight UTC.');
   loadHistory(user.id);
  }catch(error){
   if(id!==requestId)return;
@@ -134,7 +135,7 @@ async function check(){
  }finally{if(id===requestId&&!busy)displayCounter();}
 }
 async function spin(){
- if(busy||!verified||!signedIn||remaining<=0)return;
+ if(busy||!verified||!signedIn||(!pendingSpinRequestId&&remaining<=0))return;
  busy=true;button.disabled=true;setButton();
  setMessage('The casino is confirming your spin…');machine.classList.add('is-spinning');
  try{
@@ -171,7 +172,7 @@ async function spin(){
   tone(784,.17);tone(988,.18,.18);tone(1175,.27,.36);
  }catch(error){
   console.warn('Prize Wheel spin failed',error);
-  setMessage('Spin could not be confirmed: '+(error?.message||'Connection error')+'. Check recent prizes to see whether a reward was credited.','error');
+  setMessage('Spin could not be confirmed: '+(error?.message||'Connection error')+'. Use RECOVER LAST SPIN to safely fetch the same result without spending another spin.','error');
  }finally{
   busy=false;machine.classList.remove('is-spinning');
   await check();setButton();
