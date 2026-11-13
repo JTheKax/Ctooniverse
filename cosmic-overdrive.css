@@ -197,3 +197,22 @@ footer{border-top:1px solid #96aeff50;box-shadow:0 -12px 26px #050c251c;color:#d
  .home-universe-page .home-tile:hover,
  .home-universe-page .arcade-feature-strip>a:hover{transform:none!important}
 }
+
+/* Lighter portal cards on phones/tablets: 15+ MB of decorative PNGs are
+   only requested at spacious desktop widths; retain neon art on mobile. */
+@media(max-width:1100px){
+ .home-universe-page .home-tile,
+ .home-universe-page .home-tile:nth-child(2),
+ .home-universe-page .home-tile:nth-child(3),
+ .home-universe-page .home-tile:nth-child(4),
+ .home-universe-page .home-tile:nth-child(5){
+   background-image:
+     radial-gradient(circle at 84% 16%,var(--tile-light,#38bbff70),transparent 48%),
+     repeating-linear-gradient(137deg,transparent 0 27px,#b9ccff0b 28px 29px),
+     linear-gradient(150deg,#1b2e69 0%,#1b1749 55%,#10122e 100%)!important;
+ }
+ .home-universe-page .home-tile:nth-child(2){--tile-light:#b567ff8a}
+ .home-universe-page .home-tile:nth-child(3){--tile-light:#ffac7b7a}
+ .home-universe-page .home-tile:nth-child(4){--tile-light:#ff7cc68a}
+ .home-universe-page .home-tile:nth-child(5){--tile-light:#70e7ca7a}
+}
