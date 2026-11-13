@@ -53,8 +53,22 @@ if (year) year.textContent = String(new Date().getFullYear());
   if(['ctoon-set.html','anime.html','movies.html','misc.html','trades.html'].includes(page))ctoons.classList.add('active');
   if(['clothing.html'].includes(page))shop.classList.add('active');
 
-  // Individual game modes have been cleared.
-  const games=link('Games','games.html','🎮');
+  // Games is a dropdown; prize entries only link to currently playable games.
+  const games=document.createElement('div');
+  games.className='games-dropdown';
+  games.innerHTML='<button type="button" class="nav-link games-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="games-prize-menu"><span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span><span aria-hidden="true">▾</span></button>'+
+    '<div class="games-dropdown-panel" id="games-prize-menu">'+
+    '<a href="games.html">All Games</a>'+
+    '<span class="games-dropdown-heading">🎁 Prize Games</span>'+
+    '<a href="claw-machine.html">CToon Claw Craze</a>'+
+    '<a href="prize-wheel.html">Boogie’s Prize Wheel</a>'+
+    '</div>';
+  if(['games.html','claw-machine.html','prize-wheel.html'].includes(page)){
+    games.querySelector('.games-dropdown-trigger').classList.add('active');
+    games.querySelectorAll('a[href]').forEach(a=>{
+      if(a.getAttribute('href')===page)a.setAttribute('aria-current','page');
+    });
+  }
 
   const community=nav.querySelector('.community-dropdown')||(()=>{
     const root=document.createElement('div');root.className='community-dropdown';
@@ -84,6 +98,11 @@ if (year) year.textContent = String(new Date().getFullYear());
     sheet.rel='stylesheet';sheet.href='nav-symbols.css?v=20261112';
     sheet.dataset.navSymbols='true';document.head.append(sheet);
   }
+  if(!document.querySelector('link[data-games-dropdown-style]')){
+    const sheet=document.createElement('link');
+    sheet.rel='stylesheet';sheet.href='games-dropdown.css?v=prize-nav-20261112-1';
+    sheet.dataset.gamesDropdownStyle='true';document.head.append(sheet);
+  }
   const activeGroups={
     community:['forums.html','guild.html','support.html','community.html'],
     account:['account.html','login.html','avatar-maker.html']
@@ -107,16 +126,24 @@ if (year) year.textContent = String(new Date().getFullYear());
   }
 
   function closeMenus(except){
-    for(const root of nav.querySelectorAll('.community-dropdown,.account-dropdown,.owner-menu')){
+    for(const root of nav.querySelectorAll('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu')){
       if(root===except)continue;
       root.classList.remove('is-open');
       root.querySelector('button[aria-expanded]')?.setAttribute('aria-expanded','false');
     }
   }
+  const gamesTrigger=games.querySelector('.games-dropdown-trigger');
+  gamesTrigger.addEventListener('click',event=>{
+    event.preventDefault();
+    const shouldOpen=!games.classList.contains('is-open');
+    closeMenus(games);
+    games.classList.toggle('is-open',shouldOpen);
+    gamesTrigger.setAttribute('aria-expanded',String(shouldOpen));
+  });
   // Capture the click before legacy Community handlers stop propagation.
   // This guarantees at most one open dropdown on phones and desktops.
   nav.addEventListener('click',event=>{
-    const root=event.target.closest('.community-dropdown,.account-dropdown,.owner-menu');
+    const root=event.target.closest('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu');
     closeMenus(root);
   },true);
   document.addEventListener('click',event=>{
@@ -124,7 +151,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   });
   nav.addEventListener('keydown',event=>{
     if(event.key==='Escape'){
-      const trigger=event.target.closest('.community-dropdown,.account-dropdown,.owner-menu')?.querySelector('button[aria-expanded]');
+      const trigger=event.target.closest('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu')?.querySelector('button[aria-expanded]');
       closeMenus();
       trigger?.focus();
       return;
