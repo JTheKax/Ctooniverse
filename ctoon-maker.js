@@ -18,7 +18,7 @@ function showPreview(){
  const img=document.createElement('img');img.src=path;img.alt='CToon artwork preview';img.style.cssText='display:block;max-width:260px;width:100%;height:auto;margin:1rem auto';img.addEventListener('error',()=>{preview.textContent='Artwork not found at '+path+'. Upload it to GitHub first.'},{once:true});preview.append(img);
 }
 function reset(){
- editingId=null;form.reset();fields.price_coins.value=100;fields.parent_series.value='Video Games';el('ctoon-maker-save').textContent='Create CToon';preview.replaceChildren();say('Ready to create a CToon. New entries default to Coming Soon.');
+ editingId=null;form.reset();fields.price_coins.value=100;fields.parent_series.value='Cartoon & Anime';el('ctoon-maker-save').textContent='Create CToon';preview.replaceChildren();say('Ready to create a CToon. New entries default to Coming Soon.');
 }
 function edit(item){
  editingId=item.id;
@@ -56,10 +56,9 @@ async function load(){
 }
 function updateSetOptions(){
  const options=el('ctoon-maker-series-options');options.replaceChildren();
- const category=fields.parent_series.value;
- for(const set of seriesRows.filter(x=>x.category===category)){const option=document.createElement('option');option.value=set.name;options.append(option)}
+ for(const set of seriesRows){const option=document.createElement('option');option.value=set.name;options.append(option)}
 }
-fields.parent_series.addEventListener('change',()=>{fields.series.value='';updateSetOptions()});
+
 async function init(){
  authorized=await verify();form.hidden=!authorized;
  el('ctoon-maker-search').disabled=!authorized;el('ctoon-maker-reload').disabled=!authorized;
@@ -68,9 +67,9 @@ async function init(){
 }
 form.addEventListener('submit',async event=>{
  event.preventDefault();if(!authorized)return;
- const name=fields.name.value.trim(),parent_series=fields.parent_series.value.trim(),series=fields.series.value.trim(),image_path=cleanImage(fields.image_path.value),rarity=fields.rarity.value,price_coins=Number(fields.price_coins.value),is_for_sale=fields.is_for_sale.checked;
- if(!name||!parent_series||!series||!image_path||!Number.isSafeInteger(price_coins)||price_coins<0||price_coins>1000000){say('Enter a name, category, set, valid PNG/JPG/WebP artwork path and a whole-number price.');return}
- if(!seriesRows.some(x=>x.name===series&&x.category===parent_series)){say('Select a registered CToon set from the list.');return}
+ const name=fields.name.value.trim(),series=fields.series.value.trim(),parent_series=seriesRows.find(x=>x.name===series)?.category||'Cartoon & Anime',image_path=cleanImage(fields.image_path.value),rarity=fields.rarity.value,price_coins=Number(fields.price_coins.value),is_for_sale=fields.is_for_sale.checked;
+ if(!name||!parent_series||!series||!image_path||!Number.isSafeInteger(price_coins)||price_coins<0||price_coins>1000000){say('Enter a name, subseries, valid PNG/JPG/WebP artwork path and a whole-number price.');return}
+ if(!seriesRows.some(x=>x.name===series)){say('Select a registered CToon set from the list.');return}
  const existing=rows.find(x=>x.name.toLowerCase()===name.toLowerCase()&&x.series?.toLowerCase()===series.toLowerCase()&&x.id!==editingId);
  if(existing){say('A CToon with this name already exists in '+series+'. Edit the existing entry instead.');return}
  const button=el('ctoon-maker-save');button.disabled=true;say(editingId?'Saving changes…':'Creating CToon…');
