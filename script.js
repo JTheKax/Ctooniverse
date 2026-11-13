@@ -370,3 +370,14 @@ if (year) year.textContent = String(new Date().getFullYear());
     document.head.append(script);
   }
 })();
+
+/* Cosmic Overdrive: existing illustrated destination artwork, premium portal cards
+   and responsive neon stage lighting. No changes to site availability or auth. */
+(() => {
+  if (document.querySelector('link[href^="cosmic-overdrive.css"]')) return;
+  const sheet=document.createElement('link');
+  sheet.rel='stylesheet';
+  sheet.href='cosmic-overdrive.css?v=20261112-overdrive-v1';
+  sheet.dataset.ctoonOverdrive='true';
+  document.head.append(sheet);
+})();
