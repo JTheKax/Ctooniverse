@@ -25,7 +25,7 @@
   function card(item) {
     const article=el("article","ctoons-directory-card");
     const art=el("div","ctoons-directory-art");
-    if(item.image_path && /^(https:\/\/|\/|public\/|images\/|assets\/)/i.test(item.image_path)){
+    if(item.image_path && /^(https:\/\/|\/|public\/|images\/|assets\/|data\/)/i.test(item.image_path)){
       const image=el("img");
       image.src=item.image_path;
       image.alt=item.name+" artwork";
