@@ -3,7 +3,7 @@ import {createClient} from "https://esm.sh/@supabase/supabase-js@2.58.0";
 const db=createClient("https://hsxdyxdazsdmpucyhqly.supabase.co","sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS");
 const $=id=>document.getElementById(id);
 const status=$("subseries-auth-status"),tools=$("subseries-owner-tools"),feedback=$("subseries-feedback");
-const list=$("subseries-list"),form=$("subseries-create-form"),nameInput=$("subseries-name"),total=$("subseries-total");
+const list=$("subseries-list"),form=$("subseries-create-form"),nameInput=$("subseries-name"),searchInput=$("subseries-search"),total=$("subseries-total");
 const collator=new Intl.Collator(undefined,{sensitivity:"base",numeric:true});
 let entries=[],busy=false;
 function message(value,error=false){feedback.textContent=value;feedback.style.color=error?"#ff9aab":"#8af4cf";}
@@ -18,8 +18,11 @@ async function load(){
 }
 function draw(){
  list.replaceChildren();total.textContent="("+entries.length+")";
+ const query=searchInput.value.trim().toLowerCase();
+ const visible=entries.filter(item=>item.name.toLowerCase().includes(query));
+ if(query&&!visible.length){list.textContent="No matching subseries.";return;}
  if(!entries.length){const p=document.createElement("p");p.textContent="No subseries yet. Add your first one above.";list.append(p);return;}
- for(const item of entries){
+ for(const item of visible){
   const row=document.createElement("div");row.className="subseries-row";
   const info=document.createElement("div");info.className="subseries-info";
   const heading=document.createElement("strong");heading.textContent=item.name;
@@ -55,6 +58,7 @@ function draw(){
   });
  }
 }
+searchInput.addEventListener("input",draw);
 form.addEventListener("submit",async event=>{
  event.preventDefault();if(busy)return;
  const name=clean(nameInput.value);
@@ -72,7 +76,7 @@ async function verify(){
  try{
   const {data:{user},error}=await db.auth.getUser();if(error||!user){status.textContent="Sign in to your Owner account to manage subseries.";return;}
   const {data,error:ownerError}=await db.from("site_owners").select("user_id").eq("user_id",user.id).maybeSingle();
-  if(ownerError||!data){status.textContent="Owner access is required.";return;}
+  if(ownerError){status.textContent="Owner verification failed: "+ownerError.message;return;}if(!data){status.textContent="Owner access is required.";return;}
   status.textContent="Owner access verified.";tools.hidden=false;await load();
  }catch(error){status.textContent="Unable to verify owner access.";message(error.message,true);}
 }
