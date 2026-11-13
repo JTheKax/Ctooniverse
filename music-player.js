@@ -8,7 +8,22 @@ audio.volume=.5;
 let tracks=[];let index=0;
 const parts=title=>{const match=title.match(/^(.+?)\s+[-–—]\s+(.+)$/);return match?{artist:match[1].trim(),song:match[2].trim()}:{artist:'Unknown Artist',song:title.trim()}};
 const compare=new Intl.Collator(undefined,{sensitivity:'base',numeric:true});
-function sortTracks(){const selected=tracks[index]?.storage_path;tracks.sort((a,b)=>{const x=parts(a.title),y=parts(b.title);return sortChoice.value==='artist'?(compare.compare(x.artist,y.artist)||compare.compare(x.song,y.song)):(compare.compare(x.song,y.song)||compare.compare(x.artist,y.artist))});index=Math.max(0,tracks.findIndex(t=>t.storage_path===selected));choice.replaceChildren();tracks.forEach((track,i)=>{const option=document.createElement('option');option.value=String(i);option.textContent=track.title;choice.append(option)});choice.value=String(index)}
+function sortTracks(){
+ const selected=tracks[index]?.storage_path;
+ tracks.sort((a,b)=>{const x=parts(a.title),y=parts(b.title);return sortChoice.value==='artist'?(compare.compare(x.artist,y.artist)||compare.compare(x.song,y.song)):(compare.compare(x.song,y.song)||compare.compare(x.artist,y.artist))});
+ index=Math.max(0,tracks.findIndex(t=>t.storage_path===selected));
+ choice.replaceChildren();
+ let group=null,lastArtist=null;
+ tracks.forEach((track,i)=>{
+  const parsed=parts(track.title);
+  if(sortChoice.value==='artist'){
+   if(parsed.artist!==lastArtist){group=document.createElement('optgroup');group.label=parsed.artist;choice.append(group);lastArtist=parsed.artist}
+  }
+  const option=document.createElement('option');option.value=String(i);option.textContent=sortChoice.value==='artist'?parsed.song:track.title;
+  (group||choice).append(option);
+ });
+ choice.value=String(index);
+}
 let selectTrack=()=>{};let repeatOne=false;
 // Radio playback starts only when the listener presses Play.
 const advance=async()=>{if(!tracks.length)return;const wasPlaying=!audio.paused;index=(index+1)%tracks.length;selectTrack();if(wasPlaying){try{await audio.play()}catch(_){hint.textContent='Press Play to hear the next song.'}}};
