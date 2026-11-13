@@ -1,0 +1,89 @@
+/* Prize Games dropdown shared by the CTooniverse Games navigation. */
+.site-header .games-dropdown {
+  position:relative;
+  display:inline-flex;
+  flex:0 0 auto;
+  align-items:center;
+  min-width:0;
+  overflow:visible;
+  z-index:10002;
+}
+.site-header .games-dropdown.is-open { z-index:10030!important; }
+.site-header .games-dropdown-trigger {
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  cursor:pointer;
+  font:inherit;
+}
+.site-header .games-dropdown .games-dropdown-panel {
+  display:none!important;
+  position:absolute;
+  top:calc(100% + 9px);
+  left:0;
+  width:max-content;
+  min-width:240px;
+  max-width:min(340px,calc(100vw - 24px));
+  padding:10px;
+  border:2px solid #a07cff;
+  border-radius:15px;
+  background:var(--site-nav-panel,#111833);
+  color:var(--site-nav-ink,#f6f2ff);
+  box-shadow:0 14px 32px #04061ec9,0 0 20px #905aff55;
+  z-index:10031!important;
+}
+.site-header .games-dropdown.is-open>.games-dropdown-panel {
+  display:grid!important;
+  gap:5px;
+}
+.site-header .games-dropdown-panel>a {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  width:100%;
+  min-height:41px;
+  padding:9px 12px;
+  border:2px solid transparent;
+  border-radius:9px;
+  color:var(--site-nav-ink,#f8f5ff);
+  font-weight:800;
+  text-align:left;
+  text-decoration:none;
+}
+.site-header .games-dropdown-panel>a:hover,
+.site-header .games-dropdown-panel>a:focus-visible,
+.site-header .games-dropdown-panel>a[aria-current="page"] {
+  background:var(--site-nav-hover,#423176);
+  border-color:var(--site-nav-edge,#9edbff);
+  outline-offset:2px;
+}
+.site-header .games-dropdown-heading {
+  display:block;
+  margin:5px 4px 1px;
+  padding:11px 8px 5px;
+  border-top:1px solid currentColor;
+  color:var(--site-nav-ink,#9deaff);
+  font-size:.81rem;
+  font-weight:950;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+}
+@media(max-width:700px) {
+  .site-header .games-dropdown {
+    display:block;
+    width:100%;
+    max-width:100%;
+  }
+  .site-header .games-dropdown .games-dropdown-panel {
+    position:static!important;
+    inset:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    max-height:min(55dvh,450px)!important;
+    overflow-y:auto!important;
+    margin:6px 0 0;
+    padding:6px;
+    box-shadow:0 8px 18px #0007!important;
+  }
+}
