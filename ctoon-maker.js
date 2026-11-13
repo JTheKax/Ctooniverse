@@ -5,6 +5,9 @@ const form=el('ctoon-maker-form'),status=el('ctoon-maker-status'),holder=el('cto
 const fields={name:el('ctoon-maker-title'),parent_series:el('ctoon-maker-set'),series:el('ctoon-maker-series'),image_path:el('ctoon-maker-image'),rarity:el('ctoon-maker-rarity'),price_coins:el('ctoon-maker-price'),is_for_sale:el('ctoon-maker-sale')};
 let authorized=false,rows=[],seriesRows=[],editingId=null,requestId=0;
 const say=message=>{status.textContent=message};
+const deleteButton=el('ctoon-maker-delete');
+function syncDeleteButton(){deleteButton.hidden=!authorized||editingId===null;deleteButton.disabled=!authorized||editingId===null;}
+
 const cleanImage=value=>{
  const v=value.trim();
  if(/^https:\/\//i.test(v)){try{const u=new URL(v);return /\.(png|jpe?g|webp)(\?.*)?$/i.test(u.pathname)?v:null}catch{return null}}
@@ -18,10 +21,10 @@ function showPreview(){
  const img=document.createElement('img');img.src=path;img.alt='CToon artwork preview';img.style.cssText='display:block;max-width:260px;width:100%;height:auto;margin:1rem auto';img.addEventListener('error',()=>{preview.textContent='Artwork not found at '+path+'. Upload it to GitHub first.'},{once:true});preview.append(img);
 }
 function reset(){
- editingId=null;form.reset();fields.price_coins.value=100;fields.parent_series.value='Cartoon & Anime';el('ctoon-maker-save').textContent='Create CToon';preview.replaceChildren();say('Ready to create a CToon. New entries default to Coming Soon.');
+ editingId=null;syncDeleteButton();form.reset();fields.price_coins.value=100;fields.parent_series.value='Cartoon & Anime';el('ctoon-maker-save').textContent='Create CToon';preview.replaceChildren();say('Ready to create a CToon. New entries default to Coming Soon.');
 }
 function edit(item){
- editingId=item.id;
+ editingId=item.id;syncDeleteButton();
  for(const key of ['name','parent_series','series','rarity','price_coins'])fields[key].value=item[key]??'';
  fields.image_path.value=item.image_path||'';
  fields.is_for_sale.checked=!!item.is_for_sale;
@@ -60,7 +63,7 @@ function updateSetOptions(){
 }
 
 async function init(){
- authorized=await verify();form.hidden=!authorized;
+ authorized=await verify();form.hidden=!authorized;syncDeleteButton();
  el('ctoon-maker-search').disabled=!authorized;el('ctoon-maker-reload').disabled=!authorized;
  if(!authorized){holder.replaceChildren();say('Sign in with an Owner account to manage CToons.');return}
  await load();
@@ -79,6 +82,23 @@ form.addEventListener('submit',async event=>{
   const {data,error}=await request;if(error||!data)throw error||new Error('No catalog row was saved');
   reset();await load();say('CToon saved to the live catalog successfully.');
  }catch(error){say('Save failed: '+(error?.message||'Unknown error'))}finally{button.disabled=false}
+});
+deleteButton.addEventListener('click',async()=>{
+ if(!authorized||editingId===null)return;
+ const item=rows.find(row=>String(row.id)===String(editingId));
+ if(!item){say('Select an existing CToon before deleting.');return}
+ if(!window.confirm('Permanently delete "'+item.name+'" from the live CToon catalog? This cannot be undone.'))return;
+ const typed=window.prompt('To confirm deletion, type the CToon name exactly: '+item.name);
+ if(typed!==item.name){say('Deletion canceled. The CToon was not changed.');return}
+ deleteButton.disabled=true;el('ctoon-maker-save').disabled=true;say('Deleting '+item.name+'…');
+ try{
+  if(!await verify())throw new Error('Owner authorization expired. Sign in again.');
+  const {data,error}=await db.from('ctoon_catalog').delete().eq('id',item.id).select('id');
+  if(error)throw error;
+  if(!data||data.length!==1)throw new Error('Deletion was not confirmed. Check owner delete permissions and try again.');
+  reset();await load();say('Deleted '+item.name+' from the live CToon catalog. Artwork files remain in GitHub.');
+ }catch(error){say('Delete failed: '+(error?.message||'Unknown error'))}
+ finally{el('ctoon-maker-save').disabled=false;syncDeleteButton()}
 });
 el('ctoon-maker-new').addEventListener('click',reset);
 el('ctoon-maker-reload').addEventListener('click',load);
