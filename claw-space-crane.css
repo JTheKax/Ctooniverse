@@ -1,0 +1,166 @@
+/* CTooniverse Space Crane — space-arcade tribute skin. Visual only:
+   scoring, prize identities, balance & server-verified odds stay unchanged. */
+.claw-page{
+ background-color:#080f24;
+ background-image:radial-gradient(circle at 50% 7%,rgba(25,118,235,.23),transparent 37%),
+ radial-gradient(circle at 8% 46%,rgba(211,34,50,.11),transparent 30%),
+ radial-gradient(circle at 88% 68%,rgba(24,201,233,.10),transparent 30%);
+ color:#f6faff;
+}
+.claw-back{border-color:#55cdff;color:#c1f4ff;background:#101e37}
+.claw-kicker{color:#b9fa5e;text-shadow:0 0 12px #55f37c88}
+.claw-hero h1{color:#f9f4ce;text-shadow:3px 4px 0 #143b75,0 0 27px #38c6ff}
+.claw-hero h1 span{color:#b4ff5c;text-shadow:3px 4px 0 #15415a,0 0 24px #7cff47}
+.claw-facts span{background:#112b4a;border:1px solid #3eabda;color:#e5faff}
+.claw-machine-panel{padding-top:38px}
+.claw-cabinet{
+ position:relative;isolation:isolate;
+ border:10px solid #bd2831;
+ border-radius:82px 82px 27px 27px;
+ padding:15px 16px 0;
+ background:linear-gradient(112deg,#f34742 0%,#b71f2b 20%,#d72c39 43%,#8d1629 76%,#f04a48 100%);
+ box-shadow:0 15px 0 #590c1c,0 27px 48px #000b,inset 0 0 0 4px #ff817c,
+ 0 0 42px #e7314166;
+}
+.claw-cabinet:before,.claw-cabinet:after{
+ content:"";pointer-events:none;position:absolute;z-index:2;top:147px;bottom:134px;width:12px;
+ border-radius:9px;background:linear-gradient(90deg,#a5b9c7,#fff,#7b8eac);
+ box-shadow:0 0 12px #8be9ff88;
+}
+.claw-cabinet:before{left:0}.claw-cabinet:after{right:0}
+.claw-rocket-top{
+ pointer-events:none;position:absolute;left:50%;top:-49px;transform:translateX(-50%);
+ width:154px;height:60px;
+ display:grid;place-items:center;
+ border:6px solid #ffda5c;border-bottom:0;
+ border-radius:90px 90px 13px 13px;
+ background:linear-gradient(90deg,#9d0e23,#fa4449 30%,#e82b34 66%,#8f0c1d);
+ box-shadow:0 -8px 0 #ffe26b,0 0 22px #f53736aa,inset 0 5px 0 #ff8585;
+ z-index:0;
+}
+.claw-rocket-top span{font-size:35px;filter:drop-shadow(0 2px 3px #710b13)}
+.claw-marquee{
+ position:relative;z-index:1;
+ border:4px solid #e6f5fc;
+ border-radius:75px 75px 12px 12px;
+ color:#fffbd5;font-size:clamp(1.3rem,3.3vw,2.05rem);letter-spacing:.15em;
+ padding:19px 9px 13px;
+ background:linear-gradient(180deg,#0b3b85 0%,#0969c3 47%,#04417d 100%);
+ box-shadow:0 6px 0 #661b27,0 0 22px #03bdffb5,inset 0 0 22px #90e1ff77;
+ text-shadow:0 3px #00356b,0 0 12px #d7f9ff;
+}
+.claw-marquee span{color:#f9e05b;text-shadow:0 0 8px #ffe271}
+.claw-toplights i{background:#eeff9e;box-shadow:0 0 13px #acff66}
+.claw-toplights i:nth-child(even){background:#65caff;box-shadow:0 0 12px #64e7ff}
+.claw-glass{
+ border:9px solid #c7dfe9;border-radius:90px 90px 17px 17px;
+ background:
+ radial-gradient(circle at 50% 85%,#90f5ff22,transparent 40%),
+ radial-gradient(ellipse at 55% 15%,#79d6ff44,transparent 58%),
+ linear-gradient(150deg,#071a41 0%,#073c77 45%,#071a39 100%);
+ box-shadow:inset 0 0 35px #84e8ff77,inset 0 0 0 3px #e4ffff33,0 0 17px #0ecbff88;
+}
+.claw-glass:before{
+ content:"";pointer-events:none;position:absolute;inset:0;opacity:.5;
+ background-image:radial-gradient(white 1px,transparent 1.5px);
+ background-size:42px 51px;background-position:10px 17px;
+}
+.claw-glass:after{border-radius:80px 80px 14px 14px;background:linear-gradient(107deg,#ffffff45,transparent 16%,transparent 75%,#ffffff22 90%,transparent)}
+.claw-glass-stars{color:#e8fff08a;top:19%;letter-spacing:.65em}
+.claw-rail{background:linear-gradient(#eaf8ff,#8ea7b6);border-color:#c5e7ff;box-shadow:0 0 13px #9cf4ff}
+.claw-trolley{border-color:#f3f8fc;background:linear-gradient(#b5d9e8,#55768f);box-shadow:0 3px 8px #001a3d}
+.claw-cable{background:repeating-linear-gradient(to bottom,#e9f5fa 0 4px,#798fa8 4px 7px)}
+.claw-core{background:linear-gradient(#f4f8ff,#6f859a);border-color:#e6f5ff;color:#2965a2}
+.claw-finger{background:linear-gradient(#f6fbff,#628399);border-color:#cedee9}
+.claw-floor{border-color:#c9e3f1;background:repeating-linear-gradient(90deg,#15518a 0 27px,#0c4177 28px 52px);box-shadow:inset 0 8px #06274f}
+.claw-ufo{
+ position:absolute;top:24%;left:50%;width:135px;height:45px;transform:translateX(-50%);
+ border-radius:50%;border:3px solid #7feaff77;
+ background:radial-gradient(ellipse at 50% 10%,#83dffb88 0%,#1a73c277 48%,transparent 51%);
+ box-shadow:0 16px 34px #64e7ff33;
+ opacity:.75;pointer-events:none;
+}
+.claw-ufo:after{content:"";position:absolute;bottom:0;left:10%;width:80%;height:13px;background:#80dffa;border-radius:50%;box-shadow:0 0 18px #96f7ff}
+.claw-ufo span{position:absolute;left:48%;top:6px;color:#ffda55}
+.claw-alien-crowd{position:absolute;inset:0;z-index:1;pointer-events:none}
+.claw-alien{
+ --alien-scale:1;
+ position:absolute;bottom:87px;width:60px;height:59px;left:12%;
+ transform:translateX(-50%) scale(var(--alien-scale));
+ border-radius:47% 47% 42% 42%;
+ background:linear-gradient(140deg,#d0ff78 0%,#9ae838 53%,#58b63d 100%);
+ box-shadow:inset -7px -5px 0 #4a9a3e55,0 0 17px #a5ff6190,0 8px 0 -2px #134a8b;
+ animation:claw-alien-sway 3s ease-in-out infinite alternate;
+}
+.claw-alien:before,.claw-alien:after{
+ content:"";position:absolute;top:27px;width:13px;height:16px;background:#91df43;border-radius:8px 8px 4px 4px;z-index:-1;
+}
+.claw-alien:before{left:-9px;transform:rotate(31deg)}.claw-alien:after{right:-9px;transform:rotate(-31deg)}
+.claw-antenna{position:absolute;top:-16px;left:calc(50% - 3px);height:21px;width:6px;border-radius:10px;background:#86cc3b}
+.claw-antenna:before{content:"";position:absolute;left:-4px;top:-5px;width:14px;height:13px;border-radius:50%;background:#a6ed4c}
+.claw-alien-eyes{display:flex;position:absolute;top:17px;left:7px;right:7px;gap:2px;justify-content:center}
+.claw-alien-eyes b{position:relative;display:block;width:15px;height:18px;border-radius:50%;background:#fff;border:1px solid #668b4e}
+.claw-alien-eyes b:after{content:"";position:absolute;top:7px;left:5px;width:6px;height:8px;background:#172a43;border-radius:50%}
+.claw-alien-smile{position:absolute;left:21px;top:37px;width:20px;height:8px;border:0;border-bottom:2px solid #395a36;border-radius:50%}
+.claw-alien-suit{position:absolute;bottom:-17px;left:5px;right:5px;height:21px;display:grid;place-items:center;background:linear-gradient(#2986d7,#094d9b);border-radius:8px 8px 14px 14px;color:#ffdc62;font-size:11px;font-style:normal;box-shadow:inset 0 4px #64b7ee}
+.claw-alien.alien-1{left:13%;--alien-scale:.83;animation-delay:-.5s}
+.claw-alien.alien-2{left:31%;--alien-scale:1.04;bottom:105px;animation-delay:-1.8s}
+.claw-alien.alien-3{left:50%;--alien-scale:.91;bottom:92px;animation-delay:-1.2s}
+.claw-alien.alien-4{left:69%;--alien-scale:1.01;bottom:109px;animation-delay:-2.5s}
+.claw-alien.alien-5{left:88%;--alien-scale:.86;animation-delay:-3.1s}
+.claw-toy .claw-toy-label{background:#093e71e8;border:1px solid #94e3ff;color:#fff}
+.claw-toy.selected .claw-toy-label{background:#dbff78;color:#173e29;border-color:#fff}
+.claw-toy.selected .claw-toy-body{filter:drop-shadow(0 0 10px #b4ff75) drop-shadow(0 5px 3px #0009)}
+.claw-cabinet-base{
+ border-top:6px solid #f0f8ff;position:relative;isolation:isolate;
+ grid-template-columns:1fr 83px 120px;min-height:135px;
+}
+.claw-rocket-fin{position:absolute;bottom:-6px;width:45px;height:95px;background:linear-gradient(100deg,#fc6263,#a9182d);border:5px solid #8c1127;z-index:-1}
+.claw-rocket-fin-left{left:-47px;transform:skewY(-20deg);border-radius:70% 0 0 10px}
+.claw-rocket-fin-right{right:-47px;transform:skewY(20deg);border-radius:0 70% 10px 0}
+.claw-base-plate{color:#fff6ba;text-shadow:0 3px #850e24}
+.claw-base-plate span+span{color:#d5f6ff}
+.claw-coin-slot{background:linear-gradient(#4d1026,#1a183a);border-color:#ffdf68}
+.claw-chute{background:#200e25;border:4px solid #dfeafa;color:#fff3bd}
+.claw-chute-door{background:linear-gradient(#09254d,#04142e);color:#adfa62}
+.claw-controls{
+ background:linear-gradient(145deg,#145eae,#09265c);
+ border:4px solid #e7f6ff;
+ box-shadow:0 8px 0 #941f2d,inset 0 0 19px #00b7ff55;
+}
+.claw-control{border-color:#d4f5ff;background:linear-gradient(#f5fafc,#91c3dc);color:#12365f;box-shadow:0 5px #3b667d}
+.claw-drop{border:4px solid #ffdc6d;background:linear-gradient(#fa6e6a,#c71f33);color:white;box-shadow:0 6px #7a142b;text-shadow:0 2px #871124}
+.claw-target-name{color:#c9f0ff}
+.claw-target-name strong{color:#c1ff6d}
+.claw-status{background:#0b2751d9;border-color:#55b6e5;color:#e8faff}
+.claw-status[data-tone="success"]{background:#16462e;border-color:#adff61;color:#d7ffad}
+.claw-info-card{border-color:#3d9ce5;background:linear-gradient(140deg,#112b57ef,#0a1837f7);box-shadow:0 10px 26px #0008,0 0 17px #2b89e84d}
+.claw-info-card h2{color:#c5ff78;text-shadow:0 0 9px #4bdc8a66}
+.claw-balance{color:#ffeb88!important}
+.claw-prize-key>div,.claw-shelf .shelf-prize{background:#0d3a68;border-color:#3d91ca}
+.claw-signin-link{background:#b6fa63;color:#174027}
+@keyframes claw-alien-sway{from{translate:0 1px;rotate:-2deg}to{translate:0 -3px;rotate:2deg}}
+@media(max-width:590px){
+ .claw-machine-panel{padding-top:33px}
+ .claw-cabinet{border-width:6px;border-radius:52px 52px 23px 23px;padding:8px 8px 0}
+ .claw-rocket-top{width:105px;height:44px;top:-35px;border-width:4px}
+ .claw-rocket-top span{font-size:26px}
+ .claw-marquee{border-radius:45px 45px 9px 9px;font-size:1.16rem;padding:12px 3px 9px}
+ .claw-glass{height:303px;border-width:5px;border-radius:55px 55px 12px 12px}
+ .claw-glass:after{border-radius:50px 50px 11px 11px}
+ .claw-cabinet:before,.claw-cabinet:after{top:110px;bottom:100px;width:6px}
+ .claw-alien{--alien-scale:.75}
+ .claw-alien.alien-1{--alien-scale:.61;bottom:77px}
+ .claw-alien.alien-2{--alien-scale:.73;bottom:95px}
+ .claw-alien.alien-3{--alien-scale:.66;bottom:85px}
+ .claw-alien.alien-4{--alien-scale:.74;bottom:97px}
+ .claw-alien.alien-5{--alien-scale:.62;bottom:77px}
+ .claw-ufo{width:95px;top:22%}
+ .claw-cabinet-base{min-height:89px;grid-template-columns:1fr 57px 82px}
+ .claw-rocket-fin{width:25px;height:60px;border-width:3px}
+ .claw-rocket-fin-left{left:-25px}
+ .claw-rocket-fin-right{right:-25px}
+ .claw-controls{border-width:3px}
+ .claw-control,.claw-drop{min-height:58px}
+}
+@media(prefers-reduced-motion:reduce){.claw-alien{animation:none}}
