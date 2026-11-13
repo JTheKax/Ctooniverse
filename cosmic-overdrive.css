@@ -1,0 +1,199 @@
+/* CTooniverse // Cosmic Arcade Overdrive
+   Presentation-only enhancement. Preserve supplied background artwork,
+   site-operational green/yellow indicators, owner controls and games. */
+:root {
+  --overdrive-cyan:#7deaff;
+  --overdrive-violet:#ab87ff;
+  --overdrive-magenta:#ff8dd9;
+  --overdrive-ink:#eef5ff;
+}
+/* A little more stage lighting, but keep the user's DBZ art visible. */
+.home-universe-page .simple-home{position:relative;isolation:isolate}
+.home-universe-page .welcome-panel{
+  border:2px solid rgba(133,235,255,.85)!important;
+  border-radius:28px!important;
+  padding:clamp(28px,4vw,52px)!important;
+  background:radial-gradient(ellipse at 96% 42%,rgba(81,63,183,.5),transparent 49%),
+             linear-gradient(124deg,rgba(7,16,48,.94),rgba(36,17,66,.89))!important;
+  box-shadow:0 22px 65px rgba(2,4,27,.78),0 0 0 1px #ffffff24 inset,0 0 38px rgba(71,210,255,.23)!important;
+}
+.home-universe-page .welcome-copy{width:100%;max-width:730px}
+.home-universe-page .welcome-copy .eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 13px;border:1px solid #96e4ff9c;border-radius:999px;
+  background:#06142fbd;box-shadow:0 0 18px #59cfff30;
+  color:#b4f4ff;font-size:.72rem;letter-spacing:.11em;
+}
+.home-universe-page .welcome-copy h1{
+  max-width:13ch;
+  font-size:clamp(2.55rem,5.8vw,5.6rem)!important;
+  line-height:.99!important;
+  letter-spacing:-.058em!important;
+  text-shadow:0 6px 25px #070b27a9;
+}
+.home-universe-page .welcome-copy h1 .arcade-hero-break{
+  display:block;
+  background:linear-gradient(94deg,#74eaff 7%,#b09dff 48%,#ff95d9 90%);
+  -webkit-background-clip:text;background-clip:text;
+  color:#ffb9f5;
+  -webkit-text-fill-color:transparent!important;
+  filter:drop-shadow(0 0 16px rgba(150,107,255,.22));
+}
+.home-universe-page .welcome-copy>p:not(.eyebrow){font-size:clamp(1rem,1.5vw,1.13rem);line-height:1.65;color:#e5edff}
+.home-universe-page .hero-actions{gap:11px}
+.home-universe-page .hero-actions .button{
+  min-height:47px;justify-content:center;
+  border-radius:13px;border:1px solid rgba(188,185,255,.58);
+  text-decoration:none;line-height:1.2;
+  box-shadow:0 4px 0 #050d28,0 12px 22px #0807238c;
+}
+.home-universe-page .hero-actions .button.primary{
+  color:#06152c;
+  background:linear-gradient(110deg,#6ce8ff,#b8bbff 56%,#eab4ff);
+  border-color:#baf4ff;
+  font-weight:950;
+  box-shadow:0 4px 0 #075479,0 12px 25px #042659b0,0 0 20px #64eaff55;
+}
+.home-universe-page .hero-actions .button.secondary{
+  background:linear-gradient(140deg,#25245d,#39226f);
+  color:#f8f7ff;
+}
+.home-universe-page .announcement-panel{
+  border:2px solid #947dff99;
+  border-radius:25px!important;
+  padding:clamp(20px,2.7vw,30px);
+  background:linear-gradient(145deg,rgba(11,20,48,.94),rgba(39,21,68,.92))!important;
+  box-shadow:0 20px 42px #03051caa,0 0 28px #ae73ff2b!important;
+}
+.home-universe-page .announcement-panel h2{font-size:clamp(1.2rem,2.2vw,1.65rem)}
+.home-universe-page .announcement-panel li{
+  margin-block:7px;border:1px solid #a69aff36;border-radius:11px;
+  background:linear-gradient(100deg,#232457ac,#17214686);
+  transition:transform .2s ease,border-color .2s ease,background .2s ease;
+}
+.home-universe-page .announcement-panel li a{
+  display:block;padding:10px 12px;color:#f0edff;text-decoration:none;
+}
+.home-universe-page .announcement-panel li a::after{content:" ↗";color:#8eeeff}
+/* Illustrated portal-cards: the existing site art, not stock photos. */
+.home-universe-page .home-tiles{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:15px;
+}
+.home-universe-page .home-tile{
+  min-height:210px!important;
+  justify-content:flex-end!important;align-items:flex-start!important;
+  text-align:left!important;gap:6px;
+  padding:18px 16px!important;overflow:hidden;
+  border:2px solid #91d3ff8c!important;border-radius:22px!important;
+  background-image:linear-gradient(180deg,rgba(11,11,40,.10) 5%,rgba(6,12,34,.64) 41%,rgba(8,9,29,.98) 100%),
+                   url("ctoons-handdrawn-background.png")!important;
+  background-size:cover!important;background-position:center!important;
+  box-shadow:0 14px 35px #04041c9c,inset 0 1px #ffffff45,0 0 20px #68bfff1a!important;
+}
+.home-universe-page .home-tile:nth-child(2){
+  background-image:linear-gradient(180deg,rgba(11,11,40,.10),rgba(6,12,34,.65) 44%,rgba(8,9,29,.98)),url("games-arcade-handdrawn.png")!important;
+}
+.home-universe-page .home-tile:nth-child(3){
+  background-image:linear-gradient(180deg,rgba(11,11,40,.10),rgba(6,12,34,.65) 44%,rgba(8,9,29,.98)),url("shop-handdrawn-background.png")!important;
+}
+.home-universe-page .home-tile:nth-child(4){
+  background-image:linear-gradient(180deg,rgba(11,11,40,.10),rgba(6,12,34,.65) 44%,rgba(8,9,29,.98)),url("watch-theater-handdrawn.png")!important;
+}
+.home-universe-page .home-tile:nth-child(5){
+  background-image:linear-gradient(180deg,rgba(11,11,40,.10),rgba(6,12,34,.65) 44%,rgba(8,9,29,.98)),url("saturn-background.png")!important;
+}
+.home-universe-page .home-tile .tile-symbol{
+  width:53px;height:53px;border:1px solid #99e9ff9e;border-radius:14px;
+  background:#0d1d48d9;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  box-shadow:0 0 21px #67d8ff40;font-size:1.7rem;
+}
+.home-universe-page .home-tile strong{
+  font-size:clamp(1.05rem,1.75vw,1.38rem)!important;color:#fff;
+  text-shadow:0 2px 10px #000;
+}
+.home-universe-page .home-tile small{font-size:.8rem;color:#e5efff!important;opacity:1;text-shadow:0 2px 7px #000}
+/* Tighter, more luminous arrivals and section headers. */
+.home-universe-page .arcade-feature-strip>a{
+  position:relative;overflow:hidden;min-height:118px;
+  border:1px solid #a3b9ffb0;border-radius:20px;
+  background:linear-gradient(120deg,rgba(8,31,67,.95),rgba(31,18,72,.95));
+  box-shadow:0 10px 27px #05091b9e,inset 0 1px #ffffff29,0 0 19px #77a6ff1b;
+}
+.home-universe-page .arcade-feature-strip>a::before{
+  content:"";position:absolute;left:0;top:15px;bottom:15px;width:4px;
+  border-radius:0 5px 5px 0;background:linear-gradient(#80edff,#bd88ff,#ff9ed8);
+  box-shadow:0 0 13px #9ca5ff;
+}
+.home-universe-page .arcade-feature-strip strong{font-size:clamp(1.08rem,1.9vw,1.38rem)}
+.home-universe-page .arcade-feature-strip small{color:#8cecff}
+.home-universe-page .explore-heading{display:flex;gap:18px;align-items:end;justify-content:space-between;flex-wrap:wrap}
+.home-universe-page .explore-heading h2{
+  margin:4px 0 16px;font-size:clamp(1.55rem,3vw,2.45rem);
+  color:#fff;text-shadow:0 0 24px #81b6ff66;
+}
+.home-universe-page .home-status-guide{background:linear-gradient(130deg,#0c1431ed,#201744e9)!important}
+/* Match the illustrated banner with the new arcade stage. */
+.ct-page-banner{
+  border-radius:25px;
+  box-shadow:0 13px 35px #02051dcc,0 0 35px var(--ct-spectacle-glow,#876bff33),inset 0 1px #ffffff37;
+}
+.ct-page-banner[data-ct-banner="home"] .ct-banner-character{
+  box-shadow:inset -12px -12px 25px #11103a94,0 7px 0 #101027,0 0 38px #81e8ff99;
+}
+.ct-page-banner .ct-banner-bottom{border-top-color:#aad5ff5c}
+/* Sitewide: clearer focus and calmer, high-contrast form fields. */
+:where(main) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea):focus-visible{
+  outline:3px solid #9cecff;outline-offset:2px;
+  box-shadow:0 0 0 4px #70cfff22,0 0 17px #55d9ff45;
+}
+:is(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page)
+:where(main) :is(h1,h2){text-shadow:0 3px 18px #775cff44}
+.ctoons-library-page .ctoons-directory-card{
+  border-radius:19px;box-shadow:0 11px 25px #05051c99,inset 0 1px #ffffff24,0 0 18px #6da5ff28;
+}
+.watch-theater-page .theater-library{border-radius:22px}
+.shop-cartoon-page .shop-department{border-radius:21px}
+.site-header .brand-logo{filter:drop-shadow(0 0 14px rgba(152,135,255,.32))}
+footer{border-top:1px solid #96aeff50;box-shadow:0 -12px 26px #050c251c;color:#dce5ff}
+@media(hover:hover) and (pointer:fine){
+ .home-universe-page .announcement-panel li:hover{
+   transform:translateX(3px);border-color:#8adaff85;background:#273063d1;
+ }
+ .home-universe-page .home-tile:hover{
+   transform:translateY(-8px) scale(1.012);
+   border-color:#b5f4ff!important;
+   box-shadow:0 19px 38px #03041dbb,inset 0 1px #ffffff55,0 0 28px #84bcff67!important;
+ }
+ .home-universe-page .arcade-feature-strip>a:hover{
+   transform:translateY(-5px);border-color:#bef4ff;
+   box-shadow:0 16px 34px #02041ab8,0 0 24px #79cfff55;
+ }
+}
+@media(max-width:1100px){
+ .home-universe-page .home-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .home-universe-page .home-tile{min-height:205px!important}
+}
+@media(max-width:730px){
+ .home-universe-page .welcome-panel{padding:28px 20px!important}
+ .home-universe-page .welcome-copy h1{font-size:clamp(2rem,9vw,3.5rem)!important}
+ .home-universe-page .home-tiles{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+ .home-universe-page .home-tile{min-height:182px!important;padding:13px!important}
+ .home-universe-page .home-tile .tile-symbol{width:44px;height:44px;font-size:1.35rem}
+ .home-universe-page .arcade-feature-strip>a{min-height:92px}
+ .home-universe-page .hero-actions .button{flex:1 1 auto}
+ .home-universe-page .announcement-panel{border-radius:19px!important}
+}
+@media(max-width:380px){
+ .home-universe-page .home-tiles{gap:9px!important}
+ .home-universe-page .home-tile{min-height:175px!important;padding:11px!important}
+ .home-universe-page .home-tile small{font-size:.72rem}
+ .home-universe-page .home-tile strong{font-size:1rem!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .home-universe-page .announcement-panel li,
+ .home-universe-page .home-tile,
+ .home-universe-page .arcade-feature-strip>a{transition:none!important}
+ .home-universe-page .announcement-panel li:hover,
+ .home-universe-page .home-tile:hover,
+ .home-universe-page .arcade-feature-strip>a:hover{transform:none!important}
+}
