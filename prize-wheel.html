@@ -1,6 +1,68 @@
-<!doctype html>
-<html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="refresh" content="0;url=games.html"><title>Game Modes Cleared | CTooniverse</title></head>
-<body style="background:#090d25;color:#f8f8ff;font:1rem system-ui,sans-serif;padding:2rem">
-<main><h1>Game modes have been cleared</h1><p>Prize Wheel is no longer available. The CTooniverse Games arcade is starting fresh.</p><p><a style="color:#9ceaff" href="games.html">Return to the Games hub</a></p></main>
-</body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Boogie Prize Wheel | CTooniverse Arcade</title><meta name="description" content="Spin the CTooniverse Boogie Prize Wheel three times a day to win Cartoon Coins and CToon prizes."><meta name="theme-color" content="#1b1026"><link rel="stylesheet" href="styles.css?v=cartoon-wheel-2"><link rel="stylesheet" href="prize-wheel-v2.css?v=20261112-arcade"><link rel="stylesheet" href="prize-wheel-oogie.css?v=20261112-boogie-1"><link rel="stylesheet" href="prize-wheel-deluxe.css?v=20261112-deluxe-1"><link rel="stylesheet" href="prize-wheel-boogie-2.css?v=20261112-2"><script src="script.js?v=nav-icons-20261112-v2" defer></script><script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script><script type="module" src="account-menu.js?v=1"></script><script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script><script src="community-menu.js?v=2" defer></script><script src="music-player.js?v=random-autoplay-12" defer></script><script type="module" src="prize-wheel.js?v=20261112-boogie-2"></script></head><body class="games-arcade-page prize-wheel-page oogie-wheel-page"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a><nav aria-label="Main navigation"><a href="index.html" class="nav-link"><span class="nav-icon" aria-hidden="true">⌂</span><span>Home</span></a><a href="ctoons.html" class="nav-link"><span class="nav-icon" aria-hidden="true">▣</span><span>Ctoons</span></a><a href="shop.html" class="nav-link"><span class="nav-icon" aria-hidden="true">🛒</span><span>Shop</span></a><a href="games.html" class="nav-link active"><span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span></a><a href="watch.html" class="nav-link"><span class="nav-icon" aria-hidden="true">▶</span><span>Watch</span></a><div class="community-dropdown"><button type="button" class="nav-link community-dropdown-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">♧</span><span>Community</span><span aria-hidden="true">▾</span></button><div class="community-dropdown-panel"><a href="forums.html">Forums</a><a href="guild.html">Guild</a><a href="support.html">Support</a></div></div><div class="account-dropdown"><button type="button" class="nav-link account-dropdown-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">●</span><span>Account</span><span aria-hidden="true">▾</span></button><div class="account-dropdown-panel"><a href="login.html" data-account-guest hidden>Login</a><a href="account.html" data-account-guest hidden>Register</a><a href="account.html" data-account-signed hidden>My Profile</a><a href="account.html#redeem-codes" data-account-signed hidden>Redeem Code</a><button type="button" data-account-signed data-account-logout hidden>Log Out</button></div></div><div class="owner-menu owner-nav" style="display:none!important"><button type="button" class="nav-link owner-menu-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">♛</span><span>Owner</span><span aria-hidden="true">▾</span></button><div class="owner-menu-panel"><a href="owner.html">Dashboard</a><a href="owner.html#coin-management">Coin Management</a><a href="owner.html#owner-redeem-codes">Redeem Codes</a><a href="owner.html#music-management">Music Management</a></div></div></nav><div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div></header><main id="main">
+  <section class="section prize-wheel-section" aria-labelledby="wheel-title">
+    <div class="wheel-heading">
+      <div>
+        <p class="eyebrow">☠ CTOONIVERSE · HAUNTED PRIZE ARCADE ☠</p>
+        <h1 id="wheel-title">BOOGIE’S PRIZE WHEEL</h1>
+        <p class="lead">Roll the dice, tempt your luck, and watch the haunted wheel spin! Eight possible prizes, three spins every day, and real Cartoon Coins or CToons credited to your account.</p>
+      </div>
+      <span class="wheel-mode">REAL REWARDS · 3 DAILY SPINS</span>
+    </div>
+    <div class="wheel-layout">
+      <div class="wheel-machine" id="wheel-machine">
+        <div class="wheel-marquee" aria-hidden="true">☠ ROLL THE DICE ☠</div><div class="boogie-fortune-strip" aria-hidden="true"><span class="boogie-skull">☠</span><span>13 · LET THE GAMES BEGIN · 13</span><span class="boogie-skull">☠</span></div>
+        <div class="wheel-jackpot-banner" aria-hidden="true"><span class="wheel-jackpot-star">✦</span> EIGHT MYSTERY SLICES · THREE DAILY TRIES <span class="wheel-jackpot-star">✦</span></div><div class="prize-wheel-stage">
+          <div class="prize-wheel-pointer" aria-hidden="true"></div>
+          <div class="prize-wheel-disc" id="prize-wheel-disc" role="img" aria-label="Oogie Boogie-inspired roulette wheel with eight alternating red, purple and black prize sections outlined in glowing green">
+            <div class="prize-wheel-labels" id="prize-wheel-labels" aria-hidden="true"></div>
+          </div>
+          <span class="boogie-dice boogie-dice-left" aria-hidden="true">⚄</span>
+          <span class="boogie-dice boogie-dice-right" aria-hidden="true">⚅</span>
+          <span class="boogie-13" aria-hidden="true">13</span>
+          <div class="prize-wheel-hub boogie-hub" aria-hidden="true">
+            <svg class="boogie-face" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" focusable="false" aria-hidden="true">
+              <defs><linearGradient id="oogieFaceGreen" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#c9ff70"/><stop offset="48%" stop-color="#90df35"/><stop offset="100%" stop-color="#4da325"/></linearGradient></defs>
+              <path class="sack" d="M18 96Q9 80 21 61Q24 45 38 38Q42 30 48 12Q60 26 72 22Q84 18 89 35Q105 45 104 63Q115 81 99 97Q83 112 65 105Q42 116 18 96Z"/>
+              <path class="eyes" d="M30 57Q44 57 54 66L42 76Q37 72 30 57Z"/>
+              <path class="eyes" d="M67 66Q79 56 93 58Q85 73 78 76Z"/>
+              <path class="smile" d="M28 80Q55 99 98 79Q85 109 63 108Q40 105 28 80Z"/>
+              <path class="stitches" d="M33 87L39 92M45 91L48 99M59 94L59 103M72 93L76 101M85 89L89 94M22 75L27 77M91 38L94 44"/>
+            </svg>
+          </div>
+        </div>
+        <div class="wheel-control-label" aria-hidden="true">↓ TEST YOUR LUCK ↓</div><div class="wheel-controls">
+          <button type="button" class="button primary" id="prize-wheel-spin" disabled>CHECKING SPINS…</button>
+          <button type="button" id="prize-wheel-sound" aria-pressed="false" aria-label="Toggle wheel sound effects">🔇 SOUND OFF</button>
+        </div>
+        <p class="wheel-smallprint">Real account prizes. Winning a CToon or CToon pack awards an available CToon directly to your collection; until the catalog has enough items, those slices grant Cartoon Coins instead. Daily spins reset at 00:00 UTC.</p>
+      </div>
+      <aside class="wheel-sidebar" aria-label="Prize Wheel information">
+        <section class="wheel-card" aria-labelledby="spins-title">
+          <h2 id="spins-title">⚡ Daily spins</h2>
+          <div class="wheel-counter-line">
+            <strong id="wheel-spins-number" aria-label="Spins remaining">0</strong>
+            <div class="wheel-counter-copy"><strong>SPINS LEFT</strong><small>3 daily spins per player</small></div>
+          </div>
+          <div class="wheel-spin-lights" aria-hidden="true">
+            <span class="wheel-spin-light"></span><span class="wheel-spin-light"></span><span class="wheel-spin-light"></span>
+          </div>
+          <p id="prize-wheel-counter" role="status">Checking your daily spins…</p>
+          <a id="wheel-account-link" class="button secondary wheel-account-link" href="login.html">Sign in to spin</a>
+        </section>
+        <section class="wheel-card" aria-labelledby="result-title">
+          <h2 id="result-title">☠ Your fate</h2>
+          <p id="prize-wheel-result" class="prize-wheel-result" role="status" aria-live="polite" aria-atomic="true">Roll the dice! Your winnings will be securely credited to your account.</p>
+        </section>
+        <section class="wheel-card" aria-labelledby="possible-title">
+          <h2 id="possible-title">🎲 Eight possible prizes</h2>
+          <ul id="wheel-prize-list" class="wheel-prize-list"></ul>
+        </section>
+        <section class="wheel-card" aria-labelledby="history-title">
+          <h2 id="history-title">🕸 Previous spins</h2>
+          <ul id="wheel-recent" class="wheel-activity"><li data-empty="true">No spins yet this visit.</li></ul>
+        </section>
+        <a class="button secondary wheel-return" href="games.html">← Back to Games Arcade</a>
+      </aside>
+    </div>
+  </section>
+</main><footer><span>© 2026 CTooniverse</span><span>Built to collect.</span></footer></body></html>
