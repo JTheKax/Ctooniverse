@@ -1,0 +1,59 @@
+/* CTooniverse BOOGIE WHEEL 2.0 — presentation only; database chooses and credits rewards. */
+.oogie-wheel-page{--bw-lime:#c7ff79;--bw-gold:#f5d781;--bw-purple:#3e214d}
+.oogie-wheel-page .prize-wheel-section{max-width:1280px;background:radial-gradient(ellipse at 50% 0,#432b5aaf,transparent 43%),linear-gradient(145deg,#2b1738,#0d0b18 85%);box-shadow:0 0 0 5px #130a1a,0 21px 0 #080411,0 33px 70px #000c,inset 0 0 0 2px #ddff8d44}
+.oogie-wheel-page .wheel-heading h1{line-height:1.05;text-wrap:balance}
+.oogie-wheel-page .wheel-heading .lead{max-width:730px;color:#e9dfef}
+.oogie-wheel-page .wheel-mode{border:2px solid #b4fb65;background:#152b21;color:#e0ffba;box-shadow:0 0 17px #a7f96032}
+.oogie-wheel-page .wheel-machine{isolation:isolate;background:radial-gradient(ellipse at 50% 35%,#7d4b9273,transparent 70%),linear-gradient(125deg,#3a1d41,#130d21 65%,#321a39);border:6px solid #8fba4d;box-shadow:inset 0 0 0 3px #d7ff8a,inset 0 0 45px #07030a,0 12px 0 #25142e,0 23px 45px #000a,0 0 37px #a7f94e35}
+.oogie-wheel-page .wheel-machine:has(.is-spinning){} /* inert graceful fallback */
+.oogie-wheel-page .wheel-marquee{transform:rotate(-1.5deg);box-shadow:0 8px 0 #130c1c,0 12px 19px #0008,0 0 28px #fbb66a50,inset 0 0 15px #cae88b28}
+.oogie-wheel-page .boogie-fortune-strip{position:relative}
+.oogie-wheel-page .wheel-jackpot-banner{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;margin:12px auto 0;padding:8px 12px;width:fit-content;border:1px dashed #d3ff8a8c;border-radius:10px;color:#fde1a2;background:#0f0a1ccc;text-align:center;font-size:clamp(.66rem,1.8vw,.83rem);font-weight:900;letter-spacing:.1em;text-shadow:0 0 9px #d0ff777c}
+.oogie-wheel-page .wheel-jackpot-banner .wheel-jackpot-star{color:#ceff72;animation:boogie-glint 1.9s ease-in-out infinite alternate}
+.oogie-wheel-page .prize-wheel-stage{margin-top:35px;margin-bottom:34px}
+.oogie-wheel-page .prize-wheel-disc{will-change:transform;transition-property:transform;transition-timing-function:cubic-bezier(.12,.72,.18,1)}
+.oogie-wheel-page .prize-wheel-label .wheel-icon{filter:drop-shadow(0 4px 4px #000d)}
+.oogie-wheel-page .prize-wheel-pointer{transform-origin:50% 0}
+.oogie-wheel-page .wheel-machine.is-spinning .prize-wheel-pointer{animation:boogie-pointer 110ms ease-in-out infinite alternate}
+.oogie-wheel-page .wheel-machine.is-spinning .prize-wheel-stage{filter:drop-shadow(0 9px 0 #08040b) drop-shadow(0 0 39px #b3ff64)}
+.oogie-wheel-page .wheel-machine.is-spinning .wheel-marquee{animation:boogie-marquee-pulse .55s ease-in-out infinite alternate}
+.oogie-wheel-page .wheel-control-label{color:#d8fbab;text-align:center;font-size:.75rem;font-weight:900;letter-spacing:.2em;margin:4px auto -1px}
+.oogie-wheel-page .wheel-controls{position:relative}
+.oogie-wheel-page #prize-wheel-spin{position:relative;isolation:isolate;max-width:100%;white-space:normal;word-break:normal;transition:filter .18s,transform .18s}
+.oogie-wheel-page #prize-wheel-spin:focus-visible,.oogie-wheel-page #prize-wheel-sound:focus-visible{outline:3px solid #fff9bb;outline-offset:5px}
+.oogie-wheel-page #prize-wheel-spin:disabled{cursor:not-allowed;filter:saturate(.45);box-shadow:0 5px 0 #485533,0 0 9px #aafc6b29}
+.oogie-wheel-page #prize-wheel-sound{min-height:46px;cursor:pointer}
+.oogie-wheel-page .wheel-card{background:radial-gradient(circle at 90% 6%,#75538339,transparent 65%),linear-gradient(155deg,#2a1b35,#100d1d);box-shadow:0 10px 24px #0008,inset 0 0 0 2px #d9ff8733}
+.oogie-wheel-page .wheel-card h2{color:#dfff9d}
+.oogie-wheel-page .wheel-card .wheel-spin-light.is-available{animation:boogie-active-spin 2.5s ease-in-out infinite alternate}
+.oogie-wheel-page #prize-wheel-result{overflow-wrap:anywhere}
+.oogie-wheel-page #prize-wheel-result[data-tone=success]{animation:boogie-win 1.2s ease-out both}
+.oogie-wheel-page .wheel-prize-list li{transition:transform .15s,border-color .15s}
+.oogie-wheel-page .wheel-prize-list li:hover{transform:translateY(-2px);border-color:#cffb88}
+.oogie-wheel-page .wheel-return{display:inline-flex;align-items:center;justify-content:center;width:100%;margin-top:6px;text-decoration:none}
+@keyframes boogie-pointer{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+@keyframes boogie-glint{to{opacity:.45;transform:scale(.83);filter:drop-shadow(0 0 12px #ceff8a)}}
+@keyframes boogie-marquee-pulse{to{filter:brightness(1.23)}}
+@keyframes boogie-active-spin{to{filter:brightness(1.35)}}
+@keyframes boogie-win{0%{box-shadow:0 0 0 #0000}55%{box-shadow:0 0 34px #d0ff7d9c}100%{box-shadow:0 0 12px #baff5450}}
+@media(max-width:760px){
+ .oogie-wheel-page .wheel-heading{padding-bottom:19px}
+ .oogie-wheel-page .wheel-layout{grid-template-columns:minmax(0,1fr)}
+ .oogie-wheel-page .wheel-machine{padding:12px 8px 22px;border-width:4px}
+ .oogie-wheel-page .prize-wheel-stage{width:min(100% - 35px,470px);margin-top:34px}
+ .oogie-wheel-page .wheel-card{padding:16px}
+ .oogie-wheel-page .wheel-jackpot-banner{font-size:.67rem;letter-spacing:.03em}
+}
+@media(max-width:410px){
+ .oogie-wheel-page .prize-wheel-section{padding:14px 10px}
+ .oogie-wheel-page .prize-wheel-stage{width:min(100% - 40px,390px)}
+ .oogie-wheel-page .prize-wheel-pointer{top:-39px;border-left-width:17px;border-right-width:17px;border-top-width:45px}
+ .oogie-wheel-page .prize-wheel-label{font-size:8px}
+ .oogie-wheel-page .prize-wheel-label .wheel-icon{font-size:18px}
+ .oogie-wheel-page .wheel-controls{gap:9px}
+ .oogie-wheel-page #prize-wheel-spin{font-size:1rem;min-height:57px}
+ .oogie-wheel-page .wheel-jackpot-banner{padding:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ .oogie-wheel-page .wheel-machine.is-spinning .prize-wheel-pointer,.oogie-wheel-page .wheel-machine.is-spinning .wheel-marquee,.oogie-wheel-page .wheel-jackpot-star,.oogie-wheel-page .wheel-spin-light.is-available,.oogie-wheel-page #prize-wheel-result[data-tone=success]{animation:none!important}
+}
