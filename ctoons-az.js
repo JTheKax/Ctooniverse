@@ -74,26 +74,11 @@
     );
     count.textContent=filtered.length+" CToon"+(filtered.length===1?"":"s")+(q||chosen?" found":"");
     clear(alphabet);clear(results);
-    const groups=new Map();
-    for(const item of filtered){
-      const letter=initial(item.name);
-      if(!groups.has(letter))groups.set(letter,[]);
-      groups.get(letter).push(item);
-    }
-    for(const letter of ["#",...letters]){
-      const list=groups.get(letter);
-      if(!list?.length){
-        if(letter!=="#")alphabet.append(el("span","",letter));
-        continue;
-      }
-      const id="ctoons-letter-"+(letter==="#"?"misc":letter.toLowerCase());
-      const anchor=el("a","",letter);anchor.href="#"+id;alphabet.append(anchor);
-      const section=el("section","ctoons-letter-section");section.id=id;
-      const header=el("div","ctoons-letter-heading");
-      header.append(el("h2","",letter),el("span","",list.length+" CToon"+(list.length===1?"":"s")));
+    // One continuous A-Z grid, without separate letter sections.
+    if(filtered.length){
       const grid=el("div","ctoons-letter-grid");
-      for(const item of list)grid.append(card(item));
-      section.append(header,grid);results.append(section);
+      for(const item of filtered)grid.append(card(item));
+      results.append(grid);
     }
     if(!filtered.length){
       if(chosen&&!q&&availableSubseries.some(item=>item.name===chosen))
