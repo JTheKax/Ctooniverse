@@ -3,9 +3,11 @@ import {createClient} from "https://esm.sh/@supabase/supabase-js@2.58.0";
 const db=createClient("https://hsxdyxdazsdmpucyhqly.supabase.co","sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS");
 const $=id=>document.getElementById(id);
 const status=$("subseries-auth-status"),tools=$("subseries-owner-tools"),feedback=$("subseries-feedback");
-const list=$("subseries-list"),form=$("subseries-create-form"),nameInput=$("subseries-name"),searchInput=$("subseries-search"),total=$("subseries-total");
+const list=$("subseries-list"),form=$("subseries-create-form"),nameInput=$("subseries-name"),searchInput=$("subseries-search"),alphabet=$("subseries-alphabet"),matchCount=$("subseries-match-count"),total=$("subseries-total");
 const collator=new Intl.Collator(undefined,{sensitivity:"base",numeric:true});
-let entries=[],busy=false;
+let entries=[],busy=false,activeLetter="All";
+const firstLetter=name=>{const first=name.trim().charAt(0).toUpperCase();return /^[A-Z]$/.test(first)?first:"#";};
+function drawAlphabet(){alphabet.replaceChildren();const letters=["All",..."ABCDEFGHIJKLMNOPQRSTUVWXYZ","#"];for(const letter of letters){const button=document.createElement("button");button.type="button";button.textContent=letter;button.setAttribute("aria-pressed",String(activeLetter===letter));button.disabled=letter!=="All"&&!entries.some(item=>firstLetter(item.name)===letter);button.addEventListener("click",()=>{activeLetter=letter;draw();});alphabet.append(button);}}
 function message(value,error=false){feedback.textContent=value;feedback.style.color=error?"#ff9aab":"#8af4cf";}
 function slugify(value){return value.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,75);}
 function clean(value){return value.trim().replace(/\s+/g," ");}
@@ -19,8 +21,9 @@ async function load(){
 function draw(){
  list.replaceChildren();total.textContent="("+entries.length+")";
  const query=searchInput.value.trim().toLowerCase();
- const visible=entries.filter(item=>item.name.toLowerCase().includes(query));
- if(query&&!visible.length){list.textContent="No matching subseries.";return;}
+ const visible=entries.filter(item=>item.name.toLowerCase().includes(query)&&(activeLetter==="All"||firstLetter(item.name)===activeLetter));
+ matchCount.textContent=visible.length+" of "+entries.length+" subseries shown";drawAlphabet();
+ if(!visible.length&&entries.length){list.textContent="No matching subseries. Try another letter or search.";return;}
  if(!entries.length){const p=document.createElement("p");p.textContent="No subseries yet. Add your first one above.";list.append(p);return;}
  for(const item of visible){
   const row=document.createElement("div");row.className="subseries-row";
