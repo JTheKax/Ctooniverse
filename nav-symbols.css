@@ -38,6 +38,8 @@
 .site-header nav .games-dropdown-panel > a[href="speedway.html"]::before{content:"🏎️";}
 .site-header nav .games-dropdown-panel > a[href="emulator.html"]::before{content:"💾";}
 .site-header nav .games-dropdown-panel > a[href="prize-games.html"]::before{content:"🎁";}
+.site-header nav .games-dropdown-panel > a[href="claw-machine.html"]::before{content:"🧸";}
+.site-header nav .games-dropdown-panel > a[href="prize-wheel.html"]::before{content:"🎡";}
 .site-header nav .community-dropdown-panel > a[href="community.html"]::before{content:"🏘️";}
 .site-header nav .community-dropdown-panel > a[href="forums.html"]::before{content:"💬";}
 .site-header nav .community-dropdown-panel > a[href="guild.html"]::before{content:"🛡️";}
