@@ -164,3 +164,81 @@
  .claw-control,.claw-drop{min-height:58px}
 }
 @media(prefers-reduced-motion:reduce){.claw-alien{animation:none}}
+/* SPACE CRANE MK II: immersive cabinet and responsive cockpit */
+.claw-machine-panel{position:relative}
+.claw-cabinet{max-width:760px;margin-inline:auto}
+.claw-marquee{overflow:hidden;text-transform:uppercase}
+.claw-marquee::before,.claw-marquee::after{content:"";position:absolute;top:9px;bottom:9px;width:9px;border-radius:12px;background:repeating-linear-gradient(180deg,#ffe989 0 11px,#74dfff 11px 22px);filter:drop-shadow(0 0 7px #e9faff)}
+.claw-marquee::before{left:12px}.claw-marquee::after{right:12px}
+.claw-rocket-top::after{content:"";position:absolute;bottom:-7px;left:22%;right:22%;height:8px;border-radius:50%;background:#ffedb0;box-shadow:0 0 19px 8px #ffffa34b}
+.claw-toplights{position:relative;z-index:2}
+.claw-glass{isolation:isolate;background:
+ radial-gradient(ellipse at 50% 100%,#42b9e650,transparent 55%),
+ radial-gradient(circle at 23% 29%,#499dd05a,transparent 30%),
+ radial-gradient(ellipse at 78% 28%,#083969dd,transparent 60%),
+ linear-gradient(160deg,#051b43,#0b3767 45%,#092140 100%)}
+.claw-glass::before{opacity:.62}
+.claw-glass::after{z-index:12;background:linear-gradient(111deg,#f7fdff50 0,transparent 11%,transparent 70%,#f7fdff26 82%,transparent 90%)}
+.claw-glass-hud{position:absolute;z-index:6;left:17px;right:17px;top:20px;display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none;color:#d0faff;font:800 .67rem/1.2 system-ui,sans-serif;letter-spacing:.13em;text-shadow:0 0 8px #82e3ff}
+.claw-glass-hud span{padding:6px 9px;background:#052d53bc;border:1px solid #7bdfff80;border-radius:999px}
+.claw-glass-hud span:last-child{color:#ceff88}
+.claw-glass-hud span:last-child::before{content:"";display:inline-block;width:7px;height:7px;margin-right:7px;background:#b0ff71;border-radius:50%;box-shadow:0 0 10px #c4ff6e;vertical-align:1px}
+.claw-glass-stars{top:18%;letter-spacing:1.1em;opacity:.9;animation:crane-star-twinkle 4s ease-in-out infinite alternate}
+.claw-target-beam{position:absolute;z-index:2;pointer-events:none;top:38px;bottom:37px;left:var(--aim-spot,63%);width:95px;transform:translateX(-50%);background:linear-gradient(180deg,#8cfbff26,#93ff8a10 60%,#b6ff9e4d 99%);clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);opacity:.64;transition:left .48s ease}
+.claw-target-ring{position:absolute;z-index:4;pointer-events:none;bottom:46px;left:var(--aim-spot,63%);width:72px;height:26px;transform:translateX(-50%);border:3px solid #ccff7c;border-radius:50%;box-shadow:0 0 13px #aaff88,0 0 18px #aaff8848 inset;transition:left .48s ease;animation:crane-lock-pulse 1.8s ease-in-out infinite}
+.claw-target-ring::before,.claw-target-ring::after{content:"";position:absolute;top:9px;width:14px;height:2px;background:#d8ff96}
+.claw-target-ring::before{left:-17px}.claw-target-ring::after{right:-17px}
+.claw-glass.claw-dropping .claw-target-ring{animation:none;border-color:#ffe27b;box-shadow:0 0 24px #ffe27b}
+.claw-glass.claw-dropping .claw-target-beam{opacity:.97}
+.claw-glass.claw-victory .claw-target-ring{border-color:#fff}
+.claw-win-flash{position:absolute;z-index:11;inset:0;pointer-events:none;opacity:0;background:radial-gradient(ellipse at 50% 70%,#e0ffa88a,transparent 60%)}
+.claw-glass.claw-victory .claw-win-flash{animation:crane-prize-flash .85s ease-out both}
+.claw-alien-crowd{z-index:1;filter:drop-shadow(0 10px 7px #001935b0)}
+.claw-alien{box-shadow:inset -8px -5px 0 #468e335c,0 0 17px #a5ff6170,0 8px 0 -2px #134a8b}
+.claw-rail{z-index:6}
+.claw-carriage{z-index:8}
+.claw-toy{z-index:5}
+.claw-floor{z-index:3}
+.claw-cabinet-base{overflow:visible;background:repeating-linear-gradient(110deg,#ee3c42 0 50px,#c42133 52px 96px);border-radius:0 0 12px 12px}
+.claw-cabinet-base::after{content:"";position:absolute;left:5px;right:5px;bottom:4px;height:5px;border-radius:4px;background:linear-gradient(90deg,#ffe572,#fff4c0,#ffe572);box-shadow:0 0 13px #ffe07275;pointer-events:none}
+.claw-base-plate{align-self:center;padding-left:8px}
+.claw-chute-door{position:relative;overflow:hidden}
+.claw-chute-door::after{content:"";position:absolute;inset:0;background:linear-gradient(165deg,#ffffff30,transparent 58%);pointer-events:none}
+.claw-controls{position:relative;max-width:760px;margin:33px auto 0;overflow:hidden;padding-top:31px;border-radius:16px 16px 27px 27px;background:linear-gradient(170deg,#1a68bd 0%,#103b80 30%,#081e4f 100%);box-shadow:0 8px 0 #941f2d,0 18px 25px #0007,inset 0 0 20px #29d0ff55}
+.claw-controls::before{content:"CTOONIVERSE • SPACEPORT CONTROL DECK";position:absolute;top:5px;left:0;right:0;color:#c9fbff;letter-spacing:.18em;text-align:center;font:900 .64rem/1.4 system-ui,sans-serif;text-shadow:0 0 8px #85edff}
+.claw-control{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:7px 5px 9px;min-width:0;min-height:80px}
+.claw-control span:last-child{display:block;font-size:.72rem;letter-spacing:.1em}
+.claw-joystick{position:relative;display:block;width:30px;height:16px;border-radius:50%;background:#061c3c;border:3px solid #d5efff;box-shadow:inset 0 2px 5px #000,0 2px 0 #426781}
+.claw-joystick::before{content:"";position:absolute;left:10px;top:-21px;width:5px;height:23px;background:linear-gradient(90deg,#b8c8d8,#fff,#7e9eb8);border-radius:4px;transform-origin:bottom}
+.claw-joystick::after{content:"";position:absolute;left:3px;top:-29px;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 34% 25%,#ffb5a7 0 10%,#ed4a52 42%,#941a35 90%);box-shadow:0 3px 5px #0009}
+.claw-move:first-child .claw-joystick::before,.claw-move:first-child .claw-joystick::after{transform:rotate(-13deg)}
+.claw-move:last-child .claw-joystick::before,.claw-move:last-child .claw-joystick::after{transform:rotate(13deg)}
+.claw-control:active:not(:disabled) .claw-joystick{filter:brightness(1.3)}
+.claw-console{justify-content:center}
+.claw-console-readout{display:flex;justify-content:space-between;gap:6px;align-items:center;padding:4px 9px;border-radius:7px;border:1px solid #5ef0ff66;background:#021b3acc;color:#b2fff2;font:800 .63rem/1.25 ui-monospace,monospace;letter-spacing:.05em}
+.claw-console-readout span:last-child{color:#e7ffa3}
+.claw-drop{border-radius:40px;background:radial-gradient(circle at 40% 13%,#ffa79b,#ed344a 48%,#a71030 95%);box-shadow:0 5px #5e1027,0 0 18px #ff536880,inset 0 5px #ffffff55;font-weight:1000}
+.claw-drop:focus-visible,.claw-control:focus-visible{outline:3px solid #d5ff8e;outline-offset:5px}
+@keyframes crane-lock-pulse{50%{box-shadow:0 0 24px #d4ff7c,0 0 25px #aaff8899 inset;opacity:.65}}
+@keyframes crane-star-twinkle{50%{opacity:.25;transform:translateY(6px)}}
+@keyframes crane-prize-flash{0%{opacity:0}35%{opacity:.8}100%{opacity:0}}
+@media(max-width:590px){
+ .claw-glass-hud{top:14px;left:7px;right:7px;font-size:.48rem;letter-spacing:.04em}
+ .claw-glass-hud span{padding:4px 5px}
+ .claw-target-ring{bottom:38px;width:44px;height:17px;border-width:2px}
+ .claw-target-ring::before,.claw-target-ring::after{top:6px;width:7px}
+ .claw-target-ring::before{left:-9px}.claw-target-ring::after{right:-9px}
+ .claw-target-beam{width:62px;bottom:32px}
+ .claw-controls{margin-top:27px;padding-top:27px;gap:5px}
+ .claw-controls::before{font-size:.46rem;letter-spacing:.08em}
+ .claw-console-readout{font-size:.48rem;padding:3px 4px}
+ .claw-control{min-height:77px}
+ .claw-control span:last-child{font-size:.56rem}
+ .claw-joystick{transform:scale(.75);margin-bottom:-4px}
+ .claw-marquee::before,.claw-marquee::after{width:5px;top:7px;bottom:7px}
+ .claw-marquee::before{left:5px}.claw-marquee::after{right:5px}
+}
+@media(prefers-reduced-motion:reduce){
+ .claw-target-ring,.claw-glass-stars,.claw-win-flash{animation:none!important}
+ .claw-target-ring,.claw-target-beam{transition:none!important}
+}
