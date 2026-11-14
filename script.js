@@ -18,7 +18,7 @@ if (year) year.textContent = String(new Date().getFullYear());
     if(!document.querySelector(".site-header, .jam-topbar"))return;
     if(!document.querySelector('link[data-site-status-style]')){
       const style=document.createElement("link");style.rel="stylesheet";
-      style.href="site-status.css?v=nav-colors-20261108";style.dataset.siteStatusStyle="true";
+      style.href="site-status.css?v=cards-dropdown-20261114";style.dataset.siteStatusStyle="true";
       document.head.append(style);
     }
     if(!document.querySelector('script[data-site-status-widget]')){
@@ -47,7 +47,22 @@ if (year) year.textContent = String(new Date().getFullYear());
   };
   const home=link('Home','index.html','🏠');
   const ctoons=link('CToons','ctoons.html','🎴');
-  const cards=link('Cards','cards.html','🃏');
+  // Cards is independent from Games; all links point to real page sections.
+  const cards=document.createElement('div');
+  cards.className='cards-dropdown';
+  cards.innerHTML='<button type="button" class="nav-link cards-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="cards-menu"><span class="nav-icon" aria-hidden="true">🃏</span><span>Cards</span><span aria-hidden="true">▾</span></button>'+
+    '<div class="cards-dropdown-panel" id="cards-menu">'+
+    '<a href="cards.html">Cards Hub</a>'+
+    '<a href="cards.html#cards-gallery">Preview Gallery</a>'+
+    '<span class="cards-dropdown-heading">In Development</span>'+
+    '<a href="cards.html#my-cards">My Cards <small>Coming Soon</small></a>'+
+    '<a href="cards.html#card-shop">Card Shop <small>Coming Soon</small></a>'+
+    '<a href="cards.html#card-battles">Card Battles <small>Coming Soon</small></a>'+
+    '</div>';
+  if(page==='cards.html'){
+    cards.querySelector('.cards-dropdown-trigger').classList.add('active');
+    cards.querySelector('a[href="cards.html"]')?.setAttribute('aria-current','page');
+  }
   const watch=link('Theater','watch.html','🎬');
   const shop=link('Shop','shop.html','🛍️');
   // Highlight the parent tab while browsing a related subpage.
@@ -98,12 +113,12 @@ if (year) year.textContent = String(new Date().getFullYear());
   // including Owner entries rebuilt later by owner-menu.js.
   if(!document.querySelector('link[data-nav-symbols]')){
     const sheet=document.createElement('link');
-    sheet.rel='stylesheet';sheet.href='nav-symbols.css?v=20261112';
+    sheet.rel='stylesheet';sheet.href='nav-symbols.css?v=cards-dropdown-20261114';
     sheet.dataset.navSymbols='true';document.head.append(sheet);
   }
   if(!document.querySelector('link[data-games-dropdown-style]')){
     const sheet=document.createElement('link');
-    sheet.rel='stylesheet';sheet.href='games-dropdown.css?v=prize-nav-20261112-1';
+    sheet.rel='stylesheet';sheet.href='games-dropdown.css?v=cards-dropdown-20261114';
     sheet.dataset.gamesDropdownStyle='true';document.head.append(sheet);
   }
   const activeGroups={
@@ -117,7 +132,7 @@ if (year) year.textContent = String(new Date().getFullYear());
     }
   }
   nav.replaceChildren(home,ctoons,games,cards,watch,shop,community,account,owner);
-  nav.dataset.navigationVersion='2026-11-14-cards';
+  nav.dataset.navigationVersion='2026-11-14-cards-dropdown';
   const header=nav.closest('.site-header');
   if(header&&!header.querySelector('#header-player')){
     const player=document.createElement('div');
@@ -129,7 +144,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   }
 
   function closeMenus(except){
-    for(const root of nav.querySelectorAll('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu')){
+    for(const root of nav.querySelectorAll('.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu')){
       if(root===except)continue;
       root.classList.remove('is-open');
       root.querySelector('button[aria-expanded]')?.setAttribute('aria-expanded','false');
@@ -143,10 +158,18 @@ if (year) year.textContent = String(new Date().getFullYear());
     games.classList.toggle('is-open',shouldOpen);
     gamesTrigger.setAttribute('aria-expanded',String(shouldOpen));
   });
+  const cardsTrigger=cards.querySelector('.cards-dropdown-trigger');
+  cardsTrigger.addEventListener('click',event=>{
+    event.preventDefault();
+    const shouldOpen=!cards.classList.contains('is-open');
+    closeMenus(cards);
+    cards.classList.toggle('is-open',shouldOpen);
+    cardsTrigger.setAttribute('aria-expanded',String(shouldOpen));
+  });
   // Capture the click before legacy Community handlers stop propagation.
   // This guarantees at most one open dropdown on phones and desktops.
   nav.addEventListener('click',event=>{
-    const root=event.target.closest('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu');
+    const root=event.target.closest('.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu');
     closeMenus(root);
   },true);
   document.addEventListener('click',event=>{
@@ -154,7 +177,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   });
   nav.addEventListener('keydown',event=>{
     if(event.key==='Escape'){
-      const trigger=event.target.closest('.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu')?.querySelector('button[aria-expanded]');
+      const trigger=event.target.closest('.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu')?.querySelector('button[aria-expanded]');
       closeMenus();
       trigger?.focus();
       return;
