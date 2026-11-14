@@ -1,4 +1,11 @@
-/* Sitewide Dragon Ball Z background: original uploaded image, loaded last */
-html body,html body.home-universe-page,html body.shop-cartoon-page,html body.community-neon-page{background:#102e5d linear-gradient(180deg,rgba(5,12,35,.12),rgba(5,12,35,.28) 58%,rgba(5,12,35,.58)),url("dragonball-homepage.png") center top / cover fixed no-repeat!important;background-image:linear-gradient(180deg,rgba(5,12,35,.12),rgba(5,12,35,.28) 58%,rgba(5,12,35,.58)),url("dragonball-homepage.png")!important;background-size:cover,cover!important;background-position:center top,center top!important;background-attachment:fixed,fixed!important;background-repeat:no-repeat,no-repeat!important}
-html body::before,html body::after{background-image:none}
-@media(max-width:760px){html body{background-attachment:scroll,scroll!important}}
+/* Keep the 2026-11-12 original anime landscape on Home only.
+   Other pages use their own existing illustrated backgrounds in styles.css. */
+html body.home-universe-page {
+  background-color:#102452!important;
+  background-image:linear-gradient(180deg,rgba(5,13,38,.15),rgba(7,12,39,.34) 54%,rgba(6,9,30,.63)),url("dragonball-homepage.png")!important;
+  background-size:cover,cover!important;
+  background-position:center top,center top!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-attachment:fixed,fixed!important;
+}
+@media(max-width:760px){html body.home-universe-page{background-attachment:scroll,scroll!important}}

@@ -2366,7 +2366,84 @@ html .collection-grid{justify-items:center!important}
 }
 
 
-/* Sitewide original uploaded anime landscape — 2026-11-12 */
-html body{background-color:#11274b!important;background-image:linear-gradient(180deg,rgba(8,14,38,.27),rgba(8,14,38,.38) 60%,rgba(8,14,38,.64)),url("dragonball-homepage.png")!important;background-size:cover,cover!important;background-position:center top,center top!important;background-repeat:no-repeat,no-repeat!important;background-attachment:fixed,fixed!important}
+
+/* Page background harmony • November 14, 2026
+   Existing page artwork remains the stage, with legible glass panels in front.
+   No changes to CToon card frames, games, menus, status signals or user data. */
+html body {
+  --backdrop-border:rgba(150,184,255,.52);
+  background-color:#080d28!important;
+  background-image:linear-gradient(180deg,rgba(5,9,32,.44),rgba(5,8,30,.78)),url("saturn-background.png")!important;
+  background-size:cover,cover!important;
+  background-position:center top,center top!important;
+  background-attachment:fixed,fixed!important;
+  background-repeat:no-repeat,no-repeat!important;
+}
+html body.home-universe-page {
+  --backdrop-border:rgba(133,221,255,.59);
+  background-color:#102452!important;
+  background-image:linear-gradient(180deg,rgba(5,13,38,.15),rgba(7,12,39,.34) 54%,rgba(6,9,30,.63)),url("dragonball-homepage.png")!important;
+}
+html body.ctoons-library-page:not(.czone-page) {
+  --backdrop-border:rgba(163,218,255,.65);
+  background-color:#090b2a!important;
+  background-image:linear-gradient(180deg,rgba(3,7,30,.22),rgba(4,7,27,.46) 55%,rgba(7,5,28,.68)),url("images/ctoons-kingdom-sky.webp")!important;
+}
+html body.games-arcade-page {
+  --backdrop-border:rgba(116,211,255,.58);
+  background-color:#11103a!important;
+  background-image:linear-gradient(180deg,rgba(7,8,30,.25),rgba(7,7,29,.64) 75%,rgba(5,7,24,.78)),url("games-arcade-background.png")!important;
+}
+html body.shop-cartoon-page {
+  --backdrop-border:rgba(255,187,220,.57);
+  background-color:#201042!important;
+  background-image:linear-gradient(180deg,rgba(18,7,37,.24),rgba(17,8,38,.65) 80%,rgba(12,6,31,.76)),url("shop-cartoon-background.png")!important;
+}
+html body.watch-theater-page {
+  --backdrop-border:rgba(255,211,161,.59);
+  background-color:#211034!important;
+  background-image:linear-gradient(180deg,rgba(14,6,28,.28),rgba(13,6,29,.64) 75%,rgba(7,5,24,.80)),url("watch-theater-background.png")!important;
+}
+html body.community-neon-page {
+  --backdrop-border:rgba(133,237,218,.55);
+  background-color:#110d35!important;
+  background-image:linear-gradient(180deg,rgba(7,8,30,.28),rgba(11,7,36,.66) 76%,rgba(9,5,28,.78)),url("public/images/community-background.png")!important;
+}
+html body.account-neon-page {
+  --backdrop-border:rgba(151,180,255,.54);
+  background-color:#09122f!important;
+  background-image:linear-gradient(180deg,rgba(5,10,36,.52),rgba(7,9,31,.79)),url("saturn-background.png")!important;
+}
+html body.owner-neon-page {
+  --backdrop-border:rgba(240,196,133,.52);
+  background-color:#100d2f!important;
+  background-image:linear-gradient(180deg,rgba(12,7,30,.55),rgba(9,7,28,.82)),url("saturn-background.png")!important;
+}
+/* Old sitewide grid obscured the illustrations. Keep the page artwork visible. */
+html body::before{background-image:none!important;opacity:0!important}
 html body :is(main,section,article,aside){background-clip:padding-box}
-@media(max-width:760px){html body{background-attachment:scroll,scroll!important;background-position:center top,center top!important}}
+html body main{min-width:0;max-width:100%;position:relative;z-index:1}
+html body main :is(h1,h2,h3){text-shadow:0 3px 12px rgba(0,2,17,.72);overflow-wrap:break-word}
+html body main :is(p,li,small){overflow-wrap:anywhere}
+/* Readable panels, not opaque full-page overlays. Do not restyle CToon cards. */
+html body main :is(.page-placeholder,.owner-panel,.discord-panel,.trade-box){
+  background:linear-gradient(145deg,rgba(9,17,46,.93),rgba(23,15,55,.88))!important;
+  border-color:var(--backdrop-border)!important;
+  box-shadow:0 14px 38px rgba(2,5,23,.54),inset 0 1px rgba(255,255,255,.10)!important;
+  color:#f7f9ff;
+}
+html body main :is(.games-hub-hero,.ctoons-directory-hero,.shop-intro,.theater-intro,.community-hero){
+  border-color:var(--backdrop-border)!important;
+  box-shadow:0 16px 40px rgba(2,5,23,.51),0 0 20px rgba(33,58,127,.18)!important;
+}
+html body main :is(.page-placeholder,.owner-panel,.discord-panel,.trade-box,.games-hub-hero,.ctoons-directory-hero,.shop-intro,.theater-intro,.community-hero) :is(p,li,label){
+  color:#eef2ff;
+}
+html body main :is(.page-placeholder,.owner-panel,.discord-panel,.trade-box) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){max-width:100%}
+@media(max-width:760px){
+  html body{background-attachment:scroll,scroll!important;background-position:center top,center top!important;background-size:cover,cover!important}
+  html body main :is(.page-placeholder,.owner-panel,.discord-panel,.trade-box){backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
+@media(prefers-reduced-transparency:reduce){
+  html body main :is(.page-placeholder,.owner-panel,.discord-panel,.trade-box){background:#0a1232!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
