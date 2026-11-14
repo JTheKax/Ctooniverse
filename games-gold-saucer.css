@@ -1,0 +1,39 @@
+/* Golden Saucer-inspired Games hub artwork: scoped to the Games tab only. */
+html body.games-arcade-page {
+  --backdrop-border:rgba(255,215,143,.68);
+  background-color:#160c3c!important;
+  background-image:
+    linear-gradient(180deg,rgba(8,6,29,.24) 0%,rgba(11,7,32,.48) 53%,rgba(8,6,27,.73) 100%),
+    url("games-gold-saucer-background.webp")!important;
+  background-size:cover,cover!important;
+  background-position:center top,center top!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-attachment:fixed,fixed!important;
+}
+html body.games-arcade-page .games-hub-hero {
+  background:linear-gradient(133deg,rgba(22,12,60,.90),rgba(54,23,81,.86))!important;
+  border-color:rgba(255,207,113,.76)!important;
+  box-shadow:0 14px 40px rgba(5,4,28,.62),inset 0 1px rgba(255,241,192,.13),0 0 24px rgba(222,152,248,.17)!important;
+}
+html body.games-arcade-page .games-hub-card {
+  background:linear-gradient(145deg,rgba(26,20,68,.94),rgba(20,13,53,.94))!important;
+  border-color:rgba(255,204,113,.54)!important;
+}
+html body.games-arcade-page .games-hub-card :is(h2,h3) {
+  color:#fff3d5;
+  text-shadow:0 2px 14px rgba(12,8,32,.8);
+}
+html body.games-arcade-page main :is(h1,h2,h3) {
+  text-shadow:0 2px 14px rgba(10,5,34,.72);
+}
+@media(max-width:760px) {
+  html body.games-arcade-page {
+    background-attachment:scroll,scroll!important;
+    background-position:center top,center top!important;
+    background-size:cover,cover!important;
+  }
+}
+@media(prefers-reduced-transparency:reduce) {
+  html body.games-arcade-page .games-hub-hero,
+  html body.games-arcade-page .games-hub-card {background:#19153d!important}
+}
