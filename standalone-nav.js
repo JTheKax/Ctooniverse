@@ -16,7 +16,7 @@
   const root=document.createElement("div");
   root.className="ctoon-standalone-nav";
   const navIcons={
-    Home:"🏠",CToons:"🎴",Theater:"🎬",Shop:"🛍️",
+    Home:"🏠",CToons:"🎴",Cards:"🃏",Theater:"🎬",Shop:"🛍️",
     Games:"🎮",
     "Community Home":"🏘️",Forums:"💬",Guild:"🛡️",Support:"🛟",
     Login:"🔑",Register:"✨","My Profile":"👤","Redeem Code":"🎟️",
@@ -31,7 +31,7 @@
   const owner=[["Dashboard","owner.html"],["Website Status","owner.html#site-operating-controls"],["Coin Management","coin-management.html"],["Redeem Codes","owner-redeem-codes.html"],["Music Management","owner-music-management.html"],["CToon Subseries Manager","owner-subseries.html"]];
   root.innerHTML='<div class="ctoon-standalone-bar"><a class="ctoon-standalone-brand" href="index.html">✦ CTooniverse</a><button type="button" class="ctoon-standalone-toggle" aria-expanded="false" aria-controls="ctoon-standalone-panel">☰ Site Menu</button></div>'
    +'<nav id="ctoon-standalone-panel" class="ctoon-standalone-panel" aria-label="CTooniverse navigation" hidden>'
-   +link("Home","index.html")+link("CToons","ctoons.html")+link("Games","games.html")
+   +link("Home","index.html")+link("CToons","ctoons.html")+link("Games","games.html")+link("Cards","cards.html")
    +link("Theater","watch.html")+link("Shop","shop.html")+group("👥 Community",community)
    +group("👤 Account",account).replace("</details>",'<button type="button" data-nav-signed data-nav-logout hidden><span class="ctoon-nav-symbol" aria-hidden="true">🚪</span><span>Log Out</span></button></details>')
    +group("👑 Owner",owner,'id="ctoon-standalone-owner" hidden')+'</nav>';
@@ -131,7 +131,7 @@
   }
   if (!document.querySelector('script[data-ctu-universe-js]')) {
     const script=document.createElement('script');
-    script.src='universe-refresh.js?v=20261114-1';
+    script.src='universe-refresh.js?v=20261114-cards-v1';
     script.dataset.ctuUniverseJs='true';
     document.head.append(script);
   }

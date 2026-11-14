@@ -5,7 +5,7 @@
 (() => {
   const path=(location.pathname.split("/").pop()||"index.html").toLowerCase();
   const major={
-    "index.html":"home","ctoons.html":"ctoons","games.html":"games",
+    "index.html":"home","ctoons.html":"ctoons","games.html":"games","cards.html":"cards",
     "shop.html":"shop","watch.html":"theater","community.html":"community",
     "account.html":"account","owner.html":"owner"
   };
@@ -50,6 +50,12 @@
       chips:["0 ACTIVE MODES","ARCADE RESET","NEW BEGINNINGS"],
       badge:"ARCADE",
       ornaments:["★","✶","✧"]
+    },
+    cards:{
+      eyebrow:"✦ OPEN THE CARD VAULT ✦",title:"The Cards Hub",
+      description:"A new home for card designs, decks and future battles.",
+      icon:"🃏",stamp:"CARDS",chips:["CARD PREVIEWS","COLLECT","PLAY"],
+      badge:"CARDS",ornaments:["✦","♠","✧"]
     },
     shop:{
       eyebrow:"✦ STEP INSIDE THE MARKETPLACE ✦",

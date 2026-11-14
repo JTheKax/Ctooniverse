@@ -10,6 +10,7 @@
     ["🎴","CToons A–Z","Browse the alphabetical collection","ctoons.html","collect catalog gallery library"],
     ["🛍️","CToon Shop","Discover CToons and shop departments","shop.html","marketplace cards"],
     ["🎮","Games Arcade","Choose an available game","games.html","play game"],
+    ["🃏","Cards Hub","Preview trading cards and future decks","cards.html","cards card decks preview"],
     ["🥊","CToon Showdown","Enter the 1-on-1 fighting game","prototypes/ctoon-showdown-arcade.html","fighter roster arcade training story"],
     ["🧸","Claw Craze","Play the crane machine","claw-machine.html","prize claw toy"],
     ["🎡","Prize Wheel","Visit Boogie's Prize Wheel","prize-wheel.html","spin prizes"],

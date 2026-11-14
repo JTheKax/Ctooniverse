@@ -47,6 +47,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   };
   const home=link('Home','index.html','🏠');
   const ctoons=link('CToons','ctoons.html','🎴');
+  const cards=link('Cards','cards.html','🃏');
   const watch=link('Theater','watch.html','🎬');
   const shop=link('Shop','shop.html','🛍️');
   // Highlight the parent tab while browsing a related subpage.
@@ -58,7 +59,8 @@ if (year) year.textContent = String(new Date().getFullYear());
   games.className='games-dropdown';
   games.innerHTML='<button type="button" class="nav-link games-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="games-prize-menu"><span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span><span aria-hidden="true">▾</span></button>'+
     '<div class="games-dropdown-panel" id="games-prize-menu">'+
-    '<a href="games.html">All Games</a>'+
+    '<a href="games.html">All Games</a>'+ 
+    '<a href="cards.html">🃏 Cards Hub</a>'+
     '<span class="games-dropdown-heading">⚔️ Fighting Games</span>'+
     '<a href="prototypes/ctoon-showdown-arcade.html">CToon Showdown</a>'+
     '<span class="games-dropdown-heading">🎁 Prize Games</span>'+
@@ -115,8 +117,8 @@ if (year) year.textContent = String(new Date().getFullYear());
       if(a.getAttribute('href')?.split('#')[0]===page)a.setAttribute('aria-current','page');
     }
   }
-  nav.replaceChildren(home,ctoons,games,watch,shop,community,account,owner);
-  nav.dataset.navigationVersion='2026-11-12';
+  nav.replaceChildren(home,ctoons,games,cards,watch,shop,community,account,owner);
+  nav.dataset.navigationVersion='2026-11-14-cards';
   const header=nav.closest('.site-header');
   if(header&&!header.querySelector('#header-player')){
     const player=document.createElement('div');
@@ -393,7 +395,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   }
   if (!document.querySelector('script[src^="page-banners.js"]')) {
     const script=document.createElement('script');
-    script.src='page-banners.js?v=20261112-toon-banners-v1';
+    script.src='page-banners.js?v=20261114-cards-v1';
     script.defer=true;
     script.dataset.ctoonSectionBanners='true';
     document.head.append(script);
@@ -423,7 +425,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   }
   if (!document.querySelector('script[data-ctu-universe-js]')) {
     const script=document.createElement('script');
-    script.src='universe-refresh.js?v=20261114-1';
+    script.src='universe-refresh.js?v=20261114-cards-v1';
     script.dataset.ctuUniverseJs='true';
     document.head.append(script);
   }

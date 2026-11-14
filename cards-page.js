@@ -1,0 +1,1 @@
+"use strict";(()=>{for(const card of document.querySelectorAll(".cards-preview[data-name]")){card.addEventListener("click",()=>{const flipped=card.getAttribute("aria-pressed")!=="true";card.setAttribute("aria-pressed",String(flipped));card.setAttribute("aria-label",(flipped?"Show front of ":"Flip ")+card.dataset.name+" sample card");});}})();
