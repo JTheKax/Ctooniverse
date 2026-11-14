@@ -69,3 +69,205 @@ html body.ctoons-library-page .ctoons-empty{
   html body.ctoons-library-page .ctoons-toolbar,
   html body.ctoons-library-page .ctoons-alphabet{backdrop-filter:none;-webkit-backdrop-filter:none}
 }
+
+
+/* Kingdom-inspired stained-glass display windows, collection page only.
+   Preserve the 182×282 cabinet footprint, artwork, catalog content and A–Z grid. */
+html body.ctoons-library-page .ctoons-letter-grid{
+  gap:20px 16px;
+  justify-items:center;
+  align-items:start;
+}
+html body.ctoons-library-page :is(.ctoons-directory-card,.ctoons-empty-window){
+  box-sizing:border-box;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  width:min(182px,100%)!important;
+  min-width:0!important;
+  max-width:182px!important;
+  height:282px!important;
+  min-height:282px!important;
+  max-height:282px!important;
+  padding:8px 8px 9px!important;
+  overflow:hidden;
+  border:2px solid #dec589!important;
+  border-radius:46% 46% 16px 16px / 13% 13% 16px 16px!important;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(197,223,255,.24),transparent 45%),
+    linear-gradient(135deg,#121c50 0%,#33215d 40%,#111b42 70%,#0a102b 100%)!important;
+  box-shadow:
+    inset 0 0 0 2px rgba(247,240,204,.32),
+    inset 0 0 0 5px rgba(74,128,205,.35),
+    0 8px 19px rgba(0,3,27,.62),
+    0 0 17px rgba(117,152,255,.31)!important;
+  color:#f6f4ff;
+  isolation:isolate;
+}
+html body.ctoons-library-page .ctoons-directory-card:hover,
+html body.ctoons-library-page .ctoons-directory-card:focus-within{
+  transform:translateY(-3px)!important;
+  filter:none!important;
+  border-color:#fff0bb!important;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,250,225,.55),
+    inset 0 0 0 5px rgba(96,164,233,.43),
+    0 13px 24px rgba(0,3,27,.64),
+    0 0 24px rgba(154,191,255,.58)!important;
+}
+/* Jewel-cut glass: midnight sky, violet/blue panes and gentle gold tracery. */
+html body.ctoons-library-page .ctoons-directory-art,
+html body.ctoons-library-page .ctoons-empty-window>div{
+  box-sizing:border-box;
+  position:relative;
+  flex:0 0 161px!important;
+  width:100%!important;
+  height:161px!important;
+  min-height:161px!important;
+  max-height:161px!important;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  isolation:isolate;
+  border:2px solid rgba(211,219,255,.93)!important;
+  border-radius:48% 48% 10px 10px / 22% 22% 10px 10px!important;
+  background:
+    radial-gradient(circle at 50% 14%,rgba(255,240,174,.42),transparent 18%),
+    radial-gradient(ellipse at 48% 61%,rgba(99,124,224,.67),transparent 64%),
+    conic-gradient(from 25deg at 50% 42%,#181b5b,#2c286f,#10244f,#463181,#161748,#181b5b)!important;
+  box-shadow:
+    inset 0 0 0 2px rgba(230,205,137,.65),
+    inset 0 0 16px rgba(8,17,48,.85),
+    0 0 11px rgba(137,193,255,.45)!important;
+}
+html body.ctoons-library-page .ctoons-directory-art::before,
+html body.ctoons-library-page .ctoons-empty-window>div::before{
+  content:"";
+  position:absolute;
+  inset:-28%;
+  z-index:0;
+  border:0;
+  border-radius:0;
+  background:
+    repeating-conic-gradient(from 12deg at center,rgba(242,218,149,.14) 0 3deg,transparent 3deg 28deg),
+    radial-gradient(circle,rgba(141,202,255,.24),transparent 65%);
+  animation:ctoons-classic-window-rays 32s linear infinite;
+  pointer-events:none;
+}
+html body.ctoons-library-page .ctoons-directory-art::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:3;
+  border:0;
+  border-radius:inherit;
+  background:
+    radial-gradient(circle at 50% 8px,#fff9d1 0 3px,#e2bc73 4px 5px,transparent 6px),
+    linear-gradient(110deg,transparent 11%,rgba(245,246,255,.2) 27%,transparent 35% 75%,rgba(255,230,168,.12) 84%,transparent 93%);
+  animation:ctoons-classic-window-shimmer 5.5s ease-in-out infinite alternate;
+  pointer-events:none;
+}
+html body.ctoons-library-page .ctoons-directory-art img{
+  position:relative;
+  z-index:2;
+  display:block;
+  width:89%!important;
+  height:89%!important;
+  max-width:89%!important;
+  max-height:89%!important;
+  margin:auto;
+  padding:3px!important;
+  object-fit:contain!important;
+  filter:drop-shadow(0 5px 5px rgba(5,8,37,.64));
+  animation:ctoons-classic-art-float 5s ease-in-out infinite;
+}
+html body.ctoons-library-page .ctoons-directory-art .ctoons-placeholder{
+  z-index:2;
+  color:#fff1b5;
+  text-shadow:0 0 12px #a4c5ff;
+}
+html body.ctoons-library-page .ctoons-directory-card-body{
+  box-sizing:border-box;
+  flex:1 1 auto;
+  min-height:0;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:7px 4px 6px!important;
+  margin-top:5px;
+  border:1px solid rgba(198,182,240,.37);
+  border-radius:4px 4px 11px 11px;
+  background:
+    linear-gradient(180deg,rgba(44,41,101,.98),rgba(12,21,53,.99))!important;
+  text-align:center;
+}
+html body.ctoons-library-page .ctoons-directory-card h3{
+  flex:0 1 auto;
+  min-height:0!important;
+  max-height:35px!important;
+  margin:0;
+  overflow:hidden;
+  color:#fff9e9!important;
+  font-size:12px!important;
+  line-height:1.2!important;
+  font-weight:900;
+  text-shadow:0 1px 5px #070a2c;
+  overflow-wrap:anywhere;
+}
+html body.ctoons-library-page .ctoons-directory-card small{
+  min-height:0;
+  max-height:24px;
+  overflow:hidden;
+  color:#cbdcff!important;
+  font-size:10px!important;
+  line-height:1.15!important;
+}
+html body.ctoons-library-page .ctoons-directory-card .ctoons-rarity{
+  display:inline-block;
+  flex:0 0 auto;
+  margin:0;
+  padding:2px 9px!important;
+  border:1px solid #e8cd8d!important;
+  border-radius:999px!important;
+  background:linear-gradient(125deg,#f4e6b5,#a9c8e8)!important;
+  color:#20234a!important;
+  box-shadow:0 0 8px rgba(228,214,161,.3);
+  font-size:9px!important;
+  font-weight:900;
+}
+/* Placeholder cabinets receive the same jewel-glass frame. */
+html body.ctoons-library-page .ctoons-empty-window>div>span{
+  position:relative;
+  z-index:2;
+  color:#e8d298;
+  text-shadow:0 0 18px #b9caff;
+  font-size:2.5rem;
+}
+html body.ctoons-library-page .ctoons-empty-window>small{
+  margin-top:7px;
+  padding:8px 4px;
+  background:linear-gradient(180deg,rgba(38,36,94,.94),rgba(12,21,53,.98));
+  border:1px solid rgba(198,182,240,.37);
+  border-radius:5px 5px 11px 11px;
+  color:#f6edcc!important;
+}
+/* Allow twin windows on phones without horizontal clipping. */
+@media(max-width:650px){
+  html body.ctoons-library-page .ctoons-letter-grid,
+  html body.ctoons-library-page .ctoons-empty-showcase-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:12px 8px!important;
+    justify-items:center;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html body.ctoons-library-page .ctoons-directory-card:hover{transform:none!important}
+  html body.ctoons-library-page .ctoons-directory-art::before,
+  html body.ctoons-library-page .ctoons-directory-art::after,
+  html body.ctoons-library-page .ctoons-directory-art img,
+  html body.ctoons-library-page .ctoons-empty-window>div::before,
+  html body.ctoons-library-page .ctoons-empty-window>div>span{animation:none!important}
+}
