@@ -1,8 +1,36 @@
 "use strict";
 (()=>{if(document.getElementById('ctoon-music-player'))return;
-const root=document.createElement('aside');root.id='ctoon-music-player';root.className='ctoon-music-player';root.setAttribute('aria-label','Website music player');
-root.innerHTML='<div id="music-controls" class="music-controls"><div class="music-heading"><span class="music-brand"><span class="music-live-dot" aria-hidden="true"></span> CTOONIVERSE <small>RADIO // PLAYER 01</small></span></div><div class="music-now-playing"><div class="music-disc" aria-hidden="true"><span>♫</span></div><div class="music-song-info"><span class="music-kicker">NOW PLAYING</span><p class="music-track">No music uploaded yet</p><div class="music-equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div><label class="music-choice-label" for="music-sort-choice">Organize songs</label><select id="music-sort-choice" class="music-song-choice"><option value="title">Alphabetical (A–Z)</option><option value="artist">By Artist (A–Z)</option></select><label class="music-choice-label" for="music-song-choice">Choose a song</label><select id="music-song-choice" class="music-song-choice" disabled><option value="">Loading songs…</option></select><audio preload="none"></audio><div class="music-actions"><button type="button" class="music-play" disabled>▶ Play</button><button type="button" class="music-skip" aria-label="Skip to next song" disabled>⏭ Skip</button><button type="button" class="music-repeat" aria-label="Repeat current song" aria-pressed="false" disabled>🔁 Repeat: Off</button><button type="button" class="music-mute" aria-label="Mute music" disabled>♫</button><label class="music-volume-label">Volume <input class="music-volume" type="range" min="0" max="100" value="50" disabled aria-label="Music volume"></label></div><p class="music-hint">Music will be available when a track is added.</p></div>';
+const root=document.createElement('aside');root.id='ctoon-music-player';root.className='ctoon-music-player ctoon-radio-nightstage';root.setAttribute('aria-label','Website music player');
+root.innerHTML='<div id="music-controls" class="music-controls"><div class="music-heading"><span class="music-brand"><span class="music-live-dot" aria-hidden="true"></span> CTOON RADIO <small>✦ NIGHT STAGE // VOL. 01 ✦</small></span></div><div class="music-now-playing"><div class="music-disc" aria-hidden="true"><span>♫</span></div><div class="music-song-info"><span class="music-kicker">NOW PLAYING</span><p class="music-track">No music uploaded yet</p><div class="music-equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div><label class="music-choice-label" for="music-sort-choice">Organize songs</label><select id="music-sort-choice" class="music-song-choice"><option value="title">Alphabetical (A–Z)</option><option value="artist">By Artist (A–Z)</option></select><label class="music-choice-label" for="music-song-choice">Choose a song</label><select id="music-song-choice" class="music-song-choice" disabled><option value="">Loading songs…</option></select><audio preload="none"></audio><div class="music-actions"><button type="button" class="music-play" disabled>▶ Play</button><button type="button" class="music-skip" aria-label="Skip to next song" disabled>⏭ Skip</button><button type="button" class="music-repeat" aria-label="Repeat current song" aria-pressed="false" disabled>🔁 Repeat: Off</button><button type="button" class="music-mute" aria-label="Mute music" disabled>♫</button><label class="music-volume-label">Volume <input class="music-volume" type="range" min="0" max="100" value="50" disabled aria-label="Music volume"></label></div><p class="music-hint">Music will be available when a track is added.</p></div>';
 document.body.append(root);
+/* Decorative stage styling is independent of the authenticated music library. */
+if(!document.querySelector('link[data-ctoon-radio-nightstage]')){
+  const stageStyles=document.createElement('link');
+  stageStyles.rel='stylesheet';
+  stageStyles.href='ctoon-radio-stage.css?v=night-stage-20261114-v1';
+  stageStyles.dataset.ctoonRadioNightstage='true';
+  document.head.append(stageStyles);
+}
+/* Group existing sort/song controls to avoid overlapping radio grid areas. */
+const radioLibrary=document.createElement('div');
+radioLibrary.className='music-library';
+const sortLabel=root.querySelector('label[for="music-sort-choice"]');
+const songLabel=root.querySelector('label[for="music-song-choice"]');
+const sortSelect=root.querySelector('#music-sort-choice');
+const songSelect=root.querySelector('#music-song-choice');
+const nowPlaying=root.querySelector('.music-now-playing');
+if(sortLabel&&songLabel&&sortSelect&&songSelect&&nowPlaying){
+  radioLibrary.append(sortLabel,sortSelect,songLabel,songSelect);
+  nowPlaying.after(radioLibrary);
+}
+const stageHeading=root.querySelector('.music-heading');
+if(stageHeading){
+  const stars=document.createElement('span');
+  stars.className='radio-stage-stars';
+  stars.setAttribute('aria-hidden','true');
+  stars.textContent='✦ ✧ ✦';
+  stageHeading.append(stars);
+}
 const panel=root.querySelector('.music-controls'),audio=root.querySelector('audio'),play=root.querySelector('.music-play'),skip=root.querySelector('.music-skip'),repeat=root.querySelector('.music-repeat'),mute=root.querySelector('.music-mute'),volume=root.querySelector('.music-volume'),label=root.querySelector('.music-track'),choice=root.querySelector('#music-song-choice'),sortChoice=root.querySelector('#music-sort-choice'),hint=root.querySelector('.music-hint');
 audio.volume=.5;
 let tracks=[];let index=0;
