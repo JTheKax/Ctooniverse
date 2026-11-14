@@ -267,3 +267,32 @@ body[data-site-mode="online"] .ctoon-standalone-nav .ctu-standalone-search{
 body[data-site-mode="maintenance"] .ctoon-standalone-nav .ctu-standalone-search{
   background:#ecc34c;color:#302102;border-color:#bd8210
 }
+
+/* Universal animated branding.
+   Every instance of the original CTooniverse logo participates, not just the
+   header, Showdown, and the homepage. Inline page logos and future instances
+   are handled automatically; no HTML rewriting is needed. */
+html body img[src*="ctooniverse-logo.png"]{
+  transform-origin:center center;
+  will-change:transform,filter;
+  animation:ctu-logo-float 5.8s ease-in-out infinite,
+            ctu-logo-light 4.9s ease-in-out infinite !important;
+}
+@media(hover:hover) and (pointer:fine){
+  html body a:hover img[src*="ctooniverse-logo.png"]{
+    animation-duration:3.3s,3.1s!important;
+  }
+}
+/* Respect either the site's Reduce animations switch or OS preferences. */
+html body[data-ctu-motion="reduced"] img[src*="ctooniverse-logo.png"]{
+  animation:none!important;
+  transform:none!important;
+  will-change:auto!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html body:not([data-ctu-motion="full"]) img[src*="ctooniverse-logo.png"]{
+    animation:none!important;
+    transform:none!important;
+    will-change:auto!important;
+  }
+}

@@ -125,7 +125,7 @@
   if (!document.querySelector('link[data-ctu-universe-css]')) {
     const sheet=document.createElement('link');
     sheet.rel='stylesheet';
-    sheet.href='universe-refresh.css?v=20261114-1';
+    sheet.href='universe-refresh.css?v=20261114-logo-v2';
     sheet.dataset.ctuUniverseCss='true';
     document.head.append(sheet);
   }
