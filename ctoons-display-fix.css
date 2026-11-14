@@ -1,0 +1,97 @@
+/* CToons A-Z display repair — preserve the original blue arcade windows.
+   Keep the Kingdom Hearts page background and glass/ray animations intact. */
+body.ctoons-library-page #ctoons-directory-results .ctoons-letter-grid{
+  display:grid;
+  width:100%;
+  min-width:0;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,182px),1fr));
+  gap:16px;
+  justify-items:center;
+  align-items:start;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card,
+body.ctoons-library-page #ctoons-directory-results .ctoons-empty-window{
+  box-sizing:border-box;
+  width:100%;
+  max-width:182px;
+  min-width:0;
+  height:auto;
+  min-height:282px;
+  max-height:none;
+  margin:0;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-art{
+  box-sizing:border-box;
+  width:100%;
+  height:158px;
+  min-height:158px;
+  max-height:158px;
+  flex:0 0 158px;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-art img{
+  display:block;
+  width:88%;
+  height:88%;
+  max-width:88%;
+  max-height:88%;
+  padding:0;
+  margin:auto;
+  object-fit:contain;
+  object-position:center;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card-body{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:92px;
+  flex:1 0 auto;
+  justify-content:center;
+  gap:4px;
+  padding:8px 4px 5px;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card h3,
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card small{
+  max-height:none;
+  overflow:visible;
+  overflow-wrap:anywhere;
+  white-space:normal;
+  text-align:center;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card h3{
+  min-height:0;
+  line-height:1.2;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card .ctoons-rarity{
+  flex-shrink:0;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-empty-showcase-grid{
+  display:grid;
+  width:100%;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,182px),1fr));
+  justify-items:center;
+  gap:16px;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-empty-window > div{
+  width:100%;
+  height:158px;
+  min-height:158px;
+}
+@media(max-width:520px){
+  body.ctoons-library-page #ctoons-directory-results .ctoons-letter-grid,
+  body.ctoons-library-page #ctoons-directory-results .ctoons-empty-showcase-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:9px;
+  }
+  body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card h3{
+    font-size:12px;
+  }
+  body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card small{
+    font-size:10px;
+  }
+}
+@media(max-width:300px){
+  body.ctoons-library-page #ctoons-directory-results .ctoons-letter-grid,
+  body.ctoons-library-page #ctoons-directory-results .ctoons-empty-showcase-grid{
+    grid-template-columns:minmax(0,1fr);
+  }
+}
