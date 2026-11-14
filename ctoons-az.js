@@ -26,13 +26,15 @@
     const article=el("article","ctoons-directory-card");
     const art=el("div","ctoons-directory-art");
     const artPath=typeof item.image_path==="string" ? item.image_path.trim() : "";
+    const file=artPath.replace(/^\/?(?:public\/)?images\/ctoons\//i,"");
+    const imageUrl=/^https:\/\//i.test(artPath)?artPath:/^[a-z0-9][a-z0-9._-]*\.(png|jpe?g|webp)$/i.test(file)&&!file.includes("..")?"https://raw.githubusercontent.com/JTheKax/CTooniverse/main/public/images/ctoons/"+encodeURIComponent(file):artPath;
     const safePath=artPath && (
       artPath.startsWith("https://") || artPath.startsWith("http://") ||
       (!artPath.includes(":") && !artPath.startsWith("//") && !artPath.split("/").includes(".."))
     );
     if(safePath){
       const image=el("img");
-      image.src=artPath;
+      image.src=imageUrl;
       image.alt=item.name+" artwork";
       image.decoding="async";
       image.loading="lazy";
