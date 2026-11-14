@@ -25,9 +25,14 @@
   function card(item) {
     const article=el("article","ctoons-directory-card");
     const art=el("div","ctoons-directory-art");
-    if(item.image_path && (/^https?:\\/\\//i.test(item.image_path) || /^\\/(?!\\/)/.test(item.image_path) || /^(?!.*(?:^|\\/)\\.\\.(?:\\/|$))[\\w.-][\\w./%?=& +#-]*$/.test(item.image_path))){
+    const artPath=typeof item.image_path==="string" ? item.image_path.trim() : "";
+    const safePath=artPath && (
+      artPath.startsWith("https://") || artPath.startsWith("http://") ||
+      (!artPath.includes(":") && !artPath.startsWith("//") && !artPath.split("/").includes(".."))
+    );
+    if(safePath){
       const image=el("img");
-      image.src=item.image_path.trim();
+      image.src=artPath;
       image.alt=item.name+" artwork";
       image.decoding="async";
       image.loading="lazy";
