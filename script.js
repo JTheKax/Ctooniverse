@@ -410,3 +410,21 @@ if (year) year.textContent = String(new Date().getFullYear());
   sheet.dataset.ctoonOverdrive='true';
   document.head.append(sheet);
 })();
+
+/* Universe Refresh 2026-11-14: one shared UI layer for every standard page.
+   Deployed after older visual styles; operational status stays authoritative. */
+(() => {
+  if (!document.querySelector('link[data-ctu-universe-css]')) {
+    const sheet=document.createElement('link');
+    sheet.rel='stylesheet';
+    sheet.href='universe-refresh.css?v=20261114-1';
+    sheet.dataset.ctuUniverseCss='true';
+    document.head.append(sheet);
+  }
+  if (!document.querySelector('script[data-ctu-universe-js]')) {
+    const script=document.createElement('script');
+    script.src='universe-refresh.js?v=20261114-1';
+    script.dataset.ctuUniverseJs='true';
+    document.head.append(script);
+  }
+})();
