@@ -34,6 +34,12 @@
     );
     if(safePath){
       const image=el("img");
+      image.crossOrigin="anonymous";
+      image.addEventListener("load",()=>{
+        if(image.dataset.frozen==="yes"||!image.naturalWidth||!image.naturalHeight)return;
+        try{const canvas=document.createElement("canvas");canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;canvas.getContext("2d").drawImage(image,0,0);image.dataset.frozen="yes";image.src=canvas.toDataURL("image/png");}
+        catch(error){console.warn("Unable to freeze CToon artwork",error);}
+      });
       image.src=imageUrl;
       image.alt=item.name+" artwork";
       image.decoding="async";
