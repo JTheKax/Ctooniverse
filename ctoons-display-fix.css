@@ -95,3 +95,20 @@ body.ctoons-library-page #ctoons-directory-results .ctoons-empty-window > div{
     grid-template-columns:minmax(0,1fr);
   }
 }
+
+/* Final override: static characters in the A-Z CToons directory. */
+html body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card,
+html body.ctoons-library-page #ctoons-directory-results .ctoons-directory-art,
+html body.ctoons-library-page #ctoons-directory-results .ctoons-directory-art img,
+html body.ctoons-library-page #ctoons-directory-results .ctoons-directory-art::before,
+html body.ctoons-library-page #ctoons-directory-results .ctoons-directory-art::after,
+html body.ctoons-library-page #ctoons-directory-results .ctoons-empty-window > div::before,
+html body.ctoons-library-page #ctoons-directory-results .ctoons-empty-window > div > span {
+ animation:none!important;
+ animation-name:none!important;
+ transition:none!important;
+ transform:none!important;
+ translate:none!important;
+ rotate:none!important;
+ scale:none!important;
+}
