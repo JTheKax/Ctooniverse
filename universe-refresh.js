@@ -134,6 +134,9 @@
       if(!header||!menuButton)return;
       header.classList.remove("ctu-menu-open");
       menuButton.setAttribute("aria-expanded","false");
+      menuButton.setAttribute("aria-label","Open navigation menu");
+      const menuIcon=menuButton.querySelector(".ctu-menu-icon");
+      if(menuIcon)menuIcon.textContent="☰";
       const nav=header.querySelector("nav");
       if(nav){for(const m of nav.querySelectorAll(".games-dropdown,.community-dropdown,.account-dropdown,.owner-menu")){
         m.classList.remove("is-open");
