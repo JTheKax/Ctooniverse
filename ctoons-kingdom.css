@@ -70,23 +70,20 @@ html body.ctoons-library-page .ctoons-empty{
   html body.ctoons-library-page .ctoons-alphabet{backdrop-filter:none;-webkit-backdrop-filter:none}
 }
 
-/* Chain of Memories-inspired CToon collection cards.
-   Replace only the CToons window presentation; retain 182x282 sizing,
-   original character images, A–Z data, search and subseries filtering. */
+/* CToon card gallery: classic Chain of Memories attack-card silhouette.
+   Original styling, not game art. Preserve 182x282 cards, image URLs and A–Z. */
 html body.ctoons-library-page .ctoons-letter-grid{
-  gap:19px 15px;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,182px),1fr));
   justify-items:center;
   align-items:start;
+  gap:18px 15px;
 }
-
-/* Three-point crown silhouette and vivid red-orange attack-card border. */
+/* Red-orange card housing: three crown points, two deep V-shaped notches. */
 html body.ctoons-library-page :is(.ctoons-directory-card,.ctoons-empty-window){
   box-sizing:border-box;
-  position:relative;
   isolation:isolate;
-  display:flex;
-  flex-direction:column;
-  gap:0;
+  display:block;
+  position:relative;
   width:min(182px,100%)!important;
   min-width:0!important;
   max-width:182px!important;
@@ -94,227 +91,222 @@ html body.ctoons-library-page :is(.ctoons-directory-card,.ctoons-empty-window){
   min-height:282px!important;
   max-height:282px!important;
   margin:0!important;
-  padding:40px 7px 7px!important;
+  padding:0!important;
   overflow:hidden;
   border:0!important;
   border-radius:0!important;
-  clip-path:polygon(0 38px,7% 38px,14% 0,29% 33px,40% 33px,50% 0,60% 33px,71% 33px,86% 0,93% 38px,100% 38px,100% 100%,0 100%);
+  clip-path:polygon(
+    0 57px,7% 57px,12% 14px,29% 48px,
+    50% 0,71% 48px,88% 14px,93% 57px,
+    100% 57px,100% 100%,0 100%
+  );
   background:
-    linear-gradient(95deg,rgba(255,255,255,.5),transparent 11% 86%,rgba(82,3,4,.48)),
-    linear-gradient(155deg,#ff8e54 0%,#f34b2a 15%,#bf161b 53%,#ed4a29 82%,#8f1117 100%)!important;
-  color:#fff;
+    linear-gradient(112deg,rgba(255,238,197,.52) 0%,transparent 14% 78%,rgba(79,7,15,.27) 100%),
+    linear-gradient(180deg,#ffab69 0%,#ed4828 20%,#b81620 62%,#f06736 86%,#a9121a 100%)!important;
   box-shadow:none!important;
-  filter:drop-shadow(0 5px 5px rgba(0,5,24,.75));
+  filter:drop-shadow(0 5px 6px rgba(4,7,35,.6));
   transition:transform .18s ease,filter .18s ease;
 }
 html body.ctoons-library-page :is(.ctoons-directory-card,.ctoons-empty-window)::before{
   content:"";
   position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  height:45px;
-  z-index:0;
-  pointer-events:none;
+  z-index:1;
+  top:0;left:0;right:0;height:61px;
   background:
-    radial-gradient(circle at 29% 32px,#f1f3ec 0 3px,#ba2e25 4px 6px,transparent 7px),
-    radial-gradient(circle at 71% 32px,#f1f3ec 0 3px,#ba2e25 4px 6px,transparent 7px),
-    linear-gradient(180deg,rgba(255,219,174,.6),transparent 24px),
-    linear-gradient(180deg,#ed452a,#b8181a);
+    radial-gradient(ellipse at 20% 68%,rgba(255,216,168,.75),transparent 35%),
+    radial-gradient(ellipse at 79% 68%,rgba(255,187,126,.65),transparent 33%),
+    linear-gradient(180deg,rgba(255,205,143,.27),transparent 75%);
+  pointer-events:none;
 }
-/* The circular icon recalls the black card-value disk, with a CToon emblem
-   instead of a fabricated attack strength. */
 html body.ctoons-library-page :is(.ctoons-directory-card,.ctoons-empty-window)::after{
-  content:"CT";
-  box-sizing:border-box;
+  content:"";
   position:absolute;
   z-index:6;
-  right:3px;
-  top:171px;
-  width:45px;
-  height:45px;
-  display:grid;
-  place-items:center;
-  border:3px solid #f5f9ff;
+  box-sizing:border-box;
+  width:54px;
+  height:54px;
+  right:5px;
+  bottom:5px;
+  border:4px solid #f8f8fa;
   border-radius:50%;
-  background:radial-gradient(circle at 30% 25%,#454856,#030308 58%,#010105);
-  color:#fff;
-  font:900 14px/1 Georgia,serif;
-  letter-spacing:-1px;
-  text-shadow:0 1px 3px #000;
-  box-shadow:0 2px 5px #0008;
+  background:radial-gradient(circle at 29% 22%,#191b25 0%,#010104 52%,#000 100%);
+  box-shadow:0 1px 3px #05104299,0 0 0 1px rgba(13,17,38,.66);
   pointer-events:none;
 }
 html body.ctoons-library-page .ctoons-directory-card:hover,
 html body.ctoons-library-page .ctoons-directory-card:focus-within{
-  transform:translateY(-4px)!important;
-  border:0!important;
+  transform:translateY(-3px)!important;
   box-shadow:none!important;
-  filter:drop-shadow(0 8px 10px rgba(8,10,35,.85)) drop-shadow(0 0 9px rgba(244,114,75,.52))!important;
+  filter:drop-shadow(0 10px 9px #050a25cc) drop-shadow(0 0 6px #ffb28c88)!important;
 }
-
-/* Blue-violet artwork field, edged like a Chain of Memories attack card. */
+/* Main blue card face fills nearly the entire card, rather than a tiny
+   image area plus a separate nameplate. */
 html body.ctoons-library-page .ctoons-directory-art,
 html body.ctoons-library-page .ctoons-empty-window>div{
   box-sizing:border-box;
-  flex:0 0 156px!important;
-  position:relative;
-  z-index:1;
+  position:absolute;
+  z-index:2;
+  top:61px;
+  left:8px;
+  width:calc(100% - 16px)!important;
+  height:calc(100% - 70px)!important;
+  min-height:0!important;
+  max-height:none!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden;
   display:flex;
   align-items:center;
   justify-content:center;
-  width:100%!important;
-  height:156px!important;
-  min-height:156px!important;
-  max-height:156px!important;
-  padding:0!important;
-  margin:0!important;
-  overflow:hidden;
-  border:3px solid #f6a471!important;
+  border:2px solid #ffaf7f!important;
   border-radius:1px!important;
   background:
-    radial-gradient(ellipse at 35% 18%,#4049b9 0%,#282eb2 37%,#151a78 72%,#070b43 100%)!important;
-  box-shadow:
-    inset 0 0 0 2px rgba(174,182,255,.38),
-    inset 0 0 21px #020b4a,
-    0 0 0 1px #8f0d13!important;
+    radial-gradient(ellipse at 39% 38%,#2339d7 0%,#1020b3 47%,#07126d 78%,#050941 100%)!important;
+  box-shadow:inset 0 0 0 1px #bfc8ff64,inset 0 0 20px #040b5d,0 0 0 1px #872024!important;
   isolation:isolate;
 }
 html body.ctoons-library-page .ctoons-directory-art::before,
 html body.ctoons-library-page .ctoons-empty-window>div::before{
   content:"";
   position:absolute;
-  inset:0;
   z-index:0;
+  inset:0;
   border:0;
   border-radius:0;
-  background:
-    radial-gradient(circle at 14% 22%,rgba(192,217,255,.35) 0 1px,transparent 2px),
-    radial-gradient(circle at 78% 38%,rgba(216,225,255,.28) 0 1px,transparent 2px),
-    radial-gradient(ellipse at 40% 30%,rgba(128,151,255,.23),transparent 65%);
+  background:radial-gradient(ellipse at 50% 22%,rgba(115,144,255,.38),transparent 75%);
   animation:none!important;
   pointer-events:none;
 }
 html body.ctoons-library-page .ctoons-directory-art::after{
   content:"";
   position:absolute;
+  z-index:3;
   inset:0;
-  z-index:4;
   border:0;
   border-radius:0;
-  background:linear-gradient(117deg,rgba(255,255,255,.13),transparent 23% 74%,rgba(240,244,255,.08));
+  background:linear-gradient(115deg,#ffffff16 0%,transparent 25% 77%,#c9d8ff10 100%);
   animation:none!important;
   pointer-events:none;
 }
 html body.ctoons-library-page .ctoons-directory-art img{
-  position:relative;
   z-index:2;
+  position:relative;
   display:block;
-  flex:none;
-  width:90%!important;
-  height:92%!important;
-  max-width:90%!important;
-  max-height:92%!important;
+  flex:0 0 auto;
+  width:94%!important;
+  height:91%!important;
+  max-width:94%!important;
+  max-height:91%!important;
   padding:0!important;
   margin:auto!important;
   object-fit:contain!important;
-  filter:drop-shadow(0 4px 4px #070d4599);
+  transform:translateY(-11px);
   animation:none!important;
+  filter:drop-shadow(0 4px 5px #0307339c);
   transition:transform .2s ease;
 }
 html body.ctoons-library-page .ctoons-directory-art .ctoons-placeholder{
   position:relative;
   z-index:2;
-  color:#edf2ff;
-  text-shadow:0 0 9px #8ac0ff;
+  font-size:2.4rem;
+  color:#dce4ff;
+  text-shadow:0 1px 10px #b0caff;
 }
 @media(hover:hover) and (pointer:fine){
   html body.ctoons-library-page .ctoons-directory-card:hover .ctoons-directory-art img{
-    transform:scale(1.035);
+    transform:translateY(-11px) scale(1.03);
   }
 }
-
-/* Compact card description area directly below the blue illustration. */
+/* Character information is a subtle in-card overlay; the black circular
+   corner motif remains unobstructed. */
 html body.ctoons-library-page .ctoons-directory-card-body{
   box-sizing:border-box;
-  z-index:1;
-  display:flex;
-  flex:1 1 auto;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:3px;
+  position:absolute;
+  z-index:5;
+  bottom:11px;
+  left:10px;
+  width:calc(100% - 65px)!important;
+  height:auto;
+  max-height:85px;
   min-height:0!important;
-  width:100%;
-  margin-top:3px!important;
-  padding:4px 6px 5px!important;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:flex-end;
+  gap:3px;
+  margin:0!important;
+  padding:8px 4px 6px!important;
   overflow:hidden;
-  border:1px solid rgba(255,185,128,.8);
-  border-radius:2px!important;
-  background:linear-gradient(180deg,#3b124b,#1a1748 56%,#090f31)!important;
-  text-align:center;
+  border:0!important;
+  border-radius:0!important;
+  background:linear-gradient(180deg,transparent,rgba(3,6,50,.68) 20%,rgba(2,4,37,.92))!important;
+  text-align:left;
 }
 html body.ctoons-library-page .ctoons-directory-card h3{
   display:-webkit-box;
   -webkit-box-orient:vertical;
   -webkit-line-clamp:2;
   line-clamp:2;
-  flex:0 1 auto;
+  width:100%;
   min-height:0!important;
-  max-height:30px!important;
-  overflow:hidden;
+  max-height:32px!important;
   margin:0!important;
-  color:#fff6e9!important;
-  font:900 12px/1.18 system-ui,sans-serif!important;
-  text-shadow:0 1px 2px #000;
+  overflow:hidden;
+  color:#fff!important;
+  font:900 11px/1.2 system-ui,sans-serif!important;
+  text-shadow:0 1px 4px #000,0 0 4px #000;
   overflow-wrap:anywhere;
 }
 html body.ctoons-library-page .ctoons-directory-card small{
-  flex:0 1 auto;
+  display:block;
+  max-height:15px!important;
   min-height:0!important;
-  max-height:16px!important;
+  width:100%;
   overflow:hidden;
-  color:#d7dfff!important;
-  font:600 10px/1.1 system-ui,sans-serif!important;
+  color:#e2e8ff!important;
+  font:600 9px/1.2 system-ui,sans-serif!important;
   text-overflow:ellipsis;
   white-space:nowrap;
-  width:100%;
+  text-shadow:0 1px 3px #000;
 }
 html body.ctoons-library-page .ctoons-directory-card .ctoons-rarity{
   flex:0 0 auto;
   display:inline-block;
+  max-width:100%;
   margin:0!important;
-  padding:1px 7px!important;
-  border:1px solid #ffc094!important;
-  border-radius:3px!important;
-  background:#75253b!important;
-  color:#ffedda!important;
+  padding:0!important;
+  overflow:hidden;
+  border:0!important;
+  border-radius:0!important;
+  background:none!important;
   box-shadow:none!important;
-  font:800 9px/1.25 system-ui,sans-serif!important;
+  color:#ffe2a0!important;
+  font:900 9px/1.15 system-ui,sans-serif!important;
   text-transform:uppercase;
-  letter-spacing:.04em;
+  text-shadow:0 1px 3px #000;
 }
-/* Empty placeholders use the exact same silhouette and backdrop. */
 html body.ctoons-library-page .ctoons-empty-window>div>span{
-  z-index:2;
   position:relative;
-  color:#e1e9ff;
-  text-shadow:0 0 9px #9bb8ff;
+  z-index:2;
+  color:#dfe8ff;
+  text-shadow:0 0 12px #9bb8ff;
   animation:none!important;
 }
 html body.ctoons-library-page .ctoons-empty-window>small{
-  box-sizing:border-box;
-  margin-top:3px!important;
-  padding:16px 3px 5px!important;
-  border:1px solid #f8ad85;
-  background:linear-gradient(180deg,#3b124b,#090f31)!important;
-  color:#fff0de!important;
-  text-align:center;
-  flex:1 1 auto;
-  min-height:0;
+  position:absolute;
+  z-index:5;
+  bottom:12px;
+  left:11px;
+  width:calc(100% - 68px);
+  margin:0!important;
+  padding:10px 3px 4px!important;
+  border:0;
+  border-radius:0;
+  background:linear-gradient(180deg,transparent,rgba(3,5,40,.88))!important;
+  color:#fff!important;
+  font:800 11px/1.2 system-ui,sans-serif;
+  text-align:left;
 }
-
-/* On mobile, two 182px-max cards shrink to the available column width. */
 @media(max-width:650px){
   html body.ctoons-library-page .ctoons-letter-grid,
   html body.ctoons-library-page .ctoons-empty-showcase-grid{
@@ -325,8 +317,6 @@ html body.ctoons-library-page .ctoons-empty-window>small{
 }
 @media(prefers-reduced-motion:reduce){
   html body.ctoons-library-page .ctoons-directory-card,
-  html body.ctoons-library-page .ctoons-directory-art img{
-    transition:none!important;
-  }
+  html body.ctoons-library-page .ctoons-directory-art img{transition:none!important}
   html body.ctoons-library-page .ctoons-directory-card:hover{transform:none!important}
 }
