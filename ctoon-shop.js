@@ -36,7 +36,7 @@ async function refresh(){
   const card=document.createElement('article');card.className='ctoon-shop-card';
   const art=document.createElement('div');art.className='ctoon-shop-art';
   const badge=document.createElement('span');badge.className='ctoon-shop-owned';const qty=owned.get(item.id)||0;
-  badge.textContent=qty?'Owned ×'+qty:!item.is_for_sale?'Coming Soon':user?'Unowned':'Sign in';badge.classList.toggle('is-owned',qty>0);
+  badge.textContent=qty?'Owned ×'+qty:!item.is_for_sale?'Sold Out':user?'Unowned':'Sign in';badge.classList.toggle('is-owned',qty>0);
   const image=document.createElement('img');freezeShopArtwork(image);image.src=ctoonImageUrl(item.image_path)||'ctooniverse-logo.png';image.alt=item.name+' CToon artwork';image.loading='lazy';image.addEventListener('error',()=>{image.src='ctooniverse-logo.png'},{once:true});art.append(badge,image);
   const details=document.createElement('div');details.className='ctoon-shop-details';
   const title=document.createElement('div');title.className='ctoon-shop-name';title.textContent=item.name+' ';
@@ -44,9 +44,9 @@ async function refresh(){
   const series=document.createElement('p');series.className='collection-series';series.textContent=item.series||'CTooniverse';
   const purchase=document.createElement('div');purchase.className='ctoon-shop-purchase';
   const price=document.createElement('span');price.className='ctoon-shop-price';price.textContent=Number(item.price_coins||0).toLocaleString()+' pts';
-  const button=document.createElement('button');button.type='button';button.className='ctoon-shop-buy';button.textContent=!item.is_for_sale?'Coming Soon':user?'Buy':'Sign in to Buy';button.disabled=!item.is_for_sale;
+  const button=document.createElement('button');button.type='button';button.className='ctoon-shop-buy';button.textContent=!item.is_for_sale?'Sold Out':user?'Buy':'Sign in to Buy';button.disabled=!item.is_for_sale;button.classList.toggle('is-sold-out',!item.is_for_sale);button.setAttribute('aria-label',item.name+(!item.is_for_sale?' sold out':' purchase'));
   const status=document.createElement('p');status.className='ctoon-shop-status';status.setAttribute('role','status');
-  status.textContent=!item.is_for_sale?'Not available for purchase yet':!user?'Sign in to purchase':balance===null?'Sign in to check balance':'Balance: '+balance.toLocaleString()+' coins';
+  status.textContent=!item.is_for_sale?'Currently unavailable for purchase':!user?'Sign in to purchase':balance===null?'Sign in to check balance':'Balance: '+balance.toLocaleString()+' coins';
   if(item.is_for_sale)button.addEventListener('click',async()=>{
    if(button.disabled)return;
    button.disabled=true;button.textContent='Processing…';status.textContent='Checking availability and processing purchase…';
