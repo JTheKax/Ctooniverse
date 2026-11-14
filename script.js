@@ -1,3 +1,4 @@
+"use strict";
 /* Ninja-scroll tabs: load this last so legacy mobile rules cannot resize them. */
 (() => {
   if(document.querySelector('link[data-ninja-scroll-nav]'))return;
@@ -8,7 +9,6 @@
   document.head.append(sheet);
 })();
 
-"use strict";
 /* Shared visual layer: loaded after legacy styles, with operational colors intact. */
 (() => {
   if (document.querySelector('link[href^="display-refresh.css"]')) return;
