@@ -1,0 +1,71 @@
+/* CTooniverse CToons collection — celestial Kingdom Hearts-inspired background.
+   This CSS affects only the CToons collection. All original collecting functionality,
+   CToon artwork and 182x282 display windows remain unchanged. */
+html body.ctoons-library-page{
+  background-color:#090b2a!important;
+  background-image:
+    linear-gradient(180deg,rgba(3,7,30,.28) 0%,rgba(4,7,27,.47) 52%,rgba(7,5,28,.63) 100%),
+    url("images/ctoons-kingdom-sky.webp")!important;
+  background-size:cover,cover!important;
+  background-position:center top,center center!important;
+  background-repeat:no-repeat,no-repeat!important;
+  background-attachment:fixed,fixed!important;
+}
+html body.ctoons-library-page .ctoons-directory-hero{
+  background:
+    radial-gradient(ellipse at top,rgba(94,66,177,.37),transparent 74%),
+    linear-gradient(140deg,rgba(7,13,41,.88),rgba(20,14,54,.87))!important;
+  border:2px solid #a5dcff!important;
+  box-shadow:0 0 0 1px rgba(246,213,149,.24) inset,0 16px 44px rgba(3,4,24,.7),0 0 24px rgba(120,180,255,.2)!important;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+html body.ctoons-library-page .ctoons-directory-hero h1{
+  color:#f7f5ff;
+  text-shadow:0 3px 16px rgba(115,154,255,.75),0 0 26px rgba(157,119,244,.55)!important;
+}
+html body.ctoons-library-page .ctoons-directory-hero p{
+  color:#f0f0ff!important;
+}
+html body.ctoons-library-page .ctoons-toolbar{
+  padding:15px 18px;
+  border:1px solid rgba(153,211,255,.59);
+  border-radius:17px;
+  background:linear-gradient(130deg,rgba(7,14,42,.86),rgba(23,15,57,.82));
+  box-shadow:0 10px 28px rgba(3,4,20,.38);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+html body.ctoons-library-page .ctoons-alphabet{
+  background:linear-gradient(120deg,rgba(9,14,50,.89),rgba(34,21,81,.87))!important;
+  border-color:#a8d9ff!important;
+  box-shadow:0 10px 28px rgba(3,4,20,.4);
+  backdrop-filter:blur(6px);
+}
+html body.ctoons-library-page .ctoons-letter-heading{
+  padding:10px 12px;
+  border-bottom-color:#b5c5ff!important;
+  border-radius:12px;
+  background:linear-gradient(90deg,rgba(9,16,48,.89),rgba(8,16,45,.44),transparent);
+}
+html body.ctoons-library-page .ctoons-letter-heading h2{
+  color:#b6f2ff!important;
+  text-shadow:0 2px 10px rgba(87,173,255,.67);
+}
+html body.ctoons-library-page .ctoons-empty{
+  background:rgba(10,15,47,.89)!important;
+  backdrop-filter:blur(6px);
+}
+@media(max-width:760px){
+  html body.ctoons-library-page{
+    background-size:cover,auto 100vh!important;
+    background-position:center top,center top!important;
+    background-attachment:scroll,scroll!important;
+  }
+  html body.ctoons-library-page .ctoons-toolbar{padding:12px}
+}
+@media(prefers-reduced-transparency:reduce){
+  html body.ctoons-library-page .ctoons-directory-hero,
+  html body.ctoons-library-page .ctoons-toolbar,
+  html body.ctoons-library-page .ctoons-alphabet{backdrop-filter:none;-webkit-backdrop-filter:none}
+}
