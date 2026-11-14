@@ -60,7 +60,6 @@ if (year) year.textContent = String(new Date().getFullYear());
   games.innerHTML='<button type="button" class="nav-link games-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="games-prize-menu"><span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span><span aria-hidden="true">▾</span></button>'+
     '<div class="games-dropdown-panel" id="games-prize-menu">'+
     '<a href="games.html">All Games</a>'+ 
-    '<a href="cards.html">🃏 Cards Hub</a>'+
     '<span class="games-dropdown-heading">⚔️ Fighting Games</span>'+
     '<a href="prototypes/ctoon-showdown-arcade.html">CToon Showdown</a>'+
     '<span class="games-dropdown-heading">🎁 Prize Games</span>'+
