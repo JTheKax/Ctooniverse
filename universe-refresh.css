@@ -238,3 +238,16 @@ body[data-ctu-motion="reduced"] :is(.ct-page-banner,.welcome-panel,.games-hub-he
   .home-universe-page .welcome-panel img[src*="ctooniverse-logo.png"]{animation:none!important;transform:none!important}
   .ctu-feature,.ctu-to-top{transition:none!important;animation:none!important}
 }
+
+/* Full-screen and owner tools inherit a compact branded identity too. */
+.ctoon-standalone-brand{display:inline-flex;align-items:center;min-width:0}
+.ctoon-standalone-brand .ctu-standalone-logo{
+  width:clamp(96px,13vw,154px);max-height:54px;max-width:100%;
+  object-fit:contain;animation:ctu-logo-float 5.8s ease-in-out infinite,ctu-logo-light 5s ease-in-out infinite
+}
+.ctu-showdown-logo{display:inline-flex;align-items:center;justify-content:center;padding:4px 12px;margin:1px auto 4px;border:1px solid #9cdffc77;border-radius:15px;background:#141748a8;text-decoration:none}
+.ctu-showdown-logo img{display:block;width:min(170px,44vw);height:auto;max-height:62px;object-fit:contain;animation:ctu-logo-float 5.8s ease-in-out infinite,ctu-logo-light 5s ease-in-out infinite}
+.ctu-minibrand{display:flex;width:max-content;max-width:calc(100% - 24px);margin:14px auto;align-items:center;justify-content:center;padding:6px 14px;border:1px solid #96d9ff88;border-radius:16px;background:#0e1c47de;box-shadow:0 7px 24px #03082088}
+.ctu-minibrand img{display:block;width:min(200px,52vw);max-height:70px;height:auto;object-fit:contain;animation:ctu-logo-float 5.8s ease-in-out infinite,ctu-logo-light 5s ease-in-out infinite}
+body[data-ctu-motion="reduced"] :is(.ctu-standalone-logo,.ctu-showdown-logo img,.ctu-minibrand img){animation:none!important;transform:none!important}
+@media(prefers-reduced-motion:reduce){:is(.ctu-standalone-logo,.ctu-showdown-logo img,.ctu-minibrand img){animation:none!important;transform:none!important}}
