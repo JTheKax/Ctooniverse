@@ -2629,3 +2629,241 @@ html body main :is(.page-placeholder,.owner-panel,.discord-panel,.trade-box) :is
     font-size:15px!important;
   }
 }
+
+/* NINJA SCROLL NAVIGATION — 2026-11-14 v1 */
+/* A single scroll-shaped control size for links and dropdown triggers,
+   including authenticated Owner. Scroll ends are CSS (no image downloads). */
+body .site-header nav[aria-label="Main navigation"] {
+  display:grid!important;
+  grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  align-items:stretch!important;
+  justify-items:stretch!important;
+  flex:1 0 100%!important;
+  order:3!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  gap:10px!important;
+  padding:13px 16px!important;
+  border:2px solid #8764c8!important;
+  border-radius:18px!important;
+  background:linear-gradient(155deg,#28133d 0%,#111d47 48%,#24123e 100%)!important;
+  box-shadow:inset 0 2px #e1c6ff3c,0 9px 24px #0009,0 0 19px #734bba4a!important;
+  overflow:visible!important;
+}
+@media(min-width:1181px) {
+  body .site-header nav[aria-label="Main navigation"]:has(> .owner-menu.owner-visible) {
+    grid-template-columns:repeat(8,minmax(0,1fr))!important;
+  }
+}
+body .site-header nav[aria-label="Main navigation"] > * {
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+  margin:0!important;
+}
+body .site-header nav[aria-label="Main navigation"] > :is(
+  .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+) {
+  min-width:0!important;
+  max-width:100%!important;
+  align-self:stretch!important;
+  justify-self:stretch!important;
+}
+body .site-header nav[aria-label="Main navigation"] > :is(
+  .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+) > .nav-link,
+body .site-header nav[aria-label="Main navigation"] > a.nav-link {
+  position:relative!important;
+  isolation:isolate!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  flex-wrap:nowrap!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:64px!important;
+  min-height:64px!important;
+  margin:0!important;
+  padding:8px 15px!important;
+  gap:6px!important;
+  box-sizing:border-box!important;
+  border:2px solid #8e5830!important;
+  border-radius:6px!important;
+  border-bottom-width:3px!important;
+  color:#2e2041!important;
+  background:
+    linear-gradient(90deg,rgba(120,69,40,.15) 0%,transparent 15%,transparent 85%,rgba(120,69,40,.15) 100%),
+    linear-gradient(180deg,#fff1ca 0%,#f0d8a4 48%,#d5b17d 100%)!important;
+  box-shadow:inset 0 2px #fff8e7ba,inset 0 -2px #86522e53,0 4px 8px #0008!important;
+  text-shadow:none!important;
+  font:800 clamp(12px,1.08vw,15px)/1.15 system-ui,sans-serif!important;
+  letter-spacing:0!important;
+  text-align:center!important;
+  text-decoration:none!important;
+  white-space:nowrap!important;
+  overflow:visible!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  cursor:pointer;
+  transition:filter .18s ease,transform .18s ease,box-shadow .18s ease!important;
+}
+body .site-header nav[aria-label="Main navigation"] > :is(
+  .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+) > .nav-link::before,
+body .site-header nav[aria-label="Main navigation"] > a.nav-link::before,
+body .site-header nav[aria-label="Main navigation"] > :is(
+  .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+) > .nav-link::after,
+body .site-header nav[aria-label="Main navigation"] > a.nav-link::after {
+  content:""!important;
+  position:absolute!important;
+  z-index:2!important;
+  width:10px!important;
+  height:auto!important;
+  top:-4px!important;
+  bottom:-4px!important;
+  border:1px solid #392012!important;
+  border-radius:6px!important;
+  background:linear-gradient(90deg,#42221a 0%,#895329 24%,#efbe70 52%,#93592e 79%,#351d19 100%)!important;
+  box-shadow:inset 0 2px #fbe2aeaa,0 2px 5px #0008!important;
+  filter:none!important;
+  transform:none!important;
+  pointer-events:none!important;
+  opacity:1!important;
+}
+body .site-header nav[aria-label="Main navigation"] > :is(
+  .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+) > .nav-link::before,
+body .site-header nav[aria-label="Main navigation"] > a.nav-link::before {
+  left:-5px!important;right:auto!important;
+}
+body .site-header nav[aria-label="Main navigation"] > :is(
+  .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+) > .nav-link::after,
+body .site-header nav[aria-label="Main navigation"] > a.nav-link::after {
+  right:-5px!important;left:auto!important;
+}
+body .site-header nav[aria-label="Main navigation"] .nav-link .nav-icon {
+  display:inline-flex!important;
+  flex:0 0 20px!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:20px!important;
+  min-width:20px!important;
+  height:22px!important;
+  color:inherit!important;
+  font:normal 18px/1 system-ui,"Segoe UI Emoji",sans-serif!important;
+  filter:none!important;
+}
+body .site-header nav[aria-label="Main navigation"] .nav-link > span:not(.nav-icon) {
+  min-width:0;
+}
+body .site-header nav[aria-label="Main navigation"] > :is(
+  .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+) > .nav-link:hover,
+body .site-header nav[aria-label="Main navigation"] > a.nav-link:hover {
+  color:#2a1b3a!important;
+  border-color:#a77ade!important;
+  filter:brightness(1.06)!important;
+  transform:translateY(-2px)!important;
+  box-shadow:inset 0 2px #fff8e7,0 5px 15px #8563ec77!important;
+}
+body .site-header nav[aria-label="Main navigation"] > :is(
+  .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+) > .nav-link:is(.active,[aria-current="page"],[aria-expanded="true"]),
+body .site-header nav[aria-label="Main navigation"] > a.nav-link:is(.active,[aria-current="page"]) {
+  color:#22133c!important;
+  border-color:#7140dd!important;
+  background:linear-gradient(180deg,#fff5d7 0%,#e9c992 47%,#bb90df 100%)!important;
+  box-shadow:inset 0 2px #ffffffc2,0 0 0 2px #6bd3ff72,0 0 19px #8e5effa8!important;
+}
+body .site-header nav[aria-label="Main navigation"] .nav-link:focus-visible {
+  outline:3px solid #8de7ff!important;
+  outline-offset:5px!important;
+}
+/* Scroll-paper dropdown panels retain existing show/hide and authorization logic. */
+body .site-header nav[aria-label="Main navigation"] :is(
+  .games-dropdown-panel,.cards-dropdown-panel,.community-dropdown-panel,
+  .account-dropdown-panel,.owner-menu-panel
+) {
+  border:2px solid #8452be!important;
+  border-radius:12px!important;
+  background:linear-gradient(180deg,#f9edcd 0%,#dfbd8d 100%)!important;
+  color:#2a1b3a!important;
+  box-shadow:0 15px 30px #0009,inset 0 2px #fff9!important;
+}
+body .site-header nav[aria-label="Main navigation"] :is(
+  .games-dropdown-panel,.cards-dropdown-panel,.community-dropdown-panel,
+  .account-dropdown-panel,.owner-menu-panel
+) > :is(a,button) {
+  color:#342444!important;
+  border-radius:8px!important;
+  text-shadow:none!important;
+}
+body .site-header nav[aria-label="Main navigation"] :is(
+  .games-dropdown-panel,.cards-dropdown-panel,.community-dropdown-panel,
+  .account-dropdown-panel,.owner-menu-panel
+) > :is(a,button):is(:hover,:focus-visible,[aria-current="page"]) {
+  color:#1b1231!important;
+  background:#d4b1e4!important;
+}
+body .site-header nav[aria-label="Main navigation"] :is(
+  .games-dropdown-heading,.cards-dropdown-heading
+) {
+  color:#53316e!important;
+  border-top-color:#875e984d!important;
+}
+/* Four uniform scrolls per row on tablets and landscape phones. */
+@media (min-width:561px) and (max-width:1180px) {
+  body .site-header nav[aria-label="Main navigation"] {
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  }
+}
+@media(max-width:900px) {
+  body .site-header nav[aria-label="Main navigation"] {
+    gap:9px!important;
+    padding:10px 12px!important;
+  }
+  body .site-header nav[aria-label="Main navigation"] > :is(
+    .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+  ) > .nav-link,
+  body .site-header nav[aria-label="Main navigation"] > a.nav-link {
+    height:58px!important;
+    min-height:58px!important;
+    padding:7px 12px!important;
+    gap:4px!important;
+    transform:none!important;
+    font-size:clamp(11px,1.8vw,14px)!important;
+  }
+  body .site-header nav[aria-label="Main navigation"] > :is(
+    .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+  ) > .nav-link:hover,
+  body .site-header nav[aria-label="Main navigation"] > a.nav-link:hover {
+    transform:none!important;
+  }
+}
+@media(max-width:560px) {
+  body .site-header nav[aria-label="Main navigation"] {
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:9px!important;
+  }
+  body .site-header nav[aria-label="Main navigation"] > :is(
+    .games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu
+  ) > .nav-link,
+  body .site-header nav[aria-label="Main navigation"] > a.nav-link {
+    font-size:clamp(12px,3.2vw,14px)!important;
+    height:56px!important;
+    min-height:56px!important;
+    padding:7px 13px!important;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  body .site-header nav[aria-label="Main navigation"] .nav-link {
+    transition:none!important;
+    transform:none!important;
+  }
+}
+
