@@ -16,7 +16,7 @@
   const root=document.createElement("div");
   root.className="ctoon-standalone-nav";
   const navIcons={
-    Home:"🏠",CToons:"🎴",Cards:"🃏",Theater:"🎬",Shop:"🛍️",
+    Home:"🏠",CToons:"🎴","CToon Shop":"🛍️",Cards:"🃏",Theater:"🎬",Shop:"🛍️",
     Games:"🎮",
     "Community Home":"🏘️",Forums:"💬",Guild:"🛡️",Support:"🛟",
     Login:"🔑",Register:"✨","My Profile":"👤","Redeem Code":"🎟️",
@@ -26,12 +26,13 @@
   };
   const link=(label,url,attrs)=>'<a href="'+url+'" '+(attrs||"")+'><span class="ctoon-nav-symbol" aria-hidden="true">'+(navIcons[label]||"✦")+'</span><span>'+label+'</span></a>';
   const group=(label,items,attrs)=>'<details class="ctoon-nav-group" '+(attrs||"")+'><summary>'+label+'</summary>'+items.map(item=>link(item[0],item[1],item[2])).join("")+'</details>';
+  const ctoonItems=[["CToons Collection","ctoons.html"],["CToon Shop","shop.html"]];
   const community=[["Community Home","community.html"],["Forums","forums.html"],["Guild","guild.html"],["Support","support.html"]];
   const account=[["Login","login.html","data-nav-guest"],["Register","account.html","data-nav-guest"],["My Profile","account.html","data-nav-signed hidden"],["Redeem Code","account.html#redeem-codes","data-nav-signed hidden"]];
   const owner=[["Dashboard","owner.html"],["Website Status","owner.html#site-operating-controls"],["Coin Management","coin-management.html"],["Redeem Codes","owner-redeem-codes.html"],["Music Management","owner-music-management.html"],["CToon Subseries Manager","owner-subseries.html"]];
   root.innerHTML='<div class="ctoon-standalone-bar"><a class="ctoon-standalone-brand" href="index.html">✦ CTooniverse</a><button type="button" class="ctoon-standalone-toggle" aria-expanded="false" aria-controls="ctoon-standalone-panel">☰ Site Menu</button></div>'
    +'<nav id="ctoon-standalone-panel" class="ctoon-standalone-panel" aria-label="CTooniverse navigation" hidden>'
-   +link("Home","index.html")+link("CToons","ctoons.html")+link("Games","games.html")+link("Cards","cards.html")
+   +link("Home","index.html")+group("🎴 CToons",ctoonItems)+link("Games","games.html")+link("Cards","cards.html")
    +link("Theater","watch.html")+link("Shop","shop.html")+group("👥 Community",community)
    +group("👤 Account",account).replace("</details>",'<button type="button" data-nav-signed data-nav-logout hidden><span class="ctoon-nav-symbol" aria-hidden="true">🚪</span><span>Log Out</span></button></details>')
    +group("👑 Owner",owner,'id="ctoon-standalone-owner" hidden')+'</nav>';
