@@ -26,7 +26,7 @@ body[data-site-mode="maintenance"]{
   --site-nav-glow:#f0bf3d66;
 }
 
-/* Shared navigation shell: Home, CToons, Shop, Games, Watch,
+/* Shared navigation shell: Home, CToons, Shop, Games, Cards, Theater,
    Community, Account, Owner — including all responsive layouts. */
 body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav{
   background:var(--site-nav-bg)!important;
@@ -65,10 +65,10 @@ body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header n
   outline-offset:2px!important;
 }
 
-/* Drop-down menus: CToons, Shop, Games, Community, Account and Owner.
+/* Drop-down menus: CToons, Shop, Games, Cards, Community, Account and Owner.
    These menus are created and positioned by different existing scripts. */
 body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav :is(
-  .ctoons-dropdown-panel,.games-dropdown-panel,
+  .ctoons-dropdown-panel,.games-dropdown-panel,.cards-dropdown-panel,
   .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel
 ){
   background:var(--site-nav-panel)!important;
@@ -77,7 +77,7 @@ body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header n
   box-shadow:0 10px 26px #0008,0 0 12px var(--site-nav-glow)!important;
 }
 body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav :is(
-  .ctoons-dropdown-panel,.games-dropdown-panel,
+  .ctoons-dropdown-panel,.games-dropdown-panel,.cards-dropdown-panel,
   .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel
 ) :is(a,button){
   color:var(--site-nav-ink)!important;
@@ -86,7 +86,7 @@ body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header n
   text-shadow:none!important;
 }
 body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header nav :is(
-  .ctoons-dropdown-panel,.games-dropdown-panel,
+  .ctoons-dropdown-panel,.games-dropdown-panel,.cards-dropdown-panel,
   .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel
 ) :is(a,button):is(:hover,:focus-visible,[aria-current="page"],.active){
   background:var(--site-nav-hover)!important;
