@@ -83,17 +83,17 @@
 .ctoons-letter-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,182px),1fr));gap:16px}
 .ctoons-directory-card{width:182px;max-width:182px;height:282px;min-height:282px;max-height:282px;padding:6px}
 .ctoons-directory-art{height:158px;min-height:158px;max-height:158px;flex-basis:158px;isolation:isolate}
-.ctoons-directory-art::before{animation:ctoons-classic-window-rays 24s linear infinite;transform-origin:center}
-.ctoons-directory-art::after{background:linear-gradient(118deg,transparent 0 23%,#ffffff29 24% 28%,transparent 29% 100%);animation:ctoons-classic-window-shimmer 4.5s ease-in-out infinite alternate}
-.ctoons-directory-art img{animation:ctoons-classic-art-float 4s ease-in-out infinite}
+.ctoons-directory-art::before{animation:none!important;transform:none!important}
+.ctoons-directory-art::after{background:linear-gradient(118deg,transparent 0 23%,#ffffff29 24% 28%,transparent 29% 100%);animation:none!important}
+.ctoons-directory-art img{animation:none!important;transform:none!important}
 .ctoons-directory-card h3{font-size:13px;min-height:28px}
 .ctoons-directory-card small{font-size:11px}
 .ctoons-directory-card .ctoons-rarity{font-size:10px}
 .ctoons-empty-showcase-grid{grid-template-columns:repeat(4,minmax(0,182px));gap:16px}
 .ctoons-empty-window{width:182px;height:282px;min-height:282px;max-height:282px;padding:6px}
 .ctoons-empty-window>div{position:relative;overflow:hidden;isolation:isolate;height:158px;min-height:158px}
-.ctoons-empty-window>div::before{content:"";position:absolute;inset:-35%;background:repeating-conic-gradient(from 0deg,#e0ffff50 0deg 9deg,transparent 9deg 24deg);animation:ctoons-classic-window-rays 24s linear infinite;pointer-events:none}
-.ctoons-empty-window>div>span{position:relative;z-index:1;animation:ctoons-classic-art-float 4s ease-in-out infinite}
+.ctoons-empty-window>div::before{content:"";position:absolute;inset:-35%;background:repeating-conic-gradient(from 0deg,#e0ffff50 0deg 9deg,transparent 9deg 24deg);animation:none!important;pointer-events:none}
+.ctoons-empty-window>div>span{position:relative;z-index:1;animation:none!important;transform:none!important}
 @keyframes ctoons-classic-window-rays{to{transform:rotate(360deg)}}
 @keyframes ctoons-classic-window-shimmer{from{opacity:.3}to{opacity:1}}
 @keyframes ctoons-classic-art-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
