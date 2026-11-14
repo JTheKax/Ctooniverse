@@ -1,4 +1,5 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
+import {ctoonImageUrl} from './ctoon-image-url.js';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const el=id=>document.getElementById(id);
 const form=el('ctoon-maker-form'),status=el('ctoon-maker-status'),holder=el('ctoon-maker-existing'),preview=el('ctoon-maker-preview');
@@ -18,7 +19,7 @@ function showPreview(){
  preview.replaceChildren();
  const path=cleanImage(fields.image_path.value);
  if(!path)return;
- const img=document.createElement('img');img.src=path;img.alt='CToon artwork preview';img.style.cssText='display:block;max-width:260px;width:100%;height:auto;margin:1rem auto';img.addEventListener('error',()=>{preview.textContent='Artwork not found at '+path+'. Upload it to GitHub first.'},{once:true});preview.append(img);
+ const img=document.createElement('img');img.src=ctoonImageUrl(path);img.alt='CToon artwork preview';img.style.cssText='display:block;max-width:260px;width:100%;height:auto;margin:1rem auto';img.addEventListener('error',()=>{preview.textContent='Artwork not found at '+path+'. Upload it to GitHub first.'},{once:true});preview.append(img);
 }
 function reset(){
  editingId=null;syncDeleteButton();form.reset();fields.price_coins.value=100;fields.parent_series.value='Cartoon & Anime';el('ctoon-maker-save').textContent='Create CToon';preview.replaceChildren();say('Ready to create a CToon. New entries default to Coming Soon.');
