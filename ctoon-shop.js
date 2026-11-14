@@ -1,6 +1,20 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 import {ctoonImageUrl} from './ctoon-image-url.js';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
+// Freeze animated PNG/GIF/WebP artwork into a single still frame for the Shop.
+function freezeShopArtwork(img){
+ img.crossOrigin='anonymous';
+ img.addEventListener('load',()=>{
+  if(img.dataset.frozen==='yes'||!img.naturalWidth||!img.naturalHeight)return;
+  try{
+   const canvas=document.createElement('canvas');
+   canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+   canvas.getContext('2d').drawImage(img,0,0);
+   const still=canvas.toDataURL('image/png');
+   img.dataset.frozen='yes';img.src=still;
+  }catch(error){console.warn('Could not freeze CToon artwork',error)}
+ });
+}
 const grid=document.getElementById('ctoon-shop-grid');
 let generation=0;
 async function refresh(){
@@ -23,7 +37,7 @@ async function refresh(){
   const art=document.createElement('div');art.className='ctoon-shop-art';
   const badge=document.createElement('span');badge.className='ctoon-shop-owned';const qty=owned.get(item.id)||0;
   badge.textContent=qty?'Owned ×'+qty:!item.is_for_sale?'Coming Soon':user?'Unowned':'Sign in';badge.classList.toggle('is-owned',qty>0);
-  const image=document.createElement('img');image.src=ctoonImageUrl(item.image_path)||'ctooniverse-logo.png';image.alt=item.name+' CToon artwork';image.loading='lazy';image.addEventListener('error',()=>{image.src='ctooniverse-logo.png'},{once:true});art.append(badge,image);
+  const image=document.createElement('img');freezeShopArtwork(image);image.src=ctoonImageUrl(item.image_path)||'ctooniverse-logo.png';image.alt=item.name+' CToon artwork';image.loading='lazy';image.addEventListener('error',()=>{image.src='ctooniverse-logo.png'},{once:true});art.append(badge,image);
   const details=document.createElement('div');details.className='ctoon-shop-details';
   const title=document.createElement('div');title.className='ctoon-shop-name';title.textContent=item.name+' ';
   const rarity=document.createElement('span');rarity.className='ctoon-shop-rarity';rarity.title=item.rarity||'Common';rarity.textContent=(item.rarity||'Common').charAt(0).toUpperCase();title.append(rarity);
