@@ -254,6 +254,11 @@ function drawSuperEffects(){if(p.attack>0&&p.cool>15&&p.meter<75){g.strokeStyle=
 
 function loop(t){let dt=Math.min(2,(t-last)/16.67||1);last=t;try{update(dt);draw()}catch(err){console.error('Showdown arena error',err);const status=document.getElementById('showdownRuntimeStatus');if(status)status.textContent='Game error: '+err.message}requestAnimationFrame(loop)}
 try{renderRoster()}catch(err){console.error('Showdown roster initialization failed',err);document.getElementById('rosterMeta').textContent='Roster preview available · retry by refreshing';const initial=document.getElementById('initialBuggy');if(initial)initial.onclick=()=>document.getElementById('start').click()}
-document.getElementById('start').onclick=()=>{if(picked.length!==1)return;beginMode()};
+// Make the arena start control usable even if session selection was not restored.
+const startBattleButton=document.getElementById('start');
+function syncBattleSelection(){const valid=rosterData.find(f=>f.name===picked[0]&&f.status==='ready'&&isFighterUnlocked(f));if(!valid){const first=rosterData.find(f=>f.status==='ready'&&isFighterUnlocked(f));if(first)picked=[first.name]}startBattleButton.disabled=picked.length!==1;const status=document.getElementById('arenaFighterStatus');if(status)status.textContent=picked.length?'PLAYER 1: '+picked[0]:'No playable fighters available'}
+syncBattleSelection();renderRoster();
+startBattleButton.addEventListener('click',event=>{event.preventDefault();syncBattleSelection();if(startBattleButton.disabled)return;beginMode()});
+
 requestAnimationFrame(loop);
 </script></html>
