@@ -1,5 +1,5 @@
-/* Prize Games dropdown shared by the CTooniverse Games navigation. */
-.site-header .games-dropdown {
+/* Shared Games and Cards dropdowns for CTooniverse navigation. */
+.site-header :is(.games-dropdown,.cards-dropdown) {
   position:relative;
   display:inline-flex;
   flex:0 0 auto;
@@ -8,15 +8,15 @@
   overflow:visible;
   z-index:10002;
 }
-.site-header .games-dropdown.is-open { z-index:10030!important; }
-.site-header .games-dropdown-trigger {
+.site-header :is(.games-dropdown,.cards-dropdown).is-open { z-index:10030!important; }
+.site-header :is(.games-dropdown-trigger,.cards-dropdown-trigger) {
   display:inline-flex;
   align-items:center;
   gap:7px;
   cursor:pointer;
   font:inherit;
 }
-.site-header .games-dropdown .games-dropdown-panel {
+.site-header :is(.games-dropdown,.cards-dropdown) :is(.games-dropdown-panel,.cards-dropdown-panel) {
   display:none!important;
   position:absolute;
   top:calc(100% + 9px);
@@ -32,11 +32,11 @@
   box-shadow:0 14px 32px #04061ec9,0 0 20px #905aff55;
   z-index:10031!important;
 }
-.site-header .games-dropdown.is-open>.games-dropdown-panel {
+.site-header :is(.games-dropdown,.cards-dropdown).is-open>:is(.games-dropdown-panel,.cards-dropdown-panel) {
   display:grid!important;
   gap:5px;
 }
-.site-header .games-dropdown-panel>a {
+.site-header :is(.games-dropdown-panel,.cards-dropdown-panel)>a {
   display:flex;
   align-items:center;
   gap:8px;
@@ -50,14 +50,14 @@
   text-align:left;
   text-decoration:none;
 }
-.site-header .games-dropdown-panel>a:hover,
-.site-header .games-dropdown-panel>a:focus-visible,
-.site-header .games-dropdown-panel>a[aria-current="page"] {
+.site-header :is(.games-dropdown-panel,.cards-dropdown-panel)>a:hover,
+.site-header :is(.games-dropdown-panel,.cards-dropdown-panel)>a:focus-visible,
+.site-header :is(.games-dropdown-panel,.cards-dropdown-panel)>a[aria-current="page"] {
   background:var(--site-nav-hover,#423176);
   border-color:var(--site-nav-edge,#9edbff);
   outline-offset:2px;
 }
-.site-header .games-dropdown-heading {
+.site-header :is(.games-dropdown-heading,.cards-dropdown-heading) {
   display:block;
   margin:5px 4px 1px;
   padding:11px 8px 5px;
@@ -68,13 +68,20 @@
   letter-spacing:.05em;
   text-transform:uppercase;
 }
+.site-header .cards-dropdown-panel>a small {
+  margin-left:auto;
+  font-size:.68rem;
+  font-weight:750;
+  opacity:.78;
+  white-space:nowrap;
+}
 @media(max-width:700px) {
-  .site-header .games-dropdown {
+  .site-header :is(.games-dropdown,.cards-dropdown) {
     display:block;
     width:100%;
     max-width:100%;
   }
-  .site-header .games-dropdown .games-dropdown-panel {
+  .site-header :is(.games-dropdown,.cards-dropdown) :is(.games-dropdown-panel,.cards-dropdown-panel) {
     position:static!important;
     inset:auto!important;
     width:100%!important;
