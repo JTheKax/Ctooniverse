@@ -47,6 +47,7 @@ function aim(index){
  if(busy||pending)return;
  selected=Math.max(0,Math.min(TOYS.length-1,index));
  carriage.style.left=SPOTS[selected]+'%';
+ stage.style.setProperty('--aim-spot',SPOTS[selected]+'%');
  document.querySelectorAll('.claw-toy').forEach((node,i)=>{
   node.classList.toggle('selected',i===selected);
   node.setAttribute('aria-pressed',String(i===selected));
@@ -124,11 +125,13 @@ async function refresh(){
 async function animateDrop(won,index){
  const toy=document.querySelectorAll('.claw-toy')[index];
  carriage.style.left=SPOTS[index]+'%';
+ stage.style.setProperty('--aim-spot',SPOTS[index]+'%');
+ stage.classList.remove('claw-victory');stage.classList.add('claw-dropping');
  carriage.classList.remove('gripping');carry.textContent='';chute.classList.remove('celebrate');
  carriage.style.setProperty('--cable',Math.max(110,stage.clientHeight-162)+'px');
  await sleep(930);
  carriage.classList.add('gripping');await sleep(280);
- if(won){toy?.classList.add('caught');carry.textContent=TOYS[index].emoji;}
+ if(won){toy?.classList.add('caught');carry.textContent=TOYS[index].emoji;stage.classList.add('claw-victory');}
  carriage.style.setProperty('--cable','52px');await sleep(910);
  if(won){
   carriage.style.left='8%';await sleep(630);
@@ -137,6 +140,7 @@ async function animateDrop(won,index){
  }else{await sleep(280);}
  carriage.classList.remove('gripping');carriage.style.left=SPOTS[selected]+'%';
  await sleep(460);chute.classList.remove('celebrate');carry.textContent='';
+ stage.classList.remove('claw-dropping','claw-victory');
 }
 async function play(){
  if(busy||!verified)return;
@@ -172,6 +176,7 @@ async function play(){
   }else message('The claw slipped! Try another drop.','info');
  }catch(error){
   carriage.style.setProperty('--cable','52px');carry.textContent='';
+  stage.classList.remove('claw-dropping','claw-victory');
   message('Drop could not be confirmed: '+(error?.message||'connection problem')+
     '. If coins may have been charged, press RETRY SAME DROP to recover the same result safely.','error');
  }finally{
