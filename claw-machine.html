@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#111037">
+<meta name="theme-color" content="#b61c31">
 <meta name="description" content="Play CToon Claw Craze at the CTooniverse Arcade.">
 <title>Claw Craze | CTooniverse Arcade</title>
 <link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
 <link rel="stylesheet" href="display-refresh.css?v=arcade-ui-20261112">
 <link rel="stylesheet" href="claw-machine.css?v=1">
-<script src="script.js?v=mobile-tabs-20261114" defer></script>
+<script src="script.js?v=20261114-ninja-scroll-v1" defer></script>
 <script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
 <script type="module" src="account-menu.js?v=1"></script>
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="music-player.js?v=random-autoplay-12" defer></script>
 <link rel="stylesheet" href="dragonball-sitewide.css?v=background-harmony-20261114">
-<link rel="stylesheet" href="claw-space-crane.css?v=20261112-toy-story"></head>
+<link rel="stylesheet" href="claw-space-crane.css?v=20261114-pizza-planet-v3"></head>
 <body class="games-arcade-page claw-page">
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
@@ -26,19 +26,21 @@
 <main id="main" class="claw-main">
 <a href="games.html" class="claw-back">‹ Back to Games</a>
 <section class="claw-hero">
-<p class="claw-kicker">✦ CTOONIVERSE SPACE ARCADE ✦</p>
+<p class="claw-kicker">✦ PIZZA PLANET-STYLE SPACE CRANE ✦</p>
 <h1>CTOON <span>CLAW CRAZE</span></h1>
-<p>Welcome aboard the space crane! Choose a prize, guide the glowing claw, and test your luck. Every paid win is yours to keep!</p>
+<p>Step up to the rocket-shaped Space Crane! Move the joystick, aim above a plush, and press the big yellow button to drop the claw. Paid wins join your collection.</p>
 <div class="claw-facts"><span>🪙 100 coins / play</span><span>🎯 55% grip chance</span><span>🧸 6 plush prizes + coin capsule</span></div>
 </section>
 <div class="claw-layout">
 <section class="claw-machine-panel" aria-labelledby="claw-machine-title">
 <div class="claw-cabinet">
-<div class="claw-rocket-top" aria-hidden="true"><span>🚀</span></div>
-<div class="claw-marquee" id="claw-machine-title"><span aria-hidden="true">★</span> THE CLAW! <span aria-hidden="true">★</span></div>
+<div class="claw-rocket-top" aria-hidden="true"><span class="claw-rocket-emblem">★</span><span class="claw-rocket-nose">P</span></div>
+<div class="claw-marquee" id="claw-machine-title"><span class="claw-marquee-eyebrow">PIZZA PLANET</span><strong>SPACE CRANE</strong><span class="claw-marquee-sub">THE CLAW CHOOSES</span></div>
 <div class="claw-toplights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <div class="claw-glass" id="claw-glass" aria-label="Seven prizes. Use left and right to select a toy and Drop Claw to play.">
 <div class="claw-glass-stars" aria-hidden="true">✦ &nbsp;&nbsp; ✧ &nbsp;&nbsp; ✦ &nbsp;&nbsp; ✧</div>
+<div class="claw-glass-hud" aria-hidden="true"><span>THE CLAW!</span><span>★ READY ★</span></div>
+<div class="claw-target-beam" aria-hidden="true"></div><div class="claw-target-ring" aria-hidden="true"></div><div class="claw-win-flash" aria-hidden="true"></div>
 <div class="claw-ufo" aria-hidden="true"><span>★</span></div>
 <div class="claw-alien-crowd" aria-hidden="true">
   <span class="claw-alien alien-1"><i class="claw-antenna"></i><span class="claw-alien-eyes"><b></b><b></b><b></b></span><span class="claw-alien-smile"></span><span class="claw-alien-suit">✦</span></span>
@@ -55,18 +57,26 @@
 <div class="claw-toys" id="claw-toys" aria-label="Prizes inside the cabinet"></div>
 <div class="claw-floor" aria-hidden="true"></div>
 </div>
-<div class="claw-cabinet-base"><div class="claw-rocket-fin claw-rocket-fin-left" aria-hidden="true"></div><div class="claw-rocket-fin claw-rocket-fin-right" aria-hidden="true"></div><div class="claw-base-plate"><span>SPACEPORT</span><span>★ CTOONIVERSE ★</span></div>
+<div class="claw-controls" role="group" aria-label="Space Crane joystick and drop controls">
+  <div class="claw-joystick-deck">
+    <div class="claw-joystick-model" aria-hidden="true"><span class="claw-joystick-shaft"></span><span class="claw-joystick-ball"></span></div>
+    <div class="claw-direction-buttons" role="group" aria-label="Move joystick left or right">
+      <button type="button" class="claw-control claw-move" id="claw-left" aria-label="Move claw left"><span aria-hidden="true">◀</span><small>LEFT</small></button>
+      <button type="button" class="claw-control claw-move" id="claw-right" aria-label="Move claw right"><span aria-hidden="true">▶</span><small>RIGHT</small></button>
+    </div>
+    <span class="claw-joystick-caption">MOVE THE CLAW</span>
+  </div>
+  <div class="claw-console">
+    <div class="claw-console-readout"><span>★ SPACEPORT CONTROL ★</span><span>100 COINS / PLAY</span></div>
+    <div class="claw-target-name">AIMING FOR <strong id="claw-target-name">Cosmic Cat</strong></div>
+    <button type="button" class="claw-drop" id="claw-drop" disabled>CHECKING MACHINE…</button>
+    <span class="claw-drop-caption">PUSH TO DROP • GUEST PRACTICE FREE</span>
+  </div>
+</div>
+<div class="claw-cabinet-base"><div class="claw-rocket-fin claw-rocket-fin-left" aria-hidden="true"></div><div class="claw-rocket-fin claw-rocket-fin-right" aria-hidden="true"></div><div class="claw-base-plate"><span>SPACE CRANE</span><span>★ CTOONIVERSE ★</span></div>
 <div class="claw-coin-slot" aria-hidden="true"><span>🪙</span><small>COINS</small></div>
 <div class="claw-chute" id="claw-chute" aria-hidden="true"><span>PRIZE OUT</span><div class="claw-chute-door">✦</div></div>
 </div>
-</div>
-<div class="claw-controls" aria-label="Claw controls">
-<button type="button" class="claw-control claw-move" id="claw-left" aria-label="Move claw left">◀ <span>LEFT</span></button>
-<div class="claw-console">
-<div class="claw-target-name">AIMING FOR <strong id="claw-target-name">Cosmic Cat</strong></div>
-<button type="button" class="claw-drop" id="claw-drop" disabled>CHECKING MACHINE…</button>
-</div>
-<button type="button" class="claw-control claw-move" id="claw-right" aria-label="Move claw right"><span>RIGHT</span> ▶</button>
 </div>
 <p id="claw-status" class="claw-status" data-tone="info" role="status" aria-live="polite">Checking your arcade account…</p>
 <p class="claw-instructions">Use <kbd>←</kbd> <kbd>→</kbd> and <kbd>Space</kbd> on keyboard, or tap the controls. You can also tap a toy to aim. Paid rounds are chance-based; aiming chooses the prize, not the win probability.</p>
@@ -79,7 +89,7 @@
 <a class="claw-signin-link" id="claw-signin-link" href="login.html" hidden>Sign in to keep prizes</a>
 </section>
 <section class="claw-info-card">
-<h2>👽 Galactic Prize Showcase</h2><p>Meet the little green space crew and choose your prize. The rare coin capsule awards 200 Cartoon Coins when caught.</p>
+<h2>👽 Alien Prize Bay</h2><p>Green aliens cheer you on while you aim at a plush. The rare coin capsule awards 200 Cartoon Coins when caught.</p>
 <div class="claw-prize-key" id="claw-prize-key"></div>
 </section>
 <section class="claw-info-card">
