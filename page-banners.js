@@ -11,9 +11,8 @@
   };
   const aliases={
     "ctoon-set.html":"ctoons","anime.html":"ctoons","misc.html":"ctoons","movies.html":"ctoons",
-    "clothing.html":"shop",
     "forums.html":"community","guild.html":"community","support.html":"community",
-    "login.html":"account","avatar-maker.html":"account",
+    "login.html":"account",
     "coin-management.html":"owner","owner-subseries.html":"owner",
     "owner-redeem-codes.html":"owner","owner-music-management.html":"owner",
     "owner-clash-card-maker.html":"owner","owner-fighters.html":"owner"
@@ -60,9 +59,9 @@
     shop:{
       eyebrow:"✦ STEP INSIDE THE MARKETPLACE ✦",
       title:"The Neon Shop",
-      description:"Browse departments, discover styles, and find your favorites.",
+      description:"Browse CToons, cards, and collectibles across the marketplace.",
       icon:"🛍️",stamp:"SHOP THE UNIVERSE",
-      chips:["CLOTHING","CARDS","COLLECTIBLES"],
+      chips:["CTOONS","CARDS","COLLECTIBLES"],
       badge:"MARKETPLACE",
       ornaments:["✦","✧","★"]
     },

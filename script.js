@@ -67,7 +67,6 @@ if (year) year.textContent = String(new Date().getFullYear());
   const shop=link('Shop','shop.html','🛍️');
   // Highlight the parent tab while browsing a related subpage.
   if(['ctoon-set.html','anime.html','movies.html','misc.html','trades.html'].includes(page))ctoons.classList.add('active');
-  if(['clothing.html'].includes(page))shop.classList.add('active');
 
   // Games is a dropdown; prize entries only link to currently playable games.
   const games=document.createElement('div');
@@ -123,7 +122,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   }
   const activeGroups={
     community:['forums.html','guild.html','support.html','community.html'],
-    account:['account.html','login.html','avatar-maker.html']
+    account:['account.html','login.html']
   };
   for(const [root,pages] of [[community,activeGroups.community],[account,activeGroups.account]]){
     if(pages.includes(page))root.querySelector('.nav-link')?.classList.add('active');
