@@ -1,3 +1,13 @@
+/* Ninja-scroll tabs: load this last so legacy mobile rules cannot resize them. */
+(() => {
+  if(document.querySelector('link[data-ninja-scroll-nav]'))return;
+  const sheet=document.createElement('link');
+  sheet.rel='stylesheet';
+  sheet.href='ninja-scroll-nav.css?v=20261114-ninja-scroll-v1';
+  sheet.dataset.ninjaScrollNav='true';
+  document.head.append(sheet);
+})();
+
 "use strict";
 /* Shared visual layer: loaded after legacy styles, with operational colors intact. */
 (() => {
