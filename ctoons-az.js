@@ -25,10 +25,11 @@
   function card(item) {
     const article=el("article","ctoons-directory-card");
     const art=el("div","ctoons-directory-art");
-    if(item.image_path && /^(https:\/\/|\/|public\/|images\/|assets\/|data\/)/i.test(item.image_path)){
+    if(item.image_path && (/^https?:\\/\\//i.test(item.image_path) || /^\\/(?!\\/)/.test(item.image_path) || /^(?!.*(?:^|\\/)\\.\\.(?:\\/|$))[\\w.-][\\w./%?=& +#-]*$/.test(item.image_path))){
       const image=el("img");
-      image.src=item.image_path;
+      image.src=item.image_path.trim();
       image.alt=item.name+" artwork";
+      image.decoding="async";
       image.loading="lazy";
       image.addEventListener("error",()=>{art.replaceChildren(el("span","ctoons-placeholder","✦"));},{once:true});
       art.append(image);
@@ -92,18 +93,29 @@
   clearFilters.addEventListener("click",()=>{search.value="";subseries.value="";render();search.focus();});
   async function load() {
     const api="https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/";
-    const endpoint=api+"ctoon_catalog?select=id,name,series,rarity,image_path&order=name.asc";
     const seriesEndpoint=api+"ctoon_series?select=name&order=name.asc";
     const key="sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS";
     try{
       const headers={apikey:key,Authorization:"Bearer "+key};
-      const [response,seriesResponse]=await Promise.all([
-        fetch(endpoint,{headers,cache:"no-store"}),
+      // PostgREST responses can be capped at 1,000 rows. Load every page in a
+      // stable order so the A–Z display does not silently omit newer CToons.
+      const fetchCatalog=async()=>{
+        const collected=[];
+        const pageSize=500;
+        for(let offset=0;;offset+=pageSize){
+          const endpoint=api+"ctoon_catalog?select=id,name,series,rarity,image_path&order=name.asc,id.asc&limit="+pageSize+"&offset="+offset;
+          const response=await fetch(endpoint,{headers,cache:"no-store"});
+          if(!response.ok)throw new Error("Catalog HTTP "+response.status);
+          const page=await response.json();
+          if(!Array.isArray(page))throw new Error("Unexpected catalog response");
+          collected.push(...page);
+          if(page.length<pageSize)return collected;
+        }
+      };
+      const [rows,seriesResponse]=await Promise.all([
+        fetchCatalog(),
         fetch(seriesEndpoint,{headers,cache:"no-store"}).catch(()=>null)
       ]);
-      if(!response.ok)throw new Error("Catalog HTTP "+response.status);
-      const rows=await response.json();
-      if(!Array.isArray(rows))throw new Error("Unexpected catalog response");
       if(seriesResponse && seriesResponse.ok){
         const seriesRows=await seriesResponse.json();
         if(Array.isArray(seriesRows)){
