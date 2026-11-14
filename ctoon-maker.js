@@ -3,7 +3,7 @@ import {ctoonImageUrl} from './ctoon-image-url.js';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const el=id=>document.getElementById(id);
 const form=el('ctoon-maker-form'),status=el('ctoon-maker-status'),holder=el('ctoon-maker-existing'),preview=el('ctoon-maker-preview');
-const fields={name:el('ctoon-maker-title'),parent_series:el('ctoon-maker-set'),series:el('ctoon-maker-series'),image_path:el('ctoon-maker-image'),rarity:el('ctoon-maker-rarity'),price_coins:el('ctoon-maker-price'),is_for_sale:el('ctoon-maker-sale')};
+const fields={name:el('ctoon-maker-title'),parent_series:el('ctoon-maker-set'),series:el('ctoon-maker-series'),image_path:el('ctoon-maker-image'),rarity:el('ctoon-maker-rarity'),price_coins:el('ctoon-maker-price'),sold_out:el('ctoon-maker-sold-out')};
 let authorized=false,rows=[],seriesRows=[],editingId=null,requestId=0;
 const say=message=>{status.textContent=message};
 const deleteButton=el('ctoon-maker-delete');
@@ -22,13 +22,13 @@ function showPreview(){
  const img=document.createElement('img');img.src=ctoonImageUrl(path);img.alt='CToon artwork preview';img.style.cssText='display:block;max-width:260px;width:100%;height:auto;margin:1rem auto';img.addEventListener('error',()=>{preview.textContent='Artwork not found at '+path+'. Upload it to GitHub first.'},{once:true});preview.append(img);
 }
 function reset(){
- editingId=null;syncDeleteButton();form.reset();fields.price_coins.value=100;fields.parent_series.value='Cartoon & Anime';el('ctoon-maker-save').textContent='Create CToon';preview.replaceChildren();say('Ready to create a CToon. New entries default to Coming Soon.');
+ editingId=null;syncDeleteButton();form.reset();fields.price_coins.value=100;fields.sold_out.checked=true;fields.parent_series.value='Cartoon & Anime';el('ctoon-maker-save').textContent='Create CToon';preview.replaceChildren();say('Ready to create a CToon. New entries default to Sold Out.');
 }
 function edit(item){
  editingId=item.id;syncDeleteButton();
  for(const key of ['name','parent_series','series','rarity','price_coins'])fields[key].value=item[key]??'';
  fields.image_path.value=item.image_path||'';
- fields.is_for_sale.checked=!!item.is_for_sale;
+ fields.sold_out.checked=!item.is_for_sale;
  el('ctoon-maker-save').textContent='Save CToon Changes';
  showPreview();say('Editing '+item.name+'. Save Changes updates the live catalog.');form.scrollIntoView({block:'start'});
 }
@@ -39,7 +39,7 @@ function render(){
  const summary=document.createElement('p');summary.textContent='Showing '+matches.length+' of '+rows.length+' CToons';holder.append(summary);
  for(const item of matches){
   const row=document.createElement('div');row.className='music-admin-row';
-  const label=document.createElement('span');label.textContent=item.name+' — '+(item.series||'Uncategorized')+' · '+(item.is_for_sale?'For sale':'Coming Soon');
+  const label=document.createElement('span');label.textContent=item.name+' — '+(item.series||'Uncategorized')+' · '+(item.is_for_sale?'For sale':'Sold Out');
   const button=document.createElement('button');button.type='button';button.className='button secondary';button.textContent='Edit';button.addEventListener('click',()=>edit(item));row.append(label,button);holder.append(row);
  }
 }
@@ -71,7 +71,7 @@ async function init(){
 }
 form.addEventListener('submit',async event=>{
  event.preventDefault();if(!authorized)return;
- const name=fields.name.value.trim(),series=fields.series.value.trim(),parent_series=seriesRows.find(x=>x.name===series)?.category||'Cartoon & Anime',image_path=cleanImage(fields.image_path.value),rarity=fields.rarity.value,price_coins=Number(fields.price_coins.value),is_for_sale=fields.is_for_sale.checked;
+ const name=fields.name.value.trim(),series=fields.series.value.trim(),parent_series=seriesRows.find(x=>x.name===series)?.category||'Cartoon & Anime',image_path=cleanImage(fields.image_path.value),rarity=fields.rarity.value,price_coins=Number(fields.price_coins.value),is_for_sale=!fields.sold_out.checked;
  if(!name||!parent_series||!series||!image_path||!Number.isSafeInteger(price_coins)||price_coins<0||price_coins>1000000){say('Enter a name, subseries, valid PNG/JPG/WebP artwork path and a whole-number price.');return}
  if(!seriesRows.some(x=>x.name===series)){say('Select a registered CToon set from the list.');return}
  const existing=rows.find(x=>x.name.toLowerCase()===name.toLowerCase()&&x.series?.toLowerCase()===series.toLowerCase()&&x.id!==editingId);
