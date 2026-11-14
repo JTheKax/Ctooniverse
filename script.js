@@ -56,7 +56,11 @@ if (year) year.textContent = String(new Date().getFullYear());
     return a;
   };
   const home=link('Home','index.html','🏠');
-  const ctoons=link('CToons','ctoons.html','🎴');
+  const ctoons=document.createElement('div');
+  ctoons.className='ctoons-dropdown';
+  ctoons.innerHTML='<button type="button" class="nav-link ctoons-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="ctoons-menu"><span class="nav-icon" aria-hidden="true">🎴</span><span>CToons</span><span aria-hidden="true">▾</span></button>'+
+    '<div class="ctoons-dropdown-panel" id="ctoons-menu"><a href="ctoons.html">CToons Collection</a><a href="shop.html">CToon Shop</a></div>';
+  if(['ctoons.html','shop.html','ctoon-set.html','anime.html','movies.html','misc.html','trades.html'].includes(page))ctoons.querySelector('.ctoons-dropdown-trigger').classList.add('active');
   // Cards is independent from Games; all links point to real page sections.
   const cards=document.createElement('div');
   cards.className='cards-dropdown';
@@ -76,7 +80,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   const watch=link('Theater','watch.html','🎬');
   // Shop is intentionally not a top-level navigation tab; its page and purchases remain available.
   // Highlight the parent tab while browsing a related subpage.
-  if(['ctoon-set.html','anime.html','movies.html','misc.html','trades.html'].includes(page))ctoons.classList.add('active');
+  
 
   // Games is a dropdown; prize entries only link to currently playable games.
   const games=document.createElement('div');
@@ -153,11 +157,24 @@ if (year) year.textContent = String(new Date().getFullYear());
   }
 
   function closeMenus(except){
-    for(const root of nav.querySelectorAll('.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu')){
+    for(const root of nav.querySelectorAll('.ctoons-dropdown,.ctoons-dropdown,.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu')){
       if(root===except)continue;
       root.classList.remove('is-open');
       root.querySelector('button[aria-expanded]')?.setAttribute('aria-expanded','false');
     }
+  }
+  const ctoonsTrigger=ctoons.querySelector('.ctoons-dropdown-trigger');
+  ctoonsTrigger.addEventListener('click',event=>{
+    event.preventDefault();
+    const opening=!ctoons.classList.contains('is-open');
+    closeMenus(ctoons);
+    ctoons.classList.toggle('is-open',opening);
+    ctoonsTrigger.setAttribute('aria-expanded',String(opening));
+  });
+  if(!document.querySelector('#ctoons-dropdown-style')){
+    const style=document.createElement('style');style.id='ctoons-dropdown-style';
+    style.textContent='.ctoons-dropdown{position:relative;display:flex;align-items:center}.ctoons-dropdown-panel{display:none;position:absolute;top:100%;left:0;min-width:190px;z-index:9999;background:#15112c;border:2px solid #8165ff;border-radius:10px;padding:7px;box-shadow:0 10px 25px #0009}.ctoons-dropdown.is-open .ctoons-dropdown-panel{display:grid;gap:4px}.ctoons-dropdown-panel a{display:block;color:#fff;text-decoration:none;padding:11px 12px;border-radius:7px;font-weight:700}.ctoons-dropdown-panel a:hover,.ctoons-dropdown-panel a:focus-visible{background:#4935a0;color:#fff}@media(max-width:760px){.ctoons-dropdown-panel{left:0;right:auto;min-width:180px}}';
+    document.head.append(style);
   }
   const gamesTrigger=games.querySelector('.games-dropdown-trigger');
   gamesTrigger.addEventListener('click',event=>{
@@ -178,7 +195,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   // Capture the click before legacy Community handlers stop propagation.
   // This guarantees at most one open dropdown on phones and desktops.
   nav.addEventListener('click',event=>{
-    const root=event.target.closest('.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu');
+    const root=event.target.closest('.ctoons-dropdown,.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu');
     closeMenus(root);
   },true);
   document.addEventListener('click',event=>{
@@ -186,7 +203,7 @@ if (year) year.textContent = String(new Date().getFullYear());
   });
   nav.addEventListener('keydown',event=>{
     if(event.key==='Escape'){
-      const trigger=event.target.closest('.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu')?.querySelector('button[aria-expanded]');
+      const trigger=event.target.closest('.ctoons-dropdown,.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu')?.querySelector('button[aria-expanded]');
       closeMenus();
       trigger?.focus();
       return;
