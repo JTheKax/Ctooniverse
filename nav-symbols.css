@@ -1,7 +1,7 @@
 /* CTooniverse menu symbols: shared across every standard site header.
    CSS icons keep link text, aria labels, and existing JS/auth selectors unchanged. */
 .site-header nav :is(
-  .ctoons-dropdown-panel,.games-dropdown-panel,.community-dropdown-panel,
+  .ctoons-dropdown-panel,.games-dropdown-panel,.cards-dropdown-panel,.community-dropdown-panel,
   .account-dropdown-panel,.owner-menu-panel
 ) > :is(a,button) {
   display:flex!important;
@@ -12,7 +12,7 @@
   overflow-wrap:anywhere;
 }
 .site-header nav :is(
-  .ctoons-dropdown-panel,.games-dropdown-panel,.community-dropdown-panel,
+  .ctoons-dropdown-panel,.games-dropdown-panel,.cards-dropdown-panel,.community-dropdown-panel,
   .account-dropdown-panel,.owner-menu-panel
 ) > :is(a,button)::before {
   content:"✦";
@@ -40,6 +40,11 @@
 .site-header nav .games-dropdown-panel > a[href="prize-games.html"]::before{content:"🎁";}
 .site-header nav .games-dropdown-panel > a[href="claw-machine.html"]::before{content:"🧸";}
 .site-header nav .games-dropdown-panel > a[href="prize-wheel.html"]::before{content:"🎡";}
+.site-header nav .cards-dropdown-panel > a[href="cards.html"]::before{content:"🃏";}
+.site-header nav .cards-dropdown-panel > a[href="cards.html#cards-gallery"]::before{content:"✨";}
+.site-header nav .cards-dropdown-panel > a[href="cards.html#my-cards"]::before{content:"📚";}
+.site-header nav .cards-dropdown-panel > a[href="cards.html#card-shop"]::before{content:"🛍️";}
+.site-header nav .cards-dropdown-panel > a[href="cards.html#card-battles"]::before{content:"⚔️";}
 .site-header nav .community-dropdown-panel > a[href="community.html"]::before{content:"🏘️";}
 .site-header nav .community-dropdown-panel > a[href="forums.html"]::before{content:"💬";}
 .site-header nav .community-dropdown-panel > a[href="guild.html"]::before{content:"🛡️";}
@@ -60,7 +65,7 @@
 .site-header nav .account-dropdown-panel > button[data-account-logout]::before{content:"🚪";}
 /* Allow long game names and owner tools to wrap on narrow screens. */
 @media(max-width:700px){
-  .site-header nav :is(.games-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) > :is(a,button){
+  .site-header nav :is(.games-dropdown-panel,.cards-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) > :is(a,button){
     gap:8px!important;
     min-height:44px;
   }
