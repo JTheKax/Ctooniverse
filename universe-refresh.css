@@ -1,0 +1,240 @@
+/* CTooniverse • Universe-wide display refresh • 2026-11-14
+   Presentation only. Never change operational navigation color, ownership,
+   account controls, coin balances, data, or game state. */
+:root {
+  --ctu-ice:#8be9ff;--ctu-violet:#ba9aff;--ctu-pink:#ff96e4;
+  --ctu-ink:#f7f8ff;--ctu-muted:#cbd7f3;
+  --ctu-glass:linear-gradient(143deg,rgba(13,21,54,.95),rgba(30,18,69,.94));
+  --ctu-shadow:0 16px 40px rgba(3,5,30,.5),inset 0 1px rgba(255,255,255,.1);
+}
+html { scroll-padding-top:20px; }
+body { -webkit-tap-highlight-color:transparent; }
+:where(main) { min-width:0; }
+:where(main) :is(h1,h2,h3){text-wrap:balance;overflow-wrap:break-word}
+:where(main) :is(img,video,svg,canvas){max-width:100%}
+:where(main) :is(input,select,textarea,button){font:inherit;max-width:100%}
+:where(main) :is(a,button,input,select,textarea):focus-visible,
+.ctu-search-dialog :is(a,button,input):focus-visible{outline:3px solid #ffdb84!important;outline-offset:3px}
+:where(main) :is(.button,.home-tile,.ctoons-directory-card,.shop-department,.games-hub-card){transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+@media(hover:hover) and (pointer:fine){:where(main) :is(.button,.home-tile,.ctoons-directory-card,.shop-department,.games-hub-card):hover{transform:translateY(-3px)}}
+/* A cohesive header shell without overriding the green/yellow nav status controls */
+body.ctu-ui-ready .site-header{
+  isolation:isolate;position:relative;
+  border-radius:0 0 22px 22px;border:1px solid rgba(142,159,251,.35);border-top:0;
+  box-shadow:0 15px 40px rgba(2,5,24,.46),inset 0 -1px rgba(120,222,255,.12);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.site-header .brand{position:relative;isolation:isolate;overflow:visible}
+.site-header .brand-logo{display:block;object-fit:contain;max-height:77px;max-width:min(280px,100%);width:auto;height:auto;transform-origin:50% 60%}
+/* Animated logo: soft levitation, neon edge glow and passing light streak */
+body.ctu-ui-ready .site-header .brand-logo{
+  animation:ctu-logo-float 5.8s ease-in-out infinite,ctu-logo-light 4.9s ease-in-out infinite;
+}
+body.ctu-ui-ready .site-header .brand::before{
+  content:"";position:absolute;inset:2% -4%;z-index:1;pointer-events:none;border-radius:18px;
+  background:linear-gradient(106deg,transparent 26%,rgba(185,246,255,0) 38%,rgba(255,255,255,.48) 49%,rgba(177,218,255,0) 59%,transparent 68%);
+  background-size:240% 100%;mix-blend-mode:screen;animation:ctu-logo-shimmer 5.8s ease-in-out infinite;
+}
+body.ctu-ui-ready .site-header .brand::after{
+  content:"✧";position:absolute;right:8%;top:-6px;z-index:2;pointer-events:none;
+  font-size:22px;color:#b4f6ff;text-shadow:0 0 10px #4dbfff;
+  animation:ctu-logo-spark 3.1s ease-in-out infinite;
+}
+body.ctu-ui-ready .home-universe-page .welcome-panel img[src*="ctooniverse-logo.png"],
+body.ctu-ui-ready.home-universe-page .welcome-panel img[src*="ctooniverse-logo.png"]{
+  filter:drop-shadow(0 0 15px rgba(111,204,255,.42));
+  animation:ctu-logo-float 6.7s ease-in-out infinite;
+}
+@keyframes ctu-logo-float{0%,100%{transform:translateY(0) rotate(-.7deg)}50%{transform:translateY(-5px) rotate(.8deg)}}
+@keyframes ctu-logo-light{0%,100%{filter:drop-shadow(0 0 5px rgba(83,200,255,.35)) drop-shadow(0 0 9px rgba(178,103,255,.2))}50%{filter:drop-shadow(0 0 13px rgba(101,219,255,.7)) drop-shadow(0 0 22px rgba(166,103,255,.42))}}
+@keyframes ctu-logo-shimmer{0%,20%{background-position:130% 0;opacity:0}28%{opacity:.68}47%{background-position:-100% 0;opacity:0}100%{background-position:-100% 0;opacity:0}}
+@keyframes ctu-logo-spark{0%,100%{opacity:.2;transform:scale(.8) rotate(0)}50%{opacity:.95;transform:scale(1.28) rotate(35deg)}}
+.ctu-header-tools{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ctu-tool{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;padding:9px 13px;cursor:pointer;
+  border:1px solid rgba(132,216,255,.7);border-radius:13px;
+  background:linear-gradient(135deg,rgba(22,44,93,.98),rgba(43,29,95,.96));
+  color:#f8faff;font:800 13px/1.2 system-ui,sans-serif;
+  box-shadow:0 5px 17px #02051e88,inset 0 1px #ffffff22;
+}
+.ctu-tool:hover{border-color:#c3a5ff;filter:brightness(1.1)}
+.ctu-tool kbd{border-radius:6px;padding:3px 6px;background:#ffffff18;color:#e2f5ff;font:700 10px system-ui}
+.ctu-menu-trigger{display:none}
+.ctu-tool svg{width:18px;height:18px;flex-shrink:0}
+/* Landing experience */
+.home-universe-page .simple-home{width:min(100%,1360px);margin-inline:auto}
+.home-universe-page .welcome-panel{
+  overflow:hidden;min-height:440px;border-radius:30px!important;
+  border:1px solid rgba(146,217,255,.73)!important;
+  background:radial-gradient(ellipse at 92% 35%,rgba(93,66,199,.39),transparent 58%),var(--ctu-glass)!important;
+  box-shadow:var(--ctu-shadow),0 0 36px rgba(106,115,247,.18)!important;
+}
+.home-universe-page .welcome-copy{max-width:760px}
+.home-universe-page .welcome-copy h1{
+  font-size:clamp(40px,5.3vw,81px);font-weight:950;line-height:1.035;letter-spacing:-.046em;
+  text-shadow:0 6px 30px rgba(2,6,25,.5);
+}
+.home-universe-page .welcome-copy>p:not(.eyebrow){max-width:650px;font-size:clamp(16px,1.5vw,19px);color:#e2ebff}
+.home-universe-page .hero-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.home-universe-page .hero-actions .button{min-height:48px;margin:0;border-radius:14px;justify-content:center}
+.home-universe-page .announcement-panel{
+  border-radius:27px!important;border:1px solid #8b9af08c!important;
+  background:var(--ctu-glass)!important;box-shadow:var(--ctu-shadow)!important
+}
+.home-universe-page .home-tiles{gap:14px}
+.home-universe-page .home-tile{
+  min-height:175px;border-radius:22px!important;padding:24px 13px;
+  background:radial-gradient(circle at 80% 6%,#488cf028,transparent 60%),var(--ctu-glass)!important;
+  box-shadow:var(--ctu-shadow)!important
+}
+.home-universe-page .home-status-guide{border-radius:24px;background:var(--ctu-glass)}
+.ctu-feature-section{
+  margin:28px 0 8px;padding:clamp(18px,3vw,30px);border:1px solid #90aeec8c;border-radius:26px;
+  background:var(--ctu-glass);box-shadow:var(--ctu-shadow)
+}
+.ctu-feature-head{display:flex;justify-content:space-between;align-items:end;gap:15px;flex-wrap:wrap;margin-bottom:19px}
+.ctu-feature-head h2{margin:.15rem 0 .2rem;font-size:clamp(25px,3vw,38px);color:#fff}
+.ctu-feature-head p{margin:0;color:var(--ctu-muted)}
+.ctu-feature-kicker{display:block;font-size:11px;letter-spacing:.19em;font-weight:900;color:#8fe7ff}
+.ctu-feature-all{border:1px solid #79dafa88;padding:9px 14px;border-radius:100px;font-weight:800;color:#d8f4ff}
+.ctu-feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.ctu-feature{
+  position:relative;min-width:0;min-height:206px;display:flex;flex-direction:column;align-items:start;gap:10px;
+  padding:22px;border:1px solid #a0afff70;border-radius:20px;
+  background:radial-gradient(circle at 91% 6%,#4e95fa55,transparent 55%),linear-gradient(145deg,#102553,#1e174b);
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;overflow:hidden
+}
+.ctu-feature:nth-child(2){background:radial-gradient(circle at 91% 6%,#c56df344,transparent 55%),linear-gradient(145deg,#142856,#291647)}
+.ctu-feature:nth-child(3){background:radial-gradient(circle at 91% 6%,#52e2dd38,transparent 55%),linear-gradient(145deg,#102b50,#1d194c)}
+@media(hover:hover) and (pointer:fine){.ctu-feature:hover{transform:translateY(-5px);border-color:#a9ecff;box-shadow:0 14px 30px #01051bb0}}
+.ctu-feature-icon{display:grid;place-items:center;width:52px;height:52px;border:1px solid #ffffff50;border-radius:16px;background:#ffffff13;font-size:28px}
+.ctu-feature-kicker-text{color:#89e8ff;font:900 11px system-ui;letter-spacing:.14em}
+.ctu-feature-title{color:#fff;font-size:clamp(20px,2vw,25px);font-weight:950;line-height:1.14}
+.ctu-feature-desc{color:#d7e2fd;font-size:14px;line-height:1.48;max-width:33ch}
+.ctu-feature-arrow{position:absolute;right:17px;bottom:13px;color:#b1eaff;font-size:23px}
+/* Consistent panels, legible controls, and artwork-first cards on every page. */
+:where(.ctoons-directory-hero,.games-hub-hero,.shop-intro,.theater-grand-marquee,.page-placeholder,.owner-panel,.collection-section,.global-chat,.ctoons-directory-card,.shop-department){
+  box-shadow:0 14px 38px rgba(1,4,28,.44),inset 0 1px rgba(255,255,255,.05)
+}
+:where(.ctoons-directory-hero,.games-hub-hero,.shop-intro,.theater-grand-marquee){border-radius:25px}
+:where(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.account-neon-page,.owner-neon-page) :is(main h1,main h2){
+  text-shadow:0 3px 18px #6578ff4d
+}
+:where(.ctoons-library-page,.shop-cartoon-page,.games-arcade-page,.watch-theater-page,.community-neon-page,.account-neon-page,.owner-neon-page) main :is(input:not([type=checkbox]):not([type=radio]),select,textarea){
+  background-color:#0a1a3ddb;color:#fff;border-color:#7898ef88;border-radius:12px
+}
+:where(main) :is(input:not([type=checkbox]):not([type=radio]),select,textarea):focus{border-color:#8de7ff;box-shadow:0 0 0 3px #69d6ff26}
+.ctoons-directory .ctoons-directory-card,.shop-main .shop-department{
+  border-radius:20px;overflow:hidden;
+}
+.ctoons-directory .ctoons-directory-card img,.shop-main .ctoon-shop-art img{object-fit:contain;max-width:100%}
+.games-hub-main :is(.games-hub-hero,.game-card,.games-hub-card),.theater-main .theater-library,
+.community-neon-page .global-chat,.owner-neon-page .owner-panel,.account-neon-page .owner-panel{
+  border-radius:22px
+}
+.site-header nav .owner-menu:not(.owner-visible){display:none!important}
+.ctu-search-dialog{
+  box-sizing:border-box;position:fixed;inset:0;margin:auto;
+  width:min(630px,calc(100vw - 22px));max-height:min(83dvh,720px);
+  padding:0;overflow:hidden;border:1px solid #90dcff;border-radius:23px;
+  background:#111a40;color:#f7faff;
+  box-shadow:0 25px 90px #010414ea,0 0 45px #6d65fc55
+}
+.ctu-search-dialog::backdrop{background:#020716cc;backdrop-filter:blur(6px)}
+.ctu-search-head{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:18px 20px 13px}
+.ctu-search-head h2{margin:0;color:#fff;font-size:21px}
+.ctu-search-head p{margin:3px 0 0;color:#bed2f4;font-size:12px}
+.ctu-search-close{cursor:pointer;width:38px;height:38px;border:1px solid #839eea88;border-radius:10px;background:#ffffff13;color:#fff;font-size:23px}
+.ctu-search-input-wrap{padding:0 20px 15px}
+.ctu-search-input{width:100%;box-sizing:border-box;min-height:53px;border:1px solid #82cfff99;border-radius:13px;background:#071331;color:#fff;padding:13px 14px;font:600 16px system-ui}
+.ctu-search-input::placeholder{color:#afbfda}
+.ctu-search-results{max-height:min(49dvh,420px);overflow-y:auto;overscroll-behavior:contain;padding:0 11px 14px}
+.ctu-search-section{margin:4px 12px 8px;color:#86e8ff;font-size:11px;font-weight:900;letter-spacing:.15em;text-transform:uppercase}
+.ctu-search-item{display:flex;align-items:center;gap:12px;padding:10px 12px;margin:3px 0;border:1px solid transparent;border-radius:13px;color:#fff;text-decoration:none}
+.ctu-search-item:hover,.ctu-search-item:focus-visible{background:#233f7f;border-color:#8edeff88}
+.ctu-search-icon{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:11px;background:#ffffff11;font-size:23px}
+.ctu-search-info{display:flex;flex-direction:column;min-width:0}
+.ctu-search-title{font-size:14px;font-weight:850}
+.ctu-search-desc{font-size:12px;color:#bfd2f3}
+.ctu-search-arrow{margin-left:auto;color:#93e2ff}
+.ctu-search-empty{padding:18px;color:#cbdaf7}
+.ctu-search-foot{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid #8a99e955;color:#c4d5f1;font-size:12px}
+.ctu-motion-toggle{cursor:pointer;border:1px solid #86d4ff88;padding:7px 11px;border-radius:9px;background:#172f6b;color:#fff;font:800 12px system-ui}
+.ctu-to-top{
+  position:fixed;z-index:68;right:17px;bottom:105px;width:44px;height:44px;
+  display:grid;place-items:center;border:1px solid #8fe6ff;border-radius:50%;
+  background:#193571f1;color:#fff;box-shadow:0 7px 25px #020719a0;
+  font-size:22px;cursor:pointer;opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateY(10px);transition:opacity .2s ease,transform .2s ease,visibility .2s
+}
+.ctu-to-top.ctu-visible{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0)}
+body[data-ctu-motion="reduced"] .brand-logo,
+body[data-ctu-motion="reduced"] .brand::before,
+body[data-ctu-motion="reduced"] .brand::after,
+body[data-ctu-motion="reduced"] .welcome-panel img[src*="ctooniverse-logo.png"],
+body[data-ctu-motion="reduced"] :is(.ct-banner-spark,.shooting-star,.saturn-scene,.welcome-orbit){
+  animation:none!important;transform:none!important
+}
+body[data-ctu-motion="reduced"] :is(.ct-page-banner,.welcome-panel,.games-hub-hero,.ctu-feature,.home-tile){animation:none!important;transition:none!important}
+@media(max-width:1040px){.ctu-tool kbd{display:none}}
+@media(max-width:800px){
+  body.ctu-ui-ready .site-header{
+    display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;
+    gap:9px 10px;padding:12px!important
+  }
+  .site-header .brand{grid-column:1;grid-row:1;min-width:0}
+  .site-header .brand-logo{max-width:min(100%,230px);max-height:55px}
+  .ctu-header-tools{grid-column:2;grid-row:1;justify-self:end}
+  .site-header #header-player{grid-column:1/-1;grid-row:2;min-width:0;max-width:100%;justify-self:stretch;margin:0!important}
+  .site-header .header-tag{display:none!important}
+  .ctu-menu-trigger{display:inline-flex}
+  body.ctu-ui-ready .site-header nav{
+    grid-column:1/-1;grid-row:3;order:initial;
+    display:none!important;width:100%!important;min-width:0!important;max-width:100%!important;
+    max-height:min(68dvh,625px);overflow-y:auto!important;
+    grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:8px!important;
+    margin:0!important;padding:10px!important;border-radius:16px;box-sizing:border-box
+  }
+  body.ctu-ui-ready .site-header.ctu-menu-open nav{display:grid!important}
+  body.ctu-ui-ready .site-header nav>a.nav-link{
+    width:100%;min-width:0;min-height:48px;text-align:left;justify-content:flex-start
+  }
+  body.ctu-ui-ready .site-header nav>:is(.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu){
+    grid-column:1/-1;width:100%!important;min-width:0!important;max-width:100%!important;
+  }
+  body.ctu-ui-ready .site-header nav>:is(.games-dropdown,.community-dropdown,.account-dropdown,.owner-menu)>button{
+    display:flex!important;width:100%;min-height:48px;justify-content:space-between!important
+  }
+  body.ctu-ui-ready .site-header nav :is(.games-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel){
+    position:static!important;inset:auto!important;transform:none!important;
+    width:100%!important;max-width:100%!important;min-width:0!important;max-height:35dvh;
+    margin-top:5px;overflow-y:auto;box-sizing:border-box;box-shadow:none!important
+  }
+  body.ctu-ui-ready .site-header nav :is(.games-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) :is(a,button){
+    max-width:100%;white-space:normal!important;min-height:41px;overflow-wrap:anywhere
+  }
+  .home-universe-page .welcome-panel{min-height:unset;padding:28px 23px!important}
+  .home-universe-page .welcome-copy h1{font-size:clamp(36px,7.6vw,60px)}
+  .ctu-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ctu-feature:last-child{grid-column:1/-1}
+}
+@media(max-width:540px){
+  .ctu-tool{min-height:41px;padding:9px 10px}
+  .ctu-tool-label{display:none}
+  .site-header .brand-logo{max-width:min(100%,165px);max-height:48px}
+  .home-universe-page .hero-actions .button{width:100%}
+  .home-universe-page .home-tile{min-height:145px}
+  .ctu-feature-section{padding:16px;border-radius:20px}
+  .ctu-feature-grid{grid-template-columns:minmax(0,1fr)}
+  .ctu-feature:last-child{grid-column:auto}
+  .ctu-feature{min-height:175px;padding:19px}
+  .ctu-search-head,.ctu-search-foot{padding-left:16px;padding-right:16px}
+  .ctu-search-input-wrap{padding-left:16px;padding-right:16px}
+  .ctu-to-top{right:12px;bottom:95px}
+}
+@media(prefers-reduced-motion:reduce){
+  .site-header .brand-logo,.site-header .brand::before,.site-header .brand::after,
+  .home-universe-page .welcome-panel img[src*="ctooniverse-logo.png"]{animation:none!important;transform:none!important}
+  .ctu-feature,.ctu-to-top{transition:none!important;animation:none!important}
+}
