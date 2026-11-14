@@ -34,7 +34,24 @@
   function mount(){
     const header=document.querySelector(".site-header");
     const standalone=document.querySelector(".ctoon-standalone-nav");
-    if(!header&&!standalone) return;
+    if(!header&&!standalone){
+      // The owner CToon Maker uses a standalone document without the site header.
+      // Add an accessible animated logo without altering its owner-only form.
+      if(path==="owner-ctoon-maker.html" && !document.querySelector(".ctu-minibrand")){
+        const main=document.querySelector("main");
+        if(main){
+          const brand=document.createElement("a");
+          brand.className="ctu-minibrand";
+          brand.href="index.html";
+          brand.setAttribute("aria-label","CTooniverse home");
+          const logo=document.createElement("img");
+          logo.src="ctooniverse-logo.png";logo.alt="CTooniverse";logo.width=200;logo.height=68;
+          brand.append(logo);
+          main.before(brand);
+        }
+      }
+      return;
+    }
     const motionKey="ctooniverse-motion-preference";
     const preferred=safeStore("get",motionKey);
     let reduced=preferred==="reduced" || (preferred!=="full"&&matchMedia("(prefers-reduced-motion: reduce)").matches);
