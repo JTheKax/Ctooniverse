@@ -251,3 +251,19 @@ body[data-ctu-motion="reduced"] :is(.ct-page-banner,.welcome-panel,.games-hub-he
 .ctu-minibrand img{display:block;width:min(200px,52vw);max-height:70px;height:auto;object-fit:contain;animation:ctu-logo-float 5.8s ease-in-out infinite,ctu-logo-light 5s ease-in-out infinite}
 body[data-ctu-motion="reduced"] :is(.ctu-standalone-logo,.ctu-showdown-logo img,.ctu-minibrand img){animation:none!important;transform:none!important}
 @media(prefers-reduced-motion:reduce){:is(.ctu-standalone-logo,.ctu-showdown-logo img,.ctu-minibrand img){animation:none!important;transform:none!important}}
+
+/* Keep NEW navigation tools consistent with owner-controlled page status. */
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header .ctu-header-tools .ctu-tool{
+  background:var(--site-nav-tab)!important;color:var(--site-nav-ink)!important;
+  border-color:var(--site-nav-edge)!important;
+  box-shadow:0 6px 20px var(--site-nav-glow),inset 0 1px #ffffff20!important
+}
+body:is([data-site-mode="online"],[data-site-mode="maintenance"]) .site-header .ctu-header-tools .ctu-tool:hover{
+  background:var(--site-nav-tab-hover)!important;color:var(--site-nav-ink)!important
+}
+body[data-site-mode="online"] .ctoon-standalone-nav .ctu-standalone-search{
+  background:#1b5a37;color:#f2fff7;border-color:#7bebaa
+}
+body[data-site-mode="maintenance"] .ctoon-standalone-nav .ctu-standalone-search{
+  background:#ecc34c;color:#302102;border-color:#bd8210
+}
