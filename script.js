@@ -64,7 +64,7 @@ if (year) year.textContent = String(new Date().getFullYear());
     cards.querySelector('a[href="cards.html"]')?.setAttribute('aria-current','page');
   }
   const watch=link('Theater','watch.html','🎬');
-  const shop=link('Shop','shop.html','🛍️');
+  // Shop is intentionally not a top-level navigation tab; its page and purchases remain available.
   // Highlight the parent tab while browsing a related subpage.
   if(['ctoon-set.html','anime.html','movies.html','misc.html','trades.html'].includes(page))ctoons.classList.add('active');
 
@@ -130,8 +130,8 @@ if (year) year.textContent = String(new Date().getFullYear());
       if(a.getAttribute('href')?.split('#')[0]===page)a.setAttribute('aria-current','page');
     }
   }
-  nav.replaceChildren(home,ctoons,games,cards,watch,shop,community,account,owner);
-  nav.dataset.navigationVersion='2026-11-14-cards-dropdown';
+  nav.replaceChildren(home,ctoons,games,cards,watch,community,account,owner);
+  nav.dataset.navigationVersion='2026-11-14-no-shop-tab';
   const header=nav.closest('.site-header');
   if(header&&!header.querySelector('#header-player')){
     const player=document.createElement('div');
