@@ -3,7 +3,7 @@
 // All user appearance values are strictly whitelisted before SVG interpolation.
 const COLORS={
  skin:'#f2be97',hair:'#302442',shirt:'#624be3',pants:'#293862',
- hat:'#df3957',hatAccent:'#ffc950',background:'#34286d'
+ hatColor:'#df3957',hatAccent:'#ffc950',background:'#34286d'
 };
 const OPTIONS={
  hairStyle:['short','swoop','spiky','long','curly','bald'],
@@ -69,10 +69,10 @@ export function avatarSvg(value={}){
  a.face==='grin'?'<path d="M138 179Q160 215 181 179Q160 193 138 179Z" fill="white" stroke="#482633" stroke-width="3"/>':
  '<path d="M141 185 Q161 198 181 185" fill="none" stroke="#482633" stroke-width="4" stroke-linecap="round"/>';
  const hat=a.hat==='none'?'':a.hat==='beanie'?
- `<path d="M80 97Q82 12 161 20Q245 22 242 97Z" fill="${a.hat}" stroke="${stroke}" stroke-width="6"/><path d="M79 93Q161 77 243 93L242 113Q157 97 80 114Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/>`:
- a.hat==='pom'?`<circle cx="161" cy="18" r="17" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/><path d="M82 101Q91 25 159 29Q230 26 239 101Z" fill="${a.hat}" stroke="${stroke}" stroke-width="6"/><path d="M79 96Q160 84 244 96L241 113Q161 100 80 113Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/>`:
- a.hat==='earflaps'?`<path d="M86 105Q88 14 159 28Q234 19 237 103L239 144L219 147L212 108L108 108L99 147L78 145Z" fill="${a.hat}" stroke="${stroke}" stroke-width="6"/><path d="M82 94Q160 83 240 95" fill="none" stroke="${a.hatAccent}" stroke-width="11"/>`:
- `<path d="M84 97Q90 29 163 37Q226 37 238 100Z" fill="${a.hat}" stroke="${stroke}" stroke-width="6"/><path d="M146 100Q211 104 259 112Q236 127 156 116Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/>`;
+ `<path d="M80 97Q82 12 161 20Q245 22 242 97Z" fill="${a.hatColor}" stroke="${stroke}" stroke-width="6"/><path d="M79 93Q161 77 243 93L242 113Q157 97 80 114Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/>`:
+ a.hat==='pom'?`<circle cx="161" cy="18" r="17" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/><path d="M82 101Q91 25 159 29Q230 26 239 101Z" fill="${a.hatColor}" stroke="${stroke}" stroke-width="6"/><path d="M79 96Q160 84 244 96L241 113Q161 100 80 113Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/>`:
+ a.hat==='earflaps'?`<path d="M86 105Q88 14 159 28Q234 19 237 103L239 144L219 147L212 108L108 108L99 147L78 145Z" fill="${a.hatColor}" stroke="${stroke}" stroke-width="6"/><path d="M82 94Q160 83 240 95" fill="none" stroke="${a.hatAccent}" stroke-width="11"/>`:
+ `<path d="M84 97Q90 29 163 37Q226 37 238 100Z" fill="${a.hatColor}" stroke="${stroke}" stroke-width="6"/><path d="M146 100Q211 104 259 112Q236 127 156 116Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/>`;
  const extras=a.accessory==='glasses'?
  '<rect x="108" y="111" width="49" height="43" rx="13" fill="none" stroke="#343045" stroke-width="5"/><rect x="163" y="111" width="49" height="43" rx="13" fill="none" stroke="#343045" stroke-width="5"/><path d="M157 126H163" stroke="#343045" stroke-width="6"/>':
  a.accessory==='freckles'?
