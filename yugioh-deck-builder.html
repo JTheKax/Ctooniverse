@@ -10,14 +10,14 @@
 <link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
 <link rel="stylesheet" href="arcade-polish.css?v=2">
 <link rel="stylesheet" href="cards-page.css?v=cards-hub-20261114">
-<link rel="stylesheet" href="yugioh-deck-builder.css?v=20261115-locked-starters">
+<link rel="stylesheet" href="yugioh-deck-builder.css?v=20261115-deck-finish-v2">
 <script src="script.js?v=20261115-deck-builder" defer></script>
 <script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
 <script type="module" src="account-menu.js?v=1"></script>
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
-<script type="module" src="yugioh-deck-builder.js?v=20261115-locked-starters"></script>
+<script type="module" src="yugioh-deck-builder.js?v=20261115-deck-finish-v2"></script>
 </head>
 <body class="cards-hub-page ydb-body">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -66,6 +66,8 @@
 </div>
 <div class="ydb-manager-actions">
 <button type="button" class="button secondary" id="ydb-new">＋ New Deck</button>
+<button type="button" class="button secondary" id="ydb-duplicate">⧉ Duplicate</button>
+<button type="button" class="button secondary" id="ydb-clear">Clear Cards</button>
 <button type="button" class="button primary" id="ydb-save" disabled>Save Deck</button>
 <button type="button" class="button secondary" id="ydb-delete" disabled>Delete Deck</button>
 <button type="button" class="button secondary" id="ydb-export">Export .ydk</button>
@@ -77,7 +79,7 @@
 </section>
 <section class="ydb-workspace" aria-label="Deck editor">
 <div class="cards-section ydb-browser">
-<div class="cards-section-title"><div><p class="eyebrow">✦ CARD LIBRARY ✦</p><h2>Search Cards</h2><p>Search all English cards, then add them to your deck.</p></div></div>
+<div class="cards-section-title"><div><p class="eyebrow">✦ CARD LIBRARY ✦</p><h2>Search Cards</h2><p>Search all English cards, then add them to your deck. Tap any card name to inspect its text and stats. Reference cards are not additions to your collection.</p></div></div>
 <form id="ydb-search" class="ydb-search" role="search">
 <label for="ydb-query">Card name</label>
 <input id="ydb-query" type="search" placeholder="Search Blue-Eyes, Dark Magician…" maxlength="80">
@@ -98,7 +100,7 @@
 <div class="ydb-pager"><button type="button" id="ydb-prev" class="button secondary" disabled>← Previous</button><span id="ydb-page">Page 1</span><button type="button" id="ydb-next" class="button secondary" disabled>Next →</button></div>
 </div>
 <div class="cards-section ydb-editor">
-<div class="cards-section-title"><div><p class="eyebrow">✦ YOUR DECK ✦</p><h2>Deck List</h2><p>Tap + to add another copy or − to remove one.</p></div></div>
+<div class="cards-section-title"><div><p class="eyebrow">✦ YOUR DECK ✦</p><h2>Deck List</h2><p>Tap + to add another copy or − to remove one. Tap card names to see their details.</p></div></div>
 <div class="ydb-stats" aria-live="polite">
 <div><strong id="ydb-main-count">0 / 40–60</strong><small>Main Deck</small></div>
 <div><strong id="ydb-extra-count">0 / 15</strong><small>Extra Deck</small></div>
@@ -117,6 +119,10 @@
 <p class="ydb-credit">Card information: YGOPRODeck API v7. Card artwork © Konami / 4K Media. Unaffiliated fan site.</p>
 </section>
 </main>
+<dialog class="ydb-card-dialog" id="ydb-card-dialog" aria-labelledby="ydb-card-dialog-title">
+<div class="ydb-dialog-heading"><h2 id="ydb-card-dialog-title">Card Details</h2><button type="button" id="ydb-card-dialog-close" aria-label="Close card details">✕</button></div>
+<div id="ydb-card-dialog-content"></div>
+</dialog>
 <footer><span>© <span id="year">2026</span> CTooniverse</span><span>Build, save and explore your Yu-Gi-Oh! decks.</span></footer>
 <script type="module" src="site-chat-widget.js?v=1"></script>
 </body>
