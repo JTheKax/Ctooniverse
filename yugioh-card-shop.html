@@ -9,14 +9,14 @@
 <link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
 <link rel="stylesheet" href="arcade-polish.css?v=2">
 <link rel="stylesheet" href="cards-page.css?v=cards-hub-20261114">
-<link rel="stylesheet" href="yugioh-card-shop.css?v=20261115-v1">
+<link rel="stylesheet" href="yugioh-card-shop.css?v=20261115-complete-41-packs-v1">
 <script src="script.js?v=20261115-cards-shop-separate-v2" defer></script>
 <script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
 <script type="module" src="account-menu.js?v=1"></script>
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
-<script type="module" src="yugioh-card-shop.js?v=20261115-v2"></script>
+<script type="module" src="yugioh-card-shop.js?v=20261115-complete-41-packs-v1"></script>
 </head>
 <body class="cards-hub-page ycs-body"><a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
@@ -38,7 +38,16 @@
 <div class="ycs-wallet" aria-live="polite"><span>🪙 Cartoon Coin balance</span><strong id="ycs-balance">Checking account…</strong><a href="login.html" id="ycs-signin" hidden>Sign in</a></div>
 </section>
 <section class="cards-section ycs-store" aria-labelledby="ycs-pack-title">
-<div class="cards-section-title"><div><p class="eyebrow">✦ BOOSTER PACKS ✦</p><h2 id="ycs-pack-title">Choose a Pack</h2><p>Every pack contains five different English-language cards. Pack contents are randomized on the server; no purchase or reward is simulated in the browser.</p></div></div>
+<div class="cards-section-title"><div><p class="eyebrow">✦ BOOSTER PACKS ✦</p><h2 id="ycs-pack-title">Choose a Pack</h2><p>Explore more than 40 themed booster packs, including eight Card Archive volumes that cover the full English card catalog. Each pack gives you five random cards with no duplicate cards in the same opening. All purchases are processed securely on the server.</p></div></div>
+<div class="ycs-pack-toolbar">
+ <label for="ycs-pack-search">Search packs
+  <input type="search" id="ycs-pack-search" maxlength="80" autocomplete="off" placeholder="Search by pack name or theme">
+ </label>
+ <label for="ycs-pack-category">Pack category
+  <select id="ycs-pack-category"><option value="all">All pack categories</option></select>
+ </label>
+ <strong id="ycs-pack-count" aria-live="polite">Loading packs…</strong>
+</div>
 <p id="ycs-status" class="ycs-status" role="status" aria-live="polite">Loading booster packs…</p>
 <div class="ycs-pack-grid" id="ycs-pack-grid"></div>
 </section>
@@ -62,7 +71,8 @@
 <div id="ycs-history-list" class="ycs-history-list"><p>Sign in to view purchases.</p></div>
 </section>
 <section class="cards-section ycs-notes"><h2>Shop Rules</h2>
-<p>These are fan-made virtual booster packs purchased with in-game Cartoon Coins, not physical Yu-Gi-Oh! products. Each pack awards five cards without duplicates within the same pack; repeat cards across different packs increase your quantity. The available card pools are based on the English database, not official Konami booster lists or official rarity guarantees.</p>
+<p>These are unofficial virtual booster packs purchased with in-game Cartoon Coins, not physical Yu-Gi-Oh! products. Every pack awards five distinct random cards from its stated pool; repeat cards across separate openings increase your quantity. Packs do not claim official Konami card lists or official rarity odds.</p>
+<p><strong>Complete collection:</strong> The eight Card Archive volumes divide all 14,681 imported English-language cards into separate groups, so every catalog card can be found in at least one pack. The archives include collectible Tokens and Skill Cards; those cannot be used in the current Deck Builder or Duel Arena. The other packs focus on specific monsters, attributes, mechanics and iconic series.</p>
 <p>Starter decks (Yugi, Kaiba, Joey, Pegasus) are locked Arena loaners. They do not grant ownership. Your custom Deck Builder remains a reference editor; its drafts do not award cards or automatically become playable Arena decks.</p>
 <p class="ycs-credit">Card data: YGOPRODeck API v7. Artwork © Konami / 4K Media. Unofficial fan project.</p>
 </section>
