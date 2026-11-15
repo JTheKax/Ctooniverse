@@ -2,9 +2,26 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const el=id=>document.getElementById(id),params=new URLSearchParams(location.search),category=params.get('category')||'',series=params.get('series')||'';
 let items=[],owned=new Map(),user=null,wishlist=new Set();
-const logos={'Cartoons / King of the Hill':'king-of-the-hill.png','Video Games / Kingdom Hearts':'kingdom-hearts-ctoon-set.png'};
-const defaults={'Cartoons':'cartoon-ctoon-set.png','Anime':'cartoon-anime-ctoon-set.png','Video Games':'video-games-ctoon-sets.png'};
-const logo=logos[category+' / '+series]||defaults[category];
+// Only reference logos bundled with the site. Unknown sets use their text heading.
+const logos={
+ 'animal crossing':'animal-crossing-ctoon-set.png',
+ 'courage the cowardly dog':'courage-the-cowardly-dog-ctoon-set.png',
+ 'disney':'disney-ctoon-set.png',
+ 'final fantasy':'final-fantasy-ctoon-set.png',
+ 'king of the hill':'king-of-the-hill-ctoon-set.png',
+ "luigi's mansion":'luigis-mansion-ctoon-set.png',
+ 'luigis mansion':'luigis-mansion-ctoon-set.png',
+ 'mucha lucha':'mucha-lucha-ctoon-set.png',
+ 'resident evil':'resident-evil-ctoon-set.png',
+ 'super mario':'super-mario-ctoon-set.png',
+ 'the legend of zelda':'the-legend-of-zelda-ctoon-set.png',
+ 'legend of zelda':'the-legend-of-zelda-ctoon-set.png',
+ 'the simpsons':'the-simpsons-ctoon-set.png',
+ 'simpsons':'the-simpsons-ctoon-set.png',
+ 'wwe 2k':'wwe-2k-ctoon-set.png'
+};
+const defaults={'Cartoons':'cartoon-ctoon-set.png','Anime':'cartoon-anime-ctoon-set.png'};
+const logo=logos[series.trim().toLowerCase()]||defaults[category];
 if(logo){el('set-logo').src='public/images/ctoon-set-logos/'+logo;el('set-logo').alt=series+' CToon Set artwork';el('set-artwork').hidden=false;el('set-logo').onerror=()=>{el('set-artwork').hidden=true};}
 
 el('set-title').textContent=series||'CToon Set';el('set-category').textContent=category||'CTooniverse';document.title=(series||'CToon Set')+' | CTooniverse';
