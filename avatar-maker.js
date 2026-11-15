@@ -1,5 +1,5 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
-import {DEFAULT_AVATAR,AVATAR_OPTIONS,normalizeAvatar,avatarSvg,avatarDataUrl} from './avatar-renderer.js?v=paper-avatar-v1';
+import {DEFAULT_AVATAR,AVATAR_OPTIONS,normalizeAvatar,avatarSvg,avatarDataUrl} from './avatar-renderer.js?v=cutout-avatar-v3';
 
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const $=id=>document.getElementById(id);
@@ -57,7 +57,7 @@ const palette={
  pants:['#293862','#1d1e34','#5d3b64','#305648','#7c463a'],
  hatColor:['#df3957','#efaa35','#386de8','#6b52c9','#35a88e'],
  hatAccent:['#ffc950','#fffbfd','#87e2f1','#f49bd3'],
- background:['#34286d','#0e3666','#852d61','#245c6d','#714a35']
+ background:['#f8f8fb','#dceafc','#f9e8da','#daeede','#e7ddf6']
 };
 form.addEventListener('input',readForm);
 form.addEventListener('change',readForm);
