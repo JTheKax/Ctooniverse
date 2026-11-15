@@ -7,20 +7,36 @@
 <title>Yu-Gi-Oh! Duel Arena | CTooniverse</title>
 <link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
 <link rel="stylesheet" href="arcade-polish.css?v=2">
-<link rel="stylesheet" href="yugioh-duel.css?v=20261115-art">
+<link rel="stylesheet" href="yugioh-duel.css?v=20261115-starter-choice">
 <script src="script.js?v=20261115-yugioh-duel" defer></script>
 <script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
 <script type="module" src="account-menu.js?v=1"></script>
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
-<script src="yugioh-duel.js?v=20261115-art" defer></script>
+<script type="module" src="yugioh-duel.js?v=20261115-starter-choice"></script>
 </head>
 <body class="yd-duel-page">
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header"><a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a><nav aria-label="Main navigation"><a href="index.html" class="nav-link">Home</a><a href="ctoons.html" class="nav-link">CToons</a><a href="games.html" class="nav-link">Games</a><a href="cards.html" class="nav-link active">Cards</a><a href="watch.html" class="nav-link">Theater</a><a href="community.html" class="nav-link">Community</a><a href="account.html" class="nav-link">Account</a></nav><div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div><span class="header-tag">NEW UNIVERSE</span></header>
 <main id="main" class="yd-main">
-  <section class="yd-title"><div><p class="eyebrow">✦ CTOONIVERSE CARDS · SOLO DUEL ✦</p><h1>Yu-Gi-Oh! <span>Duel Arena</span></h1><p>Play a fan-made, classic-inspired duel against a computer opponent. No sign-in, coins or purchases required.</p></div><div style="display:flex;flex-wrap:wrap;gap:10px"><a class="button secondary" href="cards.html">← Back to Cards</a><a class="button secondary" href="yugioh-cards.html">📚 Card Database</a><a class="button secondary" href="yugioh-deck-builder.html">🃏 Deck Builder</a></div></section>
+  <section class="yd-title"><div><p class="eyebrow">✦ CTOONIVERSE CARDS · SOLO DUEL ✦</p><h1>Yu-Gi-Oh! <span>Duel Arena</span></h1><p>Play a fan-made, classic-inspired duel against a computer opponent. Sign in to choose one permanent Arena starter deck. No coins or purchases required.</p></div><div style="display:flex;flex-wrap:wrap;gap:10px"><a class="button secondary" href="cards.html">← Back to Cards</a><a class="button secondary" href="yugioh-cards.html">📚 Card Database</a><a class="button secondary" href="yugioh-deck-builder.html">🃏 Deck Builder</a></div></section>
+  <section class="yd-panel yd-starter-gate" id="yd-starter-gate" aria-labelledby="yd-starter-gate-title">
+    <p class="eyebrow">✦ WELCOME TO THE DUEL ARENA ✦</p>
+    <h2 id="yd-starter-gate-title">Choose Your Starter Deck</h2>
+    <p>Your first choice is permanent for this account. Choose Yugi, Kaiba, Joey or Pegasus. Each starter has a fixed 40-card Main Deck and cannot be edited.</p>
+    <p class="yd-starter-warning"><strong>Arena-only cards:</strong> choosing a starter does not add any cards to your collection. Collectible cards are acquired separately through card packs once a pack system is available.</p>
+    <p id="yd-starter-status" role="status" aria-live="polite">Checking your account…</p>
+    <p id="yd-starter-login" hidden><a class="button primary" href="login.html">Sign In / Create Account</a></p>
+    <div class="yd-starter-options" id="yd-starter-options" aria-label="Available starter decks"></div>
+    <section class="yd-starter-preview" id="yd-starter-preview" aria-label="Read-only starter deck card list" hidden></section>
+  </section>
+  <div id="yd-duel-content" hidden>
+  <section class="yd-starter-banner" aria-label="Your chosen permanent starter">
+    <strong>🔒 Your starter: <span id="yd-starter-name">Loading…</span></strong>
+    <span id="yd-starter-extra-count"></span>
+    <small>Locked for Arena play only · Cards are not in your owned collection · Simplified duel effects</small>
+  </section>
   <section class="yd-toolbar" aria-label="Duel controls"><div><strong id="yd-turn">Turn 1 · Main Phase</strong><p id="yd-message">Select a card in your hand to begin.</p></div><div class="yd-buttons"><button type="button" class="button primary" id="yd-battle">Enter Battle Phase</button><button type="button" class="button secondary" id="yd-end">End Turn</button><button type="button" class="button secondary" id="yd-new">New Duel</button></div></section>
   <section class="yd-board" aria-label="Duel field">
     <div class="yd-side yd-cpu"><div class="yd-duelist"><span class="yd-avatar">👑</span><div><strong>Computer Duelist</strong><small id="yd-cpu-counts">Deck 35 · Hand 5</small></div><div class="yd-lp"><small>LIFE POINTS</small><strong id="yd-cpu-lp">8000</strong></div></div><p class="yd-zlabel">Opponent Spell &amp; Trap Zones</p><div id="yd-cpu-traps" class="yd-zones"></div><p class="yd-zlabel">Opponent Monsters — tap a monster to target it</p><div id="yd-cpu-field" class="yd-zones"></div></div>
@@ -30,8 +46,9 @@
   <section class="yd-panel yd-hand-panel"><div class="yd-subhead"><h2>Your Hand</h2><span>Tap a card to reveal its actions</span></div><div id="yd-hand" class="yd-hand"></div></section>
   <div class="yd-columns"><section class="yd-panel"><h2>Selected Card</h2><div id="yd-details" class="yd-details" aria-live="polite">Choose a card.</div></section><section class="yd-panel"><h2>Duel Log</h2><ol id="yd-log" class="yd-log" aria-live="polite"></ol></section></div>
   <div class="yd-record">Your device's duel record: <strong id="yd-record">0 wins · 0 losses</strong></div>
-  <details class="yd-panel yd-rules"><summary>How to play &amp; what the simplified rules include</summary><p>Both duelists start with 8,000 Life Points and 5 cards. You can Normal Summon or Set one monster per turn. Level 5–6 monsters need one tribute; Level 7 or higher need two, taken from your weakest monsters automatically. Use Spell cards and set Trap cards in the Main Phase. Traps can activate on a later turn.</p><p>After your opening turn, choose Battle Phase, tap one of your Attack Position monsters, then tap an opponent's monster to attack it. If your opponent has none, choose Attack Directly. Each monster can attack once per turn. Attack vs Attack compares ATK and damages the loser. Attack vs Defense compares ATK and DEF; attacking a stronger defender costs Life Points. End Turn runs the computer's turn and draws your next card.</p><p>This is a <strong>simplified fan-made prototype</strong>, not the official Yu-Gi-Oh! rules engine. It features reference card artwork cached on CTooniverse hosting alongside a small predefined playable card pool. No online duels, card purchases, account-linked deck collection or CToon rewards are included.</p></details>
+  <details class="yd-panel yd-rules"><summary>How to play &amp; what the simplified rules include</summary><p>Both duelists start with 8,000 Life Points and 5 cards. You can Normal Summon or Set one monster per turn. Level 5–6 monsters need one tribute; Level 7 or higher need two, taken from your weakest monsters automatically. Use Spell cards and set Trap cards in the Main Phase. Traps can activate on a later turn.</p><p>After your opening turn, choose Battle Phase, tap one of your Attack Position monsters, then tap an opponent's monster to attack it. If your opponent has none, choose Attack Directly. Each monster can attack once per turn. Attack vs Attack compares ATK and damages the loser. Attack vs Defense compares ATK and DEF; attacking a stronger defender costs Life Points. End Turn runs the computer's turn and draws your next card.</p><p>This is a <strong>simplified fan-made prototype</strong>, not the official Yu-Gi-Oh! rules engine. You duel using the 40 Main Deck cards from your permanently selected starter. Original card artwork is served from CTooniverse Storage. Many Spell and Trap card effects are simplified prototype effects, not their official Yu-Gi-Oh! effects. The Extra Deck is displayed but Extra Deck summoning is not implemented. Starter cards are Arena-only; they are not added to your collection. No online duels, card purchases or CToon rewards are included.</p></details>
   <div id="yd-result" class="yd-result" role="status" hidden></div>
+  </div>
 </main>
 <footer><span>© <span id="year">2026</span> CTooniverse</span><span>Yu-Gi-Oh! card art © Konami / 4K Media. Unaffiliated fan-made prototype.</span></footer>
 <script type="module" src="site-chat-widget.js?v=1"></script>
