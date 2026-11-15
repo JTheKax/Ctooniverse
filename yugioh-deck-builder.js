@@ -486,7 +486,10 @@ db.auth.onAuthStateChange((event, session) => {
       const nextUser = session?.user || null;
       if (nextUser?.id === user?.id) return;
       if (!nextUser) {
-        user = null; saved = []; resetDeck(); guestRead();
+        // Clear signed-in deck details without overwriting an earlier guest draft.
+        user = null; saved = [];
+        Object.assign(state, { id:null, name:"New Deck", main:[], extra:[], side:[], dirty:false });
+        guestRead();
         try { await loadMetadata(uniqueIds()); } catch (_) {}
       } else {
         user = nextUser; saved = [];
