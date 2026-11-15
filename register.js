@@ -15,7 +15,7 @@ $('register-form').addEventListener('submit',async e=>{
  if(pass!==confirm){feedback.textContent='Passwords do not match.';return;}
  btn.disabled=true;feedback.textContent='Creating your account…';
  try{
- const {data,error}=await db.auth.signUp({email,password:pass,options:{data:{display_name:name},emailRedirectTo:'https://ctooniverse.onrender.com/account.html'}});
+ const {data,error}=await db.auth.signUp({email,password:pass,options:{data:{display_name:name},emailRedirectTo:'https://ctooniverse.jthekax21.workers.dev/account.html'}});
  if(error){feedback.textContent=error.message;return;}
  $('register-form').reset();
  feedback.textContent=data.session?'Account created! You are signed in.':'Check your inbox for a confirmation email. Click its link to activate your account.';

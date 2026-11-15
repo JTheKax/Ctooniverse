@@ -18,7 +18,7 @@ $('owner-signin-form').addEventListener('submit',async event=>{
   event.preventDefault();feedback.textContent='Sending sign-in link…';
   const email=$('owner-email').value.trim();
   try{
-    const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:'https://ctooniverse.onrender.com/owner.html'}});
+    const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:'https://ctooniverse.jthekax21.workers.dev/owner.html'}});
     feedback.textContent=error?'Could not send link: '+error.message:'Check your inbox for your sign-in link. If you do not see it, check spam.';
   }catch(e){feedback.textContent='Could not connect to authentication. Try again later.';}
 });

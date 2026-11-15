@@ -10,8 +10,12 @@ A fresh start for the CTooniverse Ctoon collecting website.
 - Test changes before committing; keep backups for recovery.
 - Deploy only from `main` when hosting is configured.
 
-## Current status
-This is a responsive, static foundation homepage. Collection categories are **Coming Soon** placeholders. There are no accounts, purchases, inventory, or database connections yet.
+## Hosting and data
+- **Primary website:** Cloudflare Workers at https://ctooniverse.jthekax21.workers.dev
+- **Source:** GitHub `main` branch.
+- **Accounts and data:** Supabase (the site is not fully standalone without Supabase).
+- **Legacy visitors:** The old Render site redirects visitors to Cloudflare. Keep Render only for that optional redirect until it is retired.
+- **Migration checklist:** See [Cloudflare hosting guide](docs/CLOUDFLARE-HOSTING.md) for the remaining account and deployment checks.
 
 ## Local preview
 Open `index.html` in a browser. No build step or dependencies required.
