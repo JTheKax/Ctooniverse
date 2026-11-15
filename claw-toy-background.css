@@ -1,10 +1,10 @@
 /* CTooniverse Claw Craze — original toy-arcade scene background.
-   The image is a separate optimized asset; game machine and controls are untouched. */
+   Use an existing repository arcade background; game machine and controls are untouched. */
 body.claw-page {
   background-color: #244c76 !important;
   background-image:
     linear-gradient(180deg,rgba(7,16,37,.53) 0%,rgba(9,17,38,.63) 37%,rgba(7,11,28,.84) 100%),
-    url("claw-toy-arcade-background.webp") !important;
+    url("games-arcade-handdrawn.png") !important;
   background-size: cover, cover !important;
   background-position: center top, center top !important;
   background-repeat: no-repeat, no-repeat !important;
