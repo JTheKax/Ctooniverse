@@ -82,12 +82,15 @@
       if (!job.image.isConnected) continue;
       activeArtworkLoads++;
       let released = false;
+      let timeoutId = 0;
       const finished = () => {
         if (released) return;
         released = true;
+        clearTimeout(timeoutId);
         activeArtworkLoads--;
         setTimeout(drainArtworkQueue, 160);
       };
+      timeoutId = setTimeout(finished, 14000);
       job.image.addEventListener("load", finished, { once: true });
       job.image.addEventListener("error", finished, { once: true });
       job.image.src = job.endpoint;
