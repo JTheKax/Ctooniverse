@@ -29,7 +29,7 @@
 The `yugioh_validate_deck` trigger validates each save atomically and prevents invalid type placement, unknown IDs, bad copy counts and nonstandard Skill/Token cards. The `updated_at` timestamp changes on deck edits.
 
 ## Limitations
-The deck builder does not yet pass custom decks into Duel Arena. Duel Arena retains its existing simplified predefined card pool and rules. Saved decks are private player data, not public collection ownership or a tradable in-game asset.
+The deck builder does not yet pass custom decks into Duel Arena. Players can now purchase themed virtual boosters and own cards in the separate Yu-Gi-Oh! Card Shop; this reference builder still permits catalog browsing and does not grant ownership. Duel Arena retains its existing simplified predefined card pool and rules. Saved decks are private player data, not public collection ownership or a tradable in-game asset.
 
 Tournament legality is **not certified**. This database may include cards not eligible for a particular TCG region, outdated banlist snapshots and other card restrictions. Check the latest official list before competitive play:
 https://www.yugioh-card.com/en/limited/list/
