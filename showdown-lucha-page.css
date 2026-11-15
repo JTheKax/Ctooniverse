@@ -1,0 +1,25 @@
+/* CToon Showdown — neon lucha arena page backdrop.
+   The original approved PNG takes precedence when available; the SVG is a built-in fallback. */
+body {
+  background-color: #170a40 !important;
+  background-image:
+    linear-gradient(180deg, rgba(9,5,35,.26) 0%, rgba(16,6,50,.18) 48%, rgba(9,4,25,.45) 100%),
+    url("./neon_lucha_libre_arena_backdrop.png"),
+    url("./showdown-lucha-page.svg") !important;
+  background-repeat: no-repeat, no-repeat, no-repeat !important;
+  background-position: center top, center center, center center !important;
+  background-size: cover, cover, cover !important;
+  background-attachment: fixed, fixed, fixed !important;
+  min-height: 100vh;
+}
+body .shell, body main {position:relative; z-index:0}
+body .shell .center, body #selection {
+  box-shadow: 0 16px 44px rgba(9,4,39,.7), 0 0 28px rgba(247,74,204,.2);
+}
+body .shell .center {background:rgba(13,11,54,.9)}
+@media(max-width:700px) {
+  body {
+    background-attachment: scroll, scroll, scroll !important;
+    background-position: center top, center top, center top !important;
+  }
+}
