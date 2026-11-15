@@ -25,7 +25,7 @@
     player:{dark:2,red:1,skull:2,celtic:3,stone:3,ox:2,kuriboh:3,elf:3,dragon:2,harpie:2,imp:3,jinn:2,pot:2,fissure:2,reborn:1,heal:1,swords:1,axe:1,storm:1,mirror:1,hole:1,negate:1},
     cpu:{blue:3,skull:1,ox:3,jinn:3,stone:3,kaiser:3,ryu:3,lord:2,elf:2,imp:3,harpie:2,pot:2,fissure:2,reborn:1,heal:1,swords:1,axe:1,storm:1,mirror:1,hole:1,negate:1}
   };
-  const $=id=>document.getElementById(id),opponent=s=>s==="player"?"cpu":"player",who=s=>s==="player"?"You":"Computer";
+  const $=id=>document.getElementById(id),opponent=s=>s==="player"?"cpu":"player",who=s=>s==="player"?"Player":"Computer";
   let uid=0,game;
   function makeCard(id){const spec=catalog[id];return{uid:++uid,id,name:spec[0],type:typeof spec[1]==="number"?"monster":spec[1],level:typeof spec[1]==="number"?spec[1]:0,atk:spec[2]||0,def:spec[3]||0,icon:spec[typeof spec[1]==="number"?4:3],text:typeof spec[1]==="number"?"Normal Monster":spec[2]};}
   function makeDeck(side){const result=[];for(const [id,n] of Object.entries(deckLists[side]))for(let i=0;i<n;i++)result.push(makeCard(id));for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}return result;}
