@@ -333,6 +333,169 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
       root.replaceChildren(elt("p","yd-starter-error",e.message||"Unable to load deck preview."));
     }
   }
+
+  function shuffleCards(input){
+    const list=[...input];
+    for(let i=list.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [list[i],list[j]]=[list[j],list[i]];
+    }
+    return list;
+  }
+  function registerOpponentCard(card){
+    const id=Number(card.card_id);
+    if(!Number.isSafeInteger(id)||id<1)throw new Error("Invalid opponent card");
+    const key="npc_"+id;
+    if(!catalog[key]){
+      if(card.card_type==="Spell Card"){
+        catalog[key]=[card.name,"spell","Prototype Spell: Gain 500 Life Points.","✨"];
+      }else if(card.card_type==="Trap Card"){
+        catalog[key]=[card.name,"trap","Prototype Trap: Prevent one attack.","🛡️"];
+      }else{
+        const level=Math.max(1,Math.min(12,Number(card.level)||4));
+        // Negative ATK/DEF is undefined in the reference catalog for some
+        // variable-stat monsters. Use a clearly simplified prototype value.
+        const attack=Number(card.attack);
+        const defense=Number(card.defense);
+        const divine=card.name==="The Winged Dragon of Ra";
+        catalog[key]=[card.name,level,
+          attack>=0?attack:(divine?3000:0),defense>=0?defense:(divine?3000:0),"✦"];
+      }
+    }
+    artIds[key]=Number(card.art_image_id)||id;
+    return key;
+  }
+  async function opponentMonsterPool(profile,minimumLevel,maximumLevel,minimumAttack,maximumAttack){
+    let query=db.from("yugioh_cards")
+      .select("card_id,name,card_type,level,attack,defense,art_image_id")
+      .eq("language_code","en")
+      .ilike("card_type","%Monster%")
+      .gte("level",minimumLevel)
+      .lte("level",maximumLevel)
+      .gte("attack",minimumAttack)
+      .lte("attack",maximumAttack);
+    if(profile.archetype)query=query.ilike("archetype","%"+profile.archetype+"%");
+    else query=query.eq("race",profile.race);
+    const {data,error}=await query.order("attack",{ascending:profile.difficulty<=2}).limit(180);
+    if(error)throw error;
+    return data||[];
+  }
+  async function buildOpponentDeck(profile){
+    await starterCards([profile.hero]);
+    const signature=starterCardCache.get(Number(profile.hero));
+    if(!signature)throw new Error("Signature card not found");
+    const strong=profile.difficulty>=4;
+    const lowMin=strong?1200:profile.difficulty===3?650:0;
+    const lowMax=profile.difficulty>=5?2300:profile.difficulty===4?2100:profile.difficulty===3?1900:1650;
+    let low=await opponentMonsterPool(profile,1,4,lowMin,lowMax);
+    if(low.length<13){
+      const more=await opponentMonsterPool(profile,1,4,0,2500);
+      const map=new Map([...low,...more].map(card=>[Number(card.card_id),card]));
+      low=[...map.values()];
+    }
+    if(!low.length){
+      // The public card catalog can be temporarily sparse after a reimport.
+      // Return a valid playable fallback rather than a broken game screen.
+      deckLists.cpu={blue:2,skull:2,ox:3,jinn:3,stone:3,kaiser:2,
+        ryu:3,lord:2,elf:2,imp:3,harpie:2,pot:2,fissure:2,
+        reborn:1,heal:1,swords:1,axe:1,storm:1,mirror:1,hole:1,negate:1};
+      return;
+    }
+    const next={};
+    const add=(key,count=1)=>{next[key]=(next[key]||0)+count;};
+    const regular=shuffleCards(low);
+    // 26 level 1–4 monsters: enough viable opening summons.
+    for(let i=0;i<13;i++)add(registerOpponentCard(regular[i%regular.length]),2);
+
+    let bosses=shuffleCards(await opponentMonsterPool(profile,5,8,0,4500))
+      .filter(card=>Number(card.card_id)!==Number(profile.hero));
+    const signatureMonster=signature.card_type.includes("Monster");
+    if(signatureMonster)add(registerOpponentCard(signature));
+    const bossNeeded=signatureMonster?2:3;
+    for(let i=0;i<bossNeeded;i++){
+      const choice=bosses[i]||regular[(i+4)%regular.length];
+      add(registerOpponentCard(choice));
+    }
+    // Eleven shared prototype spell/traps. Signature Spell/Trap replaces a
+    // support card, while signature monsters are included as a boss monster.
+    const support=["pot","fissure","reborn","heal","swords","axe","storm",
+      "mirror","hole","negate","fissure"];
+    if(!signatureMonster)support[4]=registerOpponentCard(signature);
+    for(const key of support)add(key);
+    const total=Object.values(next).reduce((sum,count)=>sum+count,0);
+    if(total!==40)throw new Error("Opponent deck must contain 40 cards, got "+total);
+    deckLists.cpu=next;
+  }
+  function updateRosterPreview(){
+    const profile=selectedOpponent;
+    if(!profile)return;
+    $("yd-free-duel-opponent").textContent=profile.name;
+    $("yd-free-duel-subtitle").textContent=profile.epithet;
+    $("yd-free-duel-difficulty").textContent="DIFFICULTY · "+"★".repeat(profile.difficulty)+"☆".repeat(5-profile.difficulty);
+    $("yd-free-duel-style").textContent=profile.style+" · "+profile.flavor;
+    const r=opponentRecord(profile.id);
+    $("yd-free-duel-record").textContent="Your record: "+r.wins+" wins · "+r.losses+" losses";
+    $("yd-free-duel-preview-art").replaceChildren(starterArtwork(profile.hero,profile.name+" signature"));
+    for(const btn of $("yd-free-duel-grid").querySelectorAll(".yd-free-duel-thumb")){
+      btn.setAttribute("aria-pressed",String(btn.dataset.duelist===profile.id));
+    }
+    $("yd-free-duel-status").textContent="Ready to challenge "+profile.name+".";
+  }
+  function renderDuelistRoster(){
+    const grid=$("yd-free-duel-grid");
+    grid.replaceChildren();
+    for(const profile of DUELISTS){
+      const portrait=elt("button","yd-free-duel-thumb");
+      portrait.type="button";
+      portrait.dataset.duelist=profile.id;
+      portrait.setAttribute("aria-label",profile.name+", difficulty "+profile.difficulty+" of 5");
+      portrait.setAttribute("aria-pressed","false");
+      portrait.append(starterArtwork(profile.hero,profile.name+" signature"));
+      portrait.append(elt("span","yd-free-duel-thumb-difficulty","★".repeat(profile.difficulty)));
+      portrait.append(elt("span","yd-free-duel-thumb-name",profile.name));
+      portrait.addEventListener("click",()=>{
+        if(loadingOpponent)return;
+        selectedOpponent=profile;
+        updateRosterPreview();
+      });
+      grid.append(portrait);
+    }
+    selectedOpponent=DUELISTS.find(x=>x.id===selectedOpponent?.id)||DUELISTS[0];
+    $("yd-free-duel-count").textContent=DUELISTS.length+" DUELISTS";
+    updateRosterPreview();
+  }
+  async function beginFreeDuel(){
+    if(!activeStarter||!selectedOpponent||loadingOpponent)return;
+    loadingOpponent=true;
+    const btn=$("yd-free-duel-start");
+    btn.disabled=true;
+    btn.textContent="PREPARING DUEL…";
+    $("yd-free-duel-status").textContent="Building "+selectedOpponent.name+"'s 40-card deck…";
+    try{
+      await buildOpponentDeck(selectedOpponent);
+      $("yd-free-duel").hidden=true;
+      $("yd-duel-content").hidden=false;
+      reset();
+      $("yd-duel-content").scrollIntoView({behavior:"smooth",block:"start"});
+    }catch(error){
+      $("yd-free-duel-status").textContent="Could not prepare this opponent: "+
+        (error.message||"Please try again.");
+    }finally{
+      loadingOpponent=false;
+      btn.disabled=false;
+      btn.textContent="⚔️ START DUEL";
+    }
+  }
+  function returnToFreeDuel(){
+    if(!activeStarter||loadingOpponent)return;
+    if(game&&!game.winner&&!confirm("Leave this duel and return to the opponent roster? Your current duel will be abandoned."))return;
+    game=null;
+    $("yd-duel-content").hidden=true;
+    $("yd-free-duel").hidden=false;
+    updateRosterPreview();
+    $("yd-free-duel").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
   async function activateStarter(template){
     await starterCards([...template.main_cards,...template.extra_cards]);
     const keyed=Object.entries(catalog);
@@ -355,10 +518,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     deckLists.player=next;
     activeStarter=template;
     $("yd-starter-gate").hidden=true;
-    $("yd-duel-content").hidden=false;
+    $("yd-duel-content").hidden=true;
+    $("yd-free-duel").hidden=false;
     $("yd-starter-name").textContent=template.deck_name;
     $("yd-starter-extra-count").textContent=template.extra_cards.length+" Extra Deck cards (view only; Extra summons not yet implemented)";
-    reset();
+    renderDuelistRoster();
   }
   function renderStarterPicker(templates){
     const root=$("yd-starter-options");
@@ -415,6 +579,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
   }
   async function initStarter(){
     $("yd-duel-content").hidden=true;
+    $("yd-free-duel").hidden=true;
     $("yd-starter-gate").hidden=false;
     entryStatus("Checking your starter deck selection…");
     try{
@@ -450,5 +615,21 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     }
   }
 
-  $("yd-battle").addEventListener("click",startBattle);$("yd-end").addEventListener("click",endTurn);$("yd-new").addEventListener("click",reset);initStarter();
+  $("yd-battle").addEventListener("click",startBattle);
+  $("yd-end").addEventListener("click",endTurn);
+  $("yd-new").addEventListener("click",reset);
+  $("yd-choose-opponent").addEventListener("click",returnToFreeDuel);
+  $("yd-free-duel-start").addEventListener("click",beginFreeDuel);
+  $("yd-free-duel-grid").addEventListener("keydown",event=>{
+    const arrows={ArrowRight:1,ArrowLeft:-1,ArrowDown:5,ArrowUp:-5};
+    if(!(event.key in arrows))return;
+    const cells=[...event.currentTarget.querySelectorAll(".yd-free-duel-thumb")];
+    const current=cells.indexOf(document.activeElement);
+    if(current<0)return;
+    event.preventDefault();
+    const nextIndex=(current+arrows[event.key]+cells.length)%cells.length;
+    cells[nextIndex].focus();
+    cells[nextIndex].click();
+  });
+  initStarter();
 })();
