@@ -1,0 +1,94 @@
+/* CTooniverse Yu-Gi-Oh! Deck Builder — neon arcade, responsive */
+.ydb-main{width:min(1480px,calc(100% - 28px));margin:22px auto 70px;color:#f8f5ff}
+.ydb-main .cards-section{margin-top:18px}
+.ydb-hero{padding:clamp(22px,4vw,38px)}
+.ydb-hero h1{font-size:clamp(2.2rem,5.5vw,4rem);line-height:1.1;margin:.15em 0 .3em}
+.ydb-hero h1 span{color:#ffd887}
+.ydb-hero>p:not(.eyebrow){max-width:76ch;line-height:1.6}
+.ydb-manager{display:grid;grid-template-columns:minmax(210px,1fr) minmax(220px,1.15fr);gap:12px 22px;align-items:end}
+.ydb-field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.ydb-field>label,.ydb-search label{font-size:.83rem;font-weight:900;letter-spacing:.04em;color:#e5ddff}
+.ydb-field input,.ydb-field select,.ydb-search input,.ydb-search select{box-sizing:border-box;display:block;min-height:46px;width:100%;max-width:100%;padding:10px 12px;font:inherit;font-size:.92rem;border:1px solid #aa9be9;border-radius:10px;background:#0c1539;color:#fff;outline-offset:3px}
+.ydb-field input::placeholder,.ydb-search input::placeholder{color:#b8b4d3}
+.ydb-field input:focus-visible,.ydb-search input:focus-visible,.ydb-field select:focus-visible,.ydb-search select:focus-visible{outline:2px solid #7af5ff}
+.ydb-field select option,.ydb-search select option{background:#111436;color:#fff}
+.ydb-manager-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.ydb-manager-actions .button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;text-align:center;font-size:.88rem;padding:9px 13px}
+.ydb-manager-actions button:disabled{opacity:.5;cursor:not-allowed}
+.ydb-import-label{cursor:pointer}
+.ydb-account-status,.ydb-feedback{grid-column:1/-1;margin:0;color:#cbdcf5;line-height:1.45;font-size:.86rem}
+.ydb-account-status a{font-weight:900;color:#9ef8ff;text-decoration:underline}
+.ydb-feedback{min-height:1.35em;color:#a4efce}
+.ydb-feedback[data-error="true"]{color:#ffb1b5}
+.ydb-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.06fr);gap:16px;align-items:start}
+.ydb-workspace>.cards-section{min-width:0;margin-top:18px}
+.ydb-workspace .cards-section-title{align-items:flex-start}
+.ydb-search{display:flex;flex-direction:column;gap:10px}
+.ydb-search-filters{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ydb-search-filters>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.ydb-search-submit{display:flex;flex-wrap:wrap;gap:8px}
+.ydb-search-submit .button{flex:1 1 100px;min-height:42px}
+.ydb-results-status{color:#a6f4ff!important;font-size:.84rem;margin:15px 0 10px!important;font-weight:800}
+.ydb-search-results{display:flex;flex-direction:column;gap:9px;min-height:90px}
+.ydb-result{display:flex;align-items:center;gap:12px;min-height:106px;padding:9px;border:1px solid #9880d08c;border-radius:11px;background:#151640bf;overflow:hidden}
+.ydb-image{position:relative;flex:none;display:block;width:67px;height:92px;border:1px solid #bfabcf89;border-radius:6px;overflow:hidden;background:radial-gradient(circle at center,#67419e,#141335 75%);color:#ffe08e}
+.ydb-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .15s ease}
+.ydb-image-fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:1.6rem}
+.ydb-image-ready img{opacity:1}
+.ydb-image-ready .ydb-image-fallback{opacity:0}
+.ydb-result-info{display:flex;flex:1;flex-direction:column;gap:4px;min-width:0;overflow-wrap:anywhere}
+.ydb-result-info strong{font-size:.9rem;color:#fff4df;line-height:1.25}
+.ydb-result-info small{color:#d4c9f3;font-size:.72rem;line-height:1.4}
+.ydb-result-actions{display:flex;gap:5px;flex-wrap:wrap;align-self:center;justify-content:flex-end;max-width:128px}
+.ydb-result-actions button,.ydb-deck-controls button{font:inherit;font-size:.7rem;font-weight:900;cursor:pointer;border:1px solid #8beaf5;border-radius:8px;padding:7px 8px;color:#eefbff;background:#182650;min-height:34px}
+.ydb-result-actions button:hover:not(:disabled),.ydb-deck-controls button:hover:not(:disabled){background:#304779}
+.ydb-result-actions button:focus-visible,.ydb-deck-controls button:focus-visible{outline:2px solid #ffe8a3;outline-offset:2px}
+.ydb-result-actions button:disabled,.ydb-deck-controls button:disabled{cursor:not-allowed;opacity:.35}
+.ydb-pager{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px;font-size:.83rem}
+.ydb-pager .button{min-height:41px;min-width:100px;padding:7px 10px}
+.ydb-pager button:disabled{opacity:.4;cursor:not-allowed}
+.ydb-empty{color:#cdc2eb!important;font-size:.86rem;padding:13px;background:#0c1233ac;border-radius:9px;text-align:center}
+.ydb-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:16px 0}
+.ydb-stats>div{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;padding:12px 6px;border-radius:12px;border:1px solid #b8a0f06b;background:#120f37}
+.ydb-stats strong{font-size:clamp(.9rem,1.6vw,1.13rem);color:#ffe5a3;line-height:1.2}
+.ydb-stats small{font-size:.7rem;color:#cfd8ff}
+.ydb-rules-status{padding:12px 14px;background:#391d36;border:1px solid #edb89e;border-radius:12px;color:#ffe4d6;font-size:.82rem;line-height:1.5}
+.ydb-rules-status.ydb-ready{color:#d9ffed;border-color:#90e9b3;background:#17372c}
+.ydb-zone{margin-top:20px}
+.ydb-zone h3{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;margin:0 0 9px;font-size:1.15rem;color:#ffecb5}
+.ydb-zone h3 small{font-size:.68rem;color:#c2c9ed;letter-spacing:.05em;text-transform:uppercase}
+.ydb-zone-list{display:flex;flex-direction:column;gap:6px}
+.ydb-deck-card{display:flex;align-items:center;gap:8px;padding:7px 9px;border:1px solid #907fc69c;border-radius:10px;background:#12163f;min-height:63px;min-width:0}
+.ydb-deck-card .ydb-image{width:39px;height:54px}
+.ydb-deck-card .ydb-image-fallback{font-size:1.1rem}
+.ydb-deck-card-name{display:flex;flex:1;flex-direction:column;gap:2px;min-width:0}
+.ydb-deck-card-name strong{font-size:.81rem;overflow-wrap:anywhere;line-height:1.25;color:#fcf4dd}
+.ydb-deck-card-name small{font-size:.69rem;color:#cbc3eb}
+.ydb-qty{font-size:.86rem;font-weight:950;color:#ffe3a2;min-width:24px;text-align:center;flex:none}
+.ydb-deck-controls{display:flex;align-items:center;flex-wrap:wrap;gap:4px;justify-content:flex-end;max-width:146px;flex:none}
+.ydb-deck-controls button{min-width:30px;min-height:32px;padding:3px 6px;font-size:.85rem}
+.ydb-deck-controls button.ydb-move{font-size:.65rem;border-color:#cabaff;max-width:75px}
+.ydb-help{line-height:1.6;font-size:.91rem}
+.ydb-help h2{color:#ffe2a8}
+.ydb-help p{max-width:100ch}
+.ydb-credit{font-size:.78rem;color:#d1c3ee!important}
+@media(max-width:960px){.ydb-workspace{grid-template-columns:1fr}.ydb-browser{order:2}.ydb-editor{order:1}}
+@media(max-width:630px){
+ .ydb-main{width:calc(100% - 14px);margin-top:10px}
+ .ydb-main .cards-section{padding:15px;margin-top:12px}
+ .ydb-manager{grid-template-columns:1fr;gap:12px}
+ .ydb-manager-actions .button{flex:1 1 135px;white-space:normal}
+ .ydb-search-filters{grid-template-columns:1fr}
+ .ydb-result{gap:8px}
+ .ydb-image{width:58px;height:81px}
+ .ydb-result-actions{max-width:105px}
+ .ydb-result-actions button{font-size:.64rem;padding:6px}
+ .ydb-stats>div{padding:9px 4px}
+ .ydb-deck-card{gap:5px;padding:6px}
+ .ydb-deck-card-name strong{font-size:.73rem}
+ .ydb-deck-controls{max-width:122px}
+ .ydb-deck-controls button{min-height:31px;min-width:27px}
+ .ydb-deck-controls button.ydb-move{font-size:.6rem}
+}
+@media(max-width:360px){.ydb-deck-controls{max-width:65px}.ydb-deck-controls button.ydb-move{max-width:63px}.ydb-result-actions{max-width:90px}}
+@media(prefers-reduced-motion:reduce){.ydb-image img{transition:none}}
