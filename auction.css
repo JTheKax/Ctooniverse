@@ -27,88 +27,88 @@
 .auction-note{color:#ebdffa!important;font-size:.86rem;margin:0 0 15px;line-height:1.5}
 /* Auction listings share the exact CToon Shop 182 × 282 showcase-window layout.
    The detail dialog houses bidding, so buttons and text cannot stretch cards. */
-body.auction-page #auction-grid{
+body.auction-page .auction-grid{
  box-sizing:border-box;display:grid!important;
  grid-template-columns:repeat(auto-fit,minmax(min(100%,182px),1fr))!important;
  justify-items:center!important;align-items:start!important;
  gap:16px!important;width:100%!important;min-width:0!important;margin-top:19px;
 }
-body.auction-page #auction-grid .ctoon-shop-card{
+body.auction-page .auction-grid .ctoon-shop-card{
  box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
  width:182px!important;min-width:182px!important;max-width:182px!important;
  height:282px!important;min-height:282px!important;max-height:282px!important;
  flex:none!important;margin:0!important;padding:6px!important;overflow:hidden!important;
  /* Shared shop background, beveled frame, and blue-purple arcade glow are inherited. */
 }
-body.auction-page #auction-grid .ctoon-shop-art{
+body.auction-page .auction-grid .ctoon-shop-art{
  box-sizing:border-box!important;position:relative!important;display:flex!important;
  justify-content:center!important;align-items:center!important;flex:0 0 150px!important;
  width:100%!important;height:150px!important;min-height:150px!important;max-height:150px!important;
  aspect-ratio:auto!important;overflow:hidden!important;
 }
-body.auction-page #auction-grid .ctoon-shop-art img{
+body.auction-page .auction-grid .ctoon-shop-art img{
  box-sizing:border-box!important;display:block!important;position:relative!important;
  width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
  padding:7px!important;margin:0!important;flex:none!important;
  object-fit:contain!important;object-position:center!important;
 }
-body.auction-page #auction-grid .ctoon-shop-owned.auction-type{
+body.auction-page .auction-grid .ctoon-shop-owned.auction-type{
  top:5px!important;right:5px!important;left:auto!important;bottom:auto!important;
  z-index:5!important;max-width:calc(100% - 10px);padding:3px 5px!important;
  font-size:10px!important;line-height:1.1!important;
  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-body.auction-page #auction-grid .ctoon-shop-details{
+body.auction-page .auction-grid .ctoon-shop-details{
  box-sizing:border-box!important;display:flex!important;flex:1 1 auto!important;
  flex-direction:column!important;justify-content:space-between!important;
  width:100%!important;min-height:0!important;min-width:0!important;
  padding:6px 3px 3px!important;gap:3px!important;overflow:hidden!important;
 }
-body.auction-page #auction-grid .ctoon-shop-name{
+body.auction-page .auction-grid .ctoon-shop-name{
  box-sizing:border-box!important;display:flex!important;align-items:center!important;
  justify-content:center!important;gap:4px!important;width:100%;min-width:0!important;
  height:29px!important;min-height:29px!important;max-height:29px!important;
  margin:0!important;font-size:12px!important;line-height:1.15!important;
  white-space:normal!important;overflow:hidden!important;
 }
-body.auction-page #auction-grid .ctoon-shop-name-text{
+body.auction-page .auction-grid .ctoon-shop-name-text{
  min-width:0;max-height:2.3em;overflow:hidden;overflow-wrap:anywhere;
  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
  line-clamp:2;text-overflow:ellipsis;
 }
-body.auction-page #auction-grid .ctoon-shop-rarity{
+body.auction-page .auction-grid .ctoon-shop-rarity{
  flex:none;font-size:9px!important;padding:2px 3px!important;line-height:1!important;
 }
-body.auction-page #auction-grid .collection-series{
+body.auction-page .auction-grid .collection-series{
  flex:none;min-height:12px;font-size:10px!important;line-height:1.15!important;
  margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-body.auction-page #auction-grid .ctoon-shop-purchase{
+body.auction-page .auction-grid .ctoon-shop-purchase{
  display:flex!important;flex:none;justify-content:space-between!important;
  align-items:center!important;gap:4px!important;margin:0!important;min-width:0;
 }
-body.auction-page #auction-grid .ctoon-shop-price{
+body.auction-page .auction-grid .ctoon-shop-price{
  font-size:10px!important;line-height:1.15!important;white-space:nowrap;min-width:0;
 }
-body.auction-page #auction-grid .ctoon-shop-buy{
+body.auction-page .auction-grid .ctoon-shop-buy{
  box-sizing:border-box!important;flex:none;min-height:26px!important;
  padding:4px 6px!important;font-size:10px!important;line-height:1.15!important;white-space:nowrap;
 }
-body.auction-page #auction-grid .ctoon-shop-status.auction-time{
+body.auction-page .auction-grid .ctoon-shop-status.auction-time{
  flex:none;display:-webkit-box!important;-webkit-box-orient:vertical;
  -webkit-line-clamp:2;line-clamp:2;overflow:hidden!important;
  max-height:25px!important;min-height:23px!important;margin:0!important;
  font-size:9px!important;line-height:1.25!important;overflow-wrap:anywhere!important;
  color:#e8f7ff!important;
 }
-body.auction-page #auction-grid .ctoon-shop-card,
-body.auction-page #auction-grid .ctoon-shop-art,
-body.auction-page #auction-grid .ctoon-shop-art img{
+body.auction-page .auction-grid .ctoon-shop-card,
+body.auction-page .auction-grid .ctoon-shop-art,
+body.auction-page .auction-grid .ctoon-shop-art img{
  animation:none!important;transition:none!important;transform:none!important;
  translate:none!important;rotate:none!important;scale:none!important;
 }
-body.auction-page #auction-grid .ctoon-shop-art::before,
-body.auction-page #auction-grid .ctoon-shop-art::after{
+body.auction-page .auction-grid .ctoon-shop-art::before,
+body.auction-page .auction-grid .ctoon-shop-art::after{
  animation:none!important;transition:none!important;transform:none!important;
 }
 
@@ -144,7 +144,7 @@ body.auction-page #auction-grid .ctoon-shop-art::after{
 .auction-dialog .auction-action{display:inline-block;box-sizing:border-box;text-align:center;text-decoration:none}
 .auction-dialog :is(button,a,input):focus-visible{outline:3px solid #8cf2ff;outline-offset:3px}
 @media(max-width:660px){
- body.auction-page #auction-grid{gap:12px!important}
+ body.auction-page .auction-grid{gap:12px!important}
  .auction-dialog-content{grid-template-columns:1fr}
  .auction-dialog-art{min-height:170px;max-height:235px}
  .auction-dialog-art img{height:210px}
@@ -160,4 +160,44 @@ body.auction-page #auction-grid .ctoon-shop-art::after{
  .auction-toolbar button{width:100%}
  .auction-hero,.auction-board{padding:17px}
 }
-@media(max-width:350px){body.auction-page #auction-grid{grid-template-columns:1fr!important}}
+@media(max-width:350px){body.auction-page .auction-grid{grid-template-columns:1fr!important}}
+
+/* Distinct auction category tabs — each panel has genuine matching shop windows. */
+.auction-kind-tabs{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
+ width:100%;margin-top:19px;padding:6px;box-sizing:border-box;
+ border:2px solid #70cdf6;border-radius:14px;background:#100f2ad9;
+ box-shadow:inset 0 0 16px #44b5f52b,0 4px 18px #0007;
+}
+.auction-kind-tab{
+ display:flex;align-items:center;justify-content:center;gap:9px;
+ min-width:0;min-height:52px;padding:10px 13px;
+ border:2px solid #7a69bd;border-radius:10px;
+ background:linear-gradient(180deg,#332763,#171944);
+ color:#f3edff;font-size:clamp(.82rem,2.6vw,1rem);font-weight:900;
+ cursor:pointer;white-space:normal;text-align:center;
+}
+.auction-kind-tab[aria-selected="true"]{
+ background:linear-gradient(130deg,#2d9de9,#403cba 65%,#7041bf);
+ border-color:#9df5ff;color:white;
+ box-shadow:inset 0 1px 0 #ffffff52,0 0 13px #40dfff8a;
+}
+.auction-kind-tab:focus-visible{outline:3px solid #ffdfa0;outline-offset:3px}
+.auction-tab-count{
+ display:inline-flex;align-items:center;justify-content:center;
+ min-width:25px;min-height:23px;border-radius:20px;padding:0 6px;
+ background:#071633ab;color:#f1fbff;border:1px solid #b7eaff;
+ font-size:.75rem;font-weight:900;font-variant-numeric:tabular-nums;
+}
+body.auction-page .auction-tab-panel[hidden]{display:none!important}
+body.auction-page .auction-tab-panel{margin:0;padding:0;min-width:0}
+body.auction-page .auction-empty-window .ctoon-shop-status{color:#c5dfff!important}
+body.auction-page .auction-empty-window .ctoon-shop-name-text{white-space:normal}
+body.auction-page .auction-empty-window .ctoon-shop-art img{opacity:.6}
+body.auction-page .auction-empty-window .ctoon-shop-buy{font-size:10px!important}
+body.auction-page .auction-tab-panel:focus-visible{outline:2px solid #8de9ff;outline-offset:4px}
+@media(max-width:520px){
+ .auction-kind-tabs{gap:7px;padding:5px}
+ .auction-kind-tab{min-height:54px;gap:6px;padding:7px 5px;font-size:clamp(.74rem,3.35vw,.88rem)}
+ .auction-tab-count{min-width:20px;min-height:20px;padding:0 4px;font-size:.69rem}
+}
