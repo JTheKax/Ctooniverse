@@ -67,6 +67,8 @@ if (year) year.textContent = String(new Date().getFullYear());
   cards.innerHTML='<button type="button" class="nav-link cards-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="cards-menu"><span class="nav-icon" aria-hidden="true">🃏</span><span>Cards</span><span aria-hidden="true">▾</span></button>'+
     '<div class="cards-dropdown-panel" id="cards-menu">'+
     '<a href="cards.html">Cards Hub</a>'+
+    '<a href="yugioh-cards.html">📚 Card Database</a>'+
+    '<a href="yugioh-deck-builder.html">🃏 Deck Builder</a>'+
     '<a href="yugioh-duel.html">⚡ Yu-Gi-Oh! Duel Arena</a>'+ 
     '<a href="cards.html#cards-gallery">Preview Gallery</a>'+
     '<span class="cards-dropdown-heading">In Development</span>'+
@@ -74,7 +76,7 @@ if (year) year.textContent = String(new Date().getFullYear());
     '<a href="cards.html#card-shop">Card Shop <small>Coming Soon</small></a>'+
     '<a href="cards.html#card-battles">Card Battles <small>Coming Soon</small></a>'+
     '</div>';
-  if(['cards.html','yugioh-duel.html'].includes(page)){
+  if(['cards.html','yugioh-cards.html','yugioh-deck-builder.html','yugioh-duel.html'].includes(page)){
     cards.querySelector('.cards-dropdown-trigger').classList.add('active');
     cards.querySelector('a[href="'+page+'"]')?.setAttribute('aria-current','page');
   }
