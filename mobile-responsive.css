@@ -45,12 +45,12 @@
   }
   .site-header nav .nav-link:hover { transform:none!important; }
   .site-header nav .nav-icon { flex-shrink:0; }
-  .site-header nav :is(.ctoons-dropdown,.games-dropdown,.community-dropdown,
+  .site-header nav :is(.ctoons-dropdown,.games-dropdown,.cards-dropdown,.shop-dropdown,.community-dropdown,
       .account-dropdown,.owner-menu) {
     position:relative!important; min-width:0!important; width:100%!important;
     max-width:100%!important; overflow:visible!important; z-index:auto!important;
   }
-  .site-header nav :is(.ctoons-dropdown-panel,.games-dropdown-panel,
+  .site-header nav :is(.ctoons-dropdown-panel,.games-dropdown-panel,.cards-dropdown-panel,.shop-dropdown-panel,
       .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) {
     position:static!important; inset:auto!important; transform:none!important;
     width:100%!important; min-width:0!important; max-width:100%!important;
@@ -60,7 +60,7 @@
     border-radius:12px!important; z-index:auto!important;
     box-shadow:0 8px 20px #0007!important;
   }
-  .site-header nav :is(.ctoons-dropdown-panel,.games-dropdown-panel,
+  .site-header nav :is(.ctoons-dropdown-panel,.games-dropdown-panel,.cards-dropdown-panel,.shop-dropdown-panel,
       .community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel)
       :is(a,button) {
     display:block; width:100%; min-width:0; max-width:100%;
