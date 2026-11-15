@@ -1,5 +1,5 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
-import {avatarDataUrl,DEFAULT_AVATAR} from './avatar-renderer.js?v=cutout-avatar-v4';
+import {avatarDataUrl,DEFAULT_AVATAR} from './avatar-renderer.js?v=cutout-avatar-v5';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const name=document.getElementById('header-player-name'),coins=document.getElementById('header-player-coins'),profile=document.getElementById('header-player');
 const accountAvatar=document.getElementById('account-avatar-preview');
@@ -51,6 +51,8 @@ db.auth.onAuthStateChange((event,session)=>{
  if(event==='SIGNED_IN'&&session?.user?.id!==activeUserId){activeUserId=session.user.id;setTimeout(updateHeader,50)}
  else if(event==='SIGNED_OUT'&&activeUserId!==null){activeUserId=null;setTimeout(updateHeader,50)}
 });
-window.addEventListener('pageshow',event=>{if(!event.persisted) return; /* Keep restored page state intact. */});
+window.addEventListener('pageshow',event=>{if(event.persisted)updateHeader()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateHeader()});
+window.addEventListener('storage',event=>{if(event.key==='ctoon-avatar-updated')updateHeader()});
 window.addEventListener('ctoon-profile-updated',updateHeader);
 updateHeader();
