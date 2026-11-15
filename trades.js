@@ -208,7 +208,7 @@ async function changeTrade(t,action,button){
   const {error}=await db.rpc('marketplace_trade_action',{p_trade_id:t.id,p_action:action});
   if(error)throw error;
   $('trade-dialog').close();
-  await Promise.all([loadOwned(),loadTrades()]);
+  await loadOwned();await loadTrades();
   window.dispatchEvent(new Event('ctoon-profile-updated'));
   notice('Trade '+(action==='accept'?'accepted':action==='decline'?'declined':'cancelled')+' successfully.');
  }catch(error){notice('Trade action failed: '+(error.message||error),true)}
@@ -251,8 +251,8 @@ for(const kind of kinds){
  $('trade-tab-'+kind).addEventListener('click',()=>switchTab(kind));
  const form=$('trade-form-'+kind);
  form.addEventListener('submit',event=>createTrade(kind,event));
- form.querySelector('[data-refresh]').addEventListener('click',async()=>{
-  try{await Promise.all([loadOwned(),loadTrades()]);notice('Trades refreshed.')}catch(e){notice(e.message,true)}
+ panel(kind).querySelector('[data-refresh]').addEventListener('click',async()=>{
+  try{await loadOwned();await loadTrades();notice('Trades refreshed.')}catch(e){notice(e.message,true)}
  });
  for(const side of ['offer','request']){
   field(kind,side+'-item').addEventListener('change',()=>{
@@ -272,7 +272,7 @@ async function init(){
  if(error||!user){me=null;$('trade-login').hidden=false;$('trade-member').hidden=true;$('trade-wallet').textContent='Sign in to trade';notice('Sign in to start trading.');return}
  me=user;$('trade-login').hidden=true;$('trade-member').hidden=false;
  switchTab(activeKind);
- try{await Promise.all([loadOwned(),loadTrades()]);notice('Ready to trade.')}
+ try{await loadOwned();await loadTrades();notice('Ready to trade.')}
  catch(error){notice('Could not load trades: '+(error?.message||error),true)}
 }
 db.auth.onAuthStateChange(()=>setTimeout(init,0));
