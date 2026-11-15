@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17113d">
+<meta name="description" content="Search the Yu-Gi-Oh! card database on CTooniverse.">
+<title>Yu-Gi-Oh! Card Database | CTooniverse</title>
+<link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
+<link rel="stylesheet" href="arcade-polish.css?v=2">
+<link rel="stylesheet" href="cards-page.css?v=cards-hub-20261114">
+<link rel="stylesheet" href="yugioh-cards.css?v=1">
+<script src="script.js?v=20261115-yugioh-catalog" defer></script>
+<script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
+<script type="module" src="account-menu.js?v=1"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
+<script src="yugioh-cards.js?v=1" defer></script>
+</head>
+<body class="cards-hub-page yc-page">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a>
+<nav aria-label="Main navigation">
+<a href="index.html" class="nav-link">Home</a>
+<a href="ctoons.html" class="nav-link">CToons</a>
+<a href="games.html" class="nav-link">Games</a>
+<a href="cards.html" class="nav-link active" aria-current="page">Cards</a>
+<a href="watch.html" class="nav-link">Theater</a>
+<a href="shop.html" class="nav-link">Shop</a>
+<a href="community.html" class="nav-link">Community</a>
+<a href="account.html" class="nav-link">Account</a>
+</nav>
+<div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div>
+</header>
+<main id="main" class="cards-main yc-main">
+<section class="yc-hero cards-section">
+<p class="eyebrow">✦ CTOONIVERSE CARDS · PUBLIC CATALOG ✦</p>
+<h1>Yu-Gi-Oh! <span>Card Database</span></h1>
+<p>Browse the imported card catalog. Find monsters, spells, traps, effects, archetypes and stats. Results are read directly from CTooniverse's database.</p>
+<div class="cards-actions"><a class="button secondary" href="cards.html">← Cards Hub</a><a class="button primary" href="yugioh-duel.html">⚔️ Play Duel Arena</a></div>
+<p class="yc-source" id="yc-source">Checking imported card database…</p>
+</section>
+<section class="yc-search-panel cards-section" aria-labelledby="yc-search-heading">
+<div class="cards-section-title"><div><p class="eyebrow">✦ SEARCH THE VAULT ✦</p><h2 id="yc-search-heading">Find a card</h2></div></div>
+<form id="yc-search-form" class="yc-form" role="search">
+<label>Card name<input id="yc-name" type="search" placeholder="e.g. Dark Magician, Blue-Eyes" autocomplete="off" maxlength="80"></label>
+<label>Card category<select id="yc-category"><option value="">All categories</option><option value="monster">Monsters</option><option value="spell">Spell Cards</option><option value="trap">Trap Cards</option></select></label>
+<label>Archetype<input id="yc-archetype" type="search" placeholder="e.g. Elemental HERO" autocomplete="off" maxlength="80"></label>
+<label>Attribute<select id="yc-attribute"><option value="">Any attribute</option><option value="DARK">DARK</option><option value="LIGHT">LIGHT</option><option value="EARTH">EARTH</option><option value="WATER">WATER</option><option value="FIRE">FIRE</option><option value="WIND">WIND</option><option value="DIVINE">DIVINE</option></select></label>
+<div class="yc-form-buttons"><button type="submit" class="button primary">Search Cards</button><button type="button" class="button secondary" id="yc-clear">Clear</button></div>
+</form>
+</section>
+<section class="yc-results-panel cards-section" aria-labelledby="yc-results-heading">
+<div class="cards-section-title"><div><h2 id="yc-results-heading">Card results</h2><p id="yc-result-status" role="status" aria-live="polite">Loading cards…</p></div><span class="cards-tag" id="yc-page-label">PAGE 1</span></div>
+<div class="yc-grid" id="yc-grid"></div>
+<div class="yc-pagination"><button type="button" class="button secondary" id="yc-prev" disabled>← Previous</button><span id="yc-range">—</span><button type="button" class="button secondary" id="yc-next" disabled>Next →</button></div>
+<p class="yc-footnote">Card information is provided by YGOPRODeck API v7. Official card images are not reproduced here. This is a reference library, not an owned collection; the Duel Arena currently uses a smaller simplified card pool.</p>
+</section>
+<dialog id="yc-dialog" class="yc-dialog" aria-labelledby="yc-detail-title"><button type="button" id="yc-close" class="yc-close" aria-label="Close card details">×</button><div id="yc-detail"><h2 id="yc-detail-title">Card details</h2></div></dialog>
+</main>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>Card reference data from YGOPRODeck. Fan site, not affiliated with Konami.</span></footer>
+<script type="module" src="site-chat-widget.js?v=1"></script>
+</body></html>
