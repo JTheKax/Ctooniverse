@@ -8,13 +8,13 @@
 <link rel="stylesheet" href="arcade-polish.css?v=2">
 <link rel="stylesheet" href="dragonball-sitewide.css?v=background-harmony-20261114">
 <link rel="stylesheet" href="cosmic-overdrive.css?v=20261112-overdrive-v1">
-<link rel="stylesheet" href="avatar-maker.css?v=cutout-avatar-v3">
+<link rel="stylesheet" href="avatar-maker.css?v=cutout-avatar-v4">
 <script src="script.js?v=20261115-shop-auction-v1" defer></script>
-<script type="module" src="header-profile.js?v=cutout-avatar-v3"></script>
+<script type="module" src="header-profile.js?v=cutout-avatar-v4"></script>
 <script type="module" src="account-menu.js?v=paper-avatar-v1"></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
-<script type="module" src="avatar-maker.js?v=cutout-avatar-v3"></script>
+<script type="module" src="avatar-maker.js?v=cutout-avatar-v4"></script>
 </head>
 <body class="account-neon-page avatar-maker-page">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -23,7 +23,7 @@
 <section class="avatar-intro">
 <p class="eyebrow">CREATE YOUR LOOK</p>
 <h1>Custom Avatar Maker</h1>
-<p>Start with our <strong>South Park–style cutout cartoon</strong> avatar creator. Make your own original character with customizable clothes, hair, hats, and colors.</p>
+<p>Start with our <strong>South Park–style cutout cartoon</strong> avatar creator. Make your own original character with customizable hairstyles, facial features, outfits, hats, accessories, and colors.</p>
 <a class="button secondary" href="account.html">← Back to My Account</a>
 </section>
 <section class="avatar-editor" aria-label="Customize your player avatar">
@@ -41,14 +41,17 @@
 <h2>Customize your look</h2>
 <div class="avatar-control-grid">
 <fieldset><legend>Head & face</legend>
-<label>Hair style<select name="hairStyle"><option value="short">Short</option><option value="swoop">Swoop</option><option value="spiky">Spiky</option><option value="long">Long</option><option value="curly">Curly</option><option value="bald">Bald</option></select></label>
-<label>Hat<select name="hat"><option value="none">No hat</option><option value="beanie">Beanie</option><option value="pom">Pom-pom hat</option><option value="earflaps">Earflap hat</option><option value="cap">Baseball cap</option></select></label>
-<label>Expression<select name="face"><option value="smile">Smile</option><option value="grin">Grin</option><option value="neutral">Straight face</option><option value="surprised">Surprised</option></select></label>
+<label>Hair style<select name="hairStyle"><option value="short">Short</option><option value="swoop">Swoop</option><option value="spiky">Spiky</option><option value="long">Long</option><option value="curly">Curly</option><option value="bald">Bald</option><option value="sidepart">Side part</option><option value="messy">Messy</option><option value="bob">Bob</option><option value="pigtails">Pigtails</option><option value="afro">Afro</option><option value="mohawk">Mohawk</option><option value="buzz">Buzz cut</option></select></label>
+<label>Hat<select name="hat"><option value="none">No hat</option><option value="beanie">Beanie</option><option value="pom">Pom-pom hat</option><option value="earflaps">Earflap hat</option><option value="cap">Baseball cap</option><option value="bucket">Bucket hat</option><option value="visor">Visor</option></select></label>
+<label>Expression<select name="face"><option value="smile">Smile</option><option value="grin">Grin</option><option value="neutral">Straight face</option><option value="surprised">Surprised</option><option value="frown">Frown</option><option value="laugh">Laugh</option><option value="wink">Wink</option><option value="sleepy">Sleepy</option></select></label>
+<label>Eyebrows<select name="brows"><option value="plain">Classic</option><option value="raised">Raised</option><option value="angry">Angry</option><option value="soft">Soft</option></select></label>
+<label>Facial hair<select name="facialHair"><option value="none">None</option><option value="mustache">Mustache</option><option value="goatee">Goatee</option><option value="beard">Beard</option></select></label>
 <label>Eye color<select name="eyes"><option value="black">Black</option><option value="brown">Brown</option><option value="blue">Blue</option><option value="green">Green</option></select></label>
 </fieldset>
 <fieldset><legend>Clothing & extras</legend>
-<label>Outfit<select name="outfit"><option value="coat">Winter coat</option><option value="hoodie">Hoodie</option><option value="sweater">Sweater</option><option value="tee">T-shirt</option></select></label>
-<label>Accessory<select name="accessory"><option value="none">None</option><option value="glasses">Glasses</option><option value="freckles">Freckles</option><option value="blush">Blush</option><option value="scarf">Scarf</option></select></label>
+<label>Outfit<select name="outfit"><option value="coat">Winter coat</option><option value="hoodie">Hoodie</option><option value="sweater">Sweater</option><option value="tee">T-shirt</option><option value="jacket">Jacket</option><option value="overalls">Overalls</option><option value="jersey">Sports jersey</option><option value="vest">Vest</option><option value="dress">Dress</option></select></label>
+<label>Accessory<select name="accessory"><option value="none">None</option><option value="glasses">Glasses</option><option value="freckles">Freckles</option><option value="blush">Blush</option><option value="scarf">Scarf</option><option value="sunglasses">Sunglasses</option><option value="eyepatch">Eye patch</option><option value="headphones">Headphones</option><option value="mask">Face mask</option></select></label>
+<label>Neckwear<select name="neckwear"><option value="none">None</option><option value="bowtie">Bow tie</option><option value="tie">Necktie</option><option value="necklace">Necklace</option></select></label>
 <label>Background<select name="backdrop"><option value="spotlight">Spotlight</option><option value="snow">Snow</option><option value="stars">Stars</option><option value="plain">Plain</option></select></label>
 </fieldset>
 <fieldset class="avatar-colors"><legend>Colors</legend>
