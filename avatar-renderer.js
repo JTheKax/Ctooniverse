@@ -1,3 +1,4 @@
+import {avatarExtraLayers} from './avatar-extra-layers.js?v=cutout-avatar-v4';
 // CTooniverse South Park-style cutout avatar renderer.
 // Original paper-cutout designs; no official series art or character assets.
 // All user appearance values are strictly whitelisted before SVG interpolation.
@@ -6,19 +7,22 @@ const COLORS={
  hatColor:'#354e87',hatAccent:'#d72f38',background:'#f8f8fb'
 };
 const OPTIONS={
- hairStyle:['short','swoop','spiky','long','curly','bald'],
- hat:['none','beanie','pom','earflaps','cap'],
- outfit:['coat','hoodie','sweater','tee'],
- face:['smile','grin','neutral','surprised'],
- accessory:['none','glasses','freckles','blush','scarf'],
+ hairStyle:['short','swoop','spiky','long','curly','bald','sidepart','messy','bob','pigtails','afro','mohawk','buzz'],
+ hat:['none','beanie','pom','earflaps','cap','bucket','visor'],
+ outfit:['coat','hoodie','sweater','tee','jacket','overalls','jersey','vest','dress'],
+ face:['smile','grin','neutral','surprised','frown','laugh','wink','sleepy'],
+ accessory:['none','glasses','freckles','blush','scarf','sunglasses','eyepatch','headphones','mask'],
  eyes:['black','brown','blue','green'],
+ brows:['plain','raised','angry','soft'],
+ facialHair:['none','mustache','goatee','beard'],
+ neckwear:['none','bowtie','tie','necklace'],
  backdrop:['spotlight','snow','stars','plain'],
 };
 const HEX=/^#[0-9a-f]{6}$/i;
 export const AVATAR_OPTIONS=OPTIONS;
 export const DEFAULT_AVATAR=Object.freeze({
- theme:'paper-cutout',version:3,hairStyle:'swoop',hat:'pom',
- outfit:'coat',face:'smile',accessory:'none',eyes:'black',backdrop:'plain',
+ theme:'paper-cutout',version:4,hairStyle:'swoop',hat:'pom',
+ outfit:'coat',face:'smile',accessory:'none',eyes:'black',brows:'plain',facialHair:'none',neckwear:'none',backdrop:'plain',
  ...COLORS
 });
 export function normalizeAvatar(source={}){
@@ -74,7 +78,7 @@ export function avatarSvg(value={}) {
  ${a.outfit==='coat'?`<path d="M61 319l28 9M231 328l27-9" fill="none" stroke="${ink}" stroke-width="3"/>`:''}
  <path d="M79 331Q64 319 49 327Q30 341 40 360Q50 379 70 367Q85 358 79 347Q68 356 61 345" fill="${a.skin}" ${edge}/>
  <path d="M241 331Q256 319 271 327Q290 341 280 360Q270 379 250 367Q235 358 241 347Q252 356 259 345" fill="${a.skin}" ${edge}/>`;
- const backHair=a.hairStyle==='bald'?'':`
+ const backHair=['bald','mohawk','buzz','bob','afro','pigtails','sidepart','messy'].includes(a.hairStyle)?'':`
  <path d="M72 161Q50 106 77 90Q90 68 131 72Q212 62 243 108Q261 142 251 192L276 213L248 209L249 229L224 215Q194 240 158 231Q120 241 90 213L72 226L66 201L44 211L61 179Z" fill="${a.hair}" ${hairEdge}/>`;
  const head=`<ellipse cx="160" cy="182" rx="100" ry="99" fill="${a.skin}" ${edge}/>`;
  let fringe='';
@@ -87,10 +91,11 @@ export function avatarSvg(value={}) {
  const eyes=`<ellipse cx="133" cy="187" rx="36" ry="40" fill="white" stroke="#bab7ba" stroke-width="1.2"/>
  <ellipse cx="188" cy="187" rx="36" ry="40" fill="white" stroke="#bab7ba" stroke-width="1.2"/>
  <circle cx="152" cy="189" r="5" fill="${eyeColor}"/><circle cx="172" cy="189" r="5" fill="${eyeColor}"/>`;
+ const layers=avatarExtraLayers(a);
  const mouth=a.face==='neutral'?'<path d="M147 257h27" stroke="#1b161b" stroke-width="3" fill="none" stroke-linecap="round"/>'
   :a.face==='surprised'?'<ellipse cx="160" cy="253" rx="8" ry="11" fill="#3b1c24"/>'
   :a.face==='grin'?'<path d="M140 247Q160 274 182 247Q160 261 140 247Z" fill="white" stroke="#1b161b" stroke-width="2.7"/>'
-  :'<path d="M142 251Q160 265 179 251" stroke="#1b161b" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  :['frown','laugh','wink','sleepy'].includes(a.face)?'':'<path d="M142 251Q160 265 179 251" stroke="#1b161b" stroke-width="3" fill="none" stroke-linecap="round"/>';
  let hat='';
  if(a.hat==='pom') hat=`
  <path d="M59 135Q54 57 100 43Q164 12 226 48Q267 67 262 135Z" fill="${a.hatColor}" ${edge}/>
@@ -119,9 +124,9 @@ export function avatarSvg(value={}) {
  <rect width="320" height="400" rx="10" fill="${backdrop}"/>
  ${backdropDecor}${decoration}
  <ellipse cx="160" cy="388" rx="94" ry="8" fill="#23202d" opacity=".15"/>
- ${pants}${shoes}${base}${clothing}${sleeves}
- ${backHair}<path d="M143 245H178V278H143Z" fill="${a.skin}"/>
- ${head}${fringe}${eyes}${mouth}${hat}${extras}</svg>`;
+ ${pants}${shoes}${base}${clothing}${layers.clothes}${sleeves}
+ ${backHair}${layers.backHair}<path d="M143 245H178V278H143Z" fill="${a.skin}"/>
+ ${head}${fringe}${layers.fringe}${eyes}${mouth}${layers.faceFeatures}${hat}${layers.hat}${extras}${layers.accessories}</svg>`;
 }
 export function avatarDataUrl(value){
  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(avatarSvg(value));
