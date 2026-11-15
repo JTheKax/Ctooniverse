@@ -60,14 +60,10 @@ function selectionChanged(resetName=false){
  else if(fileInput.files[0])say('Custom artwork selected. You may create the fusion or generate a new one-character design.');
  else say('Ready! Click Fuse into One Character to generate one original character from both CToons.');
 }
-function showCustomFile(){
- selectionVersion++;
- clearGenerated();
+function resetForNewSources(){
+ fileInput.value='';
  clearCustomPreview();
- const file=fileInput.files[0];
- if(file)customUrl=URL.createObjectURL(file);
- updateResult();
- selectionChanged(false);
+ selectionChanged(true);
 }
 async function verifyOwner(){
  const {data:{user},error}=await db.auth.getUser();
@@ -141,11 +137,11 @@ async function generate(){
 $('fusion-a').addEventListener('change',()=>{
  const a=current('fusion-a');
  if(a&&sets.some(x=>x.name===a.series)&&!field('fusion-series'))$('fusion-series').value=a.series;
- selectionChanged(true);
+ resetForNewSources();
 });
-$('fusion-b').addEventListener('change',()=>selectionChanged(true));
+$('fusion-b').addEventListener('change',resetForNewSources);
 for(const [searchId,selectId] of [['fusion-search-a','fusion-a'],['fusion-search-b','fusion-b']]){
- $(searchId).addEventListener('input',()=>{selectItems(selectId,searchId);selectionChanged(true)});
+ $(searchId).addEventListener('input',()=>{selectItems(selectId,searchId);resetForNewSources()});
 }
 $('fusion-redraw').addEventListener('click',generate);
 fileInput.addEventListener('change',()=>{
