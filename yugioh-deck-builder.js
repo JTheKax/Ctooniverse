@@ -52,7 +52,7 @@ function maxCopies(card) {
   return 3;
 }
 function canPlace(card, zone, moving = false) {
-  if (!card || !ZONES.includes(zone)) return false;
+  if (!card || !ZONES.includes(zone) || ["Skill Card", "Token"].includes(card.card_type)) return false;
   if (size(zone) >= LIMITS[zone]) return false;
   if (zone !== "side" && zone !== mainOrExtra(card)) return false;
   if (!moving && copyCount(Number(card.card_id)) >= 3) return false;
@@ -414,6 +414,7 @@ async function importYdk(file) {
     for (const zone of ZONES) for (const id of lists[zone]) {
       const card = cardsById.get(id);
       if (!card) throw new Error("Card #" + id + " is not in the English CTooniverse catalog.");
+      if (["Skill Card","Token"].includes(card.card_type)) throw new Error(card.name + " cannot be used in a regular deck.");
       if (zone !== "side" && zone !== mainOrExtra(card))
         throw new Error(card.name + " cannot be in the " + zone + " deck.");
     }
@@ -438,6 +439,7 @@ async function searchCards() {
       .range(searchPage * PAGE_SIZE, (searchPage+1) * PAGE_SIZE-1);
     if (query) q = q.ilike("name", "%" + query + "%");
     if (archetype) q = q.ilike("archetype", "%" + archetype + "%");
+    q = q.neq("card_type", "Skill Card").neq("card_type", "Token");
     if (type === "monster") q = q.ilike("card_type", "%Monster%");
     else if (type === "spell") q = q.eq("card_type", "Spell Card");
     else if (type === "trap") q = q.eq("card_type", "Trap Card");
