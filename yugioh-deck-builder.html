@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17113d">
+<meta name="description" content="Build and save Yu-Gi-Oh! decks from the CTooniverse card database.">
+<title>Yu-Gi-Oh! Deck Builder | CTooniverse</title>
+<link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
+<link rel="stylesheet" href="arcade-polish.css?v=2">
+<link rel="stylesheet" href="cards-page.css?v=cards-hub-20261114">
+<link rel="stylesheet" href="yugioh-deck-builder.css?v=20261115-v1">
+<script src="script.js?v=20261115-deck-builder" defer></script>
+<script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
+<script type="module" src="account-menu.js?v=1"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
+<script type="module" src="yugioh-deck-builder.js?v=20261115-v1"></script>
+</head>
+<body class="cards-hub-page ydb-body">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a>
+<nav aria-label="Main navigation">
+<a href="index.html" class="nav-link">Home</a>
+<a href="ctoons.html" class="nav-link">CToons</a>
+<a href="games.html" class="nav-link">Games</a>
+<a href="cards.html" class="nav-link active" aria-current="page">Cards</a>
+<a href="watch.html" class="nav-link">Theater</a>
+<a href="shop.html" class="nav-link">Shop</a>
+<a href="community.html" class="nav-link">Community</a>
+<a href="account.html" class="nav-link">Account</a>
+</nav>
+<div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div>
+</header>
+<main id="main" class="ydb-main">
+<section class="cards-section ydb-hero" aria-labelledby="ydb-title">
+<p class="eyebrow">✦ CTOONIVERSE CARDS ✦</p>
+<h1 id="ydb-title">Yu-Gi-Oh! <span>Deck Builder</span></h1>
+<p>Build your own deck from the English card database. Browse original card artwork, organize Main, Extra and Side Decks, and save decks to your player account.</p>
+<div class="cards-actions">
+<a class="button secondary" href="cards.html">← Cards Hub</a>
+<a class="button secondary" href="yugioh-cards.html">📚 Card Database</a>
+<a class="button secondary" href="yugioh-duel.html">⚔️ Duel Arena</a>
+</div>
+</section>
+<section class="cards-section ydb-manager" aria-label="Manage your decks">
+<div class="ydb-field">
+<label for="ydb-name">Deck name</label>
+<input id="ydb-name" maxlength="80" placeholder="My Yu-Gi-Oh! Deck" value="New Deck" spellcheck="false">
+</div>
+<div class="ydb-field ydb-saved-field">
+<label for="ydb-decks">Saved decks</label>
+<select id="ydb-decks" aria-label="Select a saved deck" disabled><option value="">Sign in to load saved decks</option></select>
+</div>
+<div class="ydb-manager-actions">
+<button type="button" class="button secondary" id="ydb-new">＋ New Deck</button>
+<button type="button" class="button primary" id="ydb-save" disabled>Save Deck</button>
+<button type="button" class="button secondary" id="ydb-delete" disabled>Delete Deck</button>
+<button type="button" class="button secondary" id="ydb-export">Export .ydk</button>
+<label class="button secondary ydb-import-label" for="ydb-import">Import .ydk</label>
+<input type="file" id="ydb-import" accept=".ydk,text/plain" hidden>
+</div>
+<p id="ydb-account-status" class="ydb-account-status" role="status">Checking your account…</p>
+<p id="ydb-feedback" class="ydb-feedback" role="status" aria-live="polite"></p>
+</section>
+<section class="ydb-workspace" aria-label="Deck editor">
+<div class="cards-section ydb-browser">
+<div class="cards-section-title"><div><p class="eyebrow">✦ CARD LIBRARY ✦</p><h2>Search Cards</h2><p>Search all English cards, then add them to your deck.</p></div></div>
+<form id="ydb-search" class="ydb-search" role="search">
+<label for="ydb-query">Card name</label>
+<input id="ydb-query" type="search" placeholder="Search Blue-Eyes, Dark Magician…" maxlength="80">
+<div class="ydb-search-filters">
+<div><label for="ydb-type">Card type</label><select id="ydb-type">
+<option value="">All types</option>
+<option value="monster">Monsters</option>
+<option value="spell">Spells</option>
+<option value="trap">Traps</option>
+<option value="extra">Extra Deck monsters</option>
+</select></div>
+<div><label for="ydb-archetype">Archetype</label><input id="ydb-archetype" maxlength="60" placeholder="Blue-Eyes"></div>
+</div>
+<div class="ydb-search-submit"><button type="submit" class="button primary">Search</button><button type="button" id="ydb-reset-search" class="button secondary">Reset</button></div>
+</form>
+<p id="ydb-results-status" class="ydb-results-status" role="status" aria-live="polite">Loading cards…</p>
+<div id="ydb-search-results" class="ydb-search-results" aria-label="Card search results"></div>
+<div class="ydb-pager"><button type="button" id="ydb-prev" class="button secondary" disabled>← Previous</button><span id="ydb-page">Page 1</span><button type="button" id="ydb-next" class="button secondary" disabled>Next →</button></div>
+</div>
+<div class="cards-section ydb-editor">
+<div class="cards-section-title"><div><p class="eyebrow">✦ YOUR DECK ✦</p><h2>Deck List</h2><p>Tap + to add another copy or − to remove one.</p></div></div>
+<div class="ydb-stats" aria-live="polite">
+<div><strong id="ydb-main-count">0 / 40–60</strong><small>Main Deck</small></div>
+<div><strong id="ydb-extra-count">0 / 15</strong><small>Extra Deck</small></div>
+<div><strong id="ydb-side-count">0 / 15</strong><small>Side Deck</small></div>
+</div>
+<div id="ydb-rules-status" class="ydb-rules-status" role="status">Add at least 40 cards to your Main Deck.</div>
+<section class="ydb-zone" aria-labelledby="ydb-main-title"><h3 id="ydb-main-title">Main Deck <small>40–60 cards</small></h3><div id="ydb-main-list" class="ydb-zone-list"><p>No Main Deck cards yet.</p></div></section>
+<section class="ydb-zone" aria-labelledby="ydb-extra-title"><h3 id="ydb-extra-title">Extra Deck <small>0–15 cards</small></h3><div id="ydb-extra-list" class="ydb-zone-list"><p>No Extra Deck cards yet.</p></div></section>
+<section class="ydb-zone" aria-labelledby="ydb-side-title"><h3 id="ydb-side-title">Side Deck <small>0–15 cards</small></h3><div id="ydb-side-list" class="ydb-zone-list"><p>No Side Deck cards yet.</p></div></section>
+</div>
+</section>
+<section class="cards-section ydb-help">
+<h2>Deck Builder Rules</h2>
+<p>The Main Deck needs <strong>40–60 cards</strong> to be ready. The Extra Deck and Side Deck can each have up to <strong>15 cards</strong>. You can have up to <strong>3 copies of each card across all three decks combined</strong>. Fusion, Synchro, Xyz and Link Monsters belong in the Extra Deck; the Side Deck can hold either type. You can save an unfinished draft.</p>
+<p>Deck-size and copy checks are built in, but this builder does <strong>not yet certify tournament legality</strong>. Always check the latest official Forbidden &amp; Limited List and card release eligibility. Building a deck does not change the Duel Arena's simplified prebuilt decks.</p>
+<p class="ydb-credit">Card information: YGOPRODeck API v7. Card artwork © Konami / 4K Media. Unaffiliated fan site.</p>
+</section>
+</main>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>Build, save and explore your Yu-Gi-Oh! decks.</span></footer>
+<script type="module" src="site-chat-widget.js?v=1"></script>
+</body>
+</html>
