@@ -56,16 +56,34 @@ async function fetchCards(ids){
  return cards;
 }
 function packView(pack){
- const item=el("article","ycs-pack "+pack.theme);
- item.append(el("span","ycs-pack-category",pack.category||"Featured"));
- const art=el("div","ycs-pack-art"),image=artwork(pack.hero_art_image_id||pack.hero_image_id);
- art.append(image);item.append(art,el("h3","",pack.name),el("p","",pack.description),
-  el("span","ycs-count",pack.card_count+" different cards per pack"),
-  el("span","ycs-pool-size",Number(pack.pool_size||0).toLocaleString()+" possible cards"),
-  el("strong","ycs-price",money(pack.price_coins)));
- const button=el("button","button primary",user?"Open Pack":"Sign in to Open");
- button.type="button";button.disabled=!user||busy;button.addEventListener("click",()=>openPack(pack));
- item.append(button);return item;
+ // Reuse the same glass-window display structure as the 182 × 282 CToon Shop cards.
+ const item=el("article","ctoon-shop-card ycs-pack");
+ item.dataset.theme=pack.theme||"violet";
+ item.title=pack.name+" — "+pack.description;
+ const art=el("div","ctoon-shop-art ycs-pack-window");
+ const badge=el("span","ctoon-shop-owned ycs-pack-badge",pack.card_count+" cards");
+ const image=artwork(pack.hero_art_image_id||pack.hero_image_id);
+ image.classList.add("ycs-pack-cover");
+ art.append(badge,image);
+ const details=el("div","ctoon-shop-details ycs-pack-details");
+ const heading=el("div","ctoon-shop-name");
+ const name=el("span","ctoon-shop-name-text",pack.name);
+ name.title=pack.name;
+ heading.append(name);
+ const category=el("p","collection-series ycs-pack-series",pack.category||"Featured");
+ category.title=pack.description;
+ const purchase=el("div","ctoon-shop-purchase");
+ const price=el("span","ctoon-shop-price",money(pack.price_coins));
+ const button=el("button","ctoon-shop-buy ycs-pack-open",user?"Open":"Sign in");
+ button.type="button";
+ button.disabled=!user||busy;
+ button.setAttribute("aria-label",user?"Open "+pack.name+" for "+money(pack.price_coins):"Sign in to open "+pack.name);
+ button.addEventListener("click",()=>openPack(pack));
+ purchase.append(price,button);
+ const pool=el("p","ctoon-shop-status ycs-pack-pool",Number(pack.pool_size||0).toLocaleString()+" possible cards · "+pack.card_count+" per pack");
+ details.append(heading,category,purchase,pool);
+ item.append(art,details);
+ return item;
 }
 function drawPacks(){
  const root=$("ycs-pack-grid");
