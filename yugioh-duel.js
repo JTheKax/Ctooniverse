@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
 (() => {
   /* CTooniverse fan duel. Account-bound starter selection; no collection/inventory transactions. */
   const db=createClient("https://hsxdyxdazsdmpucyhqly.supabase.co","sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS");
-  let activeStarter=null,choosingStarter=false;
+  let activeStarter=null,choosingStarter=false,selectedOpponent=null,loadingOpponent=false;
   const starterCardCache=new Map();
   const catalog={
     dark:["Dark Magician",7,2500,2100,"🪄"],blue:["Blue-Eyes White Dragon",8,3000,2500,"🐉"],
@@ -87,14 +87,50 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     player:{dark:2,red:1,skull:2,celtic:3,stone:3,ox:2,kuriboh:3,elf:3,dragon:2,harpie:2,imp:3,jinn:2,pot:2,fissure:2,reborn:1,heal:1,swords:1,axe:1,storm:1,mirror:1,hole:1,negate:1},
     cpu:{blue:3,skull:1,ox:3,jinn:3,stone:3,kaiser:3,ryu:3,lord:2,elf:2,imp:3,harpie:2,pot:2,fissure:2,reborn:1,heal:1,swords:1,axe:1,storm:1,mirror:1,hole:1,negate:1}
   };
-  const $=id=>document.getElementById(id),opponent=s=>s==="player"?"cpu":"player",who=s=>s==="player"?"Player":"Computer";
+
+  // Free Duel rivals: signature-card portraits and catalog-derived thematic decks.
+  // Opponent selection never modifies the permanent starter or owned inventory.
+  const DUELISTS=[
+    {id:"yugi",name:"Yugi Muto",epithet:"King of Games",hero:46986414,race:"Spellcaster",difficulty:3,style:"Dark Magician · Spellcaster tactics",flavor:"A balanced rival whose spellcasters reward careful play."},
+    {id:"kaiba",name:"Seto Kaiba",epithet:"Blue-Eyes Rival",hero:89631139,race:"Dragon",difficulty:5,style:"Blue-Eyes · Dragon power",flavor:"High-attack dragons threaten your Life Points."},
+    {id:"joey",name:"Joey Wheeler",epithet:"Red-Eyes Challenger",hero:74677422,race:"Warrior",difficulty:2,style:"Red-Eyes · Warrior beatdown",flavor:"A brawling duelist who favors direct monster battles."},
+    {id:"pegasus",name:"Maximillion Pegasus",epithet:"Toon Creator",hero:15259703,race:"Spellcaster",archetype:"Toon",difficulty:3,style:"Toons · Illusion and trickery",flavor:"Toon monsters bring an unpredictable challenge."},
+    {id:"mai",name:"Mai Valentine",epithet:"Harpie Duelist",hero:76812113,race:"Winged Beast",archetype:"Harpie",difficulty:3,style:"Harpies · Winged Beasts",flavor:"Agile flyers and relentless attacks rule this duel."},
+    {id:"weevil",name:"Weevil Underwood",epithet:"Insect Expert",hero:91512835,race:"Insect",difficulty:2,style:"Insects · Swarming monsters",flavor:"Small insect monsters gather before the queen arrives."},
+    {id:"rex",name:"Rex Raptor",epithet:"Dinosaur Tamer",hero:94119974,race:"Dinosaur",difficulty:2,style:"Dinosaurs · Physical strength",flavor:"Prehistoric monsters stand ready to attack."},
+    {id:"mako",name:"Mako Tsunami",epithet:"Ocean Warrior",hero:3643300,race:"Fish",difficulty:2,style:"Water creatures · Ocean tactics",flavor:"Ocean creatures can overwhelm an unprepared field."},
+    {id:"keith",name:"Bandit Keith",epithet:"Machine Commander",hero:81480461,race:"Machine",difficulty:4,style:"Machines · Heavy artillery",flavor:"Mechanized monsters pack serious firepower."},
+    {id:"bakura",name:"Ryo Bakura",epithet:"Shadow Duelist",hero:31829185,race:"Fiend",difficulty:4,style:"Fiends · Graveyard creatures",flavor:"Dark fiends lurk behind seemingly quiet moves."},
+    {id:"marik",name:"Marik Ishtar",epithet:"Rare Hunter",hero:10000010,race:"Fiend",difficulty:5,style:"Fiends · Egyptian God challenge",flavor:"A dangerous master of high-level monsters."},
+    {id:"ishizu",name:"Ishizu Ishtar",epithet:"Keeper of Fate",hero:17484499,race:"Fairy",difficulty:3,style:"Fairies · Ancient traps",flavor:"An elegant duelist who knows how to control the field."},
+    {id:"tea",name:"Téa Gardner",epithet:"Friendship Duelist",hero:38033121,race:"Fairy",difficulty:1,style:"Fairies · Dark Magician Girl",flavor:"A welcoming rival to practice the fundamentals."},
+    {id:"odion",name:"Odion",epithet:"Temple Guardian",hero:89194033,race:"Rock",difficulty:4,style:"Rock monsters · Defensive traps",flavor:"Strong defenses may force you into a long battle."},
+    {id:"bonz",name:"Bonz",epithet:"Ghost Gravekeeper",hero:29155212,race:"Zombie",difficulty:1,style:"Zombies · Haunted graveyard",flavor:"Rise against monsters from the haunted crypt."}
+  ];
+  function opponentRecord(id){
+    try{
+      const r=JSON.parse(localStorage.getItem("ctoon-yugioh-free-duel-records-v1")||"{}")[id];
+      return {wins:Math.max(0,Number(r?.wins)||0),losses:Math.max(0,Number(r?.losses)||0)};
+    }catch(_){return {wins:0,losses:0};}
+  }
+  function recordOpponentResult(id,won){
+    if(!id)return;
+    try{
+      const all=JSON.parse(localStorage.getItem("ctoon-yugioh-free-duel-records-v1")||"{}");
+      const r=opponentRecord(id);
+      r[won?"wins":"losses"]++;
+      all[id]=r;
+      localStorage.setItem("ctoon-yugioh-free-duel-records-v1",JSON.stringify(all));
+    }catch(_){}
+  }
+  const $=id=>document.getElementById(id),opponent=s=>s==="player"?"cpu":"player",who=s=>s==="player"?"Player":(selectedOpponent?.name||"Computer");
   let uid=0,game;
   function makeCard(id){const spec=catalog[id];if(!spec)throw new Error("Missing duel card: "+id);return{uid:++uid,id,name:spec[0],type:typeof spec[1]==="number"?"monster":spec[1],level:typeof spec[1]==="number"?spec[1]:0,atk:spec[2]||0,def:spec[3]||0,icon:spec[typeof spec[1]==="number"?4:3],text:typeof spec[1]==="number"?"Monster card (simplified arena rules)":spec[2]};}
   function makeDeck(side){const result=[];for(const [id,n] of Object.entries(deckLists[side]))for(let i=0;i<n;i++)result.push(makeCard(id));for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}return result;}
   function makeSide(side){return{lp:8000,deck:makeDeck(side),hand:[],field:Array(5).fill(null),traps:Array(5).fill(null),grave:[],shield:0};}
   function note(message){game.history.unshift(message);game.history=game.history.slice(0,25);}
   function record(){try{return JSON.parse(localStorage.getItem("ctoon-yugioh-stats")||'{"wins":0,"losses":0}');}catch(_){return {wins:0,losses:0};}}
-  function finish(winner,why){if(game.winner)return;game.winner=winner;game.phase="finished";game.selected=null;note((winner==="player"?"Victory! ":"Defeat! ")+why);const stats=record();stats[winner==="player"?"wins":"losses"]++;try{localStorage.setItem("ctoon-yugioh-stats",JSON.stringify(stats));}catch(_){}}
+  function finish(winner,why){if(game.winner)return;game.winner=winner;game.phase="finished";game.selected=null;note((winner==="player"?"Victory! ":"Defeat! ")+why);const stats=record();stats[winner==="player"?"wins":"losses"]++;try{localStorage.setItem("ctoon-yugioh-stats",JSON.stringify(stats));}catch(_){}recordOpponentResult(selectedOpponent?.id,winner==="player");}
   function damage(side,n){game[side].lp=Math.max(0,game[side].lp-n);if(game[side].lp===0)finish(opponent(side),"A duelist reached 0 Life Points.");}
   function draw(side,n){for(let k=0;k<n&&!game.winner;k++){const card=game[side].deck.pop();if(!card){finish(opponent(side),who(side)+" has no cards left to draw.");return;}game[side].hand.push(card);}}
   function removeHand(side,card){const a=game[side].hand,i=a.findIndex(c=>c.uid===card.uid);return i>=0?a.splice(i,1)[0]:null;}
@@ -175,7 +211,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
   function endTurn(){if(game.active!=="player"||game.winner)return;
     game.active="cpu";game.phase="main";game.turn++;game.summoned=false;game.selected=null;
     for(const m of game.cpu.field)if(m)m.attacked=false;
-    note("Computer's turn.");draw("cpu",1);if(!game.winner)cpuTurn();if(game.player.shield>0)game.player.shield--;
+    note(who("cpu")+"'s turn.");draw("cpu",1);if(!game.winner)cpuTurn();if(game.player.shield>0)game.player.shield--;
     if(!game.winner){game.active="player";game.phase="main";game.turn++;game.summoned=false;
       for(const m of game.player.field)if(m)m.attacked=false;
       if(game.cpu.shield>0)game.cpu.shield--;draw("player",1);note("Your turn. You draw one card.");}
@@ -232,10 +268,10 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     for(const card of game.player.hand){const btn=document.createElement("button");btn.type="button";btn.className="yd-handcard";btn.setAttribute("aria-pressed",String(game.selected?.zone==="hand"&&game.selected.uid===card.uid));btn.setAttribute("aria-label",card.name);btn.append(cardFace(card,false));btn.addEventListener("click",()=>{if(game.winner||game.active!=="player")return;game.selected={zone:"hand",uid:card.uid};render();});hand.append(btn);}
     if(!game.player.hand.length)hand.textContent="Your hand is empty.";
     renderDetail();const log=$("yd-log");log.replaceChildren();game.history.slice(0,12).forEach(x=>{const li=document.createElement("li");li.textContent=x;log.append(li);});
-    const result=$("yd-result");result.hidden=!game.winner;result.textContent=game.winner==="player"?"🏆 You won the duel!":"The computer won. Duel again!";
+    const result=$("yd-result");result.hidden=!game.winner;result.textContent=game.winner==="player"?"🏆 You defeated "+who("cpu")+"!":"Defeat against "+who("cpu")+". Duel again!";
     const r=record();$("yd-record").textContent=r.wins+" wins · "+r.losses+" losses";
   }
-  function reset(){if(!activeStarter)return;uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Duel begins with "+activeStarter.deck_name+"! You play first.");render();}
+  function reset(){if(!activeStarter||!selectedOpponent||!$("yd-free-duel").hidden)return;uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Free Duel versus "+selectedOpponent.name+"! You play first with "+activeStarter.deck_name+".");$("yd-cpu-name").textContent=selectedOpponent.name;$("yd-cpu-avatar").textContent="♛";render();}
 
   // Locked starter decks belong to the Arena entitlement, not to card ownership.
   // The only write here is to yugioh_player_starter_choices, and the database
