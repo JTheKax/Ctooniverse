@@ -33,7 +33,7 @@ body.auction-page main{box-sizing:border-box;width:min(1100px,calc(100% - 24px))
 .auction-empty strong{display:block;color:#ffe1a6;font-size:1.22rem}
 .auction-empty p{margin:10px auto 0;line-height:1.55;color:#e6ddf4}
 @media(max-width:700px){body.auction-page{background-attachment:scroll!important}.auction-links{flex-direction:column}.auction-links a{width:100%;box-sizing:border-box}}
-</style><link rel="stylesheet" href="auction.css?v=20261115-ctoon-windows-v2">
+</style><link rel="stylesheet" href="auction.css?v=20261115-auction-tabs-v3">
 </head>
 <body class="shop-cartoon-page auction-page">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -81,9 +81,30 @@ body.auction-page main{box-sizing:border-box;width:min(1100px,calc(100% - 24px))
     <button id="auction-refresh" type="button">↻ Refresh Auctions</button>
   </div>
   <p id="auction-feedback" role="status" aria-live="polite"></p>
-  <div id="auction-grid" class="auction-grid" aria-live="polite">
-    <p class="auction-empty-state">Loading auction listings…</p>
+  <div class="auction-kind-tabs" role="tablist" aria-label="Auction categories">
+    <button id="auction-tab-ctoon" class="auction-kind-tab" type="button" role="tab" aria-selected="true" aria-controls="auction-panel-ctoon" tabindex="0" data-kind="ctoon">
+      🎴 CToons <span id="auction-count-ctoon" class="auction-tab-count">0</span>
+    </button>
+    <button id="auction-tab-yugioh" class="auction-kind-tab" type="button" role="tab" aria-selected="false" aria-controls="auction-panel-yugioh" tabindex="-1" data-kind="yugioh">
+      🃏 Yu-Gi-Oh! Cards <span id="auction-count-yugioh" class="auction-tab-count">0</span>
+    </button>
   </div>
+  <section id="auction-panel-ctoon" class="auction-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="auction-tab-ctoon">
+    <div id="auction-grid-ctoon" class="auction-grid" aria-live="polite">
+      <article class="ctoon-shop-card auction-item-card auction-empty-window">
+        <div class="ctoon-shop-art auction-art"><span class="ctoon-shop-owned auction-type">CToon</span><img src="ctooniverse-logo.png" alt="" loading="lazy"></div>
+        <div class="ctoon-shop-details auction-item-info"><div class="ctoon-shop-name"><span class="ctoon-shop-name-text">CToon auctions</span></div><p class="collection-series">Loading listings…</p><p class="ctoon-shop-status auction-time">Checking marketplace</p></div>
+      </article>
+    </div>
+  </section>
+  <section id="auction-panel-yugioh" class="auction-tab-panel" role="tabpanel" tabindex="0" aria-labelledby="auction-tab-yugioh" hidden>
+    <div id="auction-grid-yugioh" class="auction-grid" aria-live="polite">
+      <article class="ctoon-shop-card auction-item-card auction-empty-window">
+        <div class="ctoon-shop-art auction-art"><span class="ctoon-shop-owned auction-type">Card</span><img src="ctooniverse-logo.png" alt="" loading="lazy"></div>
+        <div class="ctoon-shop-details auction-item-info"><div class="ctoon-shop-name"><span class="ctoon-shop-name-text">Yu-Gi-Oh! auctions</span></div><p class="collection-series">Loading listings…</p><p class="ctoon-shop-status auction-time">Checking marketplace</p></div>
+      </article>
+    </div>
+  </section>
   <p id="auction-login" hidden><a href="login.html">Sign in to bid or create your own auction.</a></p>
 </section>
 <section class="auction-board" id="auction-sell-panel" aria-labelledby="auction-sell-title" hidden>
@@ -128,5 +149,5 @@ body.auction-page main{box-sizing:border-box;width:min(1100px,calc(100% - 24px))
 </dialog>
 <footer><span>© <span id="year">2026</span> CTooniverse</span><span>The Neon Market · Auction House</span></footer>
 <script type="module" src="site-chat-widget.js?v=1"></script>
-<script type="module" src="auction.js?v=20261115-ctoon-windows-v2"></script></body>
+<script type="module" src="auction.js?v=20261115-auction-tabs-v3"></script></body>
 </html>
