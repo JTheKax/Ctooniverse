@@ -24,10 +24,10 @@
 .yd-free-duel-bar{display:flex;justify-content:space-between;gap:8px;align-items:center;
  padding:5px 3px 12px;font-size:.76rem;letter-spacing:.12em;color:#ffe5a7}
 .yd-free-duel-bar span{color:#c5d7d6;font-size:.7rem}
-.yd-free-duel-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
- gap:clamp(6px,1.1vw,12px)}
+.yd-free-duel-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:clamp(8px,1.3vw,14px)}
 .yd-free-duel-thumb{box-sizing:border-box;position:relative;min-width:0;
- aspect-ratio:4/4.65;padding:3px;display:flex;flex-direction:column;
+ aspect-ratio:3/4;padding:3px;display:flex;flex-direction:column;
  align-items:stretch;justify-content:flex-start;gap:0;overflow:hidden;
  border:3px ridge #8c9c77;border-radius:4px;color:#ffedc5;
  background:linear-gradient(132deg,#59473a,#22232a 36%,#13292e);
@@ -58,7 +58,7 @@
  padding:16px;border:3px ridge #bba677;border-radius:6px;
  background:linear-gradient(155deg,#2f3440eb,#172235f7 60%,#251832f5);
  box-shadow:inset 0 0 23px #0009}
-.yd-free-duel-portrait{min-height:130px;height:clamp(150px,21vw,215px);
+.yd-free-duel-portrait{min-height:240px;height:clamp(260px,33vw,370px);
  border:3px double #e6c681;border-radius:7px;background:radial-gradient(#5a5d70,#182334 72%);
  display:flex;justify-content:center;align-items:center;overflow:hidden}
 .yd-free-duel-portrait .yd-starter-art{display:flex;width:100%;height:100%;justify-content:center;align-items:center}
@@ -76,28 +76,50 @@
 .yd-free-duel-preview #yd-free-duel-status{min-height:1.15em;font-size:.82rem;font-weight:750;color:#d9f6fb}
 .yd-free-duel-disclaimer{position:relative;text-align:center;font-size:.75rem!important;
  color:#d6cdb9!important;margin:16px 0 0!important}
-@media(max-width:800px){.yd-free-duel{padding:14px}.yd-free-duel-layout{grid-template-columns:minmax(0,1fr) 245px;gap:10px}
- .yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}}
-@media(max-width:640px){.yd-free-duel{padding:10px;border-width:3px}
- .yd-free-duel-header h2{font-size:2.25rem}
- .yd-free-duel-layout{grid-template-columns:minmax(0,1fr)}
- .yd-free-duel-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
- .yd-free-duel-thumb{border-width:2px;padding:2px}
- .yd-free-duel-thumb-name{font-size:.51rem;min-height:20px;left:1px;right:1px;bottom:1px}
- .yd-free-duel-selector{padding:7px;border-width:2px}
- .yd-free-duel-preview{display:grid;grid-template-columns:100px minmax(0,1fr);
-  align-items:center;gap:9px;padding:10px}
- .yd-free-duel-portrait{grid-row:1;min-height:118px;height:118px}
- .yd-free-duel-profile{grid-row:1}
- .yd-free-duel-preview #yd-free-duel-status{grid-column:1/-1;margin:0}
- .yd-free-duel-preview #yd-free-duel-start{grid-column:1/-1}
- .yd-free-duel-profile h3{font-size:1.25rem}
- .yd-free-duel-profile p{font-size:.77rem}
+/* Tablet and landscape phones: give the roster the whole available width.
+   Avoid a 245px sidebar squeezing characters into tiny thumbnails. */
+@media(max-width:1000px){
+ .yd-free-duel{padding:clamp(10px,2.4vw,22px)}
+ .yd-free-duel-layout{grid-template-columns:minmax(0,1fr);gap:14px}
+ .yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+ .yd-free-duel-preview{display:grid;grid-template-columns:minmax(185px,.85fr) minmax(0,1.15fr);
+  gap:12px;align-items:center;padding:14px}
+ .yd-free-duel-portrait{grid-row:1 / span 3;min-height:260px;height:300px}
+ .yd-free-duel-profile{grid-column:2;grid-row:1}
+ .yd-free-duel-preview #yd-free-duel-status{grid-column:2;grid-row:2;margin:0}
+ .yd-free-duel-preview #yd-free-duel-start{grid-column:2;grid-row:3;margin-top:0}
 }
-@media(max-width:360px){.yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
- .yd-free-duel-thumb-name{font-size:.57rem}
- .yd-free-duel-portrait{min-height:104px;height:104px}
- .yd-free-duel-preview{grid-template-columns:88px minmax(0,1fr)}}
+@media(max-width:700px){
+ .yd-free-duel-header h2{font-size:clamp(2rem,7vw,2.8rem);letter-spacing:.10em}
+ .yd-free-duel-header>p:last-child{font-size:.82rem}
+ .yd-free-duel-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+ .yd-free-duel-preview{grid-template-columns:minmax(150px,.8fr) minmax(0,1.2fr);gap:10px}
+ .yd-free-duel-portrait{min-height:230px;height:270px}
+}
+@media(max-width:440px){
+ .yd-free-duel{padding:10px;border-width:3px;margin:12px auto 20px}
+ .yd-free-duel-header{margin-bottom:14px}
+ .yd-free-duel-header h2{font-size:2.05rem}
+ .yd-free-duel-selector{padding:7px;border-width:2px}
+ .yd-free-duel-bar{font-size:.69rem;letter-spacing:.07em;padding-bottom:9px}
+ .yd-free-duel-bar span{font-size:.65rem}
+ .yd-free-duel-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .yd-free-duel-thumb{border-width:2px;padding:2px}
+ .yd-free-duel-thumb-name{font-size:.8rem;min-height:28px;left:2px;right:2px;bottom:2px}
+ .yd-free-duel-thumb-difficulty{font-size:.79rem}
+ .yd-free-duel-preview{display:flex;flex-direction:column;align-items:stretch;padding:10px;gap:10px}
+ .yd-free-duel-portrait{width:100%;min-height:230px;height:clamp(240px,72vw,315px)}
+ .yd-free-duel-profile{gap:6px}
+ .yd-free-duel-profile h3{font-size:1.5rem}
+ .yd-free-duel-profile p{font-size:.86rem}
+ .yd-free-duel-preview #yd-free-duel-status{margin:0}
+ .yd-free-duel-preview #yd-free-duel-start{width:100%;min-height:50px}
+}
+@media(max-width:330px){
+ .yd-free-duel-grid{gap:6px}
+ .yd-free-duel-thumb-name{font-size:.69rem}
+ .yd-free-duel-portrait{min-height:215px;height:225px}
+}
 @media(prefers-reduced-motion:reduce){.yd-free-duel-thumb{transition:none!important}}
 
 /* Official character illustrations in the Free Duel portrait grid.
@@ -106,15 +128,41 @@
  background:radial-gradient(ellipse at 50% 18%,#606c82,#20242e 75%)!important;
 }
 .yd-free-duel-thumb .yd-character-art>.yd-character-image{
- width:100%!important;height:100%!important;
- object-fit:cover!important;object-position:center 12%!important;
+ display:block!important;width:100%!important;height:100%!important;
+ max-width:none!important;max-height:none!important;
+ object-fit:cover!important;object-position:center 14%!important;
+ transform:scale(1.12);transform-origin:center 30%;
 }
 .yd-free-duel-portrait .yd-character-art{
  background:radial-gradient(ellipse at 50% 28%,#52577a,#131e31 75%)!important;
 }
 .yd-free-duel-portrait .yd-character-art>.yd-character-image{
- width:100%!important;height:100%!important;
- object-fit:contain!important;object-position:center top!important;
+ display:block!important;width:100%!important;height:100%!important;
+ max-width:none!important;max-height:none!important;
+ object-fit:cover!important;object-position:center 12%!important;
+ transform:scale(1.06);transform-origin:center 20%;
 }
 .yd-free-duel-disclaimer a{color:#ffeaab;font-weight:800;text-underline-offset:3px}
 .yd-free-duel-disclaimer a:focus-visible{outline:2px solid #bdfbff;outline-offset:3px}
+
+/* Explicitly override starter-deck artwork caps in the Free Duel context.
+   Fallback portraits should fill exactly the same window as real character art. */
+.yd-free-duel-thumb .yd-starter-art,
+.yd-free-duel-portrait .yd-starter-art{
+ box-sizing:border-box!important;
+ width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+ flex:1 1 auto!important;padding:0!important;
+}
+.yd-free-duel-thumb .yd-character-art>.yd-starter-art,
+.yd-free-duel-portrait .yd-character-art>.yd-starter-art{
+ width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;
+}
+.yd-free-duel-thumb .yd-character-art>.yd-starter-art img,
+.yd-free-duel-portrait .yd-character-art>.yd-starter-art img{
+ max-height:none!important;width:100%!important;height:100%!important;
+ object-fit:cover!important;object-position:top center!important;
+}
+@media(prefers-reduced-motion:reduce){
+ .yd-free-duel-thumb .yd-character-art>.yd-character-image,
+ .yd-free-duel-portrait .yd-character-art>.yd-character-image{transform:none!important}
+}
