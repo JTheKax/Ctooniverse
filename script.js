@@ -106,6 +106,14 @@ if (year) year.textContent = String(new Date().getFullYear());
     root.innerHTML='<button type="button" class="nav-link community-dropdown-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">♧</span><span>Community</span><span aria-hidden="true">▾</span></button><div class="community-dropdown-panel"><a href="forums.html">Forums</a><a href="guild.html">Guild</a><a href="support.html">Support</a></div>';
     return root;
   })();
+  // Keep the existing directory as the sole Players destination on every page.
+  const communityPanel=community.querySelector('.community-dropdown-panel');
+  if(communityPanel&&!communityPanel.querySelector('a[href="community.html#players"]')){
+    const players=document.createElement('a');
+    players.href='community.html#players';
+    players.textContent='👥 Players';
+    communityPanel.prepend(players);
+  }
   const account=nav.querySelector('.account-dropdown')||(()=>{
     const root=document.createElement('div');root.className='account-dropdown';
     root.innerHTML='<button type="button" class="nav-link account-dropdown-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">●</span><span>Account</span><span aria-hidden="true">▾</span></button><div class="account-dropdown-panel"><a href="login.html" data-account-guest hidden>Login</a><a href="account.html" data-account-guest hidden>Register</a><a href="account.html" data-account-signed hidden>My Profile</a><a href="account.html#redeem-codes" data-account-signed hidden>Redeem Code</a><button type="button" data-account-signed data-account-logout hidden>Log Out</button></div>';
