@@ -1,0 +1,169 @@
+/* Yu-Gi-Oh! CTooniverse pack-opening theater. Results are server-awarded. */
+.ycp-dialog{
+ position:fixed;inset:0;margin:auto;padding:0;border:0;border-radius:22px;
+ width:min(680px,calc(100vw - 20px));max-width:680px;max-height:min(92dvh,840px);
+ overflow-y:auto;overscroll-behavior:contain;color:#f8f8ff;
+ background:#0b1232;box-shadow:0 25px 75px #050311df,0 0 0 2px #b896ff;
+}
+.ycp-dialog::backdrop{background:#030615dc;backdrop-filter:blur(8px)}
+.ycp-dialog[hidden],.ycp-dialog [hidden]{display:none!important}
+.ycp-shell{
+ position:relative;isolation:isolate;overflow:hidden;
+ padding:clamp(14px,3vw,25px);
+ background:radial-gradient(ellipse at 50% 32%,#293b88 0%,#15143c 49%,#090c27 100%);
+}
+.ycp-shell::before{
+ content:"";pointer-events:none;position:absolute;inset:0;z-index:-1;opacity:.26;
+ background:repeating-linear-gradient(120deg,transparent 0 27px,#a28cff24 28px 29px,transparent 30px 57px);
+}
+.ycp-header{display:flex;align-items:start;justify-content:space-between;gap:12px}
+.ycp-heading{min-width:0}
+.ycp-eyebrow{display:block;font-size:.66rem;letter-spacing:.16em;font-weight:900;color:#b4eaff}
+.ycp-heading h2{margin:8px 0 0;font-size:clamp(1.23rem,4vw,1.85rem);line-height:1.1;color:#ffe5a2;overflow-wrap:anywhere}
+.ycp-close{
+ flex:0 0 42px;min-height:42px;border:1px solid #b9c9f1;border-radius:10px;
+ background:#263260;color:white;font-size:1.8rem;cursor:pointer
+}
+.ycp-message{min-height:1.5em;margin:10px 0;color:#d6e9ff;text-align:center;font-size:.94rem}
+.ycp-stage{
+ position:relative;display:grid;place-items:center;
+ min-height:365px;margin:0 auto 12px;
+ border:1px solid #8c7ec080;border-radius:16px;
+ background:radial-gradient(ellipse at center,#3c378963 0%,#101a4d5e 48%,#090b21a3 100%);
+ box-shadow:inset 0 0 32px #02051e;
+}
+.ycp-pack-stage,.ycp-cards-stage,.ycp-all-stage{width:100%;min-width:0;text-align:center}
+.ycp-pack-stage{position:relative;min-height:340px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:7px}
+.ycp-foil{
+ position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+ overflow:hidden;gap:6px;width:204px;height:283px;min-height:283px;
+ padding:15px 12px 18px;border:3px solid #a5cfff;border-radius:9px;
+ background:linear-gradient(116deg,#0b174d,#584aba 18%,#1f3d92 47%,#8f5dd0 77%,#111b4b);
+ color:#fff;box-shadow:inset 0 0 0 2px #0e1b50,0 16px 34px #0009,0 0 27px #70bdff91;
+ cursor:pointer;animation:ycp-pack-enter .55s cubic-bezier(.2,.8,.25,1) both;
+}
+.ycp-foil[data-theme="gold"]{border-color:#ffe19b;background:linear-gradient(116deg,#52320b,#c58a2d 20%,#5e3680 50%,#edcf79 81%,#56371c)}
+.ycp-foil[data-theme="azure"]{border-color:#baf8ff;background:linear-gradient(116deg,#0a3868,#2cc4e5 19%,#354aa2 54%,#70e1f8 82%,#0a3663)}
+.ycp-foil[data-theme="plum"]{border-color:#ffc4f3;background:linear-gradient(116deg,#361445,#ba4ca4 19%,#50298c 51%,#e5a5e3 81%,#33163c)}
+.ycp-foil::before{
+ content:"";position:absolute;left:0;right:0;top:4px;height:13px;
+ background:repeating-linear-gradient(90deg,#e8efff 0 7px,#6685c2 7px 13px);
+ opacity:.85;z-index:4
+}
+.ycp-foil::after{
+ content:"";position:absolute;top:-60%;bottom:-60%;width:42%;left:-65%;
+ transform:rotate(28deg);background:linear-gradient(90deg,transparent,#ffffff75,transparent);
+ pointer-events:none;animation:ycp-foil-shine 2.5s ease-in-out infinite;
+}
+.ycp-foil-top{position:relative;z-index:3;align-self:stretch;font-size:.77rem;letter-spacing:.11em;font-weight:1000;color:#fff7c0;text-shadow:0 2px 4px #13123c}
+.ycp-foil-art.ycs-art{
+ position:relative;z-index:2;width:142px;height:172px;max-width:100%;flex:1 1 auto;
+ border:2px solid #dce7f8;border-radius:10px;
+ background:radial-gradient(ellipse at center,#b7eaff 0%,#355bac 65%,#0c183e 100%);
+ box-shadow:0 0 15px #f4e6a47a;
+}
+.ycp-foil-art.ycs-art img{display:block;object-fit:contain;width:100%;height:100%}
+.ycp-foil-name{position:relative;z-index:2;max-width:100%;font-weight:1000;font-size:1rem;line-height:1.15;text-shadow:0 2px 5px #070b32;overflow-wrap:anywhere}
+.ycp-foil-bottom{position:relative;z-index:2;font-size:.66rem;letter-spacing:.14em;font-weight:900;color:#fce8a6}
+.ycp-rip-hint{font-size:.71rem;font-weight:1000;letter-spacing:.2em;color:#ffe6a6}
+.ycp-burst{
+ position:absolute;top:50%;left:50%;width:250px;height:250px;
+ transform:translate(-50%,-50%) scale(.1);border-radius:50%;opacity:0;pointer-events:none;
+ background:repeating-conic-gradient(from 0deg,#fff7b9 0deg 9deg,#ab7dff 9deg 20deg,#5dcaff 20deg 30deg);
+ filter:blur(3px)
+}
+.ycp-pack-stage.is-ripping .ycp-burst{animation:ycp-burst .85s ease-out both}
+.ycp-pack-stage.is-ripping .ycp-foil{animation:ycp-rip .85s ease-in both}
+.ycp-pack-stage.is-ripping .ycp-foil-top{animation:ycp-top-rip .65s ease-out both}
+.ycp-pack-stage.is-ripping .ycp-rip-hint{opacity:0}
+.ycp-cards-stage{display:flex;flex-direction:column;align-items:center;gap:9px;padding:9px}
+.ycp-counter{margin:0!important;font-size:.76rem;font-weight:1000;letter-spacing:.15em;color:#c8eaff}
+.ycp-flip{
+ width:210px;height:288px;min-height:288px;border:0;padding:0;background:transparent;
+ cursor:pointer;perspective:900px;filter:drop-shadow(0 10px 22px #03041699);
+}
+.ycp-flip-inner{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .68s cubic-bezier(.2,.8,.2,1)}
+.ycp-flip.is-flipped .ycp-flip-inner{transform:rotateY(180deg)}
+.ycp-card-back,.ycp-card-front{
+ position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+ backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;
+ border:7px solid #caa16b;border-radius:13px;box-shadow:inset 0 0 0 3px #371a24;
+}
+.ycp-card-back{
+ color:#ffe8ac;background:
+ repeating-radial-gradient(ellipse at 50% 50%,transparent 0 7px,#f4a84b22 8px 14px),
+ conic-gradient(from 25deg,#100e34,#7f3c25,#30102e,#d4843c,#140d39,#803e29,#110d33);
+}
+.ycp-card-back::before{
+ content:"";position:absolute;inset:20px 14px;border:2px solid #ffdd9363;border-radius:42% 58% 40% 60%;
+ transform:rotate(-24deg);box-shadow:0 0 25px #c1673b;
+}
+.ycp-back-orbit{font-size:5rem;text-shadow:0 0 28px #ffd76f;line-height:1.2}
+.ycp-card-back strong{font-weight:1000;font-size:.79rem;letter-spacing:.13em}
+.ycp-card-back small{font-size:.64rem;letter-spacing:.18em}
+.ycp-card-front{
+ transform:rotateY(180deg);padding:6px;background:linear-gradient(165deg,#d9d0e2,#aeb6e0 60%,#736aa5);color:#171237
+}
+.ycp-face-details{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:5px;min-width:0}
+.ycp-rarity{display:block;width:100%;flex:0 0 auto;background:#232a55;color:#fff6ba;border:1px solid #525c8f;border-radius:5px;padding:3px;font-size:.65rem;font-weight:1000;letter-spacing:.08em;text-transform:uppercase}
+.ycp-card-art.ycs-art{
+ display:flex;position:relative;width:100%;height:auto;flex:1 1 auto;min-height:0;max-height:193px;
+ border:2px solid #7b73a1;background:radial-gradient(ellipse,#a4a2d9,#34395f);
+}
+.ycp-card-art.ycs-art img{width:100%;height:100%;object-fit:contain}
+.ycp-card-name{font-size:.79rem;line-height:1.2;overflow-wrap:anywhere}
+.ycp-card-type{font-size:.62rem;line-height:1.3;color:#272c5b}
+.ycp-tier-text{margin:0!important;font-size:.79rem;color:#ffe6b0;font-weight:900;min-height:2.1em}
+.ycp-progress{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.ycp-dot{
+ display:grid;place-items:center;width:25px;height:25px;border:1px solid #8a9dbf;border-radius:50%;
+ background:#121936;color:#e6e3ff;font-weight:1000;font-size:.85rem
+}
+.ycp-dot.is-current{border-color:#ffe8b0;box-shadow:0 0 8px #ffce60}
+.ycp-dot.is-revealed{background:#256d76;border-color:#8af6d8;color:#e2fff1}
+.ycp-flip.tier-rare{filter:drop-shadow(0 0 16px #7be9ff)}
+.ycp-flip.tier-epic{filter:drop-shadow(0 0 26px #df83ff);animation:ycp-rare-pop .6s both}
+.ycp-flip.tier-legendary{filter:drop-shadow(0 0 32px #ffd152);animation:ycp-rare-pop .7s both}
+.ycp-flip.tier-legendary .ycp-card-front{border-color:#ffe48a;background:linear-gradient(145deg,#fff1b4,#e9b85d,#faf1cc)}
+.ycp-flip.tier-epic .ycp-card-front{border-color:#efbbff;background:linear-gradient(145deg,#ebd4fc,#b387ea,#f6e9ff)}
+.ycp-rarity-rare{background:#126b98;border-color:#7ad9ff}
+.ycp-rarity-epic{background:#7932a5;border-color:#e2b9ff}
+.ycp-rarity-legendary{background:#8d530c;border-color:#ffe79c;color:#fff6c9}
+.ycp-all-stage{padding:15px 10px}
+.ycp-all-stage h3{margin:0;color:#ffe6a2;font-size:1.55rem}
+.ycp-all-text{margin:4px 0 12px!important;color:#e2eaff;font-size:.87rem}
+.ycp-all-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:9px;max-height:360px;overflow-y:auto;padding:3px}
+.ycp-result-card{
+ padding:6px;min-width:0;border:2px solid #8894ca;border-radius:10px;background:linear-gradient(#d1d6ed,#8b96c2);color:#171c3d
+}
+.ycp-result-card.tier-rare{border-color:#4bdcff;box-shadow:0 0 8px #5bc8ff66}
+.ycp-result-card.tier-epic{border-color:#e2a2ff;box-shadow:0 0 12px #c15bff66}
+.ycp-result-card.tier-legendary{border-color:#ffdd6e;box-shadow:0 0 17px #ffca4a95}
+.ycp-result-card .ycp-card-art.ycs-art{height:115px;flex:0 0 115px}
+.ycp-result-card .ycp-face-details{gap:5px;min-height:180px}
+.ycp-result-card .ycp-card-name{font-size:.7rem}
+.ycp-result-card .ycp-card-type{font-size:.59rem}
+.ycp-actions{display:flex;gap:11px;justify-content:center;flex-wrap:wrap}
+.ycp-actions button{min-height:44px;flex:1 1 180px;border-radius:10px;padding:10px 14px;font:inherit;font-size:.93rem;font-weight:900;cursor:pointer}
+.ycp-primary{border:2px solid #f5d483;background:linear-gradient(#fff2a6,#df8a34);color:#241332}
+.ycp-secondary{border:2px solid #92c9ec;background:linear-gradient(#205c95,#153367);color:#eef8ff}
+.ycp-actions button:disabled{opacity:.6;cursor:wait}
+.ycp-dialog button:focus-visible{outline:3px solid #fff4a5;outline-offset:4px}
+@keyframes ycp-pack-enter{from{opacity:0;transform:translateY(30px) scale(.7) rotate(-6deg)}to{opacity:1;transform:none}}
+@keyframes ycp-foil-shine{0%,34%{left:-70%}68%,100%{left:135%}}
+@keyframes ycp-rip{0%{transform:none;opacity:1}30%{transform:rotate(-7deg) scale(1.07)}55%{transform:rotate(8deg) scale(1.12)}100%{transform:rotate(-10deg) translateY(60px) scale(.35);opacity:0}}
+@keyframes ycp-top-rip{0%{transform:none}100%{transform:translate(44px,-120px) rotate(25deg);opacity:0}}
+@keyframes ycp-burst{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}45%{opacity:.85}100%{opacity:0;transform:translate(-50%,-50%) scale(2.1)}}
+@keyframes ycp-rare-pop{0%{transform:scale(.8)}60%{transform:scale(1.07)}100%{transform:scale(1)}}
+@media(max-width:520px){
+ .ycp-dialog{width:calc(100vw - 12px);max-height:95dvh;border-radius:13px}
+ .ycp-shell{padding:13px}
+ .ycp-stage{min-height:344px}
+ .ycp-pack-stage{min-height:330px}
+ .ycp-all-cards{grid-template-columns:repeat(2,minmax(0,1fr));max-height:48dvh}
+ .ycp-message{font-size:.85rem}
+ .ycp-actions button{flex:1 1 115px;font-size:.85rem}
+}
+@media(prefers-reduced-motion:reduce){
+ .ycp-dialog *, .ycp-dialog *::before,.ycp-dialog *::after{animation:none!important;transition:none!important}
+}
