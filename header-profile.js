@@ -1,5 +1,5 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
-import {avatarDataUrl,DEFAULT_AVATAR} from './avatar-renderer.js?v=paper-avatar-v1';
+import {avatarDataUrl,DEFAULT_AVATAR} from './avatar-renderer.js?v=cutout-avatar-v3';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const name=document.getElementById('header-player-name'),coins=document.getElementById('header-player-coins'),profile=document.getElementById('header-player');
 const accountAvatar=document.getElementById('account-avatar-preview');
