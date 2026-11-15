@@ -463,6 +463,78 @@ async function searchCards() {
     $("ydb-next").disabled = true;
   }
 }
+
+/* Starter templates live separately from editable player decks.
+   No Add/Remove/Save/Delete buttons exist on these read-only lists, and
+   viewing them never writes any starter cards to inventory or player decks. */
+async function loadStarterLibrary() {
+  const root = $("ydb-starter-grid");
+  if (!root) return;
+  try {
+    const { data: templates, error } = await db.from("yugioh_starter_decks")
+      .select("id,deck_name,description,theme,hero_image_id,main_cards,extra_cards,side_cards")
+      .order("deck_name", { ascending: true });
+    if (error) throw error;
+    if (!templates || !templates.length) throw new Error("Starter decks unavailable.");
+    root.replaceChildren();
+    for (const template of templates) {
+      const card = node("article", "ydb-starter-card ydb-starter-" + template.theme);
+      const visual = picture({ art_image_id: template.hero_image_id });
+      visual.classList.add("ydb-starter-image");
+      card.append(visual);
+      const body = node("div", "ydb-starter-summary");
+      body.append(node("h3", "", template.deck_name));
+      body.append(node("p", "", template.description));
+      body.append(node("small", "", template.main_cards.length + " Main · " +
+        template.extra_cards.length + " Extra · 🔒 Locked"));
+      const actions = node("div", "ydb-starter-actions");
+      const preview = node("button", "button secondary", "View Fixed Deck");
+      preview.type = "button";
+      preview.addEventListener("click", () => previewStarter(template));
+      const link = document.createElement("a");
+      link.href = "yugioh-duel.html";
+      link.className = "button primary";
+      link.textContent = "Choose in Arena";
+      actions.append(preview, link);
+      body.append(actions);
+      card.append(body);
+      root.append(card);
+    }
+  } catch (error) {
+    root.replaceChildren(node("p", "ydb-empty", "Could not load fixed starter decks. " +
+      (error.message || "Please reload.")));
+  }
+}
+async function previewStarter(template) {
+  const section = $("ydb-starter-preview");
+  section.hidden = false;
+  section.replaceChildren(node("p", "ydb-empty", "Loading locked card list…"));
+  try {
+    await loadMetadata([...(template.main_cards || []), ...(template.extra_cards || [])]);
+    section.replaceChildren(node("h3", "", template.deck_name + " · Read-only"));
+    const explanation = node("p", "ydb-starter-note",
+      "This is the original Arena starter. You cannot modify it or save its cards into your owned collection.");
+    section.append(explanation);
+    for (const [label, ids] of [["Main Deck", template.main_cards], ["Extra Deck", template.extra_cards]]) {
+      section.append(node("h4", "", label + " (" + ids.length + ")"));
+      const ul = node("ul", "ydb-starter-card-list");
+      const copies = new Map();
+      for (const value of ids) {
+        const id = Number(value);
+        copies.set(id, (copies.get(id) || 0) + 1);
+      }
+      for (const [id, quantity] of copies) {
+        const card = cardsById.get(id);
+        ul.append(node("li", "", quantity + "× " + (card?.name || "Unknown #" + id)));
+      }
+      section.append(ul);
+    }
+  } catch (error) {
+    section.replaceChildren(node("p", "ydb-empty",
+      "Could not load starter card details: " + (error.message || "Please retry.")));
+  }
+}
+
 async function init() {
   try {
     const { data, error } = await db.auth.getUser();
@@ -474,6 +546,7 @@ async function init() {
   try { await fetchSaved(); }
   catch (_) { tell("Saved decks are temporarily unavailable. Try reloading.", true); }
   render();
+  void loadStarterLibrary();
   await searchCards();
 }
 db.auth.onAuthStateChange((event, session) => {
