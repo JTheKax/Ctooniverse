@@ -114,3 +114,32 @@
 @media(max-width:1000px){.ydb-starter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ydb-starter-card-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){.ydb-starter-grid{gap:8px}.ydb-starter-card{padding:8px}.ydb-starter-card .ydb-starter-image{height:125px}.ydb-starter-card h3{font-size:.86rem}.ydb-starter-card p{font-size:.72rem}.ydb-starter-actions .button{font-size:.69rem}.ydb-starter-card-list{grid-template-columns:1fr}}
 @media(max-width:320px){.ydb-starter-grid{grid-template-columns:1fr}}
+
+/* Finished deck editor: accessible inspector and draft tools. */
+.ydb-detail-link{appearance:none;background:none;border:0;padding:0;margin:0;text-align:left;
+  color:#fff1ca;cursor:pointer;font:inherit;font-size:.9rem;font-weight:900;line-height:1.35;overflow-wrap:anywhere}
+.ydb-deck-card-name .ydb-detail-link{font-size:.81rem}
+.ydb-detail-link:hover{text-decoration:underline;color:#a6f4ff}
+.ydb-detail-link:focus-visible{outline:2px solid #84f4ff;outline-offset:3px;border-radius:2px}
+.ydb-card-dialog{box-sizing:border-box;width:min(680px,calc(100% - 20px));max-height:min(88vh,900px);overflow-y:auto;
+  margin:auto;padding:20px;border:2px solid #ba98fa;border-radius:16px;color:#f9f5ff;background:#131439;
+  box-shadow:0 18px 60px #040411b0}
+.ydb-card-dialog::backdrop{background:#050414cc}
+.ydb-dialog-heading{display:flex;align-items:flex-start;gap:14px;justify-content:space-between}
+.ydb-dialog-heading h2{font-size:clamp(1.2rem,4vw,1.65rem);margin:0 0 15px;color:#ffe8ae}
+.ydb-dialog-heading button{flex:none;border:1px solid #99dfed;border-radius:8px;min-width:38px;min-height:38px;
+  cursor:pointer;color:#fff;background:#263568;font-size:1.1rem}
+.ydb-inspector{display:grid;grid-template-columns:148px minmax(0,1fr);gap:18px}
+.ydb-inspector-art{width:148px;height:207px}
+.ydb-inspector-info{min-width:0;overflow-wrap:anywhere}
+.ydb-inspector-info p{margin:0 0 11px;line-height:1.5}
+.ydb-inspector-type{font-weight:900;color:#b6eaff}
+.ydb-inspector-stats{font-size:.84rem;color:#e3ddfc}
+.ydb-inspector-description{white-space:pre-line;font-size:.88rem;color:#fff0d9}
+.ydb-inspector-banlist{font-size:.82rem;color:#f6cb98}
+.ydb-inspector-actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.ydb-inspector-actions .button{min-height:40px;cursor:pointer;font-size:.82rem}
+.ydb-inspector-actions button:disabled{opacity:.4;cursor:not-allowed}
+.ydb-inspector-note{display:block;line-height:1.4;color:#c8c2de}
+@media(max-width:550px){.ydb-card-dialog{padding:14px}.ydb-inspector{grid-template-columns:90px minmax(0,1fr);gap:12px}
+.ydb-inspector-art{width:90px;height:126px}.ydb-deck-card-name .ydb-detail-link{font-size:.74rem}}
