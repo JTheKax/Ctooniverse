@@ -33,7 +33,7 @@ body.auction-page main{box-sizing:border-box;width:min(1100px,calc(100% - 24px))
 .auction-empty strong{display:block;color:#ffe1a6;font-size:1.22rem}
 .auction-empty p{margin:10px auto 0;line-height:1.55;color:#e6ddf4}
 @media(max-width:700px){body.auction-page{background-attachment:scroll!important}.auction-links{flex-direction:column}.auction-links a{width:100%;box-sizing:border-box}}
-</style>
+</style><link rel="stylesheet" href="auction.css?v=20261115-marketplace-v1">
 </head>
 <body class="shop-cartoon-page auction-page">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -54,24 +54,72 @@ body.auction-page main{box-sizing:border-box;width:min(1100px,calc(100% - 24px))
 </header>
 <main id="main">
 <section class="auction-hero" aria-labelledby="auction-title">
-<p class="auction-kicker">✦ THE NEON MARKET ✦</p>
-<h1 id="auction-title">🔨 Auction House</h1>
-<p>A new destination in the CTooniverse Shop for future player auctions.</p>
-<span class="auction-status">AUCTIONS NOT OPEN YET</span>
-<div class="auction-links">
-<a href="shop.html">🎴 Visit CToons Shop</a>
-<a href="yugioh-card-shop.html">🃏 Visit Yu-Gi-Oh! Card Shop</a>
-</div>
+  <p class="auction-kicker">✦ THE NEON MARKET ✦</p>
+  <h1 id="auction-title">🔨 Auction House</h1>
+  <p>List your owned CToons or Yu-Gi-Oh! cards, challenge other players with Cartoon Coin bids, and win unique collectibles.</p>
+  <span class="auction-status" id="auction-count">Loading active auctions…</span>
+  <div class="auction-links">
+    <a href="shop.html">🎴 CToons Shop</a>
+    <a href="yugioh-card-shop.html">🃏 Yu-Gi-Oh! Card Shop</a>
+  </div>
+  <p class="auction-rules"><strong>How it works:</strong> Each listing reserves one collectible. Each winning bid is held in escrow, and an outbid player is refunded automatically. When the timer ends, the winner receives the collectible and the seller receives the coins. Unsold items return to their owner.</p>
 </section>
 <section class="auction-board" aria-labelledby="auction-board-title">
-<h2 id="auction-board-title">Auction Listings</h2>
-<div class="auction-empty" role="status">
-<strong>No auctions available</strong>
-<p>Listings, bids, and transfers are not enabled yet. No coins or collectibles can be exchanged here until the Auction House is built.</p>
-</div>
+  <p class="auction-overline">✦ PLAYER MARKETPLACE ✦</p>
+  <h2 id="auction-board-title">Browse Auctions</h2>
+  <div class="auction-wallet-pill" id="auction-wallet">Checking session…</div>
+  <div class="auction-toolbar">
+    <div class="auction-toolbar-controls">
+      <input id="auction-search" type="search" placeholder="Search collectible name…" aria-label="Search auctions by name">
+      <select id="auction-filter" aria-label="Auction filter">
+        <option value="active">Active auctions</option>
+        <option value="all">All visible auctions</option>
+        <option value="mine">My listings</option>
+        <option value="winning">My winning bids</option>
+      </select>
+    </div>
+    <button id="auction-refresh" type="button">↻ Refresh Auctions</button>
+  </div>
+  <p id="auction-feedback" role="status" aria-live="polite"></p>
+  <div id="auction-grid" class="auction-grid" aria-live="polite">
+    <p class="auction-empty-state">Loading auction listings…</p>
+  </div>
+  <p id="auction-login" hidden><a href="login.html">Sign in to bid or create your own auction.</a></p>
+</section>
+<section class="auction-board" id="auction-sell-panel" aria-labelledby="auction-sell-title" hidden>
+  <p class="auction-overline">✦ YOUR COLLECTIBLES ✦</p>
+  <h2 id="auction-sell-title">Create an Auction</h2>
+  <p class="auction-note">Choose an item you actually own. You can cancel while no bids have been placed. Starter-deck loan cards cannot be listed.</p>
+  <form id="auction-form" class="auction-create">
+    <label>Collectible type
+      <select id="auction-kind" required>
+        <option value="ctoon">CToon</option>
+        <option value="yugioh">Yu-Gi-Oh! Card</option>
+      </select>
+    </label>
+    <label>Owned item
+      <select id="auction-select" required><option value="">Loading collection…</option></select>
+    </label>
+    <label>Starting bid (Cartoon Coins)
+      <input id="auction-start-bid" type="number" required min="1" max="1000000000" step="1" value="100">
+    </label>
+    <label>Auction duration
+      <select id="auction-duration" required>
+        <option value="1">1 hour</option>
+        <option value="6">6 hours</option>
+        <option value="12">12 hours</option>
+        <option value="24" selected>24 hours</option>
+        <option value="48">48 hours</option>
+        <option value="72">3 days</option>
+        <option value="168">7 days</option>
+      </select>
+    </label>
+    <p id="auction-inventory-note" class="auction-note auction-wide">Checking your collection…</p>
+    <button id="auction-sell" type="submit" class="auction-wide">🔨 Start Auction</button>
+  </form>
 </section>
 </main>
 <footer><span>© <span id="year">2026</span> CTooniverse</span><span>The Neon Market · Auction House</span></footer>
 <script type="module" src="site-chat-widget.js?v=1"></script>
-</body>
+<script type="module" src="auction.js?v=20261115-marketplace-v1"></script></body>
 </html>
