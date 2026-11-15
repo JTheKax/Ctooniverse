@@ -190,9 +190,11 @@ $('fusion-form').addEventListener('submit',async event=>{
   objectName='';
   $('ctoon-maker-reload')?.click();
   window.dispatchEvent(new CustomEvent('ctoon-catalog-updated',{detail:{id:data}}));
-  say('Fusion created! "'+name+'" is now in the CToon catalog (Sold Out by default). Original CToons were kept.');
-  $('fusion-name').value='';fileInput.value='';showCustomFile();
+  $('fusion-name').value='';fileInput.value='';
+  if(objectPreview)URL.revokeObjectURL(objectPreview);
+  objectPreview='';$('fusion-custom-art').hidden=true;canvas.hidden=false;
   await load();
+  say('Fusion created! "'+name+'" is now in the CToon catalog (Sold Out by default). Original CToons were kept.');
  }catch(error){
   if(objectName)await db.storage.from('ctoon-fusions').remove([objectName]).catch(()=>{});
   say('Could not create fusion: '+(error?.message||'Unknown error'),true);
