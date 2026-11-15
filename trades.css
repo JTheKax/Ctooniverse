@@ -1,0 +1,56 @@
+/* The Neon Market: mobile-first, separate CToon and card trading categories. */
+body.trading-page{background:#160d2b url("shop-cartoon-background.png") center/cover fixed no-repeat!important;color:#fff}
+body.trading-page .trade-main{box-sizing:border-box;width:min(1180px,calc(100% - 24px));margin:clamp(18px,4vw,48px) auto 65px}
+.trade-hero,.trade-board{border:2px solid #ddb66d;border-radius:20px;background:linear-gradient(145deg,#23153bec,#111d33ee 65%,#251433ed);box-shadow:0 12px 35px #000a,inset 0 0 30px #8454b230;padding:clamp(16px,3vw,34px)}
+.trade-hero{text-align:center}.trade-kicker{color:#eed59b!important;letter-spacing:.15em;font-weight:900;font-size:.78rem}
+.trade-hero h1{color:#ffe5a0;margin:10px 0;font-size:clamp(2rem,6vw,3.6rem)}
+.trade-hero p:not(.trade-kicker){max-width:68ch;margin:12px auto;color:#f0e4f9;line-height:1.6}
+.trade-links{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:20px}
+.trade-links a,.trade-button,.trade-refresh{display:inline-block;box-sizing:border-box;padding:10px 14px;text-decoration:none;border:2px solid #cca8e4;border-radius:11px;color:#fff;font-weight:850;background:linear-gradient(120deg,#5941a4,#33458f);cursor:pointer}
+.trade-links a:hover,.trade-button:hover,.trade-refresh:hover{filter:brightness(1.14)}
+.trade-board{margin-top:20px}
+.trade-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.trade-heading h2,.trade-heading h3{color:#ffe7a0;margin:0 0 12px}
+.trade-wallet{display:inline-block;border:1px solid #78dae0;border-radius:10px;padding:10px;background:#162e3b;color:#c3f7ff;font-weight:850}
+#trade-feedback{padding:10px 14px;border:1px solid #6b8bc0;background:#1b3044;border-radius:10px;overflow-wrap:anywhere;margin:15px 0}
+#trade-feedback[data-error=true]{background:#491b32;border-color:#f1a5b9;color:#ffd9e5}
+.trade-tabs{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.trade-tabs button{flex:1 1 225px;border:2px solid #8069b7;border-radius:12px;min-height:50px;background:#2b1b50;color:#fff;font-weight:900;font-size:1rem;padding:10px;cursor:pointer}
+.trade-tabs button[aria-selected=true]{background:linear-gradient(120deg,#ffe5ac,#9ce7f4);border-color:#f1e6af;color:#19274c}
+.trade-tabs span{border:1px solid #8f9fac;padding:2px 7px;border-radius:15px;font-size:.85rem}
+.trade-two-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.trade-box{min-width:0;background:#11152fdc;border:1px solid #8a78c1;border-radius:16px;padding:clamp(12px,2vw,18px)}
+.trade-box h3{font-size:clamp(1.05rem,2.7vw,1.4rem);margin:0 0 15px;color:#ffe7b8}
+.trade-box h4{color:#b5eaff;margin:20px 0 8px;font-size:1rem}
+.trade-box h4 span{font-size:.85rem;color:#fff;background:#2b4572;border-radius:10px;padding:2px 7px}
+.trade-box label{display:flex;flex-direction:column;gap:6px;margin:0 0 12px;font-weight:750;font-size:.88rem;color:#eee6ff}
+.trade-box :is(input,select){box-sizing:border-box;min-height:43px;width:100%;min-width:0;background:#0c193d;color:#fff;border:2px solid #76b9eb;border-radius:9px;padding:9px}
+.trade-sides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.trade-sides fieldset{box-sizing:border-box;min-width:0;margin:0;padding:10px;border:1px solid #9a79ca;border-radius:10px;background:#1c183e}
+.trade-sides legend{color:#ffe6a5;font-weight:900;padding:0 6px}
+.trade-rule{font-size:.79rem;line-height:1.5;color:#dbe9fd}
+.trade-box button:disabled{opacity:.45;cursor:not-allowed}
+.trade-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,182px),1fr));justify-items:center;gap:13px}
+.trade-card-grid>p{grid-column:1/-1}
+.trading-page .trade-offer-window{width:182px!important;min-width:182px!important;max-width:182px!important;height:282px!important;min-height:282px!important;max-height:282px!important;padding:6px!important;box-sizing:border-box;display:flex!important;flex-direction:column!important;overflow:hidden!important;transform:none!important}
+.trading-page .trade-offer-window .ctoon-shop-art{height:150px!important;min-height:150px!important;max-height:150px!important;flex:0 0 150px!important;overflow:hidden!important;box-sizing:border-box}
+.trading-page .trade-offer-window .ctoon-shop-art img{width:100%!important;height:100%!important;object-fit:contain!important;padding:6px!important;transform:none!important;animation:none!important}
+.trading-page .trade-offer-window .ctoon-shop-details{display:flex!important;flex-direction:column!important;justify-content:space-between!important;flex:1 1 auto!important;min-height:0!important;gap:3px!important;padding:5px 2px!important;box-sizing:border-box;overflow:hidden!important}
+.trading-page .trade-offer-window .ctoon-shop-name{font-size:12px!important;line-height:1.2!important;max-height:29px!important;overflow:hidden!important}
+.trading-page .trade-offer-window .ctoon-shop-purchase{display:flex;justify-content:center;align-items:center;margin:0!important}
+.trading-page .trade-offer-window .ctoon-shop-buy{font-size:11px!important;min-height:30px!important;padding:5px 8px!important;cursor:pointer}
+.trade-window-meta{font-size:10px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e7e9ff}
+.trading-page .trade-offer-window .ctoon-shop-status{font-size:10px!important;margin:0!important;color:#b3f4ff}
+.trade-dialog{box-sizing:border-box;width:min(630px,calc(100vw - 24px));max-height:90dvh;overflow:auto;color:#fff;border:3px ridge #dcb86f;border-radius:16px;background:linear-gradient(145deg,#253d68,#17162e 70%,#332050);padding:clamp(14px,3vw,24px)}
+.trade-dialog::backdrop{background:#02030bc8}
+.trade-dialog h2{color:#ffe4a3}
+.trade-dialog-items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.trade-dialog-side{border:1px solid #98b8ed;border-radius:10px;padding:12px;background:#1b2450;overflow-wrap:anywhere}
+.trade-dialog-side h3{color:#ffe2a4;margin:0 0 8px}
+.trade-dialog-side img{display:block;width:100%;height:170px;object-fit:contain}
+.trade-dialog-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.trade-dialog-actions button{cursor:pointer}
+.trade-panel[hidden],#trade-member[hidden],#trade-login[hidden]{display:none!important}
+.trading-page :is(button,input,select):focus-visible,.trade-dialog button:focus-visible{outline:3px solid #8af4ff;outline-offset:3px}
+@media(max-width:850px){.trade-two-columns{grid-template-columns:1fr}}
+@media(max-width:600px){body.trading-page{background-attachment:scroll!important}.trade-sides{grid-template-columns:1fr}.trade-box{padding:12px}.trade-links{flex-direction:column}.trade-links a{width:100%}}
