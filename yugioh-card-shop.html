@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17113d">
+<meta name="description" content="Open Yu-Gi-Oh! booster packs with Cartoon Coins and collect cards in CTooniverse.">
+<title>Yu-Gi-Oh! Card Shop | CTooniverse</title>
+<link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
+<link rel="stylesheet" href="arcade-polish.css?v=2">
+<link rel="stylesheet" href="cards-page.css?v=cards-hub-20261114">
+<link rel="stylesheet" href="yugioh-card-shop.css?v=20261115-v1">
+<script src="script.js?v=20261115-card-shop-nav" defer></script>
+<script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
+<script type="module" src="account-menu.js?v=1"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
+<script type="module" src="yugioh-card-shop.js?v=20261115-v1"></script>
+</head>
+<body class="cards-hub-page ycs-body"><a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a>
+<nav aria-label="Main navigation">
+<a href="index.html" class="nav-link">Home</a><a href="ctoons.html" class="nav-link">CToons</a>
+<a href="games.html" class="nav-link">Games</a><a href="cards.html" class="nav-link active" aria-current="page">Cards</a>
+<a href="watch.html" class="nav-link">Theater</a><a href="shop.html" class="nav-link">Shop</a>
+<a href="community.html" class="nav-link">Community</a><a href="account.html" class="nav-link">Account</a>
+</nav>
+<div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div>
+</header>
+<main id="main" class="ycs-main">
+<section class="cards-section ycs-hero">
+<p class="eyebrow">✦ CTOONIVERSE CARD CORNER ✦</p>
+<h1>Yu-Gi-Oh! <span>Card Shop</span></h1>
+<p>Open collectible booster packs with Cartoon Coins. Only cards pulled from packs are added to your own Yu-Gi-Oh! collection. Your permanent Arena starter stays separate.</p>
+<div class="cards-actions"><a class="button secondary" href="cards.html">← Cards Hub</a><a class="button secondary" href="yugioh-deck-builder.html">🃏 Deck Builder</a><a class="button secondary" href="yugioh-duel.html">⚔️ Duel Arena</a><a class="button secondary" href="yugioh-cards.html">📚 Card Database</a></div>
+<div class="ycs-wallet" aria-live="polite"><span>🪙 Cartoon Coin balance</span><strong id="ycs-balance">Checking account…</strong><a href="login.html" id="ycs-signin" hidden>Sign in</a></div>
+</section>
+<section class="cards-section ycs-store" aria-labelledby="ycs-pack-title">
+<div class="cards-section-title"><div><p class="eyebrow">✦ BOOSTER PACKS ✦</p><h2 id="ycs-pack-title">Choose a Pack</h2><p>Every pack contains five different English-language cards. Pack contents are randomized on the server; no purchase or reward is simulated in the browser.</p></div></div>
+<p id="ycs-status" class="ycs-status" role="status" aria-live="polite">Loading booster packs…</p>
+<div class="ycs-pack-grid" id="ycs-pack-grid"></div>
+</section>
+<section class="cards-section ycs-reveal" id="ycs-reveal-section" hidden aria-labelledby="ycs-reveal-title">
+<div class="cards-section-title"><div><p class="eyebrow">✦ PACK OPENED ✦</p><h2 id="ycs-reveal-title">Your New Cards</h2><p id="ycs-reveal-summary">Added to your collection.</p></div></div>
+<div id="ycs-reveal-grid" class="ycs-reveal-grid" aria-live="polite"></div>
+<div class="cards-actions"><a class="button secondary" href="#ycs-collection">View My Cards</a><button type="button" class="button secondary" id="ycs-reveal-close">Close Results</button></div>
+</section>
+<section class="cards-section" id="ycs-collection" aria-labelledby="ycs-collection-title">
+<div class="cards-section-title"><div><p class="eyebrow">✦ YOUR OWNED CARDS ✦</p><h2 id="ycs-collection-title">My Yu-Gi-Oh! Cards</h2><p>Only real pack rewards appear here. Starter deck loaners and cards used in reference deck drafts are not owned.</p></div></div>
+<div class="ycs-collection-toolbar"><strong id="ycs-collection-total">—</strong>
+<label for="ycs-collection-search">Search owned cards</label>
+<input type="search" id="ycs-collection-search" placeholder="Find a card in your collection" maxlength="80">
+</div>
+<p id="ycs-collection-status" class="ycs-status" role="status">Sign in to view your collection.</p>
+<div id="ycs-collection-grid" class="ycs-collection-grid"></div>
+<button type="button" class="button secondary" id="ycs-more" hidden>Load More Cards</button>
+</section>
+<section class="cards-section" id="ycs-history" aria-labelledby="ycs-history-title">
+<h2 id="ycs-history-title">Recent Pack Openings</h2><p>See the packs you've opened and the Cartoon Coins spent.</p>
+<div id="ycs-history-list" class="ycs-history-list"><p>Sign in to view purchases.</p></div>
+</section>
+<section class="cards-section ycs-notes"><h2>Shop Rules</h2>
+<p>These are fan-made virtual booster packs purchased with in-game Cartoon Coins, not physical Yu-Gi-Oh! products. Each pack awards five cards without duplicates within the same pack; repeat cards across different packs increase your quantity. The available card pools are based on the English database, not official Konami booster lists or official rarity guarantees.</p>
+<p>Starter decks (Yugi, Kaiba, Joey, Pegasus) are locked Arena loaners. They do not grant ownership. Your custom Deck Builder remains a reference editor; its drafts do not award cards or automatically become playable Arena decks.</p>
+<p class="ycs-credit">Card data: YGOPRODeck API v7. Artwork © Konami / 4K Media. Unofficial fan project.</p>
+</section>
+</main>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>Collect from packs, not starters.</span></footer>
+<script type="module" src="site-chat-widget.js?v=1"></script>
+</body></html>
