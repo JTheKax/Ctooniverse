@@ -10,6 +10,7 @@ const ART_BASE = SUPABASE_URL + "/storage/v1/object/public/yugioh-artwork/small/
 const ART_FALLBACK = SUPABASE_URL + "/functions/v1/yugioh-artwork?id=";
 const GUEST_KEY = "ctoon-yugioh-guest-deck-v1";
 const PAGE_SIZE = 18;
+const CARD_FIELDS = "card_id,name,card_type,description,race,level,art_image_id,attribute,attack,defense,archetype,card_data";
 
 const cardsById = new Map();
 const state = { id: null, name: "New Deck", main: [], extra: [], side: [], dirty: false };
@@ -99,7 +100,7 @@ async function loadMetadata(ids) {
   for (let i = 0; i < missing.length; i += 80) {
     const group = missing.slice(i, i + 80);
     const { data, error } = await db.from("yugioh_cards")
-      .select("card_id,name,card_type,art_image_id,attribute,attack,defense,card_data")
+      .select(CARD_FIELDS)
       .in("card_id", group);
     if (error) throw error;
     for (const card of data || []) cardsById.set(Number(card.card_id), card);
@@ -150,6 +151,7 @@ function canMove(id, from, to) {
   return from !== to && state[from].includes(id) && canPlace(cardsById.get(id), to, true);
 }
 function modifyCard(id, zone, amount) {
+  if (busy) return;
   id = normalizeId(id);
   const card = cardsById.get(id);
   if (!id || !ZONES.includes(zone) || !card) return;
@@ -168,11 +170,66 @@ function modifyCard(id, zone, amount) {
   markDirty();
 }
 function moveOne(id, from, to) {
-  if (!canMove(id, from, to)) return;
+  if (busy || !canMove(id, from, to)) return;
   state[from].splice(state[from].indexOf(id), 1);
   state[to].push(id);
   tell("");
   markDirty();
+}
+function detailButton(id, name) {
+  const button = node("button", "ydb-detail-link", name);
+  button.type = "button";
+  button.title = "View " + name + " card details";
+  button.addEventListener("click", () => inspectCard(id));
+  return button;
+}
+async function inspectCard(id) {
+  const dialog = $("ydb-card-dialog");
+  const container = $("ydb-card-dialog-content");
+  id = normalizeId(id);
+  if (!id) return;
+  container.replaceChildren(node("p", "ydb-empty", "Loading card details…"));
+  if (!dialog.open && typeof dialog.showModal === "function") dialog.showModal();
+  try {
+    await loadMetadata([id]);
+    const card = cardsById.get(id);
+    if (!card) throw new Error("Card is not in the English catalog.");
+    if (!dialog.open) return;
+    $("ydb-card-dialog-title").textContent = card.name;
+    const view = node("div", "ydb-inspector");
+    const artwork = picture(card);
+    artwork.classList.add("ydb-inspector-art");
+    const info = node("div", "ydb-inspector-info");
+    info.append(node("p", "ydb-inspector-type", card.card_type));
+    const properties = [
+      card.attribute && "Attribute: " + card.attribute,
+      card.race && "Type: " + card.race,
+      card.level != null && "Level/Rank: " + card.level,
+      card.attack != null && "ATK " + card.attack,
+      card.defense != null && "DEF " + card.defense,
+      card.archetype && "Archetype: " + card.archetype
+    ].filter(Boolean);
+    if (properties.length) info.append(node("p", "ydb-inspector-stats", properties.join(" · ")));
+    info.append(node("p", "ydb-inspector-description", card.description || "No card text available."));
+    const ban = String(card.card_data?.banlist_info?.ban_tcg || "");
+    if (ban) info.append(node("p", "ydb-inspector-banlist", "Imported TCG list: " + ban + " (advisory; check current rules)."));
+    const buttons = node("div", "ydb-inspector-actions");
+    for (const zone of ZONES) {
+      if (zone === "main" && mainOrExtra(card) === "extra") continue;
+      if (zone === "extra" && mainOrExtra(card) !== "extra") continue;
+      const button = node("button", "button secondary", "＋ " + zone[0].toUpperCase() + zone.slice(1));
+      button.type = "button";
+      button.disabled = !canPlace(card, zone) || busy;
+      button.addEventListener("click", () => { modifyCard(id, zone, 1); inspectCard(id); });
+      buttons.append(button);
+    }
+    info.append(buttons, node("small", "ydb-inspector-note",
+      "Building a reference deck does not add these cards to your collection or change your permanent Arena starter."));
+    view.append(artwork, info);
+    container.replaceChildren(view);
+  } catch (error) {
+    if (dialog.open) container.replaceChildren(node("p", "ydb-empty", "Could not load card details: " + (error.message || "Try again.")));
+  }
 }
 function renderSearchResults(items) {
   const root = $("ydb-search-results");
@@ -183,7 +240,7 @@ function renderSearchResults(items) {
     const id = Number(card.card_id);
     const row = node("article", "ydb-result");
     const info = node("div", "ydb-result-info");
-    info.append(node("strong", "", card.name), node("small", "", card.card_type));
+    info.append(detailButton(id, card.name), node("small", "", card.card_type));
     const stats = card.attack == null && card.defense == null
       ? card.attribute || card.archetype || ""
       : "ATK " + (card.attack ?? "?") + " / DEF " + (card.defense ?? "?");
@@ -218,7 +275,7 @@ function renderZone(zone) {
     const row = node("div", "ydb-deck-card");
     row.append(picture(card));
     const label = node("span", "ydb-deck-card-name");
-    label.append(node("strong", "", card?.name || "Unknown card #" + id));
+    label.append(detailButton(id, card?.name || "Unknown card #" + id));
     label.append(node("small", "", card?.card_type || "Missing from catalog"));
     row.append(label);
     row.append(node("span", "ydb-qty", "×" + qty));
@@ -268,6 +325,11 @@ function renderStatus() {
 function render() {
   $("ydb-name").value = state.name;
   $("ydb-save").disabled = !user || busy;
+  $("ydb-name").disabled = busy;
+  $("ydb-new").disabled = busy;
+  $("ydb-duplicate").disabled = busy;
+  $("ydb-clear").disabled = busy || !uniqueIds().length;
+  $("ydb-import").disabled = busy;
   $("ydb-delete").disabled = !user || !state.id || busy;
   $("ydb-decks").disabled = !user || busy;
   $("ydb-account-status").replaceChildren();
@@ -367,6 +429,22 @@ async function deleteDeck() {
     tell("Could not delete this deck: " + (e.message || "Try again."), true);
   } finally { busy = false; render(); }
 }
+function duplicateDeck() {
+  if (busy) return;
+  const copyName = ("Copy of " + state.name.trim()).slice(0, 80);
+  Object.assign(state, { id: null, name: copyName, dirty: true });
+  guestWrite();
+  updateSavedSelect();
+  render();
+  tell("Created an editable copy. Select Save Deck to keep it in your account.");
+}
+function clearCards() {
+  if (busy || !uniqueIds().length) return;
+  if (!confirm("Remove all Main, Extra and Side Deck cards from this editable draft?")) return;
+  state.main = []; state.extra = []; state.side = [];
+  markDirty();
+  tell("Cards cleared. Save to keep the empty draft, or start a new deck.");
+}
 function ydkText() {
   const lines = ["#created by CTooniverse", "#main"];
   for (const id of state.main) lines.push(String(id));
@@ -434,7 +512,7 @@ async function searchCards() {
   status.textContent = "Searching cards…";
   try {
     let q = db.from("yugioh_cards")
-      .select("card_id,name,card_type,art_image_id,attribute,attack,defense,archetype,card_data", { count: "exact" })
+      .select(CARD_FIELDS, { count: "exact" })
       .order("name", { ascending: true })
       .range(searchPage * PAGE_SIZE, (searchPage+1) * PAGE_SIZE-1);
     if (query) q = q.ilike("name", "%" + query + "%");
@@ -452,7 +530,7 @@ async function searchCards() {
     searchTotal = count || 0;
     renderSearchResults(lastResults);
     status.textContent = searchTotal.toLocaleString() + " matching cards";
-    $("ydb-page").textContent = "Page " + (searchPage+1);
+    $("ydb-page").textContent = "Page " + (searchPage+1) + " of " + Math.max(1, Math.ceil(searchTotal / PAGE_SIZE));
     $("ydb-prev").disabled = searchPage === 0;
     $("ydb-next").disabled = (searchPage+1) * PAGE_SIZE >= searchTotal;
   } catch (_) {
@@ -586,6 +664,12 @@ $("ydb-name").addEventListener("input", e => {
   state.name = e.target.value.slice(0,80); state.dirty = true; guestWrite();
   const status = $("ydb-account-status");
   if (user) status.textContent = "Signed in · Unsaved changes";
+});
+$("ydb-duplicate").addEventListener("click", duplicateDeck);
+$("ydb-clear").addEventListener("click", clearCards);
+$("ydb-card-dialog-close").addEventListener("click", () => $("ydb-card-dialog").close());
+$("ydb-card-dialog").addEventListener("click", e => {
+  if (e.target === $("ydb-card-dialog")) e.target.close();
 });
 $("ydb-new").addEventListener("click", () => {
   if (state.dirty && !confirm("Discard unsaved changes and start a new deck?")) return;
