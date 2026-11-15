@@ -166,3 +166,77 @@
  .yd-free-duel-thumb .yd-character-art>.yd-character-image,
  .yd-free-duel-portrait .yd-character-art>.yd-character-image{transform:none!important}
 }
+
+/* Uniform 3:4 opponent portraits.
+   Character files have different intrinsic sizes; never let them determine
+   roster tile dimensions or give the detail preview a different crop ratio. */
+.yd-free-duel-grid{align-items:start}
+.yd-free-duel-thumb{
+  display:block;
+  width:100%;
+  height:auto;
+  min-height:0;
+  aspect-ratio:3 / 4;
+  padding:0;
+}
+.yd-free-duel-thumb>.yd-starter-art{
+  position:absolute!important;
+  inset:3px;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  flex:none!important;
+  padding:0!important;
+}
+.yd-free-duel-portrait{
+  position:relative;
+  box-sizing:border-box;
+  width:min(100%,285px);
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  aspect-ratio:3 / 4;
+  justify-self:center;
+  align-self:center;
+  margin-inline:auto;
+}
+.yd-free-duel-portrait>.yd-starter-art{
+  position:absolute!important;
+  inset:0;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  flex:none!important;
+  padding:0!important;
+}
+.yd-free-duel-thumb .yd-character-art>.yd-character-image,
+.yd-free-duel-portrait .yd-character-art>.yd-character-image{
+  position:absolute;
+  inset:0;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:none!important;
+  max-height:none!important;
+  object-fit:cover!important;
+  object-position:center 14%!important;
+  transform:none!important;
+}
+.yd-free-duel-thumb .yd-character-art>.yd-starter-art img,
+.yd-free-duel-portrait .yd-character-art>.yd-starter-art img{
+  object-fit:contain!important;
+  object-position:center!important;
+}
+@media(max-width:1000px){
+  .yd-free-duel-portrait{width:min(100%,260px)}
+}
+@media(max-width:700px){
+  .yd-free-duel-portrait{width:min(100%,230px)}
+}
+@media(max-width:440px){
+  .yd-free-duel-portrait{width:min(100%,265px)}
+  .yd-free-duel-thumb>.yd-starter-art{inset:2px}
+}
