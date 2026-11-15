@@ -64,3 +64,131 @@
  .ycs-pack-category{font-size:.61rem}
  .ycs-pack .ycs-pool-size{font-size:.69rem}
 }
+
+
+/* Shared CToon Shop showcase geometry for booster packs.
+   Mirror shop.html's final 182x282 neon-glass cards without changing the
+   purchase flow or the reveal/collection displays elsewhere on this page. */
+#ycs-pack-grid{
+ display:grid!important;
+ grid-template-columns:repeat(auto-fit,minmax(min(100%,182px),1fr))!important;
+ justify-items:center!important;align-items:start!important;
+ gap:16px!important;width:100%!important;min-width:0!important;
+}
+#ycs-pack-grid .ctoon-shop-card.ycs-pack{
+ box-sizing:border-box!important;
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;
+ justify-content:flex-start!important;gap:0!important;
+ width:182px!important;min-width:182px!important;max-width:182px!important;
+ height:282px!important;min-height:282px!important;max-height:282px!important;
+ margin:0!important;padding:6px!important;overflow:hidden!important;
+ text-align:center!important;
+ border:2px solid #6de8ff!important;border-radius:13px!important;
+ background:linear-gradient(135deg,#78e9ff 0%,#125aa9 9%,#102d77 48%,#421b90 91%,#8e6aff 100%)!important;
+ box-shadow:inset 0 0 0 2px #09194c,inset 0 0 0 4px #5489ec,0 0 13px #26cfff88,0 9px 23px #08041fbb!important;
+ transform:none!important;transition:box-shadow .18s ease!important;animation:none!important;
+}
+#ycs-pack-grid .ctoon-shop-card.ycs-pack:hover,
+#ycs-pack-grid .ctoon-shop-card.ycs-pack:focus-within{
+ box-shadow:inset 0 0 0 2px #09194c,inset 0 0 0 4px #5489ec,0 0 22px #4feaffc9,0 13px 27px #08041fcc!important;
+}
+#ycs-pack-grid .ctoon-shop-art.ycs-pack-window{
+ box-sizing:border-box!important;position:relative!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;flex:0 0 150px!important;
+ height:150px!important;min-height:150px!important;max-height:150px!important;
+ aspect-ratio:auto!important;overflow:hidden!important;
+ border:3px solid #b9faff!important;border-radius:8px!important;
+ background:radial-gradient(ellipse at 50% 45%,#a9f6ff 0%,#5dcdf6 30%,#2083d6 64%,#2539a0 100%)!important;
+ box-shadow:inset 0 0 0 2px #2863bc,inset 0 0 19px #052c8b,0 0 0 2px #12378c,0 0 12px #4af3ff!important;
+}
+#ycs-pack-grid .ctoon-shop-art.ycs-pack-window::before{
+ display:none!important;content:none!important;animation:none!important;
+}
+#ycs-pack-grid .ctoon-shop-art.ycs-pack-window .ycs-art.ycs-pack-cover{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+ margin:0!important;padding:0!important;flex:1 1 auto!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ overflow:hidden!important;
+}
+#ycs-pack-grid .ctoon-shop-art.ycs-pack-window .ycs-pack-cover img{
+ box-sizing:border-box!important;display:block!important;
+ position:relative!important;z-index:1!important;
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ padding:7px!important;margin:0!important;
+ object-fit:contain!important;object-position:center!important;
+ filter:drop-shadow(0 3px 4px #00275dbb)!important;
+ animation:none!important;transition:none!important;transform:none!important;
+}
+#ycs-pack-grid .ctoon-shop-owned.ycs-pack-badge{
+ position:absolute!important;z-index:4!important;top:5px!important;right:5px!important;
+ max-width:calc(100% - 10px);margin:0!important;padding:3px 5px!important;
+ font-size:10px!important;line-height:1.1!important;font-weight:850!important;
+ white-space:nowrap!important;
+ background:#626b78!important;color:#fff!important;border:1px solid #b0b6c0!important;
+}
+#ycs-pack-grid .ctoon-shop-details.ycs-pack-details{
+ box-sizing:border-box!important;display:flex!important;flex:1 1 auto!important;
+ flex-direction:column!important;justify-content:space-between!important;
+ width:100%!important;min-width:0!important;min-height:0!important;
+ margin:0!important;padding:6px 3px 3px!important;gap:3px!important;
+ overflow:hidden!important;
+ background:linear-gradient(180deg,#0d4d9b,#152460)!important;
+ border-radius:0 0 7px 7px!important;
+}
+#ycs-pack-grid .ctoon-shop-name{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;min-width:0!important;
+ height:29px!important;min-height:29px!important;max-height:29px!important;
+ margin:0!important;padding:0!important;font-size:12px!important;line-height:1.15!important;
+ color:#fff!important;text-shadow:1px 1px #00346a!important;overflow:hidden!important;
+}
+#ycs-pack-grid .ctoon-shop-name-text{
+ min-width:0!important;max-height:2.3em!important;overflow:hidden!important;
+ display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+ line-clamp:2;overflow-wrap:anywhere!important;text-overflow:ellipsis!important;
+}
+#ycs-pack-grid .collection-series.ycs-pack-series{
+ display:block!important;flex:none!important;max-width:100%!important;min-height:12px!important;
+ margin:0!important;font-size:10px!important;line-height:1.15!important;
+ white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;
+ color:#ecf5ff!important;
+}
+#ycs-pack-grid .ctoon-shop-purchase{
+ display:flex!important;flex:none!important;align-items:center!important;
+ justify-content:space-between!important;gap:4px!important;
+ min-width:0!important;margin:0!important;
+}
+#ycs-pack-grid .ctoon-shop-price{
+ flex:0 1 auto!important;min-width:0!important;
+ font-size:10px!important;line-height:1.15!important;font-weight:800!important;
+ white-space:nowrap!important;color:#fff1ac!important;
+}
+#ycs-pack-grid .ctoon-shop-buy.ycs-pack-open{
+ box-sizing:border-box!important;flex:0 0 auto!important;
+ width:auto!important;min-height:28px!important;
+ margin:0!important;padding:4px 8px!important;
+ font-size:10px!important;line-height:1.15!important;font-weight:850!important;
+ white-space:nowrap!important;cursor:pointer!important;
+ background:linear-gradient(#92ff38,#3fb400)!important;
+ border:2px solid #226600!important;border-radius:6px!important;
+ color:#fff!important;text-shadow:1px 1px #164e00!important;
+ box-shadow:inset 0 1px 0 #dbffaf,0 2px 5px #061d47!important;
+}
+#ycs-pack-grid .ctoon-shop-buy.ycs-pack-open:disabled{
+ cursor:not-allowed!important;opacity:.7!important;
+}
+#ycs-pack-grid .ctoon-shop-status.ycs-pack-pool{
+ display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+ flex:none!important;min-height:23px!important;max-height:25px!important;
+ margin:0!important;font-size:9px!important;line-height:1.2!important;
+ color:#dceeff!important;overflow:hidden!important;overflow-wrap:anywhere!important;
+}
+@media(max-width:430px){
+ #ycs-pack-grid{gap:12px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #ycs-pack-grid .ctoon-shop-card.ycs-pack{transition:none!important}
+}
