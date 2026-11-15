@@ -48,3 +48,19 @@
 .ycs-collection-grid,.ycs-reveal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .ycs-wallet{align-items:flex-start}.ycs-wallet strong{font-size:1.05rem}}
 @media(prefers-reduced-motion:reduce){.ycs-reveal .ycs-card{animation:none}}
+/* Booster expansion: searchable, categorized catalogue with a clear pool count. */
+.ycs-pack-toolbar{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:15px 0 20px}
+.ycs-pack-toolbar label{display:flex;flex-direction:column;gap:5px;min-width:160px;flex:1 1 190px;color:#e6e1ff;font-size:.79rem;font-weight:850}
+.ycs-pack-toolbar :is(input,select){width:100%;min-height:42px;padding:9px 11px;border-radius:10px;border:1px solid #a89bed;background:#111b42;color:#fefcff;font:inherit}
+.ycs-pack-toolbar :is(input,select):focus-visible{outline:2px solid #ffdf88;outline-offset:2px}
+#ycs-pack-count{color:#ffe7ae;font-size:.88rem;white-space:nowrap;margin:0 0 9px}
+.ycs-pack-category{display:block;width:100%;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.09em;color:#bdefff}
+.ycs-pack .ycs-pool-size{font-size:.77rem;font-weight:750;color:#ffdeac}
+.ycs-no-packs{grid-column:1/-1;text-align:center;padding:30px;border:1px dashed #b8a4ee;border-radius:11px}
+@media(max-width:550px){
+ .ycs-pack-toolbar{gap:9px}
+ .ycs-pack-toolbar label{flex:1 1 100%}
+ #ycs-pack-count{margin:0}
+ .ycs-pack-category{font-size:.61rem}
+ .ycs-pack .ycs-pool-size{font-size:.69rem}
+}
