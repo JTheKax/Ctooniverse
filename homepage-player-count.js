@@ -21,7 +21,8 @@
       });
       if (!response.ok) throw new Error("Player count unavailable");
       const rows = await response.json();
-      const count = Number(Array.isArray(rows) && rows[0] && rows[0].registered_players);
+      if (!Array.isArray(rows) || rows.length !== 1) throw new Error("Missing registration statistics");
+      const count = Number(rows[0].registered_players);
       if (!Number.isSafeInteger(count) || count < 0) throw new Error("Invalid registration total");
       if (seq !== sequence) return;
       previous = count;
