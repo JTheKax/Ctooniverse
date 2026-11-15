@@ -435,7 +435,7 @@ if (year) year.textContent = String(new Date().getFullYear());
 
 /* Remove obsolete collection links from legacy pages while preserving other games. */
 (() => {
- const obsolete=new Set(['sets-overview.html','my-collection.html','my-scene.html','czone.html','owner-ctoon-maker.html','owner-ctoon-packs.html']);
+ const obsolete=new Set(['sets-overview.html','my-collection.html','my-scene.html','czone.html','owner-ctoon-packs.html']);
  for(const a of document.querySelectorAll('a[href]')) {
   const filename=a.getAttribute('href').split(/[?#]/)[0].split('/').pop();
   if(obsolete.has(filename)) a.remove();
