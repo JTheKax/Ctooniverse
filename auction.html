@@ -33,7 +33,7 @@ body.auction-page main{box-sizing:border-box;width:min(1100px,calc(100% - 24px))
 .auction-empty strong{display:block;color:#ffe1a6;font-size:1.22rem}
 .auction-empty p{margin:10px auto 0;line-height:1.55;color:#e6ddf4}
 @media(max-width:700px){body.auction-page{background-attachment:scroll!important}.auction-links{flex-direction:column}.auction-links a{width:100%;box-sizing:border-box}}
-</style><link rel="stylesheet" href="auction.css?v=20261115-marketplace-v1">
+</style><link rel="stylesheet" href="auction.css?v=20261115-ctoon-windows-v2">
 </head>
 <body class="shop-cartoon-page auction-page">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -119,7 +119,14 @@ body.auction-page main{box-sizing:border-box;width:min(1100px,calc(100% - 24px))
   </form>
 </section>
 </main>
+<dialog id="auction-dialog" class="auction-dialog" aria-labelledby="auction-dialog-title">
+  <div class="auction-dialog-heading">
+    <h2 id="auction-dialog-title">Auction Details</h2>
+    <button type="button" id="auction-dialog-close" class="auction-dialog-close" aria-label="Close auction details">✕ Close</button>
+  </div>
+  <div id="auction-dialog-body" class="auction-dialog-content"></div>
+</dialog>
 <footer><span>© <span id="year">2026</span> CTooniverse</span><span>The Neon Market · Auction House</span></footer>
 <script type="module" src="site-chat-widget.js?v=1"></script>
-<script type="module" src="auction.js?v=20261115-marketplace-v1"></script></body>
+<script type="module" src="auction.js?v=20261115-ctoon-windows-v2"></script></body>
 </html>
