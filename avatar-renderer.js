@@ -48,7 +48,7 @@ export function avatarSvg(value={}) {
   :a.backdrop==='stars'
   ? '<g fill="#ffe08b"><path d="M35 62l5 11 12 1-9 8 2 12-10-6-11 6 2-12-9-8 12-1z"/><path d="M281 115l4 10 10 1-8 7 2 10-8-5-9 5 2-10-8-7 10-1z"/></g>'
   :'';
- const backdrop=a.backdrop==='plain'?'#f8f8fb':a.background;
+ const backdrop=a.background;
  const backdropDecor=a.backdrop==='spotlight'
   ?'<ellipse cx="160" cy="175" rx="134" ry="161" fill="#ffffff" opacity=".13"/>':'';
  const pants=`<path d="M109 324 L209 324 L213 374 Q190 381 163 372 L159 345 L156 372 Q125 382 107 374Z" fill="${a.pants}" ${edge}/><path d="M159 345V376" fill="none" stroke="${ink}" stroke-width="4"/>`;
