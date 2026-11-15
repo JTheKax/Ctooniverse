@@ -1,4 +1,4 @@
-/* CTooniverse Yu-Gi-Oh! database — text-only card browser, no image hotlinking. */
+/* CTooniverse Yu-Gi-Oh! artwork from self-hosted Supabase Storage (no upstream hotlinking). */
 .yc-main{width:min(1200px,calc(100% - 24px));margin:24px auto 70px}
 .yc-main .yc-hero{padding:clamp(20px,4vw,38px);margin-top:0}
 .yc-main h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.08;margin:8px 0 18px}
@@ -44,3 +44,31 @@
 @media(max-width:650px){.yc-main{width:calc(100% - 16px);margin-top:12px}.yc-form{grid-template-columns:1fr}.yc-form-buttons .button{flex:1 1 125px}.yc-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.yc-card{min-height:230px;padding:9px}.yc-card-top strong{font-size:.79rem}.yc-placeholder{min-height:72px;font-size:2.2rem}.yc-card-desc{font-size:.69rem}.yc-pagination{gap:8px}.yc-pagination button{min-width:94px}.yc-dialog{padding:18px}.yc-detail-grid{grid-template-columns:1fr}}
 @media(max-width:360px){.yc-grid{grid-template-columns:1fr}.yc-card{min-height:220px}}
 @media(prefers-reduced-motion:reduce){.yc-card{transition:none}.yc-card:hover{transform:none}}
+
+/* Self-hosted card illustrations. A neon placeholder remains while a card is cached. */
+.yc-card{min-height:365px}
+.yc-artwork{position:relative;display:block;flex:1 1 auto;min-height:175px;width:100%;overflow:hidden;border:1px solid #a688c68a;border-radius:9px;background:radial-gradient(circle,#794da9,#221441 75%)}
+.yc-artwork .yc-placeholder{position:absolute;inset:0;display:grid;place-items:center;min-height:0!important;border:0;border-radius:0;width:100%;height:100%;font-size:3rem;transition:opacity .15s ease}
+.yc-art-image{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .15s ease}
+.yc-artwork-loaded .yc-art-image{opacity:1}
+.yc-artwork-loaded .yc-placeholder{opacity:0}
+.yc-artwork-missing .yc-placeholder{opacity:1}
+.yc-detail-art{margin:12px 0 18px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.yc-detail-art h3{align-self:stretch;margin:8px 0 0}
+.yc-detail-main-image{width:min(245px,75%);aspect-ratio:421/614;max-height:380px;display:flex;align-items:center;justify-content:center}
+.yc-detail-main-image .yc-artwork{width:100%;height:100%;min-height:0;background:radial-gradient(circle,#7658a0,#15152d 80%);border-color:#ffd38d}
+.yc-detail-main-image .yc-artwork .yc-placeholder{font-size:5rem}
+.yc-art-variants{width:100%;max-width:480px;display:flex;align-items:center;justify-content:center;gap:9px;overflow-x:auto;padding:5px 3px 10px}
+.yc-variant{width:64px;height:88px;display:flex;flex:0 0 64px;padding:3px;border-radius:10px;border:2px solid #7d6ca2;background:#191436;cursor:pointer}
+.yc-variant .yc-artwork{height:100%;min-height:0;border:0;border-radius:6px}
+.yc-variant .yc-artwork .yc-placeholder{font-size:1.4rem}
+.yc-variant[aria-pressed="true"]{border-color:#8ef5ff;box-shadow:0 0 12px #9efbff66}
+.yc-variant:focus-visible{outline:3px solid #ffe399;outline-offset:3px}
+.yc-art-credit{display:block;text-align:center;color:#cec7e7}
+@media(max-width:650px){
+ .yc-card{min-height:316px}
+ .yc-card .yc-artwork{min-height:136px}
+ .yc-card .yc-artwork .yc-placeholder{font-size:2.1rem}
+ .yc-detail-main-image{width:min(220px,78%);max-height:325px}
+}
+@media(prefers-reduced-motion:reduce){.yc-art-image,.yc-artwork .yc-placeholder{transition:none}}
