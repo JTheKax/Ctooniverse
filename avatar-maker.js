@@ -1,16 +1,20 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
-import {DEFAULT_AVATAR,AVATAR_OPTIONS,normalizeAvatar,avatarSvg,avatarDataUrl} from './avatar-renderer.js?v=cutout-avatar-v4';
+import {DEFAULT_AVATAR,AVATAR_OPTIONS,normalizeAvatar,avatarSvg,avatarDataUrl} from './avatar-renderer.js?v=cutout-avatar-v5';
 
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const $=id=>document.getElementById(id);
 const form=$('avatar-maker-form'),preview=$('avatar-preview'),status=$('avatar-maker-status');
-const saveBtn=$('avatar-save');
-let userId=null,working=false,dirty=false,request=0,look=normalizeAvatar(DEFAULT_AVATAR);
+const saveBtn=$('avatar-save'),mobileSaveBtn=$('avatar-mobile-save');
+const saveBtns=[saveBtn,mobileSaveBtn].filter(Boolean);
+function syncSaveButtons(){for(const button of saveBtns)button.disabled=working||!userId;}
+let userId=null,working=false,dirty=false,request=0,editRevision=0,look=normalizeAvatar(DEFAULT_AVATAR);
 
 function message(text,error=false){status.textContent=text;status.dataset.error=String(error)}
 function display(){
  look=normalizeAvatar(look);
- preview.src=avatarDataUrl(look);
+ const src=avatarDataUrl(look);
+ preview.src=src;
+ if($('avatar-compact-preview'))$('avatar-compact-preview').src=src;
  if(userId&&dirty)message('Preview updated. Save your avatar to show this look to other players.');
 }
 function setForm(value){
@@ -23,29 +27,33 @@ function setForm(value){
 function readForm(){
  const next={...look};
  for(const input of form.querySelectorAll('[name]'))next[input.name]=input.value;
- look=normalizeAvatar(next);dirty=true;display();
+ look=normalizeAvatar(next);dirty=true;editRevision++;display();
 }
 async function load(){
- const serial=++request;
+ const serial=++request,revisionAtStart=editRevision;
  try{
   const {data:{user},error}=await db.auth.getUser();
   if(serial!==request)return;
   if(error||!user){
-   userId=null;saveBtn.disabled=true;
+   userId=null;syncSaveButtons();
    setForm(DEFAULT_AVATAR);
    dirty=false;message('Sign in to your CTooniverse account to save your avatar. You can still customize and download a preview.');
    return;
   }
-  userId=user.id;saveBtn.disabled=false;
+  userId=user.id;syncSaveButtons();
   const {data,error:loadError}=await db.from('player_avatars').select('avatar').eq('user_id',user.id).maybeSingle();
   if(serial!==request)return;
   if(loadError)throw loadError;
-  setForm(data?.avatar||DEFAULT_AVATAR);
-  dirty=false;
-  message(data?'Your saved avatar has loaded. Customize it or try a new look.':'Welcome! Customize your first avatar, then save it.');
+  if(editRevision===revisionAtStart){
+   setForm(data?.avatar||DEFAULT_AVATAR);
+   dirty=false;
+   message(data?'Your saved avatar has loaded. Customize it or try a new look.':'Welcome! Customize your first avatar, then save it.');
+  }else{
+   message('Account ready. Your unsaved changes were preserved; save when you are happy with the look.');
+  }
  }catch(error){
   if(serial!==request)return;
-  saveBtn.disabled=!userId;
+  syncSaveButtons();
   message('Unable to load the saved avatar: '+(error.message||error),true);
  }
 }
@@ -65,26 +73,31 @@ $('avatar-randomize').addEventListener('click',()=>{
  const next={...look};
  for(const [key,options] of Object.entries(AVATAR_OPTIONS))next[key]=random(options);
  for(const [key,options] of Object.entries(palette))next[key]=random(options);
- setForm(next);dirty=true;message('Random look ready! Save it to your profile.');
+ setForm(next);dirty=true;editRevision++;message('Random look ready! Save it to your profile.');
 });
 $('avatar-reset').addEventListener('click',()=>{
- setForm(DEFAULT_AVATAR);dirty=true;message('Reset to the default cutout character. Save to apply this look.');
+ setForm(DEFAULT_AVATAR);dirty=true;editRevision++;message('Reset to the default cutout character. Save to apply this look.');
 });
-saveBtn.addEventListener('click',async()=>{
+async function saveAvatar(){
  if(working||!userId)return;
- working=true;saveBtn.disabled=true;message('Saving your avatar…');
+ working=true;syncSaveButtons();message('Saving your avatar…');
+ const revisionOnSave=editRevision;
+ const submittedLook=normalizeAvatar(look);
  try{
   const {data:{user},error:authError}=await db.auth.getUser();
   if(authError||!user||user.id!==userId)throw new Error('Your session expired. Sign in again.');
-  const row={user_id:user.id,avatar:normalizeAvatar(look),updated_at:new Date().toISOString()};
+  const row={user_id:user.id,avatar:submittedLook,updated_at:new Date().toISOString()};
   if(JSON.stringify(row.avatar).length>=2900)throw new Error('Avatar data is too large.');
   const {error}=await db.from('player_avatars').upsert(row,{onConflict:'user_id'});
   if(error)throw error;
-  dirty=false;message('Avatar saved! It will now show on your player profile and in the player directory.');
+  if(editRevision===revisionOnSave){dirty=false;message('Avatar saved! It will now show on your player profile and in the player directory.');}
+  else {dirty=true;message('Avatar saved, but you have newer unsaved edits. Save again to publish them.');}
   window.dispatchEvent(new CustomEvent('ctoon-profile-updated'));
+  try{localStorage.setItem('ctoon-avatar-updated',String(Date.now()))}catch(_){/* Storage is optional. */}
  }catch(error){message('Avatar could not be saved: '+(error?.message||error),true)}
- finally{working=false;saveBtn.disabled=!userId}
-});
+ finally{working=false;syncSaveButtons()}
+}
+for(const button of saveBtns)button.addEventListener('click',saveAvatar);
 $('avatar-download').addEventListener('click',async()=>{
  const button=$('avatar-download');button.disabled=true;
  try{
