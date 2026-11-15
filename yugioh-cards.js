@@ -4,6 +4,11 @@
   // Supabase publishable browser key. No secret/service-role credentials are used in this page.
   const PUBLIC_KEY = "sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS";
   const PAGE_SIZE = 24;
+  const ART_STORAGE = "https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/yugioh-artwork/";
+  const ART_FUNCTION = "https://hsxdyxdazsdmpucyhqly.supabase.co/functions/v1/yugioh-artwork";
+  const artworkQueue = [];
+  let activeArtworkLoads = 0;
+  const MAX_ARTWORK_LOADS = 2;
   const $ = (id) => document.getElementById(id);
   const grid = $("yc-grid");
   const form = $("yc-search-form");
@@ -54,7 +59,7 @@
   }
   function queryUrl() {
     const url = new URL(API_ROOT + "yugioh_cards");
-    url.searchParams.set("select", "card_id,name,card_type,description,race,attribute,archetype,level,attack,defense");
+    url.searchParams.set("select", "card_id,name,card_type,description,race,attribute,archetype,level,attack,defense,art_image_id");
     url.searchParams.set("order", "name.asc,card_id.asc");
     url.searchParams.set("limit", String(PAGE_SIZE));
     url.searchParams.set("offset", String(page * PAGE_SIZE));
@@ -68,6 +73,90 @@
     if (active.category === "trap") url.searchParams.set("card_type", "eq.Trap Card");
     return url.toString();
   }
+
+  // Images are self-hosted: try the public Storage URL first. On a cache
+  // miss, our Edge Function downloads a single image and stores it locally.
+  function drainArtworkQueue() {
+    while (activeArtworkLoads < MAX_ARTWORK_LOADS && artworkQueue.length) {
+      const job = artworkQueue.shift();
+      if (!job.image.isConnected) continue;
+      activeArtworkLoads++;
+      let released = false;
+      const finished = () => {
+        if (released) return;
+        released = true;
+        activeArtworkLoads--;
+        setTimeout(drainArtworkQueue, 160);
+      };
+      job.image.addEventListener("load", finished, { once: true });
+      job.image.addEventListener("error", finished, { once: true });
+      job.image.src = job.endpoint;
+    }
+  }
+  function artworkNode(id, size, name) {
+    const imageId = Number(id);
+    if (!Number.isSafeInteger(imageId) || imageId <= 0) return el("span", "yc-placeholder", "✦");
+    const frame = el("span", "yc-artwork");
+    const placeholder = el("span", "yc-placeholder", "✦");
+    placeholder.setAttribute("aria-hidden", "true");
+    const img = document.createElement("img");
+    img.className = "yc-art-image";
+    img.alt = name + " Yu-Gi-Oh! card artwork";
+    img.decoding = "async";
+    img.loading = "lazy";
+    let retried = false;
+    img.addEventListener("load", () => frame.classList.add("yc-artwork-loaded"));
+    img.addEventListener("error", () => {
+      if (!retried) {
+        retried = true;
+        artworkQueue.push({
+          image: img,
+          endpoint: ART_FUNCTION + "?id=" + imageId + "&size=" + size
+        });
+        drainArtworkQueue();
+      } else {
+        frame.classList.add("yc-artwork-missing");
+      }
+    });
+    frame.append(placeholder, img);
+    img.src = ART_STORAGE + size + "/" + imageId + ".jpg";
+    return frame;
+  }
+  function artworkGallery(raw, cardName) {
+    const images = Array.isArray(raw.card_images) ? raw.card_images.filter(
+      (x) => Number.isSafeInteger(Number(x?.id)) && Number(x.id) > 0
+    ) : [];
+    if (!images.length) return null;
+    const section = el("section", "yc-detail-art");
+    section.append(el("h3", "", "Card Artwork"));
+    const mainImage = el("div", "yc-detail-main-image");
+    const previews = el("div", "yc-art-variants");
+    function showVariant(index) {
+      const variant = images[index];
+      mainImage.replaceChildren(artworkNode(variant.id, "full", cardName));
+      for (const btn of previews.children) {
+        btn.setAttribute("aria-pressed", String(Number(btn.dataset.variant) === index));
+      }
+    }
+    section.append(mainImage);
+    if (images.length > 1) {
+      previews.setAttribute("aria-label", "Available artwork versions");
+      for (let i = 0; i < images.length; i++) {
+        const btn = el("button", "yc-variant");
+        btn.type = "button";
+        btn.dataset.variant = String(i);
+        btn.setAttribute("aria-label", "Artwork version " + (i + 1) + " of " + images.length);
+        btn.append(artworkNode(images[i].id, "small", cardName + " alternate artwork " + (i + 1)));
+        btn.addEventListener("click", () => showVariant(i));
+        previews.append(btn);
+      }
+      section.append(previews);
+      section.append(el("small", "yc-art-credit", images.length + " available artwork versions · tap to switch"));
+    }
+    showVariant(0);
+    return section;
+  }
+
   function displayCards(cards) {
     grid.replaceChildren();
     if (!cards.length) {
@@ -81,7 +170,7 @@
       button.setAttribute("aria-label", "View details for " + card.name);
       const top = el("span", "yc-card-top");
       top.append(el("strong", "", card.name), el("small", "", card.card_type));
-      const art = el("span", "yc-placeholder", card.card_type.includes("Spell") ? "✦" : card.card_type.includes("Trap") ? "⬡" : "★");
+      const art = artworkNode(card.art_image_id, "small", card.name);
       art.setAttribute("aria-hidden", "true");
       const meta = el("span", "yc-card-meta");
       meta.append(el("span", "", card.attribute || card.race || card.archetype || "Yu-Gi-Oh!"));
@@ -151,6 +240,8 @@
       const title = el("h2", "", card.name);
       title.id = "yc-detail-title";
       detail.append(title, el("p", "yc-detail-type", card.card_type + (raw.humanReadableCardType ? " · " + raw.humanReadableCardType : "")));
+      const gallery = artworkGallery(raw, card.name);
+      if (gallery) detail.append(gallery);
       const info = el("dl", "yc-detail-grid");
       detailLine("Card ID", card.card_id, info);
       detailLine("Attribute", card.attribute, info);
