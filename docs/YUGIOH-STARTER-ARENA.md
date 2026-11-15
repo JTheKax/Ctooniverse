@@ -6,7 +6,7 @@
 2. Players may inspect the lists before choosing. Templates cannot be edited, replaced, or deleted by regular players.
 3. They choose exactly **one** permanent starter: Yugi, Kaiba, Joey, or Pegasus. The choice is saved in `yugioh_player_starter_choices` with the player's Supabase Auth UUID as its primary key. There are **no UPDATE or DELETE permissions** for regular players.
 4. On later visits, the chosen starter is automatically loaded into Arena. The player cannot switch to a different starter.
-5. **No collectible cards are awarded.** A starter selection never inserts into a card inventory, player collection, reward, pack opening, or shop table. Only future pack-opening reward logic should mint collectible card inventory; that system is not implemented in this change.
+5. **No collectible cards are awarded.** A starter selection never inserts into a card inventory, player collection, reward, pack opening, or shop table. Actual collectible inventory is now minted only by the separate Card Shop pack-opening RPC, not by this permanent starter selection.
 6. Custom saved deck drafts are still editable in `yugioh-deck-builder.html`, but they do not alter the locked starter or convert starter cards into owned cards.
 
 Guests who are not signed in are prompted to sign in before choosing. We intentionally do not create a temporary "owned" guest starter.
