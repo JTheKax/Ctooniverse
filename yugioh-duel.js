@@ -1,6 +1,10 @@
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
 "use strict";
 (() => {
-  /* CTooniverse fan duel. Simplified, local-only, no artwork or account transactions. */
+  /* CTooniverse fan duel. Account-bound starter selection; no collection/inventory transactions. */
+  const db=createClient("https://hsxdyxdazsdmpucyhqly.supabase.co","sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS");
+  let activeStarter=null,choosingStarter=false;
+  const starterCardCache=new Map();
   const catalog={
     dark:["Dark Magician",7,2500,2100,"🪄"],blue:["Blue-Eyes White Dragon",8,3000,2500,"🐉"],
     red:["Red-Eyes Black Dragon",7,2400,2000,"🐲"],skull:["Summoned Skull",6,2500,1200,"👹"],
@@ -85,7 +89,7 @@
   };
   const $=id=>document.getElementById(id),opponent=s=>s==="player"?"cpu":"player",who=s=>s==="player"?"Player":"Computer";
   let uid=0,game;
-  function makeCard(id){const spec=catalog[id];return{uid:++uid,id,name:spec[0],type:typeof spec[1]==="number"?"monster":spec[1],level:typeof spec[1]==="number"?spec[1]:0,atk:spec[2]||0,def:spec[3]||0,icon:spec[typeof spec[1]==="number"?4:3],text:typeof spec[1]==="number"?"Normal Monster":spec[2]};}
+  function makeCard(id){const spec=catalog[id];if(!spec)throw new Error("Missing duel card: "+id);return{uid:++uid,id,name:spec[0],type:typeof spec[1]==="number"?"monster":spec[1],level:typeof spec[1]==="number"?spec[1]:0,atk:spec[2]||0,def:spec[3]||0,icon:spec[typeof spec[1]==="number"?4:3],text:typeof spec[1]==="number"?"Monster card (simplified arena rules)":spec[2]};}
   function makeDeck(side){const result=[];for(const [id,n] of Object.entries(deckLists[side]))for(let i=0;i<n;i++)result.push(makeCard(id));for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}return result;}
   function makeSide(side){return{lp:8000,deck:makeDeck(side),hand:[],field:Array(5).fill(null),traps:Array(5).fill(null),grave:[],shield:0};}
   function note(message){game.history.unshift(message);game.history=game.history.slice(0,25);}
@@ -124,6 +128,9 @@
     if(card.id==="axe"){const best=p.field.filter(Boolean).sort((a,b)=>(b.card.atk+b.bonus)-(a.card.atk+a.bonus))[0];if(best)best.bonus+=1000;}
     if(card.id==="fissure"){const options=e.field.map((m,i)=>m&&!m.hidden?{i,atk:m.card.atk+m.bonus}:null).filter(Boolean).sort((a,b)=>a.atk-b.atk);if(options.length){note("Fissure destroys "+e.field[options[0].i].card.name+".");sendGrave(opponent(side),options[0].i);}}
     if(card.id==="storm"){const i=e.traps.findIndex(Boolean);if(i>=0){destroyTrap(opponent(side),i);note("A set Trap card is destroyed.");}}
+    // Starter-template spells other than the original small prototype pool
+    // use an explicitly simplified effect. Do not represent this as official card text.
+    if(card.id.startsWith("starter_")){p.lp+=500;note(who(side)+" gains 500 LP from a prototype Spell effect.");}
     if(card.id==="reborn"){let i=-1;for(let j=p.grave.length-1;j>=0;j--)if(p.grave[j].type==="monster"){i=j;break;}if(i>=0){const revived=p.grave.splice(i,1)[0],slot=p.field.findIndex(x=>!x);p.field[slot]={card:revived,defense:false,hidden:false,attacked:false,bonus:0,changed:game.turn};note(who(side)+" revives "+revived.name+".");}}
     render();
   }
@@ -139,6 +146,8 @@
     if(mirror>=0){destroyTrap(enemySide,mirror);note(who(enemySide)+" activates Mirror Force!");p.field.forEach((v,i)=>{if(v&&!v.defense)sendGrave(side,i);});game.selected=null;render();return;}
     const negate=e.traps.findIndex(x=>x&&x.card.id==="negate"&&x.turn<game.turn);
     if(negate>=0){destroyTrap(enemySide,negate);note(who(enemySide)+" activates Negate Attack!");game.selected=null;render();return;}
+    const starterTrap=e.traps.findIndex(x=>x&&x.card.id.startsWith("starter_")&&x.turn<game.turn);
+    if(starterTrap>=0){destroyTrap(enemySide,starterTrap);note(who(enemySide)+" blocks the attack with a prototype Trap effect.");game.selected=null;render();return;}
     const atk=m.card.atk+m.bonus;
     if(target===null){damage(enemySide,atk);note(m.card.name+" attacks directly for "+atk+" damage!");}
     else {const d=e.field[target],defPower=d.defense?d.card.def:d.card.atk+d.bonus;d.hidden=false;note(m.card.name+" attacks "+d.card.name+".");
@@ -226,6 +235,184 @@
     const result=$("yd-result");result.hidden=!game.winner;result.textContent=game.winner==="player"?"🏆 You won the duel!":"The computer won. Duel again!";
     const r=record();$("yd-record").textContent=r.wins+" wins · "+r.losses+" losses";
   }
-  function reset(){uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Duel begins! You play first.");render();}
-  $("yd-battle").addEventListener("click",startBattle);$("yd-end").addEventListener("click",endTurn);$("yd-new").addEventListener("click",reset);reset();
+  function reset(){if(!activeStarter)return;uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Duel begins with "+activeStarter.deck_name+"! You play first.");render();}
+
+  // Locked starter decks belong to the Arena entitlement, not to card ownership.
+  // The only write here is to yugioh_player_starter_choices, and the database
+  // allows one insert per user and no user UPDATE or DELETE.
+  function elt(tag,className,text){
+    const v=document.createElement(tag);
+    if(className)v.className=className;
+    if(text!=null)v.textContent=String(text);
+    return v;
+  }
+  function entryStatus(text,error=false){
+    const v=$("yd-starter-status");
+    v.textContent=text;
+    v.classList.toggle("yd-starter-error",error);
+  }
+  async function starterCards(ids){
+    const missing=[...new Set(ids.map(Number))].filter(id=>Number.isSafeInteger(id)&&!starterCardCache.has(id));
+    for(let i=0;i<missing.length;i+=80){
+      const {data,error}=await db.from("yugioh_cards")
+        .select("card_id,name,card_type,level,attack,defense,art_image_id,description")
+        .in("card_id",missing.slice(i,i+80));
+      if(error)throw error;
+      for(const c of data||[])starterCardCache.set(Number(c.card_id),c);
+    }
+    const notFound=ids.find(id=>!starterCardCache.has(Number(id)));
+    if(notFound)throw new Error("Starter card #"+notFound+" is missing from the catalog.");
+  }
+  function starterArtwork(id,name){
+    const wrapper=elt("span","yd-starter-art");
+    const img=document.createElement("img");
+    img.alt=name+" card artwork";img.loading="lazy";img.decoding="async";
+    let tried=false;
+    img.addEventListener("error",()=>{
+      if(tried){img.remove();wrapper.append(elt("span","yd-starter-no-art","✦"));return;}
+      tried=true;img.src=artFunction+"?id="+encodeURIComponent(String(id))+"&size=small";
+    });
+    img.src=artStorage+encodeURIComponent(String(id))+".jpg";
+    wrapper.append(img);return wrapper;
+  }
+  async function previewStarter(template){
+    const root=$("yd-starter-preview");
+    root.hidden=false;root.replaceChildren(elt("p","","Loading fixed card list…"));
+    try{
+      await starterCards([...template.main_cards,...template.extra_cards]);
+      root.replaceChildren(elt("h3","",template.deck_name+" — Locked deck list"));
+      for(const [zone,ids] of [["Main Deck",template.main_cards],["Extra Deck",template.extra_cards]]){
+        root.append(elt("h4","",zone+" ("+ids.length+")"));
+        const list=elt("ul","yd-starter-preview-list");
+        const counts=new Map();
+        for(const id of ids)counts.set(Number(id),(counts.get(Number(id))||0)+1);
+        for(const [id,n] of counts){
+          const c=starterCardCache.get(id);
+          list.append(elt("li","",n+"× "+c.name));
+        }
+        root.append(list);
+      }
+      root.append(elt("p","yd-starter-disclaimer","Preview only — no editing, no collection cards awarded. Card effects in this prototype are simplified."));
+    }catch(e){
+      root.replaceChildren(elt("p","yd-starter-error",e.message||"Unable to load deck preview."));
+    }
+  }
+  async function activateStarter(template){
+    await starterCards([...template.main_cards,...template.extra_cards]);
+    const keyed=Object.entries(catalog);
+    const byName=new Map(keyed.map(([key,v])=>[v[0],key]));
+    const next={};
+    for(const idValue of template.main_cards){
+      const c=starterCardCache.get(Number(idValue));
+      const known=byName.get(c.name);
+      const code=known||"starter_"+c.card_id;
+      if(!known){
+        const cat=c.card_type;
+        if(cat==="Spell Card")catalog[code]=[c.name,"spell","Prototype Spell: Gain 500 Life Points.","✨"];
+        else if(cat==="Trap Card")catalog[code]=[c.name,"trap","Prototype Trap: Prevent one attack.","🛡️"];
+        else catalog[code]=[c.name,Math.max(1,Math.min(12,Number(c.level)||4)),
+            Math.max(0,Number(c.attack)||0),Math.max(0,Number(c.defense)||0),"✦"];
+      }
+      artIds[code]=Number(c.art_image_id)||Number(c.card_id);
+      next[code]=(next[code]||0)+1;
+    }
+    deckLists.player=next;
+    activeStarter=template;
+    $("yd-starter-gate").hidden=true;
+    $("yd-duel-content").hidden=false;
+    $("yd-starter-name").textContent=template.deck_name;
+    $("yd-starter-extra-count").textContent=template.extra_cards.length+" Extra Deck cards (view only; Extra summons not yet implemented)";
+    reset();
+  }
+  function renderStarterPicker(templates){
+    const root=$("yd-starter-options");
+    root.replaceChildren();
+    $("yd-starter-preview").hidden=true;
+    for(const template of templates){
+      const card=elt("article","yd-starter-card yd-starter-"+template.theme);
+      card.append(starterArtwork(template.hero_image_id,template.deck_name));
+      const summary=elt("div","yd-starter-card-summary");
+      summary.append(elt("h3","",template.deck_name));
+      summary.append(elt("p","",template.description));
+      summary.append(elt("small","","40 Main · "+template.extra_cards.length+" Extra · Locked"));
+      const actions=elt("div","yd-starter-actions");
+      const view=elt("button","button secondary","View Cards");
+      view.type="button";
+      view.addEventListener("click",()=>previewStarter(template));
+      const choose=elt("button","button primary","Choose This Starter");
+      choose.type="button";
+      choose.addEventListener("click",async()=>{
+        if(choosingStarter)return;
+        if(!confirm("Choose "+template.deck_name+" permanently for this account? You cannot switch starter decks. Choosing does NOT add these cards to your collection."))return;
+        choosingStarter=true;
+        root.querySelectorAll("button").forEach(b=>b.disabled=true);
+        entryStatus("Saving your one-time starter selection…");
+        try{
+          const {data,error}=await db.from("yugioh_player_starter_choices")
+            .insert({starter_id:template.id}).select("starter_id").single();
+          if(error)throw error;
+          if(data.starter_id!==template.id)throw new Error("Starter selection was not confirmed.");
+          await activateStarter(template);
+        }catch(e){
+          // If a prior selection won the race or a retry hit the primary key,
+          // reload the server's immutable choice, never override it.
+          try{
+            const {data:original,error:loadError}=await db.from("yugioh_player_starter_choices")
+              .select("starter_id").maybeSingle();
+            if(loadError)throw loadError;
+            if(original){
+              const selected=templates.find(t=>t.id===original.starter_id);
+              if(!selected)throw new Error("Saved starter is not available.");
+              await activateStarter(selected);
+            }else entryStatus("Could not save your choice: "+(e.message||"Retry."),true);
+          }catch(err){entryStatus("Starter selection unavailable: "+(err.message||"Retry."),true);}
+        }finally{
+          choosingStarter=false;
+          root.querySelectorAll("button").forEach(b=>b.disabled=false);
+        }
+      });
+      actions.append(view,choose);
+      summary.append(actions);
+      card.append(summary);
+      root.append(card);
+    }
+  }
+  async function initStarter(){
+    $("yd-duel-content").hidden=true;
+    $("yd-starter-gate").hidden=false;
+    entryStatus("Checking your starter deck selection…");
+    try{
+      const {data:auth,error:authError}=await db.auth.getUser();
+      if(authError||!auth.user){
+        entryStatus("Sign in to choose your one permanent starter deck.");
+        $("yd-starter-login").hidden=false;
+        return;
+      }
+      const {data:templates,error:templateError}=await db.from("yugioh_starter_decks")
+        .select("id,deck_name,description,theme,hero_image_id,main_cards,extra_cards,side_cards")
+        .order("deck_name",{ascending:true});
+      if(templateError)throw templateError;
+      if(!templates||templates.length!==4)throw new Error("Starter deck list is not ready.");
+      const {data:chosen,error:selectionError}=await db.from("yugioh_player_starter_choices")
+        .select("starter_id").maybeSingle();
+      if(selectionError)throw selectionError;
+      if(chosen){
+        const template=templates.find(t=>t.id===chosen.starter_id);
+        if(!template)throw new Error("Your chosen starter is unavailable.");
+        entryStatus("Loading your "+template.deck_name+"…");
+        await activateStarter(template);
+        return;
+      }
+      entryStatus("Choose ONE starter deck. Your choice is permanent. Cards are loaned for Arena play only — you own cards only after opening packs.");
+      renderStarterPicker(templates);
+    }catch(e){
+      entryStatus("Could not load starter decks: "+(e.message||"Please try again."),true);
+      const retry=elt("button","button secondary","Try Again");
+      retry.type="button";
+      retry.addEventListener("click",()=>{retry.remove();initStarter();});
+      $("yd-starter-options").replaceChildren(retry);
+    }
+  }
+
+  $("yd-battle").addEventListener("click",startBattle);$("yd-end").addEventListener("click",endTurn);$("yd-new").addEventListener("click",reset);initStarter();
 })();
