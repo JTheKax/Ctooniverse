@@ -18,7 +18,7 @@
   const navIcons={
     Home:"🏠",CToons:"🎴","CToon Shop":"🛍️",Cards:"🃏",Theater:"🎬",Shop:"🛍️",
     Games:"🎮",
-    "Community Home":"🏘️",Forums:"💬",Guild:"🛡️",Support:"🛟",
+    "Community Home":"🏘️",Players:"👥",Forums:"💬",Guild:"🛡️",Support:"🛟",
     Login:"🔑",Register:"✨","My Profile":"👤","Redeem Code":"🎟️",
     Dashboard:"📊","Website Status":"🚦","Coin Management":"🪙",
     "Redeem Codes":"🎟️","Music Management":"🎵","CToon Subseries Manager":"🗂️",
@@ -27,7 +27,7 @@
   const link=(label,url,attrs)=>'<a href="'+url+'" '+(attrs||"")+'><span class="ctoon-nav-symbol" aria-hidden="true">'+(navIcons[label]||"✦")+'</span><span>'+label+'</span></a>';
   const group=(label,items,attrs)=>'<details class="ctoon-nav-group" '+(attrs||"")+'><summary>'+label+'</summary>'+items.map(item=>link(item[0],item[1],item[2])).join("")+'</details>';
   const ctoonItems=[["CToons Collection","ctoons.html"],["CToon Shop","shop.html"]];
-  const community=[["Community Home","community.html"],["Forums","forums.html"],["Guild","guild.html"],["Support","support.html"]];
+  const community=[["Community Home","community.html"],["Players","community.html#players"],["Forums","forums.html"],["Guild","guild.html"],["Support","support.html"]];
   const account=[["Login","login.html","data-nav-guest"],["Register","account.html","data-nav-guest"],["My Profile","account.html","data-nav-signed hidden"],["Redeem Code","account.html#redeem-codes","data-nav-signed hidden"]];
   const owner=[["Dashboard","owner.html"],["Website Status","owner.html#site-operating-controls"],["Coin Management","coin-management.html"],["Redeem Codes","owner-redeem-codes.html"],["Music Management","owner-music-management.html"],["CToon Subseries Manager","owner-subseries.html"]];
   root.innerHTML='<div class="ctoon-standalone-bar"><a class="ctoon-standalone-brand" href="index.html">✦ CTooniverse</a><button type="button" class="ctoon-standalone-toggle" aria-expanded="false" aria-controls="ctoon-standalone-panel">☰ Site Menu</button></div>'
