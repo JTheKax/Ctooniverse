@@ -365,7 +365,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     artIds[key]=Number(card.art_image_id)||id;
     return key;
   }
-  async function opponentMonsterPool(profile,minimumLevel,maximumLevel,minimumAttack,maximumAttack){
+  async function opponentMonsterPool(profile,minimumLevel,maximumLevel,minimumAttack,maximumAttack,useRace=false){
     let query=db.from("yugioh_cards")
       .select("card_id,name,card_type,level,attack,defense,art_image_id")
       .eq("language_code","en")
@@ -374,7 +374,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
       .lte("level",maximumLevel)
       .gte("attack",minimumAttack)
       .lte("attack",maximumAttack);
-    if(profile.archetype)query=query.ilike("archetype","%"+profile.archetype+"%");
+    if(profile.archetype&&!useRace)query=query.ilike("archetype","%"+profile.archetype+"%");
     else query=query.eq("race",profile.race);
     const {data,error}=await query.order("attack",{ascending:profile.difficulty<=2}).limit(180);
     if(error)throw error;
@@ -389,7 +389,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     const lowMax=profile.difficulty>=5?2300:profile.difficulty===4?2100:profile.difficulty===3?1900:1650;
     let low=await opponentMonsterPool(profile,1,4,lowMin,lowMax);
     if(low.length<13){
-      const more=await opponentMonsterPool(profile,1,4,0,2500);
+      const more=await opponentMonsterPool(profile,1,4,0,2500,true);
       const map=new Map([...low,...more].map(card=>[Number(card.card_id),card]));
       low=[...map.values()];
     }
