@@ -1,0 +1,101 @@
+/* Free Duel opponent menu — original CTooniverse styling, inspired by the
+   stone, gold-framed portrait selection rhythm of PS1-era Duel games. */
+.yd-free-duel[hidden],#yd-duel-content[hidden],#yd-starter-gate[hidden]{display:none!important}
+.yd-free-duel{isolation:isolate;position:relative;max-width:1200px;margin:18px auto 24px;
+ padding:clamp(16px,2.8vw,32px);overflow:hidden;
+ color:#fef0d0;border:5px ridge #ad925f;border-radius:12px;
+ background:radial-gradient(ellipse at 50% -8%,#706b5a 0%,transparent 53%),
+  repeating-linear-gradient(96deg,transparent 0 47px,#1b181865 48px 50px),
+  repeating-linear-gradient(0deg,#33363a 0 62px,#202426 63px 65px);
+ box-shadow:inset 0 0 0 2px #20140e,inset 0 0 90px #080910ad,0 16px 45px #05020baf}
+.yd-free-duel::before{content:"";position:absolute;inset:8px;pointer-events:none;
+ border:1px solid #c7b27d80;border-radius:4px;box-shadow:inset 0 0 22px #0008}
+.yd-free-duel-header{position:relative;text-align:center;max-width:850px;margin:0 auto 18px}
+.yd-free-duel-header h2{font-size:clamp(2.6rem,6vw,4rem);line-height:1;
+ font-weight:1000;letter-spacing:.17em;margin:4px auto 14px;
+ color:#f8f0d1;text-shadow:0 4px #21160f,0 0 17px #cfaa56!important}
+.yd-free-duel-overline{color:#f4dc8d!important;letter-spacing:.16em;font-size:.74rem;font-weight:900}
+.yd-free-duel-header>p:last-child{font-size:.87rem;color:#f4eee0;line-height:1.55;max-width:70ch;margin:0 auto}
+.yd-free-duel-layout{position:relative;display:grid;grid-template-columns:minmax(0,1.43fr) minmax(240px,.85fr);
+ gap:clamp(13px,2vw,24px);align-items:stretch}
+.yd-free-duel-selector{min-width:0;border:3px ridge #928159;border-radius:7px;
+ background:linear-gradient(150deg,#232a2cf5,#101c27f2);padding:12px;
+ box-shadow:inset 0 0 30px #01070abf}
+.yd-free-duel-bar{display:flex;justify-content:space-between;gap:8px;align-items:center;
+ padding:5px 3px 12px;font-size:.76rem;letter-spacing:.12em;color:#ffe5a7}
+.yd-free-duel-bar span{color:#c5d7d6;font-size:.7rem}
+.yd-free-duel-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+ gap:clamp(6px,1.1vw,12px)}
+.yd-free-duel-thumb{box-sizing:border-box;position:relative;min-width:0;
+ aspect-ratio:4/4.65;padding:3px;display:flex;flex-direction:column;
+ align-items:stretch;justify-content:flex-start;gap:0;overflow:hidden;
+ border:3px ridge #8c9c77;border-radius:4px;color:#ffedc5;
+ background:linear-gradient(132deg,#59473a,#22232a 36%,#13292e);
+ box-shadow:inset 0 0 0 2px #171a20,0 2px 8px #000b;cursor:pointer;
+ transition:transform .13s ease,border-color .13s ease,box-shadow .13s ease}
+.yd-free-duel-thumb:hover{transform:translateY(-2px);border-color:#f7d38b}
+.yd-free-duel-thumb[aria-pressed="true"]{border-color:#fff4b2;
+ box-shadow:0 0 0 2px #89f6fa,0 0 19px #74eafab7,inset 0 0 11px #f5d493}
+.yd-free-duel-thumb:focus-visible{outline:3px solid #90fbff;outline-offset:2px}
+.yd-free-duel-thumb .yd-starter-art{display:flex!important;width:100%!important;
+ height:100%!important;min-height:0!important;flex:1 1 auto!important;
+ align-items:center;justify-content:center;overflow:hidden;
+ border:1px solid #9cbabd;border-radius:2px;
+ background:radial-gradient(circle at 50% 40%,#a7b8a1,#273835 65%,#151b21)}
+.yd-free-duel-thumb .yd-starter-art img{display:block!important;width:100%!important;
+ height:100%!important;object-fit:cover!important;object-position:center!important;
+ filter:saturate(.9) contrast(1.05)}
+.yd-free-duel-thumb-name{display:flex;align-items:center;justify-content:center;
+ position:absolute;z-index:2;bottom:3px;left:3px;right:3px;min-height:22px;
+ padding:3px 2px;border-top:1px solid #bcaa79;
+ background:linear-gradient(0deg,#0b1319f7,#1b262fe8);
+ color:#ffe7af;font-size:clamp(.54rem,.9vw,.68rem);font-weight:900;
+ text-align:center;line-height:1.1;text-shadow:1px 1px #000;overflow-wrap:anywhere}
+.yd-free-duel-thumb-difficulty{position:absolute;top:4px;right:4px;
+ z-index:3;color:#ffe38c;text-shadow:0 1px 3px #000;font-size:clamp(.56rem,.9vw,.73rem);
+ background:#101c2baf;border-radius:3px;padding:1px 3px}
+.yd-free-duel-preview{min-width:0;display:flex;flex-direction:column;gap:11px;
+ padding:16px;border:3px ridge #bba677;border-radius:6px;
+ background:linear-gradient(155deg,#2f3440eb,#172235f7 60%,#251832f5);
+ box-shadow:inset 0 0 23px #0009}
+.yd-free-duel-portrait{min-height:130px;height:clamp(150px,21vw,215px);
+ border:3px double #e6c681;border-radius:7px;background:radial-gradient(#5a5d70,#182334 72%);
+ display:flex;justify-content:center;align-items:center;overflow:hidden}
+.yd-free-duel-portrait .yd-starter-art{display:flex;width:100%;height:100%;justify-content:center;align-items:center}
+.yd-free-duel-portrait .yd-starter-art img{width:100%;height:100%;object-fit:contain;
+ filter:drop-shadow(0 6px 9px #04040aaa)}
+.yd-free-duel-profile{display:flex;flex-direction:column;gap:6px}
+.yd-free-duel-profile h3{margin:0;font-size:clamp(1.38rem,2.5vw,2rem);
+ color:#fff0b7!important;text-shadow:0 2px 6px #040813}
+.yd-free-duel-profile p{margin:0!important;color:#e8e2ce;line-height:1.35;font-size:.88rem}
+.yd-free-duel-profile .yd-free-duel-stars{color:#ffdc76;font-size:1.02rem;letter-spacing:.09em}
+.yd-free-duel-preview #yd-free-duel-record{font-size:.81rem;font-weight:800;color:#a8eff4}
+.yd-free-duel-preview #yd-free-duel-start{margin-top:auto;min-height:48px;width:100%;font-weight:900;
+ font-size:1.05rem;letter-spacing:.07em}
+.yd-free-duel-preview #yd-free-duel-start:disabled{opacity:.55;cursor:not-allowed}
+.yd-free-duel-preview #yd-free-duel-status{min-height:1.15em;font-size:.82rem;font-weight:750;color:#d9f6fb}
+.yd-free-duel-disclaimer{position:relative;text-align:center;font-size:.75rem!important;
+ color:#d6cdb9!important;margin:16px 0 0!important}
+@media(max-width:800px){.yd-free-duel{padding:14px}.yd-free-duel-layout{grid-template-columns:minmax(0,1fr) 245px;gap:10px}
+ .yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}}
+@media(max-width:640px){.yd-free-duel{padding:10px;border-width:3px}
+ .yd-free-duel-header h2{font-size:2.25rem}
+ .yd-free-duel-layout{grid-template-columns:minmax(0,1fr)}
+ .yd-free-duel-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+ .yd-free-duel-thumb{border-width:2px;padding:2px}
+ .yd-free-duel-thumb-name{font-size:.51rem;min-height:20px;left:1px;right:1px;bottom:1px}
+ .yd-free-duel-selector{padding:7px;border-width:2px}
+ .yd-free-duel-preview{display:grid;grid-template-columns:100px minmax(0,1fr);
+  align-items:center;gap:9px;padding:10px}
+ .yd-free-duel-portrait{grid-row:1;min-height:118px;height:118px}
+ .yd-free-duel-profile{grid-row:1}
+ .yd-free-duel-preview #yd-free-duel-status{grid-column:1/-1;margin:0}
+ .yd-free-duel-preview #yd-free-duel-start{grid-column:1/-1}
+ .yd-free-duel-profile h3{font-size:1.25rem}
+ .yd-free-duel-profile p{font-size:.77rem}
+}
+@media(max-width:360px){.yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .yd-free-duel-thumb-name{font-size:.57rem}
+ .yd-free-duel-portrait{min-height:104px;height:104px}
+ .yd-free-duel-preview{grid-template-columns:88px minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){.yd-free-duel-thumb{transition:none!important}}
