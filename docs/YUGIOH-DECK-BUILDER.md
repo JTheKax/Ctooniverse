@@ -15,6 +15,10 @@
 - Three copies maximum of each catalog card across all zones, including alternate-art versions of that card. Tokens and Skill Cards are excluded from regular decks.
 - Main/Extra placements are checked against card type; Fusion, Synchro, Xyz and Link are Extra Deck monsters.
 - Add, remove and move cards between permitted zones; save as a draft even before reaching 40 Main Deck cards.
+- Inspect any card's full text, original artwork, type, stats and imported TCG advisory, then quick-add it to a legal deck zone.
+- Duplicate an editable draft or saved deck without overwriting its original, or clear all three zones with confirmation.
+- Starter gallery is **read-only**: Yugi, Kaiba, Joey, Pegasus cannot be edited, copied into the editor, or granted to an owned-card inventory. Starter selection remains permanent in Arena.
+- Card search displays page counts and supports name, type and archetype filtering.
 - User-scoped saved decks require a Supabase login. Visitors can build an unsaved guest draft in localStorage on the current device.
 - `.ydk` file import and export; invalid, unknown or misplaced card IDs are rejected on import.
 - TCG Forbidden/Limited/Semi-Limited fields from the imported snapshot trigger **advisory warnings** rather than hard tournament-legal certification.
@@ -33,11 +37,11 @@ https://www.yugioh-card.com/en/limited/list/
 Reference rules: official Yu-Gi-Oh! Rulebook (Main 40–60, Extra and Side <=15, three copies across all zones).
 
 ## Quick verification
-1. Load the deck builder and search `Dark Magician`.
+1. Load the deck builder, search `Dark Magician`, open the card inspector and add a card through it.
 2. Add up to 3 copies in Main/Side combined; confirm a 4th is disabled.
 3. Search `Blue-Eyes Ultimate Dragon`; confirm the Extra and Side buttons appear, not Main.
 4. Import a valid `.ydk` list and export it.
-5. Sign in, save an unfinished deck, reload the page, load it, edit/save again, then delete it.
+5. Sign in, save an unfinished deck, reload the page, load it, duplicate it, clear the duplicate, edit/save again, then delete it.
 6. Confirm a second logged-in account cannot read another player's deck.
 7. Confirm desktop and mobile layouts both show all zones.
 
