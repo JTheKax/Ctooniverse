@@ -59,6 +59,7 @@ function packView(pack){
  // Reuse the same glass-window display structure as the 182 × 282 CToon Shop cards.
  const item=el("article","ctoon-shop-card ycs-pack");
  item.dataset.theme=pack.theme||"violet";
+ item.id="ycs-pack-"+pack.id;
  item.title=pack.name+" — "+pack.description;
  const art=el("div","ctoon-shop-art ycs-pack-window");
  const badge=el("span","ctoon-shop-owned ycs-pack-badge",pack.card_count+" cards");
@@ -118,6 +119,16 @@ async function loadPacks(){
  for(const category of categories){const option=el("option","",category+" ("+packs.filter(x=>x.category===category).length+")");option.value=category;selector.append(option);}
  packCategory=categories.includes(previous)?previous:"all";
  selector.value=packCategory;
+ // Card Database links target the exact pack ID. Show that pack in the
+ // existing Shop search rather than sending the visitor to all 41 packs.
+ const linkedId=new URLSearchParams(location.search).get("pack");
+ const linked=linkedId&&packs.find(pack=>pack.id===linkedId);
+ if(linked){
+  packCategory="all";
+  selector.value="all";
+  packSearch=linked.name;
+  $("ycs-pack-search").value=linked.name;
+ }
  drawPacks();
 }
 async function loadWallet(){
