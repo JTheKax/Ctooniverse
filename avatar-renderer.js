@@ -1,4 +1,4 @@
-import {avatarExtraLayers} from './avatar-extra-layers.js?v=cutout-avatar-v4';
+import {avatarExtraLayers} from './avatar-extra-layers.js?v=cutout-avatar-v5';
 // CTooniverse South Park-style cutout avatar renderer.
 // Original paper-cutout designs; no official series art or character assets.
 // All user appearance values are strictly whitelisted before SVG interpolation.
@@ -101,7 +101,7 @@ export function avatarSvg(value={}) {
  <path d="M59 135Q54 57 100 43Q164 12 226 48Q267 67 262 135Z" fill="${a.hatColor}" ${edge}/>
  <path d="M48 137Q159 92 272 137L270 164Q160 128 50 165Z" fill="${a.hatAccent}" ${edge}/>
  <path d="M68 135v22M101 120v31M133 109v37M165 106v36M198 110v36M231 122v29M257 136v22" fill="none" stroke="${ink}" stroke-width="2.5"/>
- <path d="M139 34Q130 22 144 15Q149 -2 167 12Q182 -2 191 14Q214 13 213 30Q228 41 212 51Q215 66 194 65Q178 79 166 65Q150 74 137 62Q121 59 122 43Q113 33 139 34Z" fill="${a.hatAccent}" ${edge}/>`;
+ <path d="M139 34Q130 22 144 15Q149 7 167 12Q182 7 191 14Q214 13 213 30Q228 41 212 51Q215 66 194 65Q178 79 166 65Q150 74 137 62Q121 59 122 43Q113 33 139 34Z" fill="${a.hatAccent}" ${edge}/>`;
  if(a.hat==='beanie') hat=`
  <path d="M60 136Q59 57 115 40Q170 22 217 44Q264 64 260 135Z" fill="${a.hatColor}" ${edge}/>
  <path d="M51 138Q160 103 269 138L268 164Q160 131 52 165Z" fill="${a.hatAccent}" ${edge}/>
@@ -124,7 +124,7 @@ export function avatarSvg(value={}) {
  <rect width="320" height="400" rx="10" fill="${backdrop}"/>
  ${backdropDecor}${decoration}
  <ellipse cx="160" cy="388" rx="94" ry="8" fill="#23202d" opacity=".15"/>
- ${pants}${shoes}${base}${clothing}${layers.clothes}${sleeves}
+ ${pants}${shoes}${base}${clothing}${layers.clothes}${sleeves}${layers.neckwear}
  ${backHair}${layers.backHair}<path d="M143 245H178V278H143Z" fill="${a.skin}"/>
  ${head}${fringe}${layers.fringe}${eyes}${mouth}${layers.faceFeatures}${hat}${layers.hat}${extras}${layers.accessories}</svg>`;
 }
