@@ -67,37 +67,94 @@ function drawAuctions(){
  if(!showing.length){root.append(node('p','auction-empty-state','No auctions match this view. Select another filter or create a listing.'));return}
  for(const a of showing)root.append(auctionCard(a));
 }
+// Each listing reuses the same CToon Shop window, nameplate and purchase-row
+// structure. The bid form lives in a detail dialog so the 182x282 windows remain uniform.
 function auctionCard(a){
- const card=node('article','auction-item-card');
- const visual=node('div','auction-art');visual.append(artwork(a),node('span','auction-type',a.item_kind==='ctoon'?'CTOON':'YU-GI-OH!'));
- card.append(visual);
- const body=node('div','auction-item-info');
- body.append(node('h3','',title(a)));
- body.append(node('p','auction-amount',coins(a.current_bid??a.starting_bid)));
- body.append(node('p','auction-muted',a.current_bid===null?'Starting bid':'Current winning bid'));
- const ends=node('p','auction-time');
- ends.dataset.until=a.ends_at;ends.dataset.status=a.status;
- ends.textContent=a.status==='cancelled'?'Cancelled — item returned':a.status==='settled'?
-  (a.current_bid===null?'Ended — item returned':'Sold — payout complete'):timeLeft(a.ends_at);
- body.append(ends);
+ const card=node('article','ctoon-shop-card auction-item-card');
+ const visual=node('div','ctoon-shop-art auction-art');
+ visual.append(node('span','ctoon-shop-owned auction-type',a.item_kind==='ctoon'?'CToon':'Card'),artwork(a));
+ const details=node('div','ctoon-shop-details auction-item-info');
+ const heading=node('div','ctoon-shop-name');
+ const name=node('span','ctoon-shop-name-text',title(a));name.title=title(a);
+ const rarity=node('span','ctoon-shop-rarity',a.item_kind==='ctoon'?
+   String(a.ctoon_catalog?.rarity||'Common').charAt(0).toUpperCase():'Y');
+ rarity.title=a.item_kind==='ctoon'?(a.ctoon_catalog?.rarity||'Common'):'Yu-Gi-Oh! Card';
+ heading.append(name,rarity);
+ const series=node('p','collection-series',
+   a.item_kind==='ctoon'?(a.ctoon_catalog?.series||'CTooniverse'):'Yu-Gi-Oh! Card');
+ series.title=series.textContent;
+ const purchase=node('div','ctoon-shop-purchase');
+ const amount=node('span','ctoon-shop-price',coins(a.current_bid??a.starting_bid));
+ amount.title=a.current_bid===null?'Starting bid':'Current winning bid';
  const mine=!!user&&a.seller_id===user.id;
- const leading=!!user&&a.highest_bidder_id===user.id;
- if(mine)body.append(node('p','auction-own','Your listing'));
- if(leading)body.append(node('p','auction-leading','★ Your winning bid'));
- const actions=node('div','auction-card-actions');
- if(a.status==='active'&&Date.parse(a.ends_at)>Date.now()){
+ const winning=!!user&&a.highest_bidder_id===user.id;
+ const active=a.status==='active'&&Date.parse(a.ends_at)>Date.now();
+ const open=node('button','ctoon-shop-buy auction-view',
+  !active?'View':mine?'Manage':winning?'Winning':'Bid');
+ open.type='button';open.setAttribute('aria-label','View auction for '+title(a));
+ open.addEventListener('click',()=>openAuction(a.id));
+ purchase.append(amount,open);
+ const ends=node('p','ctoon-shop-status auction-time');
+ ends.dataset.until=a.ends_at;ends.dataset.status=a.status;
+ ends.textContent=a.status==='cancelled'?'Cancelled · Item returned':
+   a.status==='settled'?(a.current_bid===null?'Unsold · Item returned':'Sold · Paid out'):
+   timeLeft(a.ends_at);
+ details.append(heading,series,purchase,ends);
+ card.append(visual,details);
+ return card;
+}
+function openAuction(id){
+ const a=auctions.find(item=>item.id===id);if(!a)return;
+ const dialog=$('auction-dialog'),content=$('auction-dialog-body');
+ content.replaceChildren();
+ $('auction-dialog-title').textContent=title(a);
+ const visual=node('div','auction-dialog-art');visual.append(artwork(a));
+ const details=node('div','auction-dialog-info');
+ details.append(node('p','auction-dialog-type',a.item_kind==='ctoon'?
+   (a.ctoon_catalog?.rarity||'CToon')+' · '+(a.ctoon_catalog?.series||'CTooniverse'):
+   'Yu-Gi-Oh! collectible card'));
+ details.append(node('p','auction-dialog-amount',coins(a.current_bid??a.starting_bid)));
+ details.append(node('p','auction-dialog-label',a.current_bid===null?'Starting bid':'Current winning bid'));
+ const time=node('p','auction-time');
+ time.dataset.until=a.ends_at;time.dataset.status=a.status;
+ time.textContent=a.status==='cancelled'?'Cancelled · Item returned':
+   a.status==='settled'?(a.current_bid===null?'Unsold · Item returned':'Sold · Paid out'):
+   timeLeft(a.ends_at);
+ details.append(time);
+ const active=a.status==='active'&&Date.parse(a.ends_at)>Date.now();
+ const mine=!!user&&a.seller_id===user.id;
+ const winning=!!user&&a.highest_bidder_id===user.id;
+ if(active){
   if(mine&&a.current_bid===null){
-   const b=node('button','auction-action auction-secondary','Cancel listing');b.type='button';b.disabled=busy;
-   b.addEventListener('click',()=>cancelAuction(a));actions.append(b);
-  }else if(!mine&&!leading){
-   const form=node('form','auction-bid-form');
-   const input=node('input');input.type='number';input.required=true;input.min=String(minBid(a));input.max='1000000000';input.step='1';input.value=String(minBid(a));input.setAttribute('aria-label','Your bid for '+title(a));
-   const b=node('button','auction-action',user?'Bid':'Sign in');b.type='submit';b.disabled=busy;
-   form.append(input,b);form.addEventListener('submit',event=>{event.preventDefault();if(user)placeBid(a,input.value);else location.href='login.html';});
-   actions.append(form);
-  }else if(mine)actions.append(node('small','auction-muted','Cannot cancel after the first bid.'));
+   details.append(node('p','auction-dialog-label','Your listing — no bids yet'));
+   const button=node('button','auction-action auction-secondary','Cancel listing');
+   button.type='button';button.disabled=busy;
+   button.addEventListener('click',()=>cancelAuction(a));
+   details.append(button);
+  }else if(mine){
+   details.append(node('p','auction-dialog-label','Your listing has bids and cannot be cancelled.'));
+  }else if(winning){
+   details.append(node('p','auction-leading','★ You currently hold the highest bid.'));
+  }else if(!user){
+   const login=node('a','auction-action auction-login-link','Sign in to place a bid');
+   login.href='login.html';details.append(login);
+  }else{
+   const form=node('form','auction-bid-form auction-dialog-bid');
+   const label=node('label','', 'Your bid (Cartoon Coins)');
+   const input=node('input');
+   input.type='number';input.required=true;input.min=String(minBid(a));input.max='1000000000';input.step='1';
+   input.value=String(minBid(a));input.setAttribute('aria-label','Bid amount for '+title(a));
+   label.append(input);
+   const button=node('button','auction-action','Place bid');button.type='submit';button.disabled=busy;
+   form.append(label,button);
+   form.addEventListener('submit',event=>{event.preventDefault();placeBid(a,input.value)});
+   details.append(form);
+  }
+ }else{
+  details.append(node('p','auction-dialog-label',a.status==='settled'?'This auction has finished.':'This listing is no longer accepting bids.'));
  }
- body.append(actions);card.append(body);return card;
+ content.append(visual,details);
+ if(!dialog.open)dialog.showModal();
 }
 async function loadAuctions(){
  const {data,error}=await db.from('marketplace_auctions')
@@ -126,6 +183,7 @@ async function mutate(fn,args,success){
  try{
   const {data,error}=await db.rpc(fn,args);if(error)throw error;
   notice(success);window.dispatchEvent(new Event('ctoon-profile-updated'));
+  if($('auction-dialog').open)$('auction-dialog').close();
   await refresh();return data;
  }catch(e){notice('Auction not changed: '+(e?.message||'Unknown error'),true);return null}
  finally{busy=false;inventoryPicker();drawAuctions();}
@@ -152,6 +210,7 @@ $('auction-filter').addEventListener('change',drawAuctions);
 $('auction-search').addEventListener('input',drawAuctions);
 $('auction-form').addEventListener('submit',submitListing);
 $('auction-refresh').addEventListener('click',refresh);
+$('auction-dialog-close').addEventListener('click',()=>$('auction-dialog').close());
 db.auth.onAuthStateChange(()=>setTimeout(refresh,0));
 window.addEventListener('pageshow',refresh);
 setInterval(()=>{
