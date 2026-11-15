@@ -35,3 +35,22 @@
  .avatar-maker-page .avatar-primary-actions>.button,
  .avatar-maker-page .avatar-secondary-actions>.button{min-height:48px}
 }
+
+/* Mobile editing keeps a compact live preview and Save action in view. */
+.avatar-maker-page .avatar-mobile-preview{display:none}
+@media(max-width:780px){
+ .avatar-maker-page .avatar-mobile-preview{
+  display:flex;align-items:center;gap:12px;position:sticky;top:6px;z-index:8;
+  margin:0 0 16px;padding:8px 11px;border:2px solid #9dc9ff;
+  border-radius:14px;background:#121c43f7;box-shadow:0 5px 22px #050716a8;
+ }
+ .avatar-mobile-preview img{display:block;width:72px;height:90px;flex:0 0 72px;object-fit:contain;background:#eeeefa;border-radius:8px}
+ .avatar-mobile-preview>div{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+ .avatar-mobile-preview strong{color:#fff3d1;font-size:1rem}
+ .avatar-mobile-preview span{color:#d4e8ff;font-size:.8rem;line-height:1.25}
+ .avatar-mobile-preview .button{align-self:flex-start;margin-top:5px;min-height:38px;padding:6px 14px}
+}
+@media(max-width:360px){
+ .avatar-maker-page .avatar-mobile-preview{gap:8px;padding:7px}
+ .avatar-mobile-preview img{width:60px;height:75px;flex-basis:60px}
+}
