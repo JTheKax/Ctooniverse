@@ -72,3 +72,35 @@
  .yc-detail-main-image{width:min(220px,78%);max-height:325px}
 }
 @media(prefers-reduced-motion:reduce){.yc-art-image,.yc-artwork .yc-placeholder{transition:none}}
+
+
+/* In-game booster availability (from live, active Card Shop pack pools). */
+.yc-card-pack-locations{
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;
+ overflow:hidden;flex:none;min-height:2.55em;margin:2px 0;
+ padding:7px 8px;border:1px solid #82cfff7a;border-radius:8px;
+ background:#0c3b698c;color:#b9f4ff;font-size:.74rem;
+ font-weight:750;line-height:1.27;overflow-wrap:anywhere;
+}
+.yc-pack-section{margin:20px 0;padding:16px;border:2px solid #6bdcf3;border-radius:13px;
+ background:linear-gradient(150deg,#174783bb,#251454e8);color:#fff}
+.yc-dialog .yc-pack-section h3{margin:0 0 8px;color:#ffe5a9}
+.yc-pack-section .yc-pack-explainer{color:#d4e7fa;font-size:.8rem;line-height:1.5;margin:0 0 12px}
+.yc-pack-section .yc-pack-count{font-weight:900;color:#c4f9ff;margin:5px 0 10px}
+.yc-pack-links{list-style:none;padding:0;margin:0;display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:9px}
+.yc-pack-links li{margin:0;min-width:0}
+.yc-pack-link{display:flex;flex-direction:column;gap:4px;min-height:56px;
+ padding:10px 12px;border:1px solid #93dfff;border-radius:10px;
+ background:linear-gradient(135deg,#174484,#271a63);
+ color:#fff;text-decoration:none!important;overflow-wrap:anywhere}
+.yc-pack-link strong{color:#fff0bd;font-size:.88rem}
+.yc-pack-link span{color:#bceaf4;font-size:.72rem;line-height:1.25}
+.yc-pack-link:is(:hover,:focus-visible){border-color:#ffe497;background:#1d59a2;
+ outline:2px solid #ffe497;outline-offset:2px}
+.yc-pack-loading,.yc-pack-unavailable{color:#bceaf4;font-size:.84rem}
+@media(max-width:520px){
+ .yc-pack-section{padding:12px}
+ .yc-pack-links{grid-template-columns:1fr}
+ .yc-card-pack-locations{font-size:.72rem}
+}
