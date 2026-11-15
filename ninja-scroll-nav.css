@@ -36,7 +36,7 @@ body .site-header.site-header nav[aria-label="Main navigation"] .nav-link:is(.ac
 }
 body .site-header.site-header nav[aria-label="Main navigation"] .nav-link:focus-visible {outline:3px solid var(--site-nav-edge,#ffdf86)!important;outline-offset:5px!important}
 body .site-header.site-header nav[aria-label="Main navigation"] .nav-link .nav-icon {flex-shrink:0!important;background:#ffffff20!important;border-radius:7px!important;text-shadow:none!important}
-body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu) > button.nav-link {cursor:pointer!important}
+body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.shop-dropdown,.community-dropdown,.account-dropdown,.owner-menu) > button.nav-link {cursor:pointer!important}
 body .site-header.site-header nav[aria-label="Main navigation"] > .owner-nav:not(.owner-visible) {display:none!important}
 @media(min-width:901px) {
  body .site-header.site-header nav[aria-label="Main navigation"] {
@@ -44,7 +44,7 @@ body .site-header.site-header nav[aria-label="Main navigation"] > .owner-nav:not
   align-items:start!important;justify-items:stretch!important;gap:12px!important;
  }
  body .site-header.site-header nav[aria-label="Main navigation"] > * {width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important}
- body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu) {display:flex!important;flex-direction:column!important;align-items:stretch!important}
+ body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.shop-dropdown,.community-dropdown,.account-dropdown,.owner-menu) {display:flex!important;flex-direction:column!important;align-items:stretch!important}
  body .site-header.site-header nav[aria-label="Main navigation"] :is(a.nav-link,button.nav-link) {
   display:flex!important;align-items:center!important;justify-content:center!important;
   width:100%!important;height:60px!important;min-height:60px!important;max-height:60px!important;
@@ -60,7 +60,7 @@ body .site-header.site-header nav[aria-label="Main navigation"] > .owner-nav:not
   grid-column:auto!important;grid-row:auto!important;width:100%!important;min-width:0!important;
   max-width:100%!important;margin:0!important;align-self:start!important;box-sizing:border-box!important;
  }
- body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu) {
+ body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.shop-dropdown,.community-dropdown,.account-dropdown,.owner-menu) {
   display:flex!important;flex-direction:column!important;align-items:stretch!important;
   justify-content:flex-start!important;position:relative!important;overflow:visible!important;
  }
@@ -71,13 +71,13 @@ body .site-header.site-header nav[aria-label="Main navigation"] > .owner-nav:not
   gap:5px!important;line-height:1.15!important;font-size:clamp(10px,2.7vw,14px)!important;
   word-break:normal!important;overflow-wrap:normal!important;
  }
- body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu):is(.is-open,:has(> button[aria-expanded="true"])) {
+ body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.shop-dropdown,.community-dropdown,.account-dropdown,.owner-menu):is(.is-open,:has(> button[aria-expanded="true"])) {
   grid-column:1 / -1!important;z-index:10020!important;
  }
- body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu):is(.is-open,:has(> button[aria-expanded="true"])) > button.nav-link {
+ body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.shop-dropdown,.community-dropdown,.account-dropdown,.owner-menu):is(.is-open,:has(> button[aria-expanded="true"])) > button.nav-link {
   width:calc((100% - 10px) / 2)!important;max-width:calc((100% - 10px) / 2)!important;align-self:flex-start!important;
  }
- body .site-header.site-header nav[aria-label="Main navigation"] :is(.games-dropdown-panel,.cards-dropdown-panel,.community-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) {
+ body .site-header.site-header nav[aria-label="Main navigation"] :is(.games-dropdown-panel,.cards-dropdown-panel,.shop-dropdown-panel,.account-dropdown-panel,.owner-menu-panel) {
   position:static!important;inset:auto!important;transform:none!important;
   width:100%!important;min-width:0!important;max-width:100%!important;margin-top:9px!important;
   max-height:min(55dvh,430px)!important;overflow-x:hidden!important;overflow-y:auto!important;box-sizing:border-box!important;
@@ -93,7 +93,7 @@ body .site-header.site-header nav[aria-label="Main navigation"] > .owner-nav:not
  body .site-header.site-header nav[aria-label="Main navigation"] .nav-link .nav-icon {
   flex:0 0 18px!important;width:18px!important;min-width:18px!important;height:18px!important;font-size:15px!important;
  }
- body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu):is(.is-open,:has(> button[aria-expanded="true"])) > button.nav-link {
+ body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.shop-dropdown,.community-dropdown,.account-dropdown,.owner-menu):is(.is-open,:has(> button[aria-expanded="true"])) > button.nav-link {
   width:calc((100% - 7px) / 2)!important;max-width:calc((100% - 7px) / 2)!important;
  }
 }
@@ -103,10 +103,10 @@ body .site-header.site-header nav[aria-label="Main navigation"] > .owner-nav:not
 
 /* Defeat legacy full-row dropdown rules, even on pages using ctu-ui-ready. */
 @media(max-width:900px) {
- body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu) {
+ body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.shop-dropdown,.community-dropdown,.account-dropdown,.owner-menu) {
   grid-column:auto!important;grid-row:auto!important;
  }
- body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.community-dropdown,.account-dropdown,.owner-menu):is(.is-open,:has(> button[aria-expanded="true"])) {
+ body .site-header.site-header nav[aria-label="Main navigation"] > :is(.games-dropdown,.cards-dropdown,.shop-dropdown,.community-dropdown,.account-dropdown,.owner-menu):is(.is-open,:has(> button[aria-expanded="true"])) {
   grid-column:1 / -1!important;
  }
 }
