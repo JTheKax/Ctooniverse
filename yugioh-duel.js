@@ -43,12 +43,15 @@
       if(!job.img.isConnected)continue;
       artRequests++;
       let finished=false;
+      let timeoutId=0;
       const release=()=>{
         if(finished)return;
         finished=true;
+        clearTimeout(timeoutId);
         artRequests--;
         setTimeout(pumpImages,180);
       };
+      timeoutId=setTimeout(release,14000);
       job.img.addEventListener("load",release,{once:true});
       job.img.addEventListener("error",release,{once:true});
       job.img.src=job.url;
