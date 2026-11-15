@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
+import { playPackOpening } from "./yugioh-pack-opening.js?v=20261115-v1";
 const URL_ROOT="https://hsxdyxdazsdmpucyhqly.supabase.co";
 const KEY="sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS";
 const db=createClient(URL_ROOT,KEY);
@@ -54,6 +55,17 @@ async function fetchCards(ids){
   for(const row of data||[])cards.set(Number(row.card_id),row);
  }
  return cards;
+}
+async function fetchPullTiers(ids){
+ const unique=[...new Set(ids.map(Number).filter(x=>Number.isSafeInteger(x)&&x>0))];
+ const tiers=new Map();
+ for(let start=0;start<unique.length;start+=80){
+  const {data,error}=await db.from("yugioh_card_pull_weights")
+   .select("card_id,tier").in("card_id",unique.slice(start,start+80));
+  if(error)throw error;
+  for(const row of data||[])tiers.set(Number(row.card_id),row.tier);
+ }
+ return tiers;
 }
 function packView(pack){
  // Reuse the same glass-window display structure as the 182 × 282 CToon Shop cards.
@@ -209,9 +221,8 @@ async function refresh(){
   status(user?"Packs are ready. Choose a pack to collect cards.":"Browse packs below. Sign in to purchase and collect.");
  } catch(e){if(generation===loadId)status("Could not load the Card Shop: "+(e.message||"Please retry."),true);}
 }
-async function showOpening(opening){
+function showOpening(opening,cards){
  const ids=opening.card_ids||[];
- const cards=await fetchCards(ids);
  const root=$("ycs-reveal-grid");root.replaceChildren();
  for(const raw of ids){
   const card=cards.get(Number(raw));
@@ -241,13 +252,29 @@ async function openPack(pack){
   purchased=true;
   clearRequest(pack.id);
   window.dispatchEvent(new Event("ctoon-profile-updated"));
-  status("Pack opened! Your purchased cards were added to your collection.");
-  try { await showOpening(opening); } catch(e) {
-   status("Purchase succeeded, but card images could not load. View your collection to see rewards.",true);
-  }
-  const updates=await Promise.allSettled([loadWallet(),loadCollection(true),loadHistory()]);
-  if(updates.some(x=>x.status==="rejected"))
-   status("Purchase succeeded! Refresh this page if the balance or collection has not updated.",true);
+  status("Pack purchased! Your cards are saved. Opening the booster…");
+  const ids=opening.card_ids||[];
+  let cards=new Map(),tiers=new Map();
+  // Loading display metadata must never change or undo the server-awarded cards.
+  try { cards=await fetchCards(ids); }
+  catch(e){console.warn("Card art details unavailable for pack reveal",e);}
+  try { tiers=await fetchPullTiers(ids); }
+  catch(e){console.warn("Pull-tier display unavailable for pack reveal",e);}
+  const rewards=ids.map(raw=>{
+   const id=Number(raw);
+   return {id,card:cards.get(id)||{name:"Card #"+id,art_image_id:null,card_type:"Yu-Gi-Oh! Card"},
+    tier:tiers.get(id)||""};
+  });
+  // Refresh account data independently while the player flips through saved rewards.
+  const updates=Promise.allSettled([loadWallet(),loadCollection(true),loadHistory()]);
+  try { await playPackOpening({pack,rewards,artwork}); }
+  catch(e){console.warn("Pack reveal effect unavailable",e);}
+  showOpening(opening,cards);
+  const results=await updates;
+  status(results.some(x=>x.status==="rejected")?
+   "Pack opened! Refresh the page if your wallet or collection has not updated.":
+   "Pack opened! Your cards have been added to your collection.",
+   results.some(x=>x.status==="rejected"));
  }catch(e){
   status(purchased?"Purchase succeeded! Refresh to view your new cards.":"Pack could not be confirmed: "+
    (e.message||"Try again")+". Retry this pack without risk of a duplicate charge.",!purchased);
