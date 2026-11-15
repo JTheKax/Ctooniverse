@@ -23,6 +23,8 @@
   let total = 0;
   let pending = null;
   let active = { name: "", category: "", archetype: "", attribute: "" };
+  let activeDetail = 0;
+  let packCatalogPromise = null;
 
   function el(tag, className, content) {
     const node = document.createElement(tag);
@@ -72,6 +74,86 @@
     if (active.category === "spell") url.searchParams.set("card_type", "eq.Spell Card");
     if (active.category === "trap") url.searchParams.set("card_type", "eq.Trap Card");
     return url.toString();
+  }
+
+
+  // The Card Shop is the source of truth for pack contents. Never infer
+  // availability from a card's official printings or archetype alone.
+  // Only active packs are readable under the database's public RLS policy.
+  async function shopPackCatalog() {
+    if (!packCatalogPromise) {
+      const url = new URL(API_ROOT + "yugioh_shop_packs");
+      url.searchParams.set("select", "id,name,category,price_coins,sort_order");
+      url.searchParams.set("is_active", "eq.true");
+      url.searchParams.set("order", "sort_order.asc,name.asc");
+      url.searchParams.set("limit", "1000");
+      packCatalogPromise = request(url.toString()).then(({ rows }) =>
+        new Map(rows.map((pack) => [pack.id, pack]))
+      ).catch((error) => { packCatalogPromise = null; throw error; });
+    }
+    return packCatalogPromise;
+  }
+
+  async function getCardPackSources(ids, signal) {
+    const cardIds = [...new Set(ids.map(Number).filter((id) => Number.isSafeInteger(id) && id > 0))];
+    const result = new Map(cardIds.map((id) => [id, []]));
+    if (!cardIds.length) return result;
+    const published = await shopPackCatalog();
+    const batchSize = 1000;
+    // PAGE_SIZE=24. Paging here also guards against a future shop expansion
+    // exceeding PostgREST's default maximum of 1000 rows per request.
+    for (let offset = 0; ; offset += batchSize) {
+      const url = new URL(API_ROOT + "yugioh_shop_pack_cards");
+      url.searchParams.set("select", "card_id,pack_id");
+      url.searchParams.set("card_id", "in.(" + cardIds.join(",") + ")");
+      url.searchParams.set("order", "card_id.asc,pack_id.asc");
+      url.searchParams.set("limit", String(batchSize));
+      url.searchParams.set("offset", String(offset));
+      const { rows } = await request(url.toString(), signal);
+      for (const match of rows) {
+        const pack = published.get(match.pack_id);
+        const list = result.get(Number(match.card_id));
+        if (pack && list) list.push(pack);
+      }
+      if (rows.length < batchSize) break;
+    }
+    for (const sources of result.values()) {
+      sources.sort((a, b) => Number(a.sort_order) - Number(b.sort_order) || a.name.localeCompare(b.name));
+    }
+    return result;
+  }
+
+  function describePackSources(container, sources) {
+    if (!sources.length) {
+      container.textContent = "Not available in an active booster pack";
+      return;
+    }
+    const titles = sources.slice(0, 2).map((pack) => pack.name).join(" · ");
+    container.textContent = "In " + sources.length + " pack" + (sources.length === 1 ? "" : "s") +
+      ": " + titles + (sources.length > 2 ? " +" + (sources.length - 2) + " more" : "");
+    container.title = sources.map((pack) => pack.name).join(" · ");
+  }
+
+  function renderPackLinks(section, sources) {
+    section.replaceChildren(el("h3", "", "Available in CTooniverse packs"));
+    section.append(el("p", "yc-pack-explainer",
+      "These are random booster pools in the CTooniverse Card Shop, not official card sets. Opening a pack does not guarantee a specific card."));
+    if (!sources.length) {
+      section.append(el("p", "yc-pack-unavailable", "This card is not currently in an active booster pack."));
+      return;
+    }
+    section.append(el("p", "yc-pack-count", sources.length + " pack" + (sources.length === 1 ? "" : "s") + " can contain this card."));
+    const list = el("ul", "yc-pack-links");
+    for (const pack of sources) {
+      const item = el("li");
+      const link = el("a", "yc-pack-link");
+      link.href = "yugioh-card-shop.html?pack=" + encodeURIComponent(pack.id);
+      link.append(el("strong", "", pack.name),
+        el("span", "", pack.category + " · " + Number(pack.price_coins).toLocaleString() + " coins"));
+      item.append(link);
+      list.append(item);
+    }
+    section.append(list);
   }
 
   // Images are self-hosted: try the public Storage URL first. On a cache
@@ -179,8 +261,10 @@
       meta.append(el("span", "", card.attribute || card.race || card.archetype || "Yu-Gi-Oh!"));
       if (card.attack != null || card.defense != null) meta.append(el("strong", "", "ATK " + formatNumber(card.attack) + " · DEF " + formatNumber(card.defense)));
       else meta.append(el("strong", "", card.card_type));
+      const where = el("span", "yc-card-pack-locations", "Finding available packs…");
+      where.dataset.packCardId = String(card.card_id);
       const excerpt = el("span", "yc-card-desc", card.description || "View card details");
-      button.append(top, art, meta, excerpt);
+      button.append(top, art, meta, where, excerpt);
       button.addEventListener("click", () => openDetail(card.card_id));
       fragment.append(button);
     }
@@ -207,6 +291,18 @@
       pageLabel.textContent = "PAGE " + (page + 1);
       prev.disabled = page === 0;
       next.disabled = last >= total || rows.length < PAGE_SIZE;
+      try {
+        const sources = await getCardPackSources(rows.map((card) => card.card_id), controller.signal);
+        if (pending !== controller) return;
+        for (const location of grid.querySelectorAll(".yc-card-pack-locations")) {
+          describePackSources(location, sources.get(Number(location.dataset.packCardId)) || []);
+        }
+      } catch (packError) {
+        if (packError.name === "AbortError" || pending !== controller) return;
+        for (const location of grid.querySelectorAll(".yc-card-pack-locations")) {
+          location.textContent = "Pack information temporarily unavailable";
+        }
+      }
     } catch (error) {
       if (error.name === "AbortError") return;
       grid.replaceChildren(el("p", "yc-empty", "The card database is temporarily unavailable. Please try again."));
@@ -226,8 +322,9 @@
     parent.append(item);
   }
   async function openDetail(id) {
+    const currentDetail = ++activeDetail;
     detail.replaceChildren(el("p", "", "Loading card details…"));
-    if (typeof dialog.showModal === "function") dialog.showModal();
+    if (typeof dialog.showModal === "function" && !dialog.open) dialog.showModal();
     else dialog.setAttribute("open", "");
     const url = new URL(API_ROOT + "yugioh_cards");
     url.searchParams.set("select", "*");
@@ -235,7 +332,7 @@
     url.searchParams.set("limit", "1");
     try {
       const result = await request(url.toString());
-      if (!dialog.open) return;
+      if (!dialog.open || currentDetail !== activeDetail) return;
       const card = result.rows[0];
       if (!card) throw new Error("Card not found");
       const raw = card.card_data || {};
@@ -259,7 +356,12 @@
         const b = Object.entries(raw.banlist_info).map(([key, value]) => key.replaceAll("_", " ") + ": " + value).join(" · ");
         detailLine("Banlist status", b, info);
       }
-      detail.append(info, el("h3", "", "Card text"), el("p", "yc-effect", card.description || "No effect text available."));
+      detail.append(info);
+      const packSection = el("section", "yc-pack-section");
+      packSection.append(el("h3", "", "Available in CTooniverse packs"),
+        el("p", "yc-pack-loading", "Looking up booster packs…"));
+      detail.append(packSection);
+      detail.append(el("h3", "", "Card text"), el("p", "yc-effect", card.description || "No effect text available."));
       if (Array.isArray(raw.card_sets) && raw.card_sets.length) {
         detail.append(el("h3", "", "Card sets"));
         const sets = el("ul", "yc-set-list");
@@ -269,8 +371,20 @@
         detail.append(sets);
         if (raw.card_sets.length > 8) detail.append(el("small", "", "Plus " + (raw.card_sets.length - 8) + " additional printings."));
       }
+      try {
+        const sources = await getCardPackSources([card.card_id]);
+        if (dialog.open && currentDetail === activeDetail) {
+          renderPackLinks(packSection, sources.get(Number(card.card_id)) || []);
+        }
+      } catch (_) {
+        if (dialog.open && currentDetail === activeDetail) {
+          packSection.replaceChildren(el("h3", "", "Available in CTooniverse packs"),
+            el("p", "yc-pack-unavailable", "Pack information is temporarily unavailable. Try again later."));
+        }
+      }
     } catch (_) {
-      if (dialog.open) detail.replaceChildren(el("h2", "", "Card details"), el("p", "", "Could not load this card. Try again."));
+      if (dialog.open && currentDetail === activeDetail)
+        detail.replaceChildren(el("h2", "", "Card details"), el("p", "", "Could not load this card. Try again."));
     }
   }
   async function loadCount() {
@@ -300,6 +414,7 @@
   next.addEventListener("click", () => { if ((page + 1) * PAGE_SIZE < total) { page++; loadCards(); } });
   $("yc-close").addEventListener("click", () => { if (typeof dialog.close === "function") dialog.close(); else dialog.removeAttribute("open"); });
   dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+  dialog.addEventListener("close", () => { activeDetail++; });
   loadCount();
   loadCards();
 })();
