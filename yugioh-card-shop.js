@@ -155,19 +155,23 @@ async function openPack(pack){
   pending.set(pack.id,crypto.randomUUID());
  }
  busy=true;drawPacks();status("Opening "+pack.name+"…");
+ let purchased=false;
  try{
   const {data:opening,error}=await db.rpc("open_yugioh_pack",{p_pack_id:pack.id,p_request_id:pending.get(pack.id)});
   if(error)throw error;
+  purchased=true;
   pending.delete(pack.id);
-  await showOpening(opening);
   window.dispatchEvent(new Event("ctoon-profile-updated"));
-  status("Pack opened! Cards were added to your collection.");
-  await loadWallet();
-  await loadCollection(true);
-  await loadHistory();
+  status("Pack opened! Your purchased cards were added to your collection.");
+  try { await showOpening(opening); } catch(e) {
+   status("Purchase succeeded, but card images could not load. View your collection to see rewards.",true);
+  }
+  const updates=await Promise.allSettled([loadWallet(),loadCollection(true),loadHistory()]);
+  if(updates.some(x=>x.status==="rejected"))
+   status("Purchase succeeded! Refresh this page if the balance or collection has not updated.",true);
  }catch(e){
-  status("Pack could not be confirmed: "+(e.message||"Try again")+
-   ". Retry this pack without risk of a duplicate charge.",true);
+  status(purchased?"Purchase succeeded! Refresh to view your new cards.":"Pack could not be confirmed: "+
+   (e.message||"Try again")+". Retry this pack without risk of a duplicate charge.",!purchased);
  }finally{busy=false;drawPacks();}
 }
 $("ycs-reveal-close").addEventListener("click",()=>{$("ycs-reveal-section").hidden=true;});
@@ -177,6 +181,6 @@ $("ycs-collection-search").addEventListener("input",e=>{
  clearTimeout(searchTimer);collectionSearch=e.target.value.trim().slice(0,80);
  searchTimer=setTimeout(()=>loadCollection(true).catch(error=>status("Collection search unavailable: "+error.message,true)),300);
 });
-db.auth.onAuthStateChange((event)=>{if(["SIGNED_IN","SIGNED_OUT"].includes(event))setTimeout(refresh,0);});
+db.auth.onAuthStateChange((event)=>{if(["SIGNED_IN","SIGNED_OUT"].includes(event)){pending.clear();setTimeout(refresh,0);}});
 window.addEventListener("pageshow",e=>{if(e.persisted)refresh();});
 refresh();
