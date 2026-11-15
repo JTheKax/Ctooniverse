@@ -397,7 +397,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
       // The public card catalog can be temporarily sparse after a reimport.
       // Return a valid playable fallback rather than a broken game screen.
       deckLists.cpu={blue:2,skull:2,ox:3,jinn:3,stone:3,kaiser:2,
-        ryu:3,lord:2,elf:2,imp:3,harpie:2,pot:2,fissure:2,
+        ryu:3,lord:2,elf:2,imp:3,harpie:2,kuriboh:1,pot:2,fissure:2,
         reborn:1,heal:1,swords:1,axe:1,storm:1,mirror:1,hole:1,negate:1};
       return;
     }
