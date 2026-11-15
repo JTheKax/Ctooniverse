@@ -69,7 +69,6 @@ if (year) year.textContent = String(new Date().getFullYear());
     '<a href="cards.html">Cards Hub</a>'+
     '<a href="yugioh-cards.html">📚 Card Database</a>'+
     '<a href="yugioh-deck-builder.html">🃏 Deck Builder</a>'+
-    '<a href="yugioh-card-shop.html">🛍️ Yu-Gi-Oh! Card Shop</a>'+
     '<a href="yugioh-card-shop.html#ycs-collection">📂 My Yu-Gi-Oh! Cards</a>'+
     '<a href="yugioh-duel.html">⚡ Yu-Gi-Oh! Duel Arena</a>'+ 
     '<a href="cards.html#cards-gallery">Preview Gallery</a>'+
