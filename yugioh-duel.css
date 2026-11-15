@@ -72,3 +72,8 @@ html body.yd-duel-page::before{background-image:none!important}
 @media(max-width:740px){html body.yd-duel-page{background-attachment:scroll!important}.yd-main{width:calc(100% - 16px)}.yd-columns{grid-template-columns:1fr;gap:0}.yd-toolbar{padding:12px}.yd-buttons{width:100%}.yd-buttons .button{flex:1 1 120px}.yd-board{padding:8px}.yd-side{padding:6px}.yd-zones{gap:4px}.yd-slot{padding:1px;border-width:1px;border-radius:5px}.yd-card{padding:2px;gap:1px;border-width:2px}.yd-card-name{font-size:.45rem}.yd-stars{font-size:.43rem}.yd-art{font-size:clamp(.9rem,4.1vw,1.6rem)}.yd-stats{font-size:.42rem}.yd-position{font-size:.42rem;left:2px;bottom:2px;padding:1px}.yd-panel{padding:13px}.yd-duelist{gap:6px}.yd-avatar{font-size:1.2rem}.yd-center{font-size:.7rem}.yd-handcard{flex-basis:98px;height:147px}.yd-title h1{font-size:2.2rem}}
 @media(max-width:380px){.yd-card-name{font-size:.4rem}.yd-stats{font-size:.37rem}.yd-position{display:none}.yd-zlabel{font-size:.57rem}}
 @media(prefers-reduced-motion:reduce){.yd-slot{transition:none}}
+/* Yu-Gi-Oh! card images are loaded from CTooniverse Storage only. */
+.yd-art{position:relative;overflow:hidden}
+.yd-art img{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .16s ease}
+.yd-art.yd-art-loaded img{opacity:1}
+@media(prefers-reduced-motion:reduce){.yd-art img{transition:none}}
