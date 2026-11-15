@@ -7,6 +7,8 @@ const ART=URL_ROOT+"/storage/v1/object/public/yugioh-artwork/small/";
 const ART_ENDPOINT=URL_ROOT+"/functions/v1/yugioh-artwork?id=";
 const PAGE_SIZE=36;
 let user=null,packs=[],collection=[],collectionCount=0,collectionOffset=0,collectionSearch="",busy=false,loadId=0;
+let packSearch="",packCategory="all";
+const CATEGORY_ORDER=["Featured","Legendary Series","Monster Realms","Elemental Forces","Duel Mechanics","Card Archives"];
 const pending=new Map();
 function requestKey(packId){return "ycs-pending-"+user.id+"-"+packId;}
 function rememberRequest(packId,id){
@@ -55,19 +57,50 @@ async function fetchCards(ids){
 }
 function packView(pack){
  const item=el("article","ycs-pack "+pack.theme);
- const art=el("div","ycs-pack-art"),image=artwork(pack.hero_image_id);
+ item.append(el("span","ycs-pack-category",pack.category||"Featured"));
+ const art=el("div","ycs-pack-art"),image=artwork(pack.hero_art_image_id||pack.hero_image_id);
  art.append(image);item.append(art,el("h3","",pack.name),el("p","",pack.description),
-  el("span","ycs-count",pack.card_count+" unique cards"),el("strong","ycs-price",money(pack.price_coins)));
+  el("span","ycs-count",pack.card_count+" different cards per pack"),
+  el("span","ycs-pool-size",Number(pack.pool_size||0).toLocaleString()+" possible cards"),
+  el("strong","ycs-price",money(pack.price_coins)));
  const button=el("button","button primary",user?"Open Pack":"Sign in to Open");
  button.type="button";button.disabled=!user||busy;button.addEventListener("click",()=>openPack(pack));
  item.append(button);return item;
 }
-function drawPacks(){const root=$("ycs-pack-grid");root.replaceChildren();for(const pack of packs)root.append(packView(pack));}
+function drawPacks(){
+ const root=$("ycs-pack-grid");
+ const query=packSearch.toLocaleLowerCase();
+ const shown=packs.filter(pack=>
+   (packCategory==="all"||pack.category===packCategory) &&
+   (!query||[pack.name,pack.description,pack.category].some(value=>String(value||"").toLocaleLowerCase().includes(query)))
+ );
+ root.replaceChildren();
+ for(const pack of shown)root.append(packView(pack));
+ if(!shown.length)root.append(el("p","ycs-no-packs","No packs match your search. Try another name or category."));
+ $("ycs-pack-count").textContent="Showing "+shown.length+" of "+packs.length+" packs";
+}
 async function loadPacks(){
  const {data,error}=await db.from("yugioh_shop_packs")
-  .select("id,name,description,price_coins,card_count,hero_image_id,theme").eq("is_active",true).order("price_coins").order("name");
+  .select("id,name,description,category,sort_order,pool_size,price_coins,card_count,hero_image_id,theme")
+  .eq("is_active",true).order("sort_order",{ascending:true}).order("name",{ascending:true});
  if(error)throw error;
- packs=data||[];drawPacks();
+ packs=data||[];
+ // Hero IDs are card catalog IDs; use the canonical artwork ID to prevent broken pack art.
+ try{
+  const heroes=await fetchCards(packs.map(pack=>pack.hero_image_id));
+  for(const pack of packs)pack.hero_art_image_id=heroes.get(Number(pack.hero_image_id))?.art_image_id||pack.hero_image_id;
+ }catch(e){console.warn("Pack hero artwork mapping unavailable",e);}
+ const selector=$("ycs-pack-category");
+ const previous=selector.value||"all";
+ const categories=[...new Set(packs.map(pack=>pack.category||"Featured"))];
+ categories.sort((a,b)=>
+   CATEGORY_ORDER.indexOf(a)===-1?1:CATEGORY_ORDER.indexOf(b)===-1?-1:CATEGORY_ORDER.indexOf(a)-CATEGORY_ORDER.indexOf(b));
+ selector.replaceChildren();
+ const all=el("option","","All pack categories");all.value="all";selector.append(all);
+ for(const category of categories){const option=el("option","",category+" ("+packs.filter(x=>x.category===category).length+")");option.value=category;selector.append(option);}
+ packCategory=categories.includes(previous)?previous:"all";
+ selector.value=packCategory;
+ drawPacks();
 }
 async function loadWallet(){
  const balance=$("ycs-balance");
@@ -191,6 +224,14 @@ async function openPack(pack){
    (e.message||"Try again")+". Retry this pack without risk of a duplicate charge.",!purchased);
  }finally{busy=false;drawPacks();}
 }
+$("ycs-pack-search").addEventListener("input",event=>{
+ packSearch=event.target.value.trim().slice(0,80);
+ drawPacks();
+});
+$("ycs-pack-category").addEventListener("change",event=>{
+ packCategory=event.target.value;
+ drawPacks();
+});
 $("ycs-reveal-close").addEventListener("click",()=>{$("ycs-reveal-section").hidden=true;});
 $("ycs-more").addEventListener("click",()=>loadCollection().catch(e=>status("Could not load more cards: "+e.message,true)));
 let searchTimer;
