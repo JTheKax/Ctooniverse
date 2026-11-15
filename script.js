@@ -67,15 +67,16 @@ if (year) year.textContent = String(new Date().getFullYear());
   cards.innerHTML='<button type="button" class="nav-link cards-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="cards-menu"><span class="nav-icon" aria-hidden="true">🃏</span><span>Cards</span><span aria-hidden="true">▾</span></button>'+
     '<div class="cards-dropdown-panel" id="cards-menu">'+
     '<a href="cards.html">Cards Hub</a>'+
+    '<a href="yugioh-duel.html">⚡ Yu-Gi-Oh! Duel Arena</a>'+ 
     '<a href="cards.html#cards-gallery">Preview Gallery</a>'+
     '<span class="cards-dropdown-heading">In Development</span>'+
     '<a href="cards.html#my-cards">My Cards <small>Coming Soon</small></a>'+
     '<a href="cards.html#card-shop">Card Shop <small>Coming Soon</small></a>'+
     '<a href="cards.html#card-battles">Card Battles <small>Coming Soon</small></a>'+
     '</div>';
-  if(page==='cards.html'){
+  if(['cards.html','yugioh-duel.html'].includes(page)){
     cards.querySelector('.cards-dropdown-trigger').classList.add('active');
-    cards.querySelector('a[href="cards.html"]')?.setAttribute('aria-current','page');
+    cards.querySelector('a[href="'+page+'"]')?.setAttribute('aria-current','page');
   }
   const watch=link('Theater','watch.html','🎬');
   // Shop is intentionally not a top-level navigation tab; its page and purchases remain available.
