@@ -5,7 +5,7 @@ const colorize=(s,a)=>s.replaceAll('@hair',a.hair).replaceAll('@skin',a.skin)
  .replaceAll('@hat',a.hatColor).replaceAll('@trim',a.hatAccent);
 const outline='stroke="#19171d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"';
 export function avatarExtraLayers(a){
- const p={backHair:'',fringe:'',clothes:'',faceFeatures:'',hat:'',accessories:''};
+ const p={backHair:'',fringe:'',clothes:'',faceFeatures:'',hat:'',neckwear:'',accessories:''};
  if(a.hairStyle==='sidepart'){
   p.backHair='<path d="M63 185Q44 110 100 89Q166 51 226 95Q266 124 253 200L226 215L85 211Z" fill="@hair" '+outline+'/>';
   p.fringe='<path d="M62 171Q64 111 113 100Q183 73 246 113L254 159Q215 132 174 144Q136 171 78 171Q104 143 125 120Z" fill="@hair" '+outline+'/>';
@@ -43,9 +43,9 @@ export function avatarExtraLayers(a){
  if(a.facialHair==='mustache')p.faceFeatures+='<path d="M160 238Q143 225 128 244Q144 253 160 245Q176 253 192 244Q178 225 160 238Z" fill="@hair" '+outline+'/>';
  if(a.facialHair==='goatee')p.faceFeatures+='<path d="M148 266Q160 279 172 266L169 289Q160 299 151 289Z" fill="@hair" '+outline+'/>';
  if(a.facialHair==='beard')p.faceFeatures+='<path d="M81 225Q94 271 124 273Q129 295 160 301Q191 295 198 273Q228 269 240 225L225 248L208 261L194 282L160 294L126 282L111 261L94 250Z" fill="@hair" '+outline+'/>';
- if(a.neckwear==='bowtie')p.accessories+='<path d="M160 270L135 256L135 287L160 277L185 287L185 256Z" fill="@trim" '+outline+'/><circle cx="160" cy="272" r="6" fill="@hat" stroke="#19171d" stroke-width="2"/>';
- if(a.neckwear==='tie')p.accessories+='<path d="M150 264H170L169 281L181 331L160 345L139 331L151 281Z" fill="@trim" '+outline+'/>';
- if(a.neckwear==='necklace')p.accessories+='<path d="M129 261Q160 306 191 261" fill="none" stroke="@trim" stroke-width="4"/><circle cx="160" cy="291" r="7" fill="@hat" stroke="#19171d" stroke-width="2"/>';
+ if(a.neckwear==='bowtie')p.neckwear+='<path d="M160 270L135 256L135 287L160 277L185 287L185 256Z" fill="@trim" '+outline+'/><circle cx="160" cy="272" r="6" fill="@hat" stroke="#19171d" stroke-width="2"/>';
+ if(a.neckwear==='tie')p.neckwear+='<path d="M150 264H170L169 281L181 331L160 345L139 331L151 281Z" fill="@trim" '+outline+'/>';
+ if(a.neckwear==='necklace')p.neckwear+='<path d="M129 261Q160 306 191 261" fill="none" stroke="@trim" stroke-width="4"/><circle cx="160" cy="291" r="7" fill="@hat" stroke="#19171d" stroke-width="2"/>';
  if(a.hat==='bucket')p.hat='<path d="M78 130Q66 65 116 49Q173 24 221 56Q254 78 241 130L279 145Q160 182 43 145Z" fill="@hat" '+outline+'/><path d="M71 132Q160 145 250 132" fill="none" stroke="@trim" stroke-width="9"/>';
  if(a.hat==='visor')p.hat='<path d="M60 145Q160 103 261 145L259 163Q160 139 61 166Z" fill="@hat" '+outline+'/><path d="M165 152Q240 132 288 151Q257 170 179 168Z" fill="@trim" '+outline+'/>';
  if(a.accessory==='sunglasses')p.accessories+='<path d="M100 165Q128 151 158 165L156 207Q129 223 105 203Z M164 165Q194 151 225 165L218 203Q193 223 166 207Z" fill="#151922" '+outline+'/><path d="M158 172h8" stroke="#19171d" stroke-width="5"/>';
