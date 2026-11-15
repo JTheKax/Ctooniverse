@@ -25,3 +25,13 @@
 .avatar-editor :is(button,input,select):focus-visible{outline:3px solid #ffdf8c;outline-offset:2px}
 @media(max-width:780px){.avatar-editor{grid-template-columns:1fr}.avatar-preview-pane{display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr);column-gap:16px}.avatar-preview-pane h2{grid-column:1/-1}.avatar-preview-frame{grid-row:2/5;align-self:start}.avatar-saved-note{margin:0}.avatar-primary-actions{align-content:start}}
 @media(max-width:560px){.avatar-maker-page .avatar-main{width:calc(100% - 16px);margin:14px auto 42px}.avatar-preview-pane{display:block}.avatar-preview-frame{width:min(100%,270px)}.avatar-saved-note{margin:15px 0}.avatar-control-grid{grid-template-columns:1fr}.avatar-control-grid .avatar-colors{grid-template-columns:repeat(2,minmax(0,1fr))}.avatar-editor{gap:12px}}
+
+/* Larger screens keep the character visible; mobile keeps all inputs touch-friendly. */
+@media(min-width:781px){.avatar-maker-page .avatar-preview-pane{position:sticky;top:14px}}
+@media(max-width:560px){
+ .avatar-maker-page .avatar-customize-pane{padding:14px 12px}
+ .avatar-maker-page .avatar-control-grid fieldset{padding:12px 10px}
+ .avatar-maker-page .avatar-control-grid select{min-height:44px}
+ .avatar-maker-page .avatar-primary-actions>.button,
+ .avatar-maker-page .avatar-secondary-actions>.button{min-height:48px}
+}
