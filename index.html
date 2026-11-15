@@ -25,8 +25,21 @@
     .home-status-rule--maintenance .home-status-dot{background:#f3d34e;color:#f3d34e}
     .home-status-guide .home-status-footnote{font-size:.9rem;margin:1rem 0 0;color:#ccc5e9}
     @media(max-width:650px){.home-status-guide{padding:1rem}.home-status-rules{grid-template-columns:1fr}}
+
+    /* Public, aggregate-only player counter. */
+    .home-player-counter{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-wrap:wrap;margin:22px 0;padding:22px clamp(16px,3vw,32px);border:2px solid #91d9ff;border-radius:22px;background:linear-gradient(120deg,rgba(16,27,72,.97),rgba(46,22,89,.95));box-shadow:0 14px 34px #05072199,inset 0 1px #ffffff24}
+    .home-player-counter-title{flex:1 1 240px;min-width:0}
+    .home-player-counter-title .eyebrow{margin:0 0 7px;color:#afecff}
+    .home-player-counter-title h2{margin:0 0 6px;color:#fff;font-size:clamp(1.25rem,3vw,1.9rem);line-height:1.2}
+    .home-player-counter-title p:last-child{margin:0;color:#e8e4ff;max-width:500px;line-height:1.5}
+    .home-player-counter-number{display:flex;flex-direction:column;align-items:center;min-width:170px;text-align:center}
+    #home-player-count{display:block;color:#a8f3ff;font-size:clamp(3rem,7vw,4.6rem);font-weight:1000;line-height:1.05;text-shadow:0 0 20px #59dfff77;font-variant-numeric:tabular-nums}
+    .home-player-counter-number span{color:#fff;font-size:.83rem;letter-spacing:.1em;font-weight:900}
+    #home-player-status{display:block;color:#d3d1f7;font-size:.76rem;margin-top:7px}
+    .home-player-counter .button{white-space:normal;text-align:center}
+    @media(max-width:640px){.home-player-counter{flex-direction:column;text-align:center;gap:16px}.home-player-counter-title{flex:auto}.home-player-counter-number{min-width:0}.home-player-counter .button{width:100%}}
   </style>
-<link rel="stylesheet" href="display-refresh.css?v=arcade-ui-20261112"><link rel="stylesheet" href="arcade-polish.css?v=neon-phase2-20261112"><link rel="stylesheet" href="dragonball-sitewide.css?v=background-harmony-20261114"><link rel="stylesheet" href="cosmic-overdrive.css?v=20261112-overdrive-v1"></head>
+<link rel="stylesheet" href="display-refresh.css?v=arcade-ui-20261112"><link rel="stylesheet" href="arcade-polish.css?v=neon-phase2-20261112"><link rel="stylesheet" href="dragonball-sitewide.css?v=background-harmony-20261114"><link rel="stylesheet" href="cosmic-overdrive.css?v=20261112-overdrive-v1"><script src="homepage-player-count.js?v=20261115-live-count-v1" defer></script></head>
 <body class="home-universe-page">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
@@ -41,6 +54,19 @@
         
       </div>
       <aside class="announcement-panel" aria-labelledby="announcements-title"><h2 id="announcements-title">✦ Latest Announcements</h2><ul><li><a href="games.html">Claw Craze is in the Arcade</a></li><li><a href="ctoons.html">New CToons section is open</a></li><li><a href="shop.html">Visit the Shop</a></li></ul></aside>
+    </section>
+    <section class="home-player-counter" aria-labelledby="home-player-counter-heading">
+      <div class="home-player-counter-title">
+        <p class="eyebrow">✦ THE UNIVERSE IS GROWING ✦</p>
+        <h2 id="home-player-counter-heading">Join the CTooniverse community</h2>
+        <p>Meet fellow collectors and see how many accounts have joined, including the owner.</p>
+      </div>
+      <div class="home-player-counter-number">
+        <strong id="home-player-count" aria-live="polite">—</strong>
+        <span>REGISTERED PLAYERS</span>
+        <small id="home-player-status" role="status">Checking registrations…</small>
+      </div>
+      <a class="button secondary" href="community.html#players">👥 View Players</a>
     </section>
     <section class="arcade-feature-strip" aria-label="Featured destinations"><a href="claw-machine.html"><span aria-hidden="true">🧸</span><span><small>FEATURED GAME</small><strong>Claw Craze</strong><em>Try the prize machine</em></span><b aria-hidden="true">↗</b></a><a href="ctoons.html"><span aria-hidden="true">🎴</span><span><small>COLLECTION HUB</small><strong>CToons A–Z</strong><em>Explore the collection</em></span><b aria-hidden="true">↗</b></a><a href="watch.html"><span aria-hidden="true">🎬</span><span><small>THE BIG SCREEN</small><strong>Movie Theater</strong><em>Pick your feature</em></span><b aria-hidden="true">↗</b></a></section><section class="home-status-guide" aria-labelledby="home-status-guide-title">
       <p class="eyebrow">✦ PLAYER INFORMATION ✦</p>
