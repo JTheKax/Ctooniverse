@@ -13,6 +13,9 @@
 .fusion-window img,.fusion-window canvas{width:100%;height:100%;object-fit:contain;display:block}
 .fusion-window canvas{background:#170e3d}
 .fusion-window small{display:block;max-height:2.5em;overflow:hidden;text-align:center;font-size:.7rem;color:#e8f1ff;margin:7px 0 3px;overflow-wrap:anywhere}
+.fusion-result-empty{display:flex;align-items:center;justify-content:center;height:100%;min-height:100px;padding:12px;text-align:center;color:#f8e2ff;font-size:clamp(.7rem,1.8vw,.95rem);line-height:1.45;text-shadow:0 2px 8px #170f3d;background:radial-gradient(circle,#915aff6b,#141239);box-sizing:border-box}
+#fusion-result-art{object-fit:contain;max-height:100%;background:radial-gradient(circle at 50% 35%,#684dad,#171942)}
+#fusion-download:disabled{opacity:.55;cursor:not-allowed}
 #fusion-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
 #fusion-form .fusion-wide{grid-column:1/-1}
 .fusion-actions{display:flex;gap:10px;flex-wrap:wrap}
