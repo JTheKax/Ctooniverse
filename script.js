@@ -4,7 +4,7 @@
   if(document.querySelector('link[data-ninja-scroll-nav]'))return;
   const sheet=document.createElement('link');
   sheet.rel='stylesheet';
-  sheet.href='ninja-scroll-nav.css?v=20261114-ninja-scroll-v1';
+  sheet.href='ninja-scroll-nav.css?v=20261115-shop-dropdown-v1';
   sheet.dataset.ninjaScrollNav='true';
   document.head.append(sheet);
 })();
@@ -28,7 +28,7 @@ if (year) year.textContent = String(new Date().getFullYear());
     if(!document.querySelector(".site-header, .jam-topbar"))return;
     if(!document.querySelector('link[data-site-status-style]')){
       const style=document.createElement("link");style.rel="stylesheet";
-      style.href="site-status.css?v=cards-dropdown-20261114";style.dataset.siteStatusStyle="true";
+      style.href="site-status.css?v=20261115-shop-dropdown-v1";style.dataset.siteStatusStyle="true";
       document.head.append(style);
     }
     if(!document.querySelector('script[data-site-status-widget]')){
@@ -342,7 +342,7 @@ if (year) year.textContent = String(new Date().getFullYear());
 (function(){
   if(document.querySelector('link[data-mobile-layout]'))return;
   const sheet=document.createElement('link');
-  sheet.rel='stylesheet';sheet.href='mobile-responsive.css?v=mobile-layout-20261109-v2';
+  sheet.rel='stylesheet';sheet.href='mobile-responsive.css?v=20261115-shop-dropdown-v1';
   sheet.setAttribute('data-mobile-layout','');
   document.head.appendChild(sheet);
 })();
