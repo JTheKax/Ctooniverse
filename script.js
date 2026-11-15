@@ -80,15 +80,16 @@ if (year) year.textContent = String(new Date().getFullYear());
     cards.querySelector('.cards-dropdown-trigger').classList.add('active');
     cards.querySelector('a[href="'+page+'"]')?.setAttribute('aria-current','page');
   }
-  // Shop has its own top-level tab, with both storefronts available everywhere.
+  // Shop has its own top-level tab, with both storefronts and the Auction House available everywhere.
   const shop=document.createElement('div');
   shop.className='shop-dropdown';
   shop.innerHTML='<button type="button" class="nav-link shop-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="shop-menu"><span class="nav-icon" aria-hidden="true">🛍️</span><span>Shop</span><span aria-hidden="true">▾</span></button>'+
     '<div class="shop-dropdown-panel" id="shop-menu" aria-label="Shop destinations">'+
     '<a href="shop.html">🎴 CToons Shop</a>'+
     '<a href="yugioh-card-shop.html">🃏 Yu-Gi-Oh! Card Shop</a>'+
+    '<a href="auction.html">🔨 Auction</a>'+
     '</div>';
-  if(['shop.html','yugioh-card-shop.html'].includes(page)){
+  if(['shop.html','yugioh-card-shop.html','auction.html'].includes(page)){
     shop.querySelector('.shop-dropdown-trigger').classList.add('active');
     shop.querySelectorAll('a[href]').forEach(a=>{
       if(a.getAttribute('href')===page)a.setAttribute('aria-current','page');
@@ -168,7 +169,7 @@ if (year) year.textContent = String(new Date().getFullYear());
     }
   }
   nav.replaceChildren(home,ctoons,games,cards,shop,watch,community,account,owner);
-  nav.dataset.navigationVersion='2026-11-15-shop-dropdown';
+  nav.dataset.navigationVersion='2026-11-15-shop-auction';
   const header=nav.closest('.site-header');
   if(header&&!header.querySelector('#header-player')){
     const player=document.createElement('div');
@@ -433,7 +434,7 @@ if (year) year.textContent = String(new Date().getFullYear());
 
 /* Remove obsolete collection links from legacy pages while preserving other games. */
 (() => {
- const obsolete=new Set(['sets-overview.html','my-collection.html','my-scene.html','czone.html','trades.html','auction.html','owner-ctoon-maker.html','owner-ctoon-packs.html']);
+ const obsolete=new Set(['sets-overview.html','my-collection.html','my-scene.html','czone.html','trades.html','owner-ctoon-maker.html','owner-ctoon-packs.html']);
  for(const a of document.querySelectorAll('a[href]')) {
   const filename=a.getAttribute('href').split(/[?#]/)[0].split('/').pop();
   if(obsolete.has(filename)) a.remove();
