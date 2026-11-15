@@ -1,30 +1,106 @@
 <!doctype html>
 <html lang="en">
-<head><script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#080d24"><title>Shop | CTooniverse</title><link rel="stylesheet" href="styles.css?v=mobile-tabs-20261114"><link rel="stylesheet" href="arcade-polish.css?v=2"><script src="script.js?v=20261114-ctoons-shop-dropdown-v2" defer></script><script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script><script type="module" src="account-menu.js?v=1"></script><script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script><script src="community-menu.js?v=2" defer></script><script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script><link rel="stylesheet" href="display-refresh.css?v=arcade-ui-20261112"><link rel="stylesheet" href="arcade-polish.css?v=neon-phase2-20261112"><link rel="stylesheet" href="dragonball-sitewide.css?v=background-harmony-20261114"><link rel="stylesheet" href="cosmic-overdrive.css?v=20261112-overdrive-v1"><style>#ctoon-shop{max-width:1200px;margin:24px auto;padding:24px 16px}#ctoon-shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(182px,1fr));gap:16px;align-items:start}#ctoon-shop-grid .ctoon-shop-card{width:182px;margin:0 auto}#ctoon-shop-grid .ctoon-shop-art{width:100%;min-height:282px}#ctoon-shop-grid .ctoon-shop-art img{width:100%;height:282px;object-fit:contain}#ctoon-shop-grid .ctoon-shop-details{overflow-wrap:anywhere}@media(max-width:430px){#ctoon-shop-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}#ctoon-shop-grid .ctoon-shop-card{width:100%}#ctoon-shop-grid .ctoon-shop-art,#ctoon-shop-grid .ctoon-shop-art img{height:220px;min-height:220px}}/* Keep collectible CToon artwork completely stationary, including on hover. */
+<head><script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#080d24"><title>Shop | CTooniverse</title><link rel="stylesheet" href="styles.css?v=mobile-tabs-20261114"><link rel="stylesheet" href="arcade-polish.css?v=2"><script src="script.js?v=20261114-ctoons-shop-dropdown-v2" defer></script><script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script><script type="module" src="account-menu.js?v=1"></script><script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script><script src="community-menu.js?v=2" defer></script><script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script><link rel="stylesheet" href="display-refresh.css?v=arcade-ui-20261112"><link rel="stylesheet" href="arcade-polish.css?v=neon-phase2-20261112"><link rel="stylesheet" href="dragonball-sitewide.css?v=background-harmony-20261114"><link rel="stylesheet" href="cosmic-overdrive.css?v=20261112-overdrive-v1"><style>
+/* Shop-only display repair. Keep collectible frames at their true 182 × 282 size. */
+#ctoon-shop{box-sizing:border-box;max-width:1200px;margin:24px auto;padding:24px 16px;min-width:0}
+#ctoon-shop-grid{
+ display:grid!important;
+ grid-template-columns:repeat(auto-fit,minmax(182px,1fr))!important;
+ justify-items:center;align-items:start;gap:16px;width:100%;min-width:0
+}
+#ctoon-shop-grid>p{grid-column:1/-1;text-align:center;width:100%}
+#ctoon-shop-grid .ctoon-shop-card{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ width:182px!important;min-width:182px!important;max-width:182px!important;
+ height:282px!important;min-height:282px!important;max-height:282px!important;
+ flex:none!important;margin:0!important;padding:6px!important;overflow:hidden!important
+}
+#ctoon-shop-grid .ctoon-shop-art{
+ box-sizing:border-box!important;position:relative!important;display:flex!important;
+ align-items:center!important;justify-content:center!important;flex:0 0 150px!important;
+ width:100%!important;height:150px!important;min-height:150px!important;max-height:150px!important;
+ aspect-ratio:auto!important;overflow:hidden!important
+}
+#ctoon-shop-grid .ctoon-shop-art img{
+ box-sizing:border-box!important;display:block!important;position:relative!important;
+ width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+ padding:7px!important;margin:0!important;flex:none!important;
+ object-fit:contain!important;object-position:center!important
+}
+#ctoon-shop-grid .ctoon-shop-owned{
+ top:5px!important;right:5px!important;max-width:calc(100% - 10px);
+ padding:3px 5px!important;font-size:10px!important;line-height:1.1!important;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+#ctoon-shop-grid .ctoon-shop-owned.is-sold-out{
+ background:#514c5c!important;border-color:#a7a1b0!important;color:#fff!important
+}
+#ctoon-shop-grid .ctoon-shop-details{
+ box-sizing:border-box!important;display:flex!important;flex:1 1 auto!important;
+ flex-direction:column!important;justify-content:space-between!important;
+ width:100%!important;min-height:0!important;min-width:0!important;
+ padding:6px 3px 3px!important;gap:3px!important;overflow:hidden!important
+}
+#ctoon-shop-grid .ctoon-shop-name{
+ box-sizing:border-box!important;display:flex!important;align-items:center!important;
+ justify-content:center!important;gap:4px!important;width:100%;min-width:0!important;
+ height:29px!important;min-height:29px!important;max-height:29px!important;
+ margin:0!important;font-size:12px!important;line-height:1.15!important;
+ white-space:normal!important;overflow:hidden!important
+}
+#ctoon-shop-grid .ctoon-shop-name-text{
+ min-width:0;max-height:2.3em;overflow:hidden;overflow-wrap:anywhere;
+ display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+ line-clamp:2;text-overflow:ellipsis
+}
+#ctoon-shop-grid .ctoon-shop-rarity{
+ flex:none;font-size:9px!important;padding:2px 3px!important;line-height:1!important
+}
+#ctoon-shop-grid .collection-series{
+ flex:none;min-height:12px;font-size:10px!important;line-height:1.15!important;
+ margin:0!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+#ctoon-shop-grid .ctoon-shop-purchase{
+ display:flex!important;flex:none;justify-content:space-between!important;
+ align-items:center!important;gap:4px!important;margin:0!important;min-width:0
+}
+#ctoon-shop-grid .ctoon-shop-price{
+ font-size:10px!important;line-height:1.15!important;white-space:nowrap;min-width:0
+}
+#ctoon-shop-grid .ctoon-shop-buy{
+ box-sizing:border-box!important;flex:none;min-height:26px!important;
+ padding:4px 6px!important;font-size:10px!important;line-height:1.15!important;
+ white-space:nowrap
+}
+#ctoon-shop-grid .ctoon-shop-buy.is-sold-out{
+ background:#514c5c!important;color:#f3eaf7!important;
+ border-color:#807887!important;cursor:not-allowed!important;
+ opacity:.85!important;box-shadow:none!important
+}
+#ctoon-shop-grid .ctoon-shop-status{
+ flex:none;display:-webkit-box!important;-webkit-box-orient:vertical;
+ -webkit-line-clamp:2;line-clamp:2;overflow:hidden!important;
+ max-height:25px!important;min-height:23px!important;
+ margin:0!important;font-size:9px!important;line-height:1.25!important;
+ overflow-wrap:anywhere!important
+}
+/* Artwork must remain still; only the neon frame may brighten on hover. */
 #ctoon-shop-grid .ctoon-shop-card,
 #ctoon-shop-grid .ctoon-shop-art,
-#ctoon-shop-grid .ctoon-shop-art img,
-#ctoon-shop-grid .ctoon-shop-card:hover,
-#ctoon-shop-grid .ctoon-shop-card:hover .ctoon-shop-art,
-#ctoon-shop-grid .ctoon-shop-card:hover .ctoon-shop-art img {
- animation:none!important;
- transition:none!important;
- transform:none!important;
- translate:none!important;
- rotate:none!important;
- scale:none!important;
+#ctoon-shop-grid .ctoon-shop-art img{
+ animation:none!important;transition:none!important;transform:none!important;
+ translate:none!important;rotate:none!important;scale:none!important
 }
-
-/* The animated rotating glow is on ::before, not the image itself. */
 body.shop-cartoon-page #ctoon-shop-grid .ctoon-shop-art::before,
 body.shop-cartoon-page #ctoon-shop-grid .ctoon-shop-art::after,
 body.shop-cartoon-page #ctoon-shop-grid .ctoon-shop-card::before,
-body.shop-cartoon-page #ctoon-shop-grid .ctoon-shop-card::after {
- animation:none!important;
- transition:none!important;
- transform:none!important;
+body.shop-cartoon-page #ctoon-shop-grid .ctoon-shop-card::after{
+ animation:none!important;transition:none!important;transform:none!important
 }
-body.shop-cartoon-page #ctoon-shop-grid .ctoon-shop-art::before {content:none!important;display:none!important;}
-.ctoon-shop-buy.is-sold-out{background:#514c5c!important;color:#f3eaf7!important;border-color:#807887!important;cursor:not-allowed!important;opacity:.85!important;box-shadow:none!important}
-</style><script type="module" src="ctoon-shop.js?v=sold-out-buttons-20261114"></script></head>
+body.shop-cartoon-page #ctoon-shop-grid .ctoon-shop-art::before{content:none!important;display:none!important}
+@media(max-width:430px){
+ #ctoon-shop{padding:16px 10px;margin:12px auto}
+ #ctoon-shop-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,182px),1fr))!important;gap:12px}
+}
+</style><script type="module" src="ctoon-shop.js?v=shop-display-repair-20261115"></script></head>
 <body class="shop-cartoon-page"><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a><nav aria-label="Main navigation"><a href="index.html" class="nav-link"><span class="nav-icon" aria-hidden="true">⌂</span><span>Home</span></a><a href="ctoons.html" class="nav-link"><span class="nav-icon" aria-hidden="true">▣</span><span>CToons</span></a><a href="shop.html" class="nav-link active"><span class="nav-icon" aria-hidden="true">🛒</span><span>Shop</span></a><a href="games.html" class="nav-link"><span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span></a><a href="watch.html" class="nav-link"><span class="nav-icon" aria-hidden="true">▶</span><span>Watch</span></a><div class="community-dropdown"><button type="button" class="nav-link community-dropdown-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">♧</span><span>Community</span><span aria-hidden="true">▾</span></button><div class="community-dropdown-panel"><a href="forums.html">Forums</a><a href="guild.html">Guild</a><a href="support.html">Support</a></div></div><div class="account-dropdown"><button type="button" class="nav-link account-dropdown-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">●</span><span>Account</span><span aria-hidden="true">▾</span></button><div class="account-dropdown-panel"><a href="login.html" data-account-guest hidden>Login</a><a href="account.html" data-account-guest hidden>Register</a><a href="account.html" data-account-signed hidden>My Profile</a><a href="account.html#redeem-codes" data-account-signed hidden>Redeem Code</a><button type="button" data-account-signed data-account-logout hidden>Log Out</button></div></div><div class="owner-menu owner-nav" style="display:none!important"><button type="button" class="nav-link owner-menu-trigger" aria-haspopup="true" aria-expanded="false"><span class="nav-icon" aria-hidden="true">♛</span><span>Owner</span><span aria-hidden="true">▾</span></button><div class="owner-menu-panel"><a href="owner.html">Dashboard</a><a href="owner.html#coin-management">Coin Management</a><a href="owner.html#owner-redeem-codes">Redeem Codes</a><a href="owner.html#music-management">Music Management</a></div></div></nav><div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div><span class="header-tag">NEW UNIVERSE</span></header><main id="main" class="shop-main"><section class="section shop-intro"><div class="eyebrow" style="margin:0 auto 1rem;max-width:260px"><img src="ctooniverse-logo.png" alt="CTooniverse" style="display:inline-block;width:min(100%,360px);height:auto;vertical-align:middle" loading="lazy"></div><div class="shop-neon-sign" aria-hidden="true"><span>★</span> THE NEON MARKET <span>★</span></div><p class="eyebrow">Marketplace</p><h1>THE CTOONIVERSE <span>SHOP</span></h1><p class="lead">Browse CToons, cards, and upcoming shop departments.</p><span class="coming-tag">MORE ITEMS COMING SOON</span></section><span id="ctoon-store" class="sr-only" aria-hidden="true"></span><section class="section" id="ctoon-shop" aria-label="CToon Shop"><h2>CToon Shop</h2><p>Browse all available CToons in alphabetical order. Sign in to buy with your coins.</p><div id="ctoon-shop-grid" class="ctoon-shop-grid" aria-live="polite"><p>Loading CToons…</p></div></section><section class="section shop-departments" aria-label="Shop departments"><h2>Explore departments A–Z</h2><div class="shop-department-grid"><article class="shop-department"><span class="shop-department-icon" aria-hidden="true">🃏</span><h3>Card Shop</h3><p>Card purchases are coming later. See designs in the Cards hub.</p><span class="coming-tag">COMING SOON</span><a class="button secondary" href="cards.html">Explore Cards</a></article><article class="shop-department"><span class="shop-department-icon" aria-hidden="true">🔄</span><h3>Trading &amp; Recycler</h3><p>New ways to trade and manage collectibles are in development.</p><span class="coming-tag">COMING SOON</span></article></div></section></main><footer><span>© <span id="year">2026</span> CTooniverse</span><span>Built from scratch. Built to collect.</span></footer><script type="module" src="site-chat-widget.js?v=1"></script></body></html>
