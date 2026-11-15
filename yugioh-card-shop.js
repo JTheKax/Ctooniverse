@@ -8,6 +8,23 @@ const ART_ENDPOINT=URL_ROOT+"/functions/v1/yugioh-artwork?id=";
 const PAGE_SIZE=36;
 let user=null,packs=[],collection=[],collectionCount=0,collectionOffset=0,collectionSearch="",busy=false,loadId=0;
 const pending=new Map();
+function requestKey(packId){return "ycs-pending-"+user.id+"-"+packId;}
+function rememberRequest(packId,id){
+ pending.set(packId,id);
+ try{sessionStorage.setItem(requestKey(packId),id);}catch(_){}
+}
+function pendingRequest(packId){
+ let id=pending.get(packId);
+ if(!id)try{
+  const stored=sessionStorage.getItem(requestKey(packId));
+  if(stored&&/^[a-f0-9-]{36}$/i.test(stored)){id=stored;pending.set(packId,id);}
+ }catch(_){}
+ return id||null;
+}
+function clearRequest(packId){
+ pending.delete(packId);
+ try{sessionStorage.removeItem(requestKey(packId));}catch(_){}
+}
 function el(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=String(text);return e;}
 function status(text,error=false){$("ycs-status").textContent=text;$("ycs-status").dataset.error=String(error);}
 function money(n){return Number(n).toLocaleString()+" coins";}
@@ -149,18 +166,18 @@ async function openPack(pack){
  if(busy||!user)return;
  const {data,error:authError}=await db.auth.getUser();
  if(authError||!data.user||data.user.id!==user.id){status("Please sign in again before purchasing.",true);return;}
- if(!pending.has(pack.id)){
+ if(!pendingRequest(pack.id)){
   if(!confirm("Spend "+money(pack.price_coins)+" on "+pack.name+"? You will receive "+
     pack.card_count+" random collectible cards."))return;
-  pending.set(pack.id,crypto.randomUUID());
+  rememberRequest(pack.id,crypto.randomUUID());
  }
  busy=true;drawPacks();status("Opening "+pack.name+"…");
  let purchased=false;
  try{
-  const {data:opening,error}=await db.rpc("open_yugioh_pack",{p_pack_id:pack.id,p_request_id:pending.get(pack.id)});
+  const {data:opening,error}=await db.rpc("open_yugioh_pack",{p_pack_id:pack.id,p_request_id:pendingRequest(pack.id)});
   if(error)throw error;
   purchased=true;
-  pending.delete(pack.id);
+  clearRequest(pack.id);
   window.dispatchEvent(new Event("ctoon-profile-updated"));
   status("Pack opened! Your purchased cards were added to your collection.");
   try { await showOpening(opening); } catch(e) {
