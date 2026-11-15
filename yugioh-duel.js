@@ -21,6 +21,61 @@
     hole:["Trap Hole","trap","Destroy a face-up Normal Summoned monster with at least 1000 ATK.","🕳️"],
     negate:["Negate Attack","trap","Cancel an opponent's attack.","🛡️"]
   };
+
+  // Artwork for the playable prototype's 26 cards, mapped to IDs already
+  // indexed in the CTooniverse Supabase Yu-Gi-Oh! card catalog.
+  const artIds={
+    dark:46986414,blue:89631139,red:74677422,skull:70781052,
+    celtic:91152256,stone:13039848,ox:5053103,jinn:97590747,
+    elf:15025844,kuriboh:40640057,dragon:88819587,harpie:76812113,
+    imp:41392891,kaiser:17444133,ryu:24611934,lord:17985575,
+    pot:55144522,fissure:66788016,reborn:83764719,heal:84257640,
+    swords:72302403,axe:40619825,storm:5318639,mirror:44095762,
+    hole:4206964,negate:14315573
+  };
+  const artStorage="https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/yugioh-artwork/small/";
+  const artFunction="https://hsxdyxdazsdmpucyhqly.supabase.co/functions/v1/yugioh-artwork";
+  const artJobs=[];
+  let artRequests=0;
+  function pumpImages(){
+    while(artRequests<2&&artJobs.length){
+      const job=artJobs.shift();
+      if(!job.img.isConnected)continue;
+      artRequests++;
+      let finished=false;
+      const release=()=>{
+        if(finished)return;
+        finished=true;
+        artRequests--;
+        setTimeout(pumpImages,180);
+      };
+      job.img.addEventListener("load",release,{once:true});
+      job.img.addEventListener("error",release,{once:true});
+      job.img.src=job.url;
+    }
+  }
+  function decorateArt(node,card){
+    const id=artIds[card.id];
+    if(!id)return;
+    const picture=document.createElement("img");
+    picture.alt="";
+    picture.loading="lazy";
+    picture.decoding="async";
+    let attempted=false;
+    picture.addEventListener("load",()=>node.classList.add("yd-art-loaded"));
+    picture.addEventListener("error",()=>{
+      if(!attempted){
+        attempted=true;
+        artJobs.push({img:picture,url:artFunction+"?id="+id+"&size=small"});
+        pumpImages();
+      }else{
+        picture.remove();
+      }
+    });
+    node.append(picture);
+    picture.src=artStorage+id+".jpg";
+  }
+
   const deckLists={
     player:{dark:2,red:1,skull:2,celtic:3,stone:3,ox:2,kuriboh:3,elf:3,dragon:2,harpie:2,imp:3,jinn:2,pot:2,fissure:2,reborn:1,heal:1,swords:1,axe:1,storm:1,mirror:1,hole:1,negate:1},
     cpu:{blue:3,skull:1,ox:3,jinn:3,stone:3,kaiser:3,ryu:3,lord:2,elf:2,imp:3,harpie:2,pot:2,fissure:2,reborn:1,heal:1,swords:1,axe:1,storm:1,mirror:1,hole:1,negate:1}
@@ -118,7 +173,7 @@
     if(hidden){root.textContent="✦";return root;}
     const name=document.createElement("strong");name.className="yd-card-name";name.textContent=card.name;
     const stars=document.createElement("small");stars.className="yd-stars";stars.textContent=card.type==="monster"?"★".repeat(card.level):card.type.toUpperCase();
-    const art=document.createElement("span");art.className="yd-art";art.textContent=card.icon;
+    const art=document.createElement("span");art.className="yd-art";art.textContent=card.icon;decorateArt(art,card);
     const stats=document.createElement("small");stats.className="yd-stats";stats.textContent=card.type==="monster"?"ATK "+(card.atk)+" / DEF "+card.def:card.type.toUpperCase();root.append(name,stars,art,stats);return root;}
   function renderRow(side,kind){const slots=game[side][kind],parent=$("yd-"+side+"-"+kind);parent.replaceChildren();
     slots.forEach((entry,i)=>{const button=document.createElement("button");button.type="button";button.className="yd-slot";const isMonster=kind==="field",hidden=side==="cpu"?(isMonster?entry?.hidden:!!entry):isMonster&&entry?.hidden;
