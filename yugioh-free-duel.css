@@ -99,3 +99,22 @@
  .yd-free-duel-portrait{min-height:104px;height:104px}
  .yd-free-duel-preview{grid-template-columns:88px minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){.yd-free-duel-thumb{transition:none!important}}
+
+/* Official character illustrations in the Free Duel portrait grid.
+   Keep the full-size detail art centered; names remain readable on top. */
+.yd-free-duel-thumb .yd-character-art{
+ background:radial-gradient(ellipse at 50% 18%,#606c82,#20242e 75%)!important;
+}
+.yd-free-duel-thumb .yd-character-art>.yd-character-image{
+ width:100%!important;height:100%!important;
+ object-fit:cover!important;object-position:center 12%!important;
+}
+.yd-free-duel-portrait .yd-character-art{
+ background:radial-gradient(ellipse at 50% 28%,#52577a,#131e31 75%)!important;
+}
+.yd-free-duel-portrait .yd-character-art>.yd-character-image{
+ width:100%!important;height:100%!important;
+ object-fit:contain!important;object-position:center top!important;
+}
+.yd-free-duel-disclaimer a{color:#ffeaab;font-weight:800;text-underline-offset:3px}
+.yd-free-duel-disclaimer a:focus-visible{outline:2px solid #bdfbff;outline-offset:3px}
