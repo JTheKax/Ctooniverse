@@ -166,7 +166,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     if(card.id==="storm"){const i=e.traps.findIndex(Boolean);if(i>=0){destroyTrap(opponent(side),i);note("A set Trap card is destroyed.");}}
     // Starter-template spells other than the original small prototype pool
     // use an explicitly simplified effect. Do not represent this as official card text.
-    if(card.id.startsWith("starter_")){p.lp+=500;note(who(side)+" gains 500 LP from a prototype Spell effect.");}
+    if(card.id.startsWith("starter_")||card.id.startsWith("npc_")){p.lp+=500;note(who(side)+" gains 500 LP from a prototype Spell effect.");}
     if(card.id==="reborn"){let i=-1;for(let j=p.grave.length-1;j>=0;j--)if(p.grave[j].type==="monster"){i=j;break;}if(i>=0){const revived=p.grave.splice(i,1)[0],slot=p.field.findIndex(x=>!x);p.field[slot]={card:revived,defense:false,hidden:false,attacked:false,bonus:0,changed:game.turn};note(who(side)+" revives "+revived.name+".");}}
     render();
   }
@@ -182,7 +182,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     if(mirror>=0){destroyTrap(enemySide,mirror);note(who(enemySide)+" activates Mirror Force!");p.field.forEach((v,i)=>{if(v&&!v.defense)sendGrave(side,i);});game.selected=null;render();return;}
     const negate=e.traps.findIndex(x=>x&&x.card.id==="negate"&&x.turn<game.turn);
     if(negate>=0){destroyTrap(enemySide,negate);note(who(enemySide)+" activates Negate Attack!");game.selected=null;render();return;}
-    const starterTrap=e.traps.findIndex(x=>x&&x.card.id.startsWith("starter_")&&x.turn<game.turn);
+    const starterTrap=e.traps.findIndex(x=>x&&(x.card.id.startsWith("starter_")||x.card.id.startsWith("npc_"))&&x.turn<game.turn);
     if(starterTrap>=0){destroyTrap(enemySide,starterTrap);note(who(enemySide)+" blocks the attack with a prototype Trap effect.");game.selected=null;render();return;}
     const atk=m.card.atk+m.bonus;
     if(target===null){damage(enemySide,atk);note(m.card.name+" attacks directly for "+atk+" damage!");}
