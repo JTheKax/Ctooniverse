@@ -279,7 +279,7 @@
       const row = result.rows[0];
       if (!row) throw new Error("No status");
       const date = row.last_imported_at ? new Date(row.last_imported_at).toLocaleDateString() : "not yet";
-      $("yc-source").textContent = formatNumber(row.imported_cards) + " cards imported · Updated " + date + " · Source: " + row.source;
+      $("yc-source").textContent = formatNumber(row.imported_cards) + " English-language cards · Updated " + date + " · Source: " + row.source;
     } catch (_) {
       $("yc-source").textContent = "Search the Yu-Gi-Oh! card reference database.";
     }
