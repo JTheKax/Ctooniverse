@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#18102d">
+<meta name="description" content="The Auction House at CTooniverse, part of the Neon Market.">
+<title>Auction House | CTooniverse</title>
+<link rel="stylesheet" href="styles.css?v=mobile-tabs-20261114">
+<link rel="stylesheet" href="arcade-polish.css?v=2">
+<script src="script.js?v=20261115-shop-auction-v1" defer></script>
+<script type="module" src="header-profile.js?v=owner-card-stable-20261103"></script>
+<script type="module" src="account-menu.js?v=1"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
+<style>
+body.auction-page{background:#160d2b url("shop-cartoon-background.png") center/cover fixed no-repeat!important}
+body.auction-page main{box-sizing:border-box;width:min(1100px,calc(100% - 24px));margin:clamp(22px,4vw,52px) auto 70px;color:#fff}
+.auction-hero,.auction-board{position:relative;overflow:hidden;border:2px solid #ddb66d;border-radius:20px;background:linear-gradient(145deg,#22153bef,#101c32ed 65%,#251433ed);box-shadow:0 12px 35px #0009,inset 0 0 35px #6b47ad30;padding:clamp(20px,4vw,42px)}
+.auction-hero{text-align:center}
+.auction-hero .auction-kicker{color:#efce88;letter-spacing:.17em;text-transform:uppercase;font-size:.78rem;font-weight:900}
+.auction-hero h1{color:#ffe8a8;font-size:clamp(2rem,6vw,4rem);line-height:1.08;margin:12px auto}
+.auction-hero p{color:#f1e8fa;max-width:65ch;margin:12px auto;line-height:1.6}
+.auction-status{display:inline-block;padding:8px 15px;border:1px solid #deb868;border-radius:999px;background:#4a3518;color:#ffe9ab;font-weight:800;letter-spacing:.06em;font-size:.85rem}
+.auction-links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:23px}
+.auction-links a{display:inline-block;border:2px solid #b795ef;border-radius:11px;padding:11px 15px;background:#39255e;color:#fff;text-decoration:none;font-weight:850}
+.auction-links a:hover,.auction-links a:focus-visible{background:#55367f;border-color:#e0c3ff}
+.auction-links a:focus-visible{outline:3px solid #8cecff;outline-offset:3px}
+.auction-board{margin-top:22px}
+.auction-board h2{color:#ffe8a8;margin:0 0 14px;font-size:clamp(1.3rem,3vw,1.9rem)}
+.auction-empty{border:2px dashed #a38db6;background:#14132bbd;border-radius:16px;padding:clamp(22px,5vw,46px);text-align:center}
+.auction-empty strong{display:block;color:#ffe1a6;font-size:1.22rem}
+.auction-empty p{margin:10px auto 0;line-height:1.55;color:#e6ddf4}
+@media(max-width:700px){body.auction-page{background-attachment:scroll!important}.auction-links{flex-direction:column}.auction-links a{width:100%;box-sizing:border-box}}
+</style>
+</head>
+<body class="shop-cartoon-page auction-page">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a>
+<nav aria-label="Main navigation">
+<a href="index.html" class="nav-link">Home</a>
+<a href="ctoons.html" class="nav-link">CToons</a>
+<a href="games.html" class="nav-link">Games</a>
+<a href="cards.html" class="nav-link">Cards</a>
+<a href="shop.html" class="nav-link active">Shop</a>
+<a href="watch.html" class="nav-link">Theater</a>
+<a href="community.html" class="nav-link">Community</a>
+<a href="account.html" class="nav-link">Account</a>
+</nav>
+<div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div>
+<span class="header-tag">NEW UNIVERSE</span>
+</header>
+<main id="main">
+<section class="auction-hero" aria-labelledby="auction-title">
+<p class="auction-kicker">✦ THE NEON MARKET ✦</p>
+<h1 id="auction-title">🔨 Auction House</h1>
+<p>A new destination in the CTooniverse Shop for future player auctions.</p>
+<span class="auction-status">AUCTIONS NOT OPEN YET</span>
+<div class="auction-links">
+<a href="shop.html">🎴 Visit CToons Shop</a>
+<a href="yugioh-card-shop.html">🃏 Visit Yu-Gi-Oh! Card Shop</a>
+</div>
+</section>
+<section class="auction-board" aria-labelledby="auction-board-title">
+<h2 id="auction-board-title">Auction Listings</h2>
+<div class="auction-empty" role="status">
+<strong>No auctions available</strong>
+<p>Listings, bids, and transfers are not enabled yet. No coins or collectibles can be exchanged here until the Auction House is built.</p>
+</div>
+</section>
+</main>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>The Neon Market · Auction House</span></footer>
+<script type="module" src="site-chat-widget.js?v=1"></script>
+</body>
+</html>
