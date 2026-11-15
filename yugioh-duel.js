@@ -90,6 +90,26 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
 
   // Free Duel rivals: signature-card portraits and catalog-derived thematic decks.
   // Opponent selection never modifies the permanent starter or owned inventory.
+  // Actual Duel Monsters character art from the official Yu-Gi-Oh! character
+  // profiles. Load from the source host; if unavailable, show the in-game
+  // signature-card artwork instead of an empty roster slot.
+  const DUELIST_PORTRAITS=Object.freeze({
+    "yugi": "https://uploads3.yugioh.com/character/2/detail/detail/yugi-l.png?1371660955=",
+    "kaiba": "https://uploads4.yugioh.com/character/11/detail/detail/kaib-l.png?1375717119=",
+    "joey": "https://uploads2.yugioh.com/character/5/detail/detail/joey-l.png?1375717061=",
+    "pegasus": "https://uploads2.yugioh.com/character/13/detail/detail/pagasus.png?1375717258=",
+    "mai": "https://uploads3.yugioh.com/character/6/detail/detail/mai-l.png?1375717076=",
+    "weevil": "https://uploads3.yugioh.com/character/155/detail/detail/weevil-lg.png?1384808905=",
+    "rex": "https://uploads4.yugioh.com/character/149/detail/detail/rex-lrgs.png?1393274278=",
+    "mako": "https://uploads4.yugioh.com/character/111/detail/detail/mako-lgx.png?1384883790=",
+    "keith": "https://uploads1.yugioh.com/character/62/detail/detail/bandit-lg.png?1384883953=",
+    "bakura": "https://uploads4.yugioh.com/character/14/detail/detail/y-bakura-l.png?1371755458=",
+    "marik": "https://uploads3.yugioh.com/character/12/detail/detail/ymarik-l.png?1371754161=",
+    "ishizu": "https://uploads4.yugioh.com/character/58/detail/detail/ishizu-lg.png?1384802855=",
+    "tea": "https://uploads2.yugioh.com/character/8/detail/detail/tea-l.png?1371746845=",
+    "odion": "https://uploads2.yugioh.com/character/59/detail/detail/odion-lg.png?1384802615=",
+    "bonz": "https://uploads2.yugioh.com/character/136/detail/detail/bonz-lrg.png?1393274111="
+  });
   const DUELISTS=[
     {id:"yugi",name:"Yugi Muto",epithet:"King of Games",hero:46986414,race:"Spellcaster",difficulty:3,style:"Dark Magician · Spellcaster tactics",flavor:"A balanced rival whose spellcasters reward careful play."},
     {id:"kaiba",name:"Seto Kaiba",epithet:"Blue-Eyes Rival",hero:89631139,race:"Dragon",difficulty:5,style:"Blue-Eyes · Dragon power",flavor:"High-attack dragons threaten your Life Points."},
@@ -311,6 +331,28 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     img.src=artStorage+encodeURIComponent(String(id))+".jpg";
     wrapper.append(img);return wrapper;
   }
+  function duelistArtwork(profile){
+    const frame=elt("span","yd-starter-art yd-character-art");
+    const url=DUELIST_PORTRAITS[profile.id];
+    if(!url){
+      frame.replaceChildren(starterArtwork(profile.hero,profile.name+" signature card"));
+      return frame;
+    }
+    const img=document.createElement("img");
+    img.className="yd-character-image";
+    img.alt=profile.name+" portrait";
+    img.loading="lazy";
+    img.decoding="async";
+    // Image errors are handled locally. Never block a duel if an external
+    // illustration is unavailable or the source host changes its URLs.
+    img.addEventListener("error",()=>{
+      if(img.isConnected)frame.replaceChildren(starterArtwork(profile.hero,profile.name+" signature card"));
+    },{once:true});
+    frame.append(img);
+    img.src=url;
+    return frame;
+  }
+
   async function previewStarter(template){
     const root=$("yd-starter-preview");
     root.hidden=false;root.replaceChildren(elt("p","","Loading fixed card list…"));
@@ -435,7 +477,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     $("yd-free-duel-style").textContent=profile.style+" · "+profile.flavor;
     const r=opponentRecord(profile.id);
     $("yd-free-duel-record").textContent="Your record: "+r.wins+" wins · "+r.losses+" losses";
-    $("yd-free-duel-preview-art").replaceChildren(starterArtwork(profile.hero,profile.name+" signature"));
+    $("yd-free-duel-preview-art").replaceChildren(duelistArtwork(profile));
     for(const btn of $("yd-free-duel-grid").querySelectorAll(".yd-free-duel-thumb")){
       btn.setAttribute("aria-pressed",String(btn.dataset.duelist===profile.id));
     }
@@ -450,7 +492,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
       portrait.dataset.duelist=profile.id;
       portrait.setAttribute("aria-label",profile.name+", difficulty "+profile.difficulty+" of 5");
       portrait.setAttribute("aria-pressed","false");
-      portrait.append(starterArtwork(profile.hero,profile.name+" signature"));
+      portrait.append(duelistArtwork(profile));
       portrait.append(elt("span","yd-free-duel-thumb-difficulty","★".repeat(profile.difficulty)));
       portrait.append(elt("span","yd-free-duel-thumb-name",profile.name));
       portrait.addEventListener("click",()=>{
