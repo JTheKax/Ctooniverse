@@ -93,8 +93,9 @@ if (year) year.textContent = String(new Date().getFullYear());
     '<span class="games-dropdown-heading">🎁 Prize Games</span>'+
     '<a href="claw-machine.html">CToon Claw Craze</a>'+
     '<a href="prize-wheel.html">Boogie’s Prize Wheel</a>'+
+    '<a href="pinball.html">CToon Winball</a>'+
     '</div>';
-  if(['games.html','claw-machine.html','prize-wheel.html'].includes(page)){
+  if(['games.html','claw-machine.html','prize-wheel.html','pinball.html'].includes(page)){
     games.querySelector('.games-dropdown-trigger').classList.add('active');
     games.querySelectorAll('a[href]').forEach(a=>{
       if(a.getAttribute('href')===page)a.setAttribute('aria-current','page');
