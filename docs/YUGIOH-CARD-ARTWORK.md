@@ -2,6 +2,23 @@
 
 CTooniverse's card database holds **14,681 card records** and **14,853 indexed image variants** (including alternate artwork for 125 cards) as of 2026-11-15.
 
+## English-only catalog policy
+
+The source import uses YGOPRODeck API v7's default language (English). Do **not**
+supply `language=fr`, `language=de`, `language=it`, or `language=pt` to future imports.
+
+The Supabase `yugioh_cards.language_code` column defaults to `en` and a
+database check constraint rejects non-English language codes, including
+explicit non-English language tags in imported `card_data`. Rebuild/import
+jobs must set their language explicitly instead of assuming localized source
+data is English. English card names may legitimately include accented letters,
+stars, Greek letters, and decorative punctuation; those are **not** reasons
+to delete those cards.
+
+An English translation of an OCG-only card is still an English-language
+catalog record. Removing OCG-exclusive cards would be a separate decision
+based on edition/region, **not** a language filter.
+
 ## Hosting
 
 YGOPRODeck API v7 provides artwork references in `card_images` but explicitly requires you to **download and re-host images rather than hotlink them**. Its source server can block high-volume fetchers. Documentation: https://ygoprodeck.com/api-guide/
