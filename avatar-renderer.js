@@ -2,8 +2,8 @@
 // Original paper-cutout designs; no official series art or character assets.
 // All user appearance values are strictly whitelisted before SVG interpolation.
 const COLORS={
- skin:'#f2be97',hair:'#302442',shirt:'#624be3',pants:'#293862',
- hatColor:'#df3957',hatAccent:'#ffc950',background:'#34286d'
+ skin:'#ffd19f',hair:'#513020',shirt:'#d72f38',pants:'#414b79',
+ hatColor:'#354e87',hatAccent:'#d72f38',background:'#f8f8fb'
 };
 const OPTIONS={
  hairStyle:['short','swoop','spiky','long','curly','bald'],
@@ -17,8 +17,8 @@ const OPTIONS={
 const HEX=/^#[0-9a-f]{6}$/i;
 export const AVATAR_OPTIONS=OPTIONS;
 export const DEFAULT_AVATAR=Object.freeze({
- theme:'paper-cutout',version:2,hairStyle:'swoop',hat:'beanie',
- outfit:'coat',face:'smile',accessory:'none',eyes:'black',backdrop:'spotlight',
+ theme:'paper-cutout',version:3,hairStyle:'swoop',hat:'pom',
+ outfit:'coat',face:'smile',accessory:'none',eyes:'black',backdrop:'plain',
  ...COLORS
 });
 export function normalizeAvatar(source={}){
@@ -39,55 +39,89 @@ export function normalizeAvatar(source={}){
  if(typeof input.aura==='string'&&input.aura==='stars'&&!input.backdrop)a.backdrop='stars';
  return a;
 }
-export function avatarSvg(value={}){
+export function avatarSvg(value={}) {
  const a=normalizeAvatar(value);
- const stroke='#201c2c';
- let decor='';
- if(a.backdrop==='stars')decor=`<g fill="#f8df6e"><path d="M35 52l6 12 13 2-10 9 2 13-11-6-12 6 3-13-10-9 13-2z"/><path d="M267 86l4 10 10 3-8 6 2 11-8-5-9 5 2-11-8-6 10-3z"/><circle cx="275" cy="200" r="5"/><circle cx="51" cy="234" r="4"/></g>`;
- if(a.backdrop==='snow')decor='<g fill="#fff" opacity=".65"><circle cx="38" cy="52" r="7"/><circle cx="278" cy="86" r="10"/><circle cx="49" cy="179" r="5"/><circle cx="269" cy="250" r="6"/></g>';
- const hairBase=a.hairStyle==='long'? `<path d="M83 111 Q73 39 159 34 Q234 43 228 123 L229 220 L88 220Z" fill="${a.hair}" stroke="${stroke}" stroke-width="6"/>`:'';
- const legs=`<path d="M116 276L116 351Q133 364 159 350L159 286ZM161 286L161 350Q190 365 209 350L204 276Z" fill="${a.pants}" stroke="${stroke}" stroke-width="6" stroke-linejoin="round"/>`;
- const shoes=`<path d="M113 345 Q102 354 101 366 Q103 381 140 379 L163 375L162 350Q142 351 113 345Z" fill="#f2efef" stroke="${stroke}" stroke-width="6"/><path d="M166 352 L205 345Q223 354 223 368Q219 381 183 379L161 375Z" fill="#f2efef" stroke="${stroke}" stroke-width="6"/>`;
- const body=a.outfit==='coat'
-  ?`<path d="M114 208 Q159 195 204 208 L225 300 Q163 311 95 300Z" fill="${a.shirt}" stroke="${stroke}" stroke-width="6" stroke-linejoin="round"/><path d="M157 211L157 302" stroke="${stroke}" stroke-width="5"/><circle cx="171" cy="245" r="3.5" fill="#fae59a"/><circle cx="171" cy="271" r="3.5" fill="#fae59a"/>`:
- a.outfit==='hoodie'? `<path d="M116 201 Q160 193 204 201L227 301Q158 315 94 301Z" fill="${a.shirt}" stroke="${stroke}" stroke-width="6"/><path d="M135 207 Q160 240 188 207" fill="none" stroke="#f4cda7" stroke-width="6"/><path d="M132 273 Q161 261 187 273L186 293L135 293Z" fill="none" stroke="${stroke}" stroke-width="4"/>`:
- a.outfit==='sweater'? `<path d="M112 210Q162 193 207 210L225 303Q160 314 96 303Z" fill="${a.shirt}" stroke="${stroke}" stroke-width="6"/><path d="M109 278Q160 293 216 278" fill="none" stroke="${a.hatAccent}" stroke-width="7"/>`:
- `<path d="M111 207Q160 193 206 207L225 301Q160 312 96 301Z" fill="${a.shirt}" stroke="${stroke}" stroke-width="6"/><path d="M140 210 Q160 229 181 210" stroke="${a.hatAccent}" stroke-width="5" fill="none"/>`;
- const arms=`<path d="M111 216 Q82 214 68 266 L91 282 L115 246Z" fill="${a.shirt}" stroke="${stroke}" stroke-width="6"/><path d="M206 216 Q236 214 251 266 L228 282 L203 246Z" fill="${a.shirt}" stroke="${stroke}" stroke-width="6"/><ellipse cx="83" cy="279" rx="20" ry="19" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="6"/><ellipse cx="237" cy="279" rx="20" ry="19" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="6"/>`;
- const face=`<ellipse cx="160" cy="136" rx="83" ry="85" fill="${a.skin}" stroke="${stroke}" stroke-width="7"/>`;
- const hairFront=a.hairStyle==='bald'?'':a.hairStyle==='curly'?
-  Array.from({length:8},(_,i)=>`<circle cx="${96+i*18}" cy="${61+Math.abs(i-3.5)*3}" r="18" fill="${a.hair}" stroke="${stroke}" stroke-width="2"/>`).join(''):
- a.hairStyle==='spiky'?`<path d="M86 110L75 45L110 58L122 23L151 54L179 28L189 56L228 43L225 108Q188 86 157 95Q112 86 86 110Z" fill="${a.hair}" stroke="${stroke}" stroke-width="5" stroke-linejoin="round"/>`:
- a.hairStyle==='long'?`<path d="M83 109Q72 57 125 47Q178 30 226 86Q191 72 177 83Q134 102 83 109Z" fill="${a.hair}" stroke="${stroke}" stroke-width="5"/>`:
- a.hairStyle==='short'?`<path d="M82 110Q72 58 137 48Q217 43 236 109Q214 97 199 94Q157 82 82 110Z" fill="${a.hair}" stroke="${stroke}" stroke-width="5"/>`:
- `<path d="M80 110Q61 54 145 43Q219 35 237 100Q207 109 182 82Q145 115 81 114Z" fill="${a.hair}" stroke="${stroke}" stroke-width="5"/>`;
- const eyes=`<ellipse cx="139" cy="136" rx="26" ry="33" fill="white" stroke="${stroke}" stroke-width="4"/><ellipse cx="182" cy="136" rx="26" ry="33" fill="white" stroke="${stroke}" stroke-width="4"/>`;
- const pupil=a.eyes==='black'?'#1a1929':a.eyes==='brown'?'#80482f':a.eyes==='green'?'#2c9c62':'#368fd7';
- const pupils=`<circle cx="145" cy="143" r="5.5" fill="${pupil}"/><circle cx="177" cy="143" r="5.5" fill="${pupil}"/><circle cx="146" cy="141" r="2" fill="#fff"/><circle cx="178" cy="141" r="2" fill="#fff"/>`;
- const mouth=a.face==='neutral'?'<path d="M147 189L174 189" fill="none" stroke="#452633" stroke-width="4" stroke-linecap="round"/>':
- a.face==='surprised'?'<ellipse cx="160" cy="189" rx="9" ry="13" fill="#482633"/>':
- a.face==='grin'?'<path d="M138 179Q160 215 181 179Q160 193 138 179Z" fill="white" stroke="#482633" stroke-width="3"/>':
- '<path d="M141 185 Q161 198 181 185" fill="none" stroke="#482633" stroke-width="4" stroke-linecap="round"/>';
- const hat=a.hat==='none'?'':a.hat==='beanie'?
- `<path d="M80 97Q82 12 161 20Q245 22 242 97Z" fill="${a.hatColor}" stroke="${stroke}" stroke-width="6"/><path d="M79 93Q161 77 243 93L242 113Q157 97 80 114Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/>`:
- a.hat==='pom'?`<circle cx="161" cy="18" r="17" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/><path d="M82 101Q91 25 159 29Q230 26 239 101Z" fill="${a.hatColor}" stroke="${stroke}" stroke-width="6"/><path d="M79 96Q160 84 244 96L241 113Q161 100 80 113Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/>`:
- a.hat==='earflaps'?`<path d="M86 105Q88 14 159 28Q234 19 237 103L239 144L219 147L212 108L108 108L99 147L78 145Z" fill="${a.hatColor}" stroke="${stroke}" stroke-width="6"/><path d="M82 94Q160 83 240 95" fill="none" stroke="${a.hatAccent}" stroke-width="11"/>`:
- `<path d="M84 97Q90 29 163 37Q226 37 238 100Z" fill="${a.hatColor}" stroke="${stroke}" stroke-width="6"/><path d="M146 100Q211 104 259 112Q236 127 156 116Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/>`;
- const extras=a.accessory==='glasses'?
- '<rect x="108" y="111" width="49" height="43" rx="13" fill="none" stroke="#343045" stroke-width="5"/><rect x="163" y="111" width="49" height="43" rx="13" fill="none" stroke="#343045" stroke-width="5"/><path d="M157 126H163" stroke="#343045" stroke-width="6"/>':
- a.accessory==='freckles'?
- '<g fill="#ad6a58"><circle cx="106" cy="171" r="3.5"/><circle cx="117" cy="174" r="3.5"/><circle cx="204" cy="171" r="3.5"/><circle cx="194" cy="174" r="3.5"/></g>':
- a.accessory==='blush'?
- '<ellipse cx="105" cy="177" rx="18" ry="8" fill="#e9828a" opacity=".75"/><ellipse cx="215" cy="177" rx="18" ry="8" fill="#e9828a" opacity=".75"/>':
- a.accessory==='scarf'?
- `<path d="M103 198Q161 221 217 198L220 216Q161 243 103 217Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="5"/><path d="M194 221L208 266L231 261L215 212Z" fill="${a.hatAccent}" stroke="${stroke}" stroke-width="4"/>`:'';
- return `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400" role="img" aria-label="Custom paper-cutout cartoon avatar">
-<rect width="320" height="400" rx="18" fill="${a.background}"/>
-${a.backdrop==='spotlight'?'<ellipse cx="160" cy="160" rx="128" ry="153" fill="#ffffff" opacity=".09"/>':''}
-${decor}<ellipse cx="160" cy="378" rx="102" ry="10" fill="#100d24" opacity=".45"/>
-<g stroke-linecap="round" stroke-linejoin="round">${hairBase}${legs}${shoes}${arms}${body}
-<path d="M142 193H181V215H142Z" fill="${a.skin}" stroke="${stroke}" stroke-width="5"/>
-${face}${hairFront}${eyes}${pupils}${mouth}${hat}${extras}</g></svg>`;
+ const ink='#19171d', edge=`stroke="${ink}" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round"`;
+ const hairEdge=`stroke="${ink}" stroke-width="4" stroke-linejoin="round"`;
+ const decoration=a.backdrop==='snow'
+  ? '<g fill="#fff" opacity=".9"><circle cx="38" cy="45" r="6"/><circle cx="282" cy="85" r="8"/><circle cx="49" cy="215" r="4"/><circle cx="271" cy="252" r="5"/></g>'
+  :a.backdrop==='stars'
+  ? '<g fill="#ffe08b"><path d="M35 62l5 11 12 1-9 8 2 12-10-6-11 6 2-12-9-8 12-1z"/><path d="M281 115l4 10 10 1-8 7 2 10-8-5-9 5 2-10-8-7 10-1z"/></g>'
+  :'';
+ const backdrop=a.backdrop==='plain'?'#f8f8fb':a.background;
+ const backdropDecor=a.backdrop==='spotlight'
+  ?'<ellipse cx="160" cy="175" rx="134" ry="161" fill="#ffffff" opacity=".13"/>':'';
+ const pants=`<path d="M109 324 L209 324 L213 374 Q190 381 163 372 L159 345 L156 372 Q125 382 107 374Z" fill="${a.pants}" ${edge}/><path d="M159 345V376" fill="none" stroke="${ink}" stroke-width="4"/>`;
+ const shoes=`<ellipse cx="120" cy="383" rx="44" ry="13" fill="${ink}"/><ellipse cx="199" cy="383" rx="44" ry="13" fill="${ink}"/>`;
+ const base=`<path d="M110 256 Q159 244 211 256 Q225 298 230 346 Q163 360 91 346 Q97 296 110 256Z" fill="${a.shirt}" ${edge}/>`;
+ let clothing='';
+ if(a.outfit==='coat') clothing=`
+ <path d="M113 267 Q130 245 160 260 Q185 245 208 267L215 284Q177 278 160 291Q139 280 105 283Z" fill="${a.shirt}" ${edge}/>
+ <path d="M160 283V350M99 315Q160 324 221 315" fill="none" stroke="${ink}" stroke-width="3.8"/>
+ <path d="M142 286L157 299M177 286L163 299" fill="none" stroke="${ink}" stroke-width="3"/>
+ <path d="M113 326l-12 25 10 4 15-26M195 329l14 25 10-5-12-23" fill="none" stroke="${ink}" stroke-width="3.7"/>
+ <rect x="155" y="294" width="10" height="20" rx="2" fill="#bbbcc6" stroke="${ink}" stroke-width="2"/>`;
+ else if(a.outfit==='hoodie') clothing=`
+ <path d="M112 263Q160 297 208 263Q204 250 187 255L160 271L133 254Q119 251 112 263Z" fill="${a.shirt}" ${edge}/>
+ <path d="M145 270l-4 26M176 270l4 26" stroke="#eeeeed" stroke-width="3" fill="none"/>
+ <path d="M124 322Q161 314 197 322L190 343H130Z" fill="none" stroke="${ink}" stroke-width="3.8"/>`;
+ else if(a.outfit==='sweater') clothing=`
+ <path d="M118 264Q160 281 201 264" fill="none" stroke="${a.hatAccent}" stroke-width="10"/>
+ <path d="M94 332Q160 344 225 332" fill="none" stroke="${a.hatAccent}" stroke-width="7"/>`;
+ else clothing=`<path d="M128 261Q160 283 192 261" fill="none" stroke="${a.hatAccent}" stroke-width="5"/>`;
+ const sleeves=`<path d="M111 267Q91 259 78 277Q62 294 56 326L86 337Q105 314 117 289Z" fill="${a.shirt}" ${edge}/>
+ <path d="M209 267Q229 259 242 277Q257 294 263 326L233 337Q215 314 202 289Z" fill="${a.shirt}" ${edge}/>
+ ${a.outfit==='coat'?`<path d="M61 319l28 9M231 328l27-9" fill="none" stroke="${ink}" stroke-width="3"/>`:''}
+ <path d="M79 331Q64 319 49 327Q30 341 40 360Q50 379 70 367Q85 358 79 347Q68 356 61 345" fill="${a.skin}" ${edge}/>
+ <path d="M241 331Q256 319 271 327Q290 341 280 360Q270 379 250 367Q235 358 241 347Q252 356 259 345" fill="${a.skin}" ${edge}/>`;
+ const backHair=a.hairStyle==='bald'?'':`
+ <path d="M72 161Q50 106 77 90Q90 68 131 72Q212 62 243 108Q261 142 251 192L276 213L248 209L249 229L224 215Q194 240 158 231Q120 241 90 213L72 226L66 201L44 211L61 179Z" fill="${a.hair}" ${hairEdge}/>`;
+ const head=`<ellipse cx="160" cy="182" rx="100" ry="99" fill="${a.skin}" ${edge}/>`;
+ let fringe='';
+ if(a.hairStyle==='swoop') fringe=`<path d="M62 171Q61 112 101 106L116 126L148 107L166 126L187 102L213 122L236 112Q257 134 258 165L244 155L231 174L220 152L200 166L179 145L152 160L128 145L107 166L92 148L75 174Z" fill="${a.hair}" ${hairEdge}/>`;
+ if(a.hairStyle==='short') fringe=`<path d="M62 159Q60 111 115 104Q183 92 235 114Q258 129 258 158L237 147L222 160Q193 147 161 155Q119 145 95 159L80 145Z" fill="${a.hair}" ${hairEdge}/>`;
+ if(a.hairStyle==='spiky') fringe=`<path d="M63 164L52 95L90 111L101 73L129 105L158 68L178 105L217 80L224 117L262 104L256 167Q221 146 200 158L176 142L146 161L116 145L89 164L76 146Z" fill="${a.hair}" ${hairEdge}/>`;
+ if(a.hairStyle==='long') fringe=`<path d="M59 174Q55 112 96 104Q164 83 234 112Q261 148 260 187L245 211L223 167L215 138Q166 160 130 139Q111 172 88 180L73 222L57 213Z" fill="${a.hair}" ${hairEdge}/>`;
+ if(a.hairStyle==='curly') fringe=`<g fill="${a.hair}" ${hairEdge}><circle cx="86" cy="127" r="22"/><circle cx="109" cy="112" r="23"/><circle cx="135" cy="106" r="22"/><circle cx="164" cy="109" r="22"/><circle cx="188" cy="108" r="23"/><circle cx="213" cy="118" r="22"/><circle cx="235" cy="136" r="23"/></g>`;
+ const eyeColor={black:'#19191e',brown:'#5f3b29',blue:'#2867b5',green:'#2c8052'}[a.eyes];
+ const eyes=`<ellipse cx="133" cy="187" rx="36" ry="40" fill="white" stroke="#bab7ba" stroke-width="1.2"/>
+ <ellipse cx="188" cy="187" rx="36" ry="40" fill="white" stroke="#bab7ba" stroke-width="1.2"/>
+ <circle cx="152" cy="189" r="5" fill="${eyeColor}"/><circle cx="172" cy="189" r="5" fill="${eyeColor}"/>`;
+ const mouth=a.face==='neutral'?'<path d="M147 257h27" stroke="#1b161b" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  :a.face==='surprised'?'<ellipse cx="160" cy="253" rx="8" ry="11" fill="#3b1c24"/>'
+  :a.face==='grin'?'<path d="M140 247Q160 274 182 247Q160 261 140 247Z" fill="white" stroke="#1b161b" stroke-width="2.7"/>'
+  :'<path d="M142 251Q160 265 179 251" stroke="#1b161b" stroke-width="3" fill="none" stroke-linecap="round"/>';
+ let hat='';
+ if(a.hat==='pom') hat=`
+ <path d="M59 135Q54 57 100 43Q164 12 226 48Q267 67 262 135Z" fill="${a.hatColor}" ${edge}/>
+ <path d="M48 137Q159 92 272 137L270 164Q160 128 50 165Z" fill="${a.hatAccent}" ${edge}/>
+ <path d="M68 135v22M101 120v31M133 109v37M165 106v36M198 110v36M231 122v29M257 136v22" fill="none" stroke="${ink}" stroke-width="2.5"/>
+ <path d="M139 34Q130 22 144 15Q149 -2 167 12Q182 -2 191 14Q214 13 213 30Q228 41 212 51Q215 66 194 65Q178 79 166 65Q150 74 137 62Q121 59 122 43Q113 33 139 34Z" fill="${a.hatAccent}" ${edge}/>`;
+ if(a.hat==='beanie') hat=`
+ <path d="M60 136Q59 57 115 40Q170 22 217 44Q264 64 260 135Z" fill="${a.hatColor}" ${edge}/>
+ <path d="M51 138Q160 103 269 138L268 164Q160 131 52 165Z" fill="${a.hatAccent}" ${edge}/>
+ <path d="M94 123V158M129 114v36M164 109v38M199 114v36M235 123v34" stroke="${ink}" stroke-width="2.5" fill="none"/>`;
+ if(a.hat==='earflaps') hat=`
+ <path d="M61 143Q58 65 113 43Q166 21 218 47Q263 65 260 144L264 199L238 205L227 159H94L82 205L56 201Z" fill="${a.hatColor}" ${edge}/>
+ <path d="M57 139Q160 106 262 139" stroke="${a.hatAccent}" stroke-width="14" fill="none"/>`;
+ if(a.hat==='cap') hat=`
+ <path d="M57 142Q60 74 119 55Q171 39 218 62Q255 82 258 143Z" fill="${a.hatColor}" ${edge}/>
+ <path d="M128 139Q224 120 287 143Q260 169 148 161Z" fill="${a.hatAccent}" ${edge}/>`;
+ const extras=a.accessory==='glasses'?`
+ <rect x="100" y="158" width="58" height="52" rx="15" fill="none" stroke="${ink}" stroke-width="4"/>
+ <rect x="165" y="158" width="58" height="52" rx="15" fill="none" stroke="${ink}" stroke-width="4"/>
+ <path d="M158 171h7" stroke="${ink}" stroke-width="5"/>`
+ :a.accessory==='freckles'?'<g fill="#a26450"><circle cx="94" cy="225" r="3"/><circle cx="104" cy="229" r="3"/><circle cx="114" cy="227" r="3"/><circle cx="206" cy="227" r="3"/><circle cx="216" cy="229" r="3"/><circle cx="226" cy="225" r="3"/></g>'
+ :a.accessory==='blush'?'<ellipse cx="100" cy="225" rx="18" ry="8" fill="#ed959a" opacity=".65"/><ellipse cx="219" cy="225" rx="18" ry="8" fill="#ed959a" opacity=".65"/>'
+ :a.accessory==='scarf'?`<path d="M104 271Q160 293 215 271L219 291Q159 313 102 291Z" fill="${a.hatAccent}" ${edge}/><path d="M193 298l16 37 18-7-14-37Z" fill="${a.hatAccent}" ${edge}/>`
+ :'';
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="400" viewBox="0 0 320 400" role="img" aria-label="Custom flat paper-cutout cartoon avatar">
+ <rect width="320" height="400" rx="10" fill="${backdrop}"/>
+ ${backdropDecor}${decoration}
+ <ellipse cx="160" cy="388" rx="94" ry="8" fill="#23202d" opacity=".15"/>
+ ${pants}${shoes}${base}${clothing}${sleeves}
+ ${backHair}<path d="M143 245H178V278H143Z" fill="${a.skin}"/>
+ ${head}${fringe}${eyes}${mouth}${hat}${extras}</svg>`;
 }
 export function avatarDataUrl(value){
  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(avatarSvg(value));
