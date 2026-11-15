@@ -69,14 +69,15 @@ if (year) year.textContent = String(new Date().getFullYear());
     '<a href="cards.html">Cards Hub</a>'+
     '<a href="yugioh-cards.html">📚 Card Database</a>'+
     '<a href="yugioh-deck-builder.html">🃏 Deck Builder</a>'+
+    '<a href="yugioh-card-shop.html">🛍️ Yu-Gi-Oh! Card Shop</a>'+
+    '<a href="yugioh-card-shop.html#ycs-collection">📂 My Yu-Gi-Oh! Cards</a>'+
     '<a href="yugioh-duel.html">⚡ Yu-Gi-Oh! Duel Arena</a>'+ 
     '<a href="cards.html#cards-gallery">Preview Gallery</a>'+
     '<span class="cards-dropdown-heading">In Development</span>'+
-    '<a href="cards.html#my-cards">My Cards <small>Coming Soon</small></a>'+
-    '<a href="cards.html#card-shop">Card Shop <small>Coming Soon</small></a>'+
+
     '<a href="cards.html#card-battles">Card Battles <small>Coming Soon</small></a>'+
     '</div>';
-  if(['cards.html','yugioh-cards.html','yugioh-deck-builder.html','yugioh-duel.html'].includes(page)){
+  if(['cards.html','yugioh-cards.html','yugioh-deck-builder.html','yugioh-card-shop.html','yugioh-duel.html'].includes(page)){
     cards.querySelector('.cards-dropdown-trigger').classList.add('active');
     cards.querySelector('a[href="'+page+'"]')?.setAttribute('aria-current','page');
   }
