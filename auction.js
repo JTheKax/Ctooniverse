@@ -6,6 +6,8 @@ const $=id=>document.getElementById(id);
 const node=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=String(text);return e};
 const coins=n=>Number(n||0).toLocaleString()+' coins';
 let user=null,auctions=[],owned={ctoon:[],yugioh:[]},busy=false,version=0;
+let activeKind=location.hash==='#cards'?'yugioh':'ctoon';
+let tabChosen=location.hash==='#cards'||location.hash==='#ctoons';
 function notice(message,error=false){const output=$('auction-feedback');output.textContent=message;output.dataset.error=String(error)}
 function title(a){return a.item_kind==='ctoon'?(a.ctoon_catalog?.name||'CToon'):(a.yugioh_cards?.name||'Yu-Gi-Oh! card')}
 function minBid(a){return a.current_bid===null?Number(a.starting_bid):Number(a.current_bid)+1}
@@ -55,20 +57,74 @@ async function loadWallet(){
  if(error)throw error;
  $('auction-wallet').textContent=coins(data?.balance||0)+' available';
 }
-function drawAuctions(){
- const root=$('auction-grid');root.replaceChildren();
- const filter=$('auction-filter').value,query=$('auction-search').value.trim().toLowerCase();
- const showing=auctions.filter(a=>{
-  const isActive=a.status==='active'&&Date.parse(a.ends_at)>Date.now();
-  return (!query||title(a).toLowerCase().includes(query)) &&
-    (filter==='all'||filter==='active'&&isActive||filter==='mine'&&user&&a.seller_id===user.id||
-      filter==='winning'&&user&&a.highest_bidder_id===user.id);
- }).sort((a,b)=>Date.parse(a.ends_at)-Date.parse(b.ends_at));
- if(!showing.length){root.append(node('p','auction-empty-state','No auctions match this view. Select another filter or create a listing.'));return}
- for(const a of showing)root.append(auctionCard(a));
+function switchAuctionTab(kind,explicit=false){
+ if(!['ctoon','yugioh'].includes(kind))return;
+ activeKind=kind;if(explicit)tabChosen=true;
+ for(const type of ['ctoon','yugioh']){
+  const tab=$('auction-tab-'+type),panel=$('auction-panel-'+type),selected=kind===type;
+  tab.setAttribute('aria-selected',String(selected));
+  tab.tabIndex=selected?0:-1;
+  panel.hidden=!selected;
+ }
+ // Listing a collectible should start in the category currently being browsed.
+ $('auction-kind').value=kind;
+ inventoryPicker();
 }
-// Each listing reuses the same CToon Shop window, nameplate and purchase-row
-// structure. The bid form lives in a detail dialog so the 182x282 windows remain uniform.
+function updateAuctionCounts(){
+ const available=auctions.filter(a=>a.status==='active'&&Date.parse(a.ends_at)>Date.now());
+ for(const kind of ['ctoon','yugioh']){
+  $('auction-count-'+kind).textContent=String(available.filter(a=>a.item_kind===kind).length);
+ }
+ $('auction-count').textContent=available.length+' active auctions';
+ // Avoid an apparently blank marketplace when the only real auctions are cards.
+ if(!tabChosen&&activeKind==='ctoon'&&available.every(a=>a.item_kind==='yugioh')&&available.length){
+  switchAuctionTab('yugioh');
+ }else switchAuctionTab(activeKind);
+}
+function emptyAuctionWindow(kind,filter){
+ const label=kind==='ctoon'?'CToon':'Yu-Gi-Oh! card';
+ const card=node('article','ctoon-shop-card auction-item-card auction-empty-window');
+ const art=node('div','ctoon-shop-art auction-art');
+ art.append(node('span','ctoon-shop-owned auction-type',label),node('img'));
+ const img=art.querySelector('img');img.src='ctooniverse-logo.png';img.alt='';
+ const details=node('div','ctoon-shop-details auction-item-info');
+ const heading=node('div','ctoon-shop-name');
+ const name=node('span','ctoon-shop-name-text','No '+label+' auctions');
+ heading.append(name);
+ const series=node('p','collection-series',filter==='mine'?'Your listings':filter==='winning'?'Your winning bids':'Auction House');
+ const purchase=node('div','ctoon-shop-purchase');
+ const info=node('span','ctoon-shop-price','No bids yet');
+ const shop=node('a','ctoon-shop-buy',kind==='ctoon'?'CToon Shop':'Card Shop');
+ shop.href=kind==='ctoon'?'shop.html':'yugioh-card-shop.html';
+ purchase.append(info,shop);
+ const status=node('p','ctoon-shop-status auction-time',filter==='active'?'Awaiting new listings':'Nothing to display');
+ details.append(heading,series,purchase,status);
+ card.append(art,details);
+ return card;
+}
+function drawAuctions(){
+ const filter=$('auction-filter').value,query=$('auction-search').value.trim().toLowerCase();
+ for(const kind of ['ctoon','yugioh']){
+  const root=$('auction-grid-'+kind);root.replaceChildren();
+  const showing=auctions.filter(a=>{
+   const isActive=a.status==='active'&&Date.parse(a.ends_at)>Date.now();
+   return a.item_kind===kind&&(!query||title(a).toLowerCase().includes(query))&&
+     (filter==='all'||filter==='active'&&isActive||
+       filter==='mine'&&user&&a.seller_id===user.id||
+       filter==='winning'&&user&&a.highest_bidder_id===user.id);
+  }).sort((a,b)=>Date.parse(a.ends_at)-Date.parse(b.ends_at));
+  if(!showing.length){
+   root.append(emptyAuctionWindow(kind,filter));
+   const caption=filter==='mine'?'You have no '+(kind==='ctoon'?'CToon':'Yu-Gi-Oh! card')+' listings yet.':
+     filter==='winning'?'You have no winning bids in this category.':
+     query?'No auctions match your search.':
+     'No current '+(kind==='ctoon'?'CToon':'Yu-Gi-Oh! card')+' listings. New items will appear here.';
+   root.append(node('p','auction-empty-state',caption));
+   continue;
+  }
+  for(const a of showing)root.append(auctionCard(a));
+ }
+}
 function auctionCard(a){
  const card=node('article','ctoon-shop-card auction-item-card');
  const visual=node('div','ctoon-shop-art auction-art');
@@ -162,7 +218,7 @@ async function loadAuctions(){
   .order('created_at',{ascending:false}).limit(250);
  if(error)throw error;
  auctions=data||[];
- $('auction-count').textContent=auctions.filter(a=>a.status==='active'&&Date.parse(a.ends_at)>Date.now()).length+' active listings';
+ updateAuctionCounts();
  drawAuctions();
 }
 async function refresh(){
@@ -205,7 +261,22 @@ async function submitListing(event){
  if(!confirm('List this collectible for '+coins(amount)+'? One owned copy is held until the auction closes.'))return;
  await mutate('marketplace_create_listing',{p_item_kind:kind,p_ctoon_id:kind==='ctoon'?choice:null,p_card_id:kind==='yugioh'?Number(choice):null,p_starting_bid:amount,p_duration_hours:hours},'Auction created! Your collectible is now listed.');
 }
-$('auction-kind').addEventListener('change',inventoryPicker);
+for(const kind of ['ctoon','yugioh']){
+ const tab=$('auction-tab-'+kind);
+ tab.addEventListener('click',()=>switchAuctionTab(kind,true));
+ tab.addEventListener('keydown',event=>{
+  if(!['ArrowRight','ArrowLeft','Home','End'].includes(event.key))return;
+  event.preventDefault();
+  const next=event.key==='Home'?'ctoon':event.key==='End'?'yugioh':
+   kind==='ctoon'?'yugioh':'ctoon';
+  switchAuctionTab(next,true);
+  $('auction-tab-'+next).focus();
+ });
+}
+$('auction-kind').addEventListener('change',()=>{
+ const kind=$('auction-kind').value;
+ switchAuctionTab(kind,true);
+});
 $('auction-filter').addEventListener('change',drawAuctions);
 $('auction-search').addEventListener('input',drawAuctions);
 $('auction-form').addEventListener('submit',submitListing);
@@ -217,4 +288,5 @@ setInterval(()=>{
  for(const e of document.querySelectorAll('.auction-time[data-status="active"]'))e.textContent=timeLeft(e.dataset.until);
 },30000);
 setInterval(()=>{if(!document.hidden&&!busy)refresh()},60000);
+switchAuctionTab(activeKind);
 refresh();
