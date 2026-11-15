@@ -1,0 +1,74 @@
+/* CTooniverse Yu-Gi-Oh! single-player fan duel. All styles scoped to yd-* classes. */
+html body.yd-duel-page{background:#100d2b linear-gradient(180deg,#0c0923da,#1c103add),url("games-gold-saucer-background.webp") center top/cover fixed no-repeat!important}
+html body.yd-duel-page::before{background-image:none!important}
+.yd-main{width:min(1220px,calc(100% - 24px));margin:20px auto 60px;position:relative;z-index:1;min-width:0;color:#f6f2ff}
+.yd-main :is(h1,h2){color:#fff5d8;text-shadow:0 2px 10px #060619}
+.yd-main button{cursor:pointer}
+.yd-main button:disabled{opacity:.5;cursor:not-allowed}
+.yd-main :is(button,a,summary):focus-visible{outline:3px solid #81ebff;outline-offset:3px}
+.yd-title{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:17px}
+.yd-title>div{max-width:810px}
+.yd-title .eyebrow{font-size:.8rem;font-weight:900;letter-spacing:.13em;color:#ffe0a1}
+.yd-title h1{font-size:clamp(2.1rem,5vw,4rem);line-height:1.08;margin:6px 0 12px}
+.yd-title h1 span{color:#ffd98d}
+.yd-title p{line-height:1.55;color:#e2dff7}
+.yd-toolbar,.yd-board,.yd-panel{border:2px solid #f6d39590;border-radius:19px;background:linear-gradient(140deg,#15173cf4,#291742f2);box-shadow:0 15px 35px #050417a3}
+.yd-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 18px;margin-bottom:16px;flex-wrap:wrap}
+.yd-toolbar strong{font-size:1.05rem;color:#ffdfa8}
+.yd-toolbar p{font-size:.86rem;color:#d8d5ee;margin:4px 0 0}
+.yd-buttons{display:flex;flex-wrap:wrap;gap:9px}
+.yd-buttons .button,.yd-actions .button{min-height:44px;font-size:.86rem;padding:8px 13px}
+.yd-board{padding:clamp(9px,2vw,20px);background:linear-gradient(145deg,#11163bef,#201447f2 50%,#101939f0)}
+.yd-side{border-radius:14px;padding:10px;background:linear-gradient(145deg,#0c1632cc,#28183eb8)}
+.yd-cpu{border:1px solid #f4c58380}
+.yd-player{border:1px solid #8bb4ff80}
+.yd-duelist{display:flex;align-items:center;gap:10px;padding:4px 6px 8px}
+.yd-avatar{font-size:1.8rem}
+.yd-duelist>div:not(.yd-lp){display:flex;flex-direction:column;gap:3px}
+.yd-duelist strong{font-size:.92rem;color:#ffedce}
+.yd-duelist small{font-size:.7rem;color:#d3d4ef}
+.yd-lp{margin-left:auto;display:flex;align-items:flex-end;flex-direction:column}
+.yd-lp small{font-size:.59rem;letter-spacing:.09em}
+.yd-lp strong{font-size:clamp(1.4rem,2.9vw,2.2rem);color:#a8f4ff;line-height:1.15;font-variant-numeric:tabular-nums}
+.yd-cpu .yd-lp strong{color:#ffc099}
+.yd-zlabel{font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;font-weight:850;text-align:center;margin:9px 0 5px;color:#dad2f5}
+.yd-zones{max-width:835px;margin:0 auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(4px,1vw,11px)}
+.yd-slot{position:relative;display:grid;place-items:center;aspect-ratio:182/254;min-width:0;width:100%;background:#090f27a8;border:2px dashed #9f95cb88;border-radius:10px;padding:3px;color:#9084bf;font-size:1.5rem}
+.yd-slot.yd-selected{border-color:#6ff9ff;box-shadow:0 0 14px #5debffaa}
+.yd-slot.yd-target{border-color:#ffe088;box-shadow:0 0 13px #ffe08899}
+.yd-card{display:flex;flex-direction:column;width:100%;height:100%;overflow:hidden;min-width:0;gap:3px;padding:clamp(3px,.8vw,8px);border-radius:7px;border:3px ridge #b57a49;background:linear-gradient(155deg,#e8bd8a,#bf7944);color:#1b1024;box-shadow:inset 0 0 8px #fff5}
+.yd-card.yd-spell{background:linear-gradient(155deg,#a3efdc,#248d7d);border-color:#258f81}
+.yd-card.yd-trap{background:linear-gradient(155deg,#f3b6f1,#9b489e);border-color:#a54ca9}
+.yd-card.yd-back{background:repeating-radial-gradient(ellipse at center,#47266f 0 6px,#26163f 7px 12px,#ad7847 14px 17px);border-color:#d5a56b;color:#ffe1a5;align-items:center;justify-content:center;font-size:clamp(1.4rem,3.5vw,2.7rem);text-shadow:0 0 11px #05030e}
+.yd-card-name{font-size:clamp(.48rem,1vw,.79rem);line-height:1.13;font-weight:950;text-align:center;max-height:3.3em;overflow:hidden;overflow-wrap:anywhere}
+.yd-stars{display:block;text-align:right;color:#852c13;font-size:clamp(.47rem,.82vw,.68rem);line-height:1}
+.yd-art{flex:1;min-height:0;display:grid;place-items:center;font-size:clamp(1rem,3.6vw,3rem);background:radial-gradient(circle at center,#ffffffbd,#2c4079aa);border:1px solid #4c397485;border-radius:4px}
+.yd-stats{display:block;font-size:clamp(.42rem,.9vw,.66rem);text-align:right;font-weight:900;line-height:1.1}
+.yd-position{position:absolute;left:5px;bottom:5px;font-size:.62rem;background:#0e1539dd;color:#fff;padding:2px 4px;border-radius:4px;font-weight:850}
+.yd-center{padding:13px 4px;text-align:center;color:#ffdda4;font-size:.8rem;font-weight:900;letter-spacing:.12em}
+.yd-panel{margin-top:17px;padding:18px;min-width:0}
+.yd-panel h2{font-size:1.2rem;margin:0;color:#ffe3a4}
+.yd-subhead{display:flex;align-items:baseline;justify-content:space-between;gap:9px;flex-wrap:wrap}
+.yd-subhead span{font-size:.8rem;color:#dad4ef}
+.yd-hand{display:flex;gap:11px;padding:14px 2px 10px;overflow-x:auto;min-height:156px;scrollbar-color:#b38de5 #1b1639}
+.yd-handcard{background:transparent;border:0;padding:0;flex:0 0 clamp(92px,12vw,135px);height:clamp(145px,18vw,200px);border-radius:10px;color:inherit}
+.yd-handcard[aria-pressed="true"]{outline:3px solid #8ff6ff;outline-offset:3px}
+.yd-handcard .yd-card-name{font-size:clamp(.63rem,1vw,.8rem)}
+.yd-handcard .yd-art{font-size:clamp(1.9rem,3vw,3rem)}
+.yd-handcard .yd-stats{font-size:.64rem}
+.yd-columns{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}
+.yd-details{margin-top:12px;min-height:125px;line-height:1.55;color:#eeebff}
+.yd-details strong{color:#ffe0a0}
+.yd-details p{margin:9px 0}
+.yd-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.yd-log{max-height:215px;overflow-y:auto;padding-left:22px;margin:12px 0 0;font-size:.85rem;color:#e0d9fa;line-height:1.55}
+.yd-log li{margin-bottom:7px}
+.yd-record{text-align:right;padding:14px 3px 2px;font-size:.86rem;color:#e5ddf5}
+.yd-rules{line-height:1.6;color:#e6e1f4}
+.yd-rules summary{cursor:pointer;font-weight:900;color:#ffe09c}
+.yd-rules p{margin:10px 0}
+.yd-result{margin:17px 0;padding:20px;text-align:center;border:2px solid #f2dc9b;border-radius:15px;background:#301e55;color:#fff2d2;font-size:1.3rem;font-weight:900}
+.yd-result[hidden]{display:none}
+@media(max-width:740px){html body.yd-duel-page{background-attachment:scroll!important}.yd-main{width:calc(100% - 16px)}.yd-columns{grid-template-columns:1fr;gap:0}.yd-toolbar{padding:12px}.yd-buttons{width:100%}.yd-buttons .button{flex:1 1 120px}.yd-board{padding:8px}.yd-side{padding:6px}.yd-zones{gap:4px}.yd-slot{padding:1px;border-width:1px;border-radius:5px}.yd-card{padding:2px;gap:1px;border-width:2px}.yd-card-name{font-size:.45rem}.yd-stars{font-size:.43rem}.yd-art{font-size:clamp(.9rem,4.1vw,1.6rem)}.yd-stats{font-size:.42rem}.yd-position{font-size:.42rem;left:2px;bottom:2px;padding:1px}.yd-panel{padding:13px}.yd-duelist{gap:6px}.yd-avatar{font-size:1.2rem}.yd-center{font-size:.7rem}.yd-handcard{flex-basis:98px;height:147px}.yd-title h1{font-size:2.2rem}}
+@media(max-width:380px){.yd-card-name{font-size:.4rem}.yd-stats{font-size:.37rem}.yd-position{display:none}.yd-zlabel{font-size:.57rem}}
+@media(prefers-reduced-motion:reduce){.yd-slot{transition:none}}
