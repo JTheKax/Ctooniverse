@@ -223,3 +223,30 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
 @media(prefers-reduced-motion:reduce){
   .yd-free-duel-thumb,.yd-handcard{transition:none!important}
 }
+
+/* Free Duel portrait roster: stable, equal-size A–Z grid on every screen.
+   The sidebar remains separate, while roster cards fill rows left to right. */
+#yd-free-duel-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-auto-flow:row;
+  align-items:stretch;
+  gap:clamp(8px,1.2vw,12px);
+}
+#yd-free-duel-grid .yd-free-duel-thumb{
+  box-sizing:border-box;
+  display:block;
+  width:100%;
+  min-width:0;
+  min-height:0;
+  aspect-ratio:3/4;
+}
+@media(max-width:700px){
+  #yd-free-duel-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+}
+@media(max-width:480px){
+  #yd-free-duel-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+}
+@media(orientation:landscape) and (max-height:480px) and (max-width:920px){
+  #yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
