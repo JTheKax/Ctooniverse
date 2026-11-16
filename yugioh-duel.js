@@ -130,7 +130,9 @@
     "chazz": "https://uploads2.yugioh.com/character/21/detail/detail/chazz-l.png?1371839968=",
     "syrus": "https://uploads1.yugioh.com/character/25/detail/detail/syrus-l.png?1371841093=",
     "aster": "https://uploads4.yugioh.com/character/37/detail/detail/aster-l.png?1375717571=",
-    "crowler": "https://uploads4.yugioh.com/character/23/detail/detail/Crowler-l.png?1371840566="
+    "crowler": "https://uploads4.yugioh.com/character/23/detail/detail/Crowler-l.png?1371840566=",
+    "chumley": "https://uploads4.yugioh.com/character/22/detail/detail/chumley-l.png?1371840210=",
+    "bastion": "https://uploads4.yugioh.com/character/20/detail/detail/bastion-l.png?1375717320="
   });
   const DUELISTS=[
     {id:"yugi",name:"Yugi Muto",epithet:"King of Games",hero:46986414,race:"Spellcaster",difficulty:3,style:"Dark Magician · Spellcaster tactics",flavor:"A balanced rival whose spellcasters reward careful play."},
@@ -154,7 +156,9 @@
     {id:"chazz",series:"gx",name:"Chazz Princeton",epithet:"The Chazz",hero:73879377,race:"Dragon",archetype:"Armed Dragon",difficulty:4,style:"Armed Dragons · Dragon beatdown",flavor:"An ambitious challenger who brings his strongest dragons."},
     {id:"syrus",series:"gx",name:"Syrus Truesdale",epithet:"Roid Rookie",hero:44729197,race:"Machine",archetype:"roid",difficulty:2,style:"Vehicroids · Machine teamwork",flavor:"The underdog of Slifer Red fights with trusty machine monsters."},
     {id:"aster",series:"gx",name:"Aster Phoenix",epithet:"Destiny HERO Pro",hero:83965310,race:"Warrior",archetype:"Destiny HERO",difficulty:4,style:"Destiny HERO · Pro dueling",flavor:"A calculated professional with formidable Destiny HERO monsters."},
-    {id:"crowler",series:"gx",name:"Dr. Vellian Crowler",epithet:"Duel Academy Professor",hero:83104731,race:"Machine",archetype:"Ancient Gear",difficulty:4,style:"Ancient Gear · Heavy machines",flavor:"The professor is ready to test you with ancient machinery."}
+    {id:"crowler",series:"gx",name:"Dr. Vellian Crowler",epithet:"Duel Academy Professor",hero:83104731,race:"Machine",archetype:"Ancient Gear",difficulty:4,style:"Ancient Gear · Heavy machines",flavor:"The professor is ready to test you with ancient machinery."},
+    {id:"chumley",series:"gx",name:"Chumley Huffington",epithet:"Koala-Loving Slifer Red",hero:42129512,race:"Beast",difficulty:2,style:"Big Koala · Beast creatures",flavor:"A laid-back duelist who calls on koalas and other powerful beasts."},
+    {id:"bastion",series:"gx",name:"Bastion Misawa",epithet:"Duel Academy Strategist",hero:85066822,race:"Dinosaur",difficulty:4,style:"Water Dragon · Hydrogeddon chemistry",flavor:"A calculating rival who uses dinosaur monsters and scientific combinations."}
   ];
   function opponentRecord(id){
     try{
