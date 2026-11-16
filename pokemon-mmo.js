@@ -278,6 +278,9 @@ function setBattleButtons(enabled){
  for(const id of ["pmmo-attack","pmmo-catch","pmmo-run"])$(id).disabled=!enabled;
 }
 function showEncounter(data,message){
+ $("pmmo-attack").hidden=false;
+ $("pmmo-catch").hidden=false;
+ $("pmmo-run").textContent="↩ Run";
  encounter={species_id:data.species_id,level:data.level,hp:data.hp??data.wild_hp,
    max_hp:data.max_hp??data.wild_max};
  $("pmmo-wild-name").textContent=SPECIES[encounter.species_id]||"Wild Pokémon";
