@@ -153,10 +153,18 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
   .yd-main #yd-duel-content .yd-duelist strong{overflow-wrap:anywhere}
   .yd-main #yd-duel-content .yd-zlabel{font-size:clamp(.5rem,1.65vw,.66rem);letter-spacing:.035em}
   .yd-main #yd-duel-content .yd-center{font-size:clamp(.55rem,1.8vw,.7rem);padding:8px 3px}
+  /* Phone hand: larger readable cards in a contained swipeable row. */
   .yd-hand-panel{overflow:hidden}
-  .yd-handcard{flex:0 0 108px;height:162px}
-  .yd-handcard .yd-card-name{font-size:.67rem}
-  .yd-handcard .yd-stats{font-size:.61rem}
+  .yd-hand{gap:9px;padding:12px 4px 14px;min-height:0;scroll-padding-inline:4px}
+  .yd-handcard{
+    flex:0 0 clamp(110px,33vw,132px);
+    height:clamp(165px,49.5vw,198px);
+    min-width:0;touch-action:pan-x
+  }
+  .yd-handcard .yd-card{padding:5px;gap:3px}
+  .yd-handcard .yd-card-name{font-size:clamp(.7rem,2.15vw,.8rem);line-height:1.16}
+  .yd-handcard .yd-stats{font-size:.68rem}
+  .yd-handcard .yd-stars{font-size:.61rem}
   .yd-columns{grid-template-columns:1fr;gap:0}
   .yd-detail-summary{gap:10px}
   .yd-detail-preview{flex-basis:100px;height:150px}
@@ -184,7 +192,6 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
   .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{min-width:700px}
   .yd-view-toolbar>span{flex:1 1 120px}
   .yd-view-toolbar button{padding:8px;font-size:.75rem}
-  .yd-handcard{flex-basis:105px;height:157px}
   .yd-detail-preview{flex-basis:90px;height:135px}
   .yd-record{text-align:left;font-size:.79rem}
 }
