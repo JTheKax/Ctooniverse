@@ -565,6 +565,7 @@
     if(!profile)return;
     $("yd-free-duel-opponent").textContent=profile.name;
     $("yd-free-duel-subtitle").textContent=profile.epithet;
+    $("yd-profile-series").textContent=profile.series==="gx"?"GX · DUEL ACADEMY":"CLASSIC · DUEL MONSTERS";
     $("yd-free-duel-difficulty").textContent="DIFFICULTY · "+"★".repeat(profile.difficulty)+"☆".repeat(5-profile.difficulty);
     $("yd-free-duel-style").textContent=profile.style+" · "+profile.flavor;
     const r=opponentRecord(profile.id);
