@@ -1,6 +1,6 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 
-import {avatarDataUrl} from './avatar-renderer.js?v=cutout-avatar-v5';
+import {avatarDataUrl} from './avatar-renderer.js?v=cutout-avatar-v6';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const list=document.getElementById('players-list');
 const status=document.getElementById('players-status');
