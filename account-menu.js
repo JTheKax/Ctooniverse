@@ -1,15 +1,6 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const menus=[...document.querySelectorAll('.account-dropdown')];
-for(const menu of menus){
- const panel=menu.querySelector('.account-dropdown-panel');
- if(!panel||panel.querySelector('[href="avatar-maker.html"]'))continue;
- const link=document.createElement('a');
- link.href='avatar-maker.html';link.textContent='My Avatar';
- link.dataset.accountSigned='';link.hidden=true;
- const reference=panel.querySelector('[href*="redeem-codes"]');
- if(reference)reference.before(link);else panel.append(link);
-}
 async function refresh(){
  try{const {data:{user}}=await db.auth.getUser();for(const menu of menus){menu.querySelectorAll('[data-account-guest]').forEach(el=>el.hidden=!!user);menu.querySelectorAll('[data-account-signed]').forEach(el=>el.hidden=!user);}}
  catch(_){for(const menu of menus){menu.querySelectorAll('[data-account-guest],[data-account-signed]').forEach(el=>el.hidden=true);}}

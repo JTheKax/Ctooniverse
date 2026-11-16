@@ -1,21 +1,6 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
-import {avatarDataUrl,DEFAULT_AVATAR} from './avatar-renderer.js?v=cutout-avatar-v8';
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const name=document.getElementById('header-player-name'),coins=document.getElementById('header-player-coins'),profile=document.getElementById('header-player');
-const accountAvatar=document.getElementById('account-avatar-preview');
-const originalIcon=profile.querySelector('.header-player-icon');
-const avatarPicture=document.createElement('img');
-avatarPicture.className='header-avatar-picture';
-avatarPicture.width=44;avatarPicture.height=55;avatarPicture.alt='Your CTooniverse avatar';
-avatarPicture.style.cssText='width:40px;height:50px;object-fit:contain;flex-shrink:0;border:2px solid #9ecaff;border-radius:10px;background:#2b176a';
-avatarPicture.hidden=true;
-profile.insertBefore(avatarPicture,originalIcon);
-function showAvatar(look){
- const src=avatarDataUrl(look||DEFAULT_AVATAR);
- avatarPicture.src=src;avatarPicture.hidden=false;originalIcon.hidden=true;
- if(accountAvatar)accountAvatar.src=src;
-}
-function hideAvatar(){avatarPicture.hidden=true;avatarPicture.removeAttribute('src');originalIcon.hidden=false;if(accountAvatar)accountAvatar.removeAttribute('src');}
 let seq=0;let previousBalance=null;
 profile.classList.add('profile-loading');
 let verifiedOwnerUserId=null;
@@ -26,7 +11,7 @@ async function updateHeader(){
  const id=++seq;
  try{
   const {data:{user},error}=await db.auth.getUser();if(id!==seq)return;
-  if(error||!user){hideAvatar();activeUserId=null;name.textContent='Guest';coins.textContent='Sign in';profile.classList.add('is-guest');hideOwner();previousBalance=null;revealProfile();return;}
+  if(error||!user){activeUserId=null;name.textContent='Guest';coins.textContent='Sign in';profile.classList.add('is-guest');hideOwner();previousBalance=null;revealProfile();return;}
   activeUserId=user.id;
   const raw=user.user_metadata?.display_name;
   name.textContent=typeof raw==='string'&&raw.trim()?raw.trim().slice(0,30):user.email?.split('@')[0]||'Player';
@@ -41,10 +26,7 @@ async function updateHeader(){
   if(id!==seq)return;
   if(!walletError&&data){const next=Number(data.balance);if(previousBalance!==null&&next!==previousBalance){profile.classList.remove('coin-updated');void profile.offsetWidth;profile.classList.add('coin-updated');}previousBalance=next;}else if(walletError){previousBalance=null;}
   coins.textContent=walletError?'Coins unavailable':(data?.balance??0).toLocaleString()+' Coins';
-  const {data:avatarRecord,error:avatarError}=await db.from('player_avatars').select('avatar').eq('user_id',user.id).maybeSingle();
-  if(id!==seq)return;
-  showAvatar(avatarError?DEFAULT_AVATAR:(avatarRecord?.avatar||DEFAULT_AVATAR));
- }catch(_){if(id===seq){name.textContent='Guest';coins.textContent='Unavailable';hideOwner();hideAvatar();revealProfile();}}
+ }catch(_){if(id===seq){name.textContent='Guest';coins.textContent='Unavailable';hideOwner();revealProfile();}}
 }
 let activeUserId=null;
 db.auth.onAuthStateChange((event,session)=>{
@@ -53,6 +35,4 @@ db.auth.onAuthStateChange((event,session)=>{
 });
 window.addEventListener('pageshow',event=>{if(event.persisted)updateHeader()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateHeader()});
-window.addEventListener('storage',event=>{if(event.key==='ctoon-avatar-updated')updateHeader()});
-window.addEventListener('ctoon-profile-updated',updateHeader);
 updateHeader();
