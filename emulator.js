@@ -2,6 +2,8 @@
 const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.58.0');
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 let selectedGame=null;
+// Ignore stale asynchronous game-case lookups when a newer selection is made.
+let launchRequestId=0;
 const $=id=>document.getElementById(id);
 const start=$('emu-start'),status=$('emu-status'),file=$('emu-file'),consoleSelect=$('emu-console'),biosFile=$('emu-bios');
 let currentUrl=null,currentBiosUrl=null,started=false,loadTimer=null;
@@ -19,6 +21,7 @@ function idleScreen(){
 const cores={nes:'nes',snes:'snes',gb:'gb',gba:'gba',gbc:'gbc',n64:'n64',segaMD:'segaMD',nds:'nds',psx:'psx'};
 const ext={nes:['nes','zip'],snes:['sfc','smc','zip'],gb:['gb','zip'],gba:['gba','zip'],gbc:['gbc','zip'],n64:['n64','z64','v64','zip'],segaMD:['md','gen','bin','zip'],nds:['nds','zip'],psx:['chd','pbp','iso','zip']};
 function stopGame(){
+ launchRequestId++;
  if(loadTimer){clearTimeout(loadTimer);loadTimer=null}
  idleScreen();
  clearUrl(currentUrl);clearUrl(currentBiosUrl);
@@ -62,12 +65,14 @@ $('emu-fullscreen').addEventListener('click',async()=>{try{if(!document.fullscre
 window.addEventListener('pagehide',()=>{clearUrl(currentUrl);clearUrl(currentBiosUrl);});
 
 file.addEventListener('change',()=>{
+ launchRequestId++;
  if(started)stopGame();
  selectedGame=null;
  document.querySelectorAll('.emu-case').forEach(el=>el.classList.remove('selected'));
  if(file.files?.[0])setStatus(file.files[0].name+' selected. Press Start Game when ready.');
 });
 consoleSelect.addEventListener('change',()=>{
+ launchRequestId++;
  if(started)stopGame();
  selectedGame=null;
  document.querySelectorAll('.emu-case').forEach(el=>el.classList.remove('selected'));
@@ -119,6 +124,7 @@ async function loadCases(){
   const title=document.createElement('span');title.className='emu-case-name';title.textContent=game.title;
   cover.append(spine,art,coverTitle);caseEl.append(cover,title);
   caseEl.addEventListener('click',()=>{
+   launchRequestId++;
    if(started)stopGame();selectedGame=game;file.value='';consoleSelect.value=game.console;
    host.querySelectorAll('.emu-case').forEach(el=>el.classList.remove('selected'));caseEl.classList.add('selected');
    status.textContent=game.title+' selected. Press Start Game to play.';
@@ -135,7 +141,9 @@ async function loadCases(){
 }
 window.ctoonPlayGameCase=async gameId=>{
  if(started)stopGame();
+ const requestId=++launchRequestId;
  const {data:game,error}=await db.from('emulator_games').select('id,title,console,storage_path').eq('id',gameId).eq('published',true).single();
+ if(requestId!==launchRequestId)return false;
  if(error||!game){setStatus('Unable to load this published game.',true);return false}
  selectedGame=game;file.value='';consoleSelect.value=game.console;
  document.querySelectorAll('.emu-case').forEach(el=>el.classList.toggle('selected',el.dataset.gameId===String(game.id)));
