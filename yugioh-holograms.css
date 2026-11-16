@@ -1,0 +1,149 @@
+/* CTooniverse Duel Arena: optional 2D monster hologram projections.
+   No WebGL, external model downloads, or overlay hit targets. */
+#yd-duel-content .yd-field-view-actions{
+  display:flex;align-items:center;justify-content:flex-end;
+  flex-wrap:wrap;gap:7px
+}
+#yd-duel-content #yd-holograms-toggle{
+  border:2px solid #a5dbe7;
+  border-radius:5px;
+  background:linear-gradient(#193953,#102039 52%,#131b2a);
+  color:#d5f9ff;
+  box-shadow:inset 0 1px #ffffff20,0 0 11px #63d8ef2e;
+  font-weight:900
+}
+#yd-duel-content #yd-holograms-toggle[aria-pressed="true"]{
+  border-color:#83f9fa;
+  color:#081d2b;
+  background:linear-gradient(#b8ffff,#4bcad8 55%,#237b9b);
+  box-shadow:0 0 13px #35e8f477,inset 0 1px #ffffffaf
+}
+#yd-duel-content .yd-holo-slot{isolation:isolate}
+#yd-duel-content .yd-holo-slot > .yd-card{
+  filter:saturate(.8) brightness(.77)
+}
+#yd-duel-content .yd-holo-slot>.yd-card>.yd-art{
+  filter:saturate(.75) brightness(.7)
+}
+#yd-duel-content .yd-holo-slot>.yd-card> :is(.yd-card-name,.yd-stats){
+  position:relative;z-index:5;
+  color:#30170e;
+  text-shadow:0 1px #fff2c3b8
+}
+#yd-duel-content .yd-holo-slot>.yd-position{z-index:6}
+#yd-duel-content .yd-holo-projector{
+  --yd-holo-color:#6ceef6;
+  pointer-events:none;
+  position:absolute;
+  inset:0;z-index:4;
+  display:block;
+  overflow:hidden;
+  border-radius:inherit
+}
+#yd-duel-content .yd-cpu .yd-holo-projector{
+  --yd-holo-color:#b9a3ff
+}
+#yd-duel-content .yd-holo-projector::before{
+  content:"";pointer-events:none;
+  position:absolute;inset:11% 8% 19%;
+  border-radius:50% 50% 15% 15%;
+  background:linear-gradient(0deg,color-mix(in srgb,var(--yd-holo-color) 25%,transparent),transparent 74%);
+  filter:blur(5px);opacity:.8
+}
+#yd-duel-content .yd-holo-beam{
+  position:absolute;z-index:1;
+  inset:10% 7% 25%;
+  background:linear-gradient(0deg,color-mix(in srgb,var(--yd-holo-color) 30%,transparent),transparent 91%);
+  clip-path:polygon(26% 100%,0 0,100% 0,74% 100%);
+  opacity:.78
+}
+#yd-duel-content .yd-holo-art,
+#yd-duel-content .yd-holo-symbol{
+  position:absolute;z-index:2;
+  inset:10% 7% 25%;
+  width:86%;height:65%;
+  object-fit:contain;
+  object-position:center;
+  filter:drop-shadow(0 0 4px var(--yd-holo-color))
+    drop-shadow(0 0 8px var(--yd-holo-color));
+  opacity:.82;
+  animation:yd-holo-float 3.4s ease-in-out infinite
+}
+#yd-duel-content .yd-holo-symbol{
+  display:grid;place-items:center;
+  font-size:clamp(1.35rem,3vw,2.7rem);
+  color:var(--yd-holo-color);
+  text-shadow:0 0 12px var(--yd-holo-color)
+}
+#yd-duel-content .yd-holo-scan{
+  pointer-events:none;position:absolute;z-index:3;
+  inset:8% 5% 27%;
+  background:repeating-linear-gradient(
+    0deg,transparent 0px,transparent 5px,
+    color-mix(in srgb,var(--yd-holo-color) 24%,transparent) 6px,transparent 7px);
+  mix-blend-mode:screen;opacity:.7;
+  animation:yd-holo-scan 4.8s linear infinite
+}
+#yd-duel-content .yd-holo-ring{
+  pointer-events:none;position:absolute;z-index:3;
+  bottom:17%;left:13%;width:74%;height:18%;
+  border:2px solid var(--yd-holo-color);
+  border-radius:50%;
+  transform:perspective(75px) rotateX(57deg);
+  box-shadow:0 0 5px var(--yd-holo-color),inset 0 0 11px var(--yd-holo-color);
+  background:radial-gradient(ellipse,transparent 20%,color-mix(in srgb,var(--yd-holo-color) 22%,transparent));
+  animation:yd-holo-ring 2.8s ease-in-out infinite
+}
+#yd-duel-content .yd-holo-summon .yd-holo-projector{
+  animation:yd-holo-summon .7s cubic-bezier(.16,.68,.2,1.13) both
+}
+#yd-duel-content .yd-holo-attack .yd-holo-projector{
+  animation:yd-holo-attack .52s ease-out both
+}
+#yd-duel-content .yd-holo-slot.yd-selected .yd-holo-ring{
+  border-color:#fff6ba;
+  box-shadow:0 0 13px #fff4b0,inset 0 0 12px #a2eefa
+}
+@keyframes yd-holo-float{
+  0%,100%{transform:translateY(1px)}
+  50%{transform:translateY(-5px)}
+}
+@keyframes yd-holo-ring{
+  0%,100%{opacity:.6;filter:brightness(.9)}
+  50%{opacity:1;filter:brightness(1.4)}
+}
+@keyframes yd-holo-scan{
+  0%{transform:translateY(-7%)}
+  100%{transform:translateY(7%)}
+}
+@keyframes yd-holo-summon{
+  0%{opacity:0;filter:brightness(3);transform:translateY(26%) scale(.5)}
+  65%{opacity:1;filter:brightness(1.8);transform:translateY(-5%) scale(1.06)}
+  100%{opacity:1;filter:brightness(1);transform:translateY(0) scale(1)}
+}
+@keyframes yd-holo-attack{
+  0%{filter:brightness(3);transform:translateY(-7%) scale(1.1)}
+  45%{filter:brightness(2.4);transform:translateY(-5%) scale(1.08)}
+  100%{filter:brightness(1);transform:translateY(0) scale(1)}
+}
+@media(max-width:700px){
+  #yd-duel-content .yd-field-view-actions{width:100%;justify-content:stretch}
+  #yd-duel-content .yd-field-view-actions .button{
+    flex:1 1 130px;min-height:44px;
+    font-size:.75rem;padding:8px 5px
+  }
+  #yd-duel-content .yd-holo-scan{opacity:.47}
+  #yd-duel-content .yd-holo-art,
+  #yd-duel-content .yd-holo-symbol{inset:11% 6% 27%;width:88%;height:62%}
+  #yd-duel-content .yd-holo-ring{border-width:1px}
+}
+@media(prefers-reduced-motion:reduce){
+  #yd-duel-content .yd-holo-art,
+  #yd-duel-content .yd-holo-symbol,
+  #yd-duel-content .yd-holo-scan,
+  #yd-duel-content .yd-holo-ring,
+  #yd-duel-content .yd-holo-summon .yd-holo-projector,
+  #yd-duel-content .yd-holo-attack .yd-holo-projector{
+    animation:none!important;
+  }
+}
