@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#162946"><meta name="description" content="Browse over 23,000 English Pokémon TCG card printings and 200+ sets in the CTooniverse Pokémon Card Database.">
+<title>Pokémon Card Database | CTooniverse</title>
+<link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
+<link rel="stylesheet" href="arcade-polish.css?v=2">
+<link rel="stylesheet" href="pokemon-card-database.css?v=20261116-full-catalog-v1">
+<script src="script.js?v=20261115-shop-auction-v1" defer></script>
+<script type="module" src="header-profile.js?v=without-avatar-20261116"></script>
+<script type="module" src="account-menu.js?v=without-avatar-20261116"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
+<script type="module" src="pokemon-card-database.js?v=20261116-full-catalog-v1"></script>
+</head>
+<body class="pcd-page">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a>
+<nav aria-label="Main navigation"><a class="nav-link" href="index.html">Home</a><a class="nav-link" href="ctoons.html">CToons</a><a class="nav-link" href="games.html">Games</a><a class="nav-link active" href="cards.html" aria-current="page">Cards</a><a class="nav-link" href="watch.html">Theater</a><a class="nav-link" href="shop.html">Shop</a><a class="nav-link" href="community.html">Community</a><a class="nav-link" href="account.html">Account</a></nav>
+<div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div><span class="header-tag">CARD ARCHIVE</span>
+</header>
+<main id="main" class="pcd-main">
+<section class="pcd-hero">
+<p class="pcd-eyebrow">✦ CTOONIVERSE · ENGLISH CARD REFERENCE ✦</p>
+<h1>Pokémon <span>Card Database</span></h1>
+<p>Explore every English Pokémon card printing currently indexed from TCGdex. Find cards by name or expansion, open them for card information, and discover which CTooniverse Archive pack can contain them.</p>
+<div class="pcd-links"><a class="button secondary" href="cards.html">← Cards Hub</a><a class="button primary" href="pokemon-card-shop.html">🎁 Booster Shop &amp; My Collection</a><a class="button secondary" href="pokemon-tcg.html">⚔️ Play Card Arena</a></div>
+<div class="pcd-stats"><div><strong id="pcd-total-cards">—</strong><span>English card printings</span></div><div><strong id="pcd-total-sets">—</strong><span>Indexed sets</span></div></div>
+</section>
+<section class="pcd-panel pcd-library" aria-labelledby="pcd-library-heading">
+<h2 id="pcd-library-heading">Search the Pokémon Card Archive</h2>
+<form id="pcd-search-form" class="pcd-search-form">
+<label for="pcd-search">Card name</label>
+<input id="pcd-search" name="search" type="search" maxlength="80" autocomplete="off" placeholder="Pikachu, Charizard, Eevee…">
+<button type="submit" class="button primary">Search Cards</button>
+</form>
+<div class="pcd-filters">
+<label for="pcd-set">Expansion <select id="pcd-set"><option value="all">All sets</option></select></label>
+<label for="pcd-category">Category <select id="pcd-category"><option value="all">All categories</option><option value="Pokemon">Pokémon</option><option value="Trainer">Trainer</option><option value="Energy">Energy</option></select></label>
+<label for="pcd-rarity">Pull tier <select id="pcd-rarity"><option value="all">All rarities</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Ultra Rare</option></select></label>
+<label for="pcd-sort">Sort <select id="pcd-sort"><option value="az">Name A–Z</option><option value="za">Name Z–A</option><option value="set">Set ID</option></select></label>
+<button class="button secondary" type="button" id="pcd-clear">Clear Filters</button>
+</div>
+<div class="pcd-results-heading"><p id="pcd-status" role="status" aria-live="polite">Loading Pokémon card index…</p><span id="pcd-page-label"></span></div>
+<div id="pcd-grid" class="pcd-grid" aria-label="Pokémon cards"></div>
+<div class="pcd-pages"><button type="button" class="button secondary" id="pcd-prev" disabled>← Previous</button><strong id="pcd-page-number">Page 1</strong><button type="button" class="button secondary" id="pcd-next" disabled>Next →</button></div>
+</section>
+<section class="pcd-panel pcd-help">
+<h2>About This Database</h2>
+<p>The imported index covers English card printings currently listed by TCGdex, across classic and modern expansions. Each set/card ID identifies a distinct printing, including reprints. Card-specific details load from the TCGdex reference API when you open a card. Some records don't have images or full card text yet.</p>
+<p>Booster rewards and owned collections are handled separately on CTooniverse. The eight Archive volumes together cover every indexed card. The Pokémon Card Arena currently uses its own simplified loaner decks, not your collected cards.</p>
+<p class="pcd-credit">Data and card imagery provided by <a href="https://tcgdex.dev" target="_blank" rel="noopener noreferrer">TCGdex</a>. Pokémon trademarks and imagery belong to their respective owners. Unofficial, non-endorsed fan project.</p>
+</section>
+</main>
+<dialog id="pcd-dialog" class="pcd-dialog" aria-labelledby="pcd-dialog-title">
+<div class="pcd-dialog-top"><h2 id="pcd-dialog-title">Pokémon Card</h2><button type="button" id="pcd-close" aria-label="Close card details">×</button></div>
+<div class="pcd-detail-body"><div id="pcd-detail-image" class="pcd-detail-image"></div><div class="pcd-detail-copy"><div id="pcd-detail-metadata"></div><div id="pcd-detail-attacks"></div><div class="pcd-detail-links"><a id="pcd-find-pack" class="button primary" href="pokemon-card-shop.html">Find This Card's Pack</a><a class="button secondary" id="pcd-tcgdex-link" href="https://tcgdex.dev" target="_blank" rel="noopener noreferrer">TCGdex Card Details</a></div><p id="pcd-detail-status" class="pcd-small" role="status" aria-live="polite"></p></div></div>
+</dialog>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>Card data courtesy of TCGdex.</span></footer>
+<script type="module" src="site-chat-widget.js?v=1"></script>
+</body>
+</html>
