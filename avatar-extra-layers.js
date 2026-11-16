@@ -43,8 +43,8 @@ export function avatarExtraLayers(a){
  if(a.outfit==='dress')p.clothes='<path d="M123 268Q159 283 196 268L225 370Q160 390 96 370Z" fill="@shirt" '+outline+'/><path d="M127 271Q159 289 193 271M108 351Q162 370 212 351" stroke="@trim" stroke-width="7" fill="none"/>';
  if(a.face==='frown')p.faceFeatures+='<path d="M143 262Q160 245 179 262" fill="none" stroke="#19171d" stroke-width="3.5" stroke-linecap="round"/>';
  if(a.face==='laugh')p.faceFeatures+='<path d="M134 246Q160 295 187 246Q160 262 134 246Z" fill="#451c2b" '+outline+'/><path d="M146 264Q159 257 173 264" fill="none" stroke="#fff" stroke-width="6"/>';
- if(a.face==='wink')p.faceFeatures+='<ellipse cx="133" cy="187" rx="35" ry="39" fill="@skin"/><path d="M105 190Q133 174 156 191M142 251Q160 266 178 251" fill="none" stroke="#19171d" stroke-width="3.5" stroke-linecap="round"/>';
- if(a.face==='sleepy')p.faceFeatures+='<path d="M100 176Q133 184 162 177L161 207Q131 215 101 203Z M165 177Q192 184 224 176L220 203Q190 215 165 207Z" fill="@skin"/><path d="M108 190Q131 196 155 190M169 190Q193 196 215 190M148 254h24" fill="none" stroke="#19171d" stroke-width="3"/>';
+ if(a.face==='wink')p.faceFeatures+='<path d="M142 251Q160 266 178 251" fill="none" stroke="#19171d" stroke-width="3.5" stroke-linecap="round"/>';
+ if(a.face==='sleepy')p.faceFeatures+='<path d="M148 254h24" fill="none" stroke="#19171d" stroke-width="3" stroke-linecap="round"/>';
  if(a.brows==='raised')p.faceFeatures+='<path d="M107 151Q130 138 150 149M174 149Q194 138 214 151" fill="none" stroke="#19171d" stroke-width="3"/>';
  if(a.brows==='angry')p.faceFeatures+='<path d="M105 152l48 14M169 166l48-14" stroke="#19171d" stroke-width="4"/>';
  if(a.brows==='soft')p.faceFeatures+='<path d="M110 155Q130 150 149 157M173 157Q193 150 213 155" fill="none" stroke="#19171d" stroke-width="2"/>';
