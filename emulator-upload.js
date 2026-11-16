@@ -6,26 +6,31 @@
  if(!form)return;
  const button=document.getElementById('emu-upload');
  const status=document.getElementById('emu-status');
- form.hidden=false;
- const message=document.createElement('p');message.id='emu-owner-auth-status';message.setAttribute('role','status');form.insertBefore(message,button);
+ form.hidden=true;
+ const message=document.createElement('p');
+ message.id='emu-owner-auth-status';message.setAttribute('role','status');
+ const actions=form.querySelector('.emu-owner-actions');
+ if(actions)actions.prepend(message);else form.append(message);
  button.disabled=true;
  async function verifyOwner(){
+  button.disabled=true;form.hidden=true;
   message.textContent='Checking Owner access…';
   const {data:{user},error:authError}=await db.auth.getUser();
   if(authError||!user){message.textContent='Sign in to your Owner account to upload games.';return false}
   const {data:owner,error:ownerError}=await db.from('site_owners').select('user_id').eq('user_id',user.id).maybeSingle();
   if(ownerError){message.textContent='Unable to verify Owner access: '+ownerError.message;return false}
   if(!owner){message.textContent='This account does not have Owner upload permissions.';return false}
+  form.hidden=false;
   message.textContent='Owner verified. Choose a game file to upload.';
   button.disabled=false;return true
  }
  await verifyOwner();
  db.auth.onAuthStateChange(()=>{setTimeout(verifyOwner,0)});
  button.addEventListener('click',async()=>{
-  const title=document.getElementById('emu-title').value.trim();
+  const title=document.getElementById('emu-title-input').value.trim();
   const rom=document.getElementById('emu-owner-file').files[0];
   const consoleId=document.getElementById('emu-upload-console').value;
-  const allowed={nes:['nes'],snes:['sfc','smc'],gb:['gb'],gba:['gba'],gbc:['gbc'],n64:['n64','z64','v64'],segaMD:['md','gen','bin'],nds:['nds'],psx:['chd','pbp','iso','zip']};
+  const allowed={nes:['nes','zip'],snes:['sfc','smc','zip'],gb:['gb','zip'],gba:['gba','zip'],gbc:['gbc','zip'],n64:['n64','z64','v64','zip'],segaMD:['md','gen','bin','zip'],nds:['nds','zip'],psx:['chd','pbp','iso','zip']};
   const extension=rom?.name.split('.').pop().toLowerCase();
   if(!title){status.textContent='Enter a game title first.';return}
   if(title.length>100){status.textContent='Game title must be 100 characters or fewer.';return}
@@ -48,8 +53,9 @@
    }
    const saved=await db.from('emulator_games').insert({title,console:consoleId,storage_path:path,published:true});
    if(saved.error){await db.storage.from('emulator-games').remove([path]);throw saved.error}
-   status.textContent='Game saved to the library. Refresh to see its case.';
-   document.getElementById('emu-title').value='';
+   status.textContent='Game uploaded. Refreshing the console cases…';
+   await window.ctoonReloadGameCases?.();
+   document.getElementById('emu-title-input').value='';
    document.getElementById('emu-owner-file').value='';
   }catch(e){status.textContent='Upload failed: '+e.message}finally{button.disabled=false}
  });
