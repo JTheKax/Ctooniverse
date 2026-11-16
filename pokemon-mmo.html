@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123542">
+<meta name="description" content="Explore Pokémon Meadow Online, an early multiplayer creature-collecting RPG inside CTooniverse.">
+<title>Pokémon Meadow Online | CTooniverse</title>
+<link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
+<link rel="stylesheet" href="arcade-polish.css?v=2">
+<link rel="stylesheet" href="pokemon-mmo.css?v=20261116-alpha-1">
+<script src="script.js?v=20261115-shop-auction-v1" defer></script>
+<script type="module" src="header-profile.js?v=without-avatar-20261116"></script>
+<script type="module" src="account-menu.js?v=without-avatar-20261116"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
+<script type="module" src="pokemon-mmo.js?v=20261116-alpha-1"></script>
+</head>
+<body class="pmmo-page">
+<a href="#main" class="skip-link">Skip to content</a>
+<header class="site-header">
+<a href="index.html" class="brand" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" width="300" height="100" alt="CTooniverse"></a>
+<nav aria-label="Main navigation">
+<a href="index.html" class="nav-link">Home</a><a href="ctoons.html" class="nav-link">CToons</a>
+<a href="games.html" class="nav-link active" aria-current="page">Games</a><a href="cards.html" class="nav-link">Cards</a>
+<a href="watch.html" class="nav-link">Theater</a><a href="shop.html" class="nav-link">Shop</a>
+<a href="community.html" class="nav-link">Community</a><a href="account.html" class="nav-link">Account</a>
+<div class="owner-menu owner-nav" style="display:none!important"><button type="button" class="nav-link owner-menu-trigger" aria-haspopup="true" aria-expanded="false">♛ Owner ▾</button><div class="owner-menu-panel"><a href="owner.html">Dashboard</a></div></div>
+</nav><div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div>
+<span class="header-tag">MULTIPLAYER ALPHA</span></header>
+<main id="main" class="pmmo-main">
+<section class="pmmo-hero">
+<div><p class="pmmo-eyebrow">✦ CTOONIVERSE · ONLINE ADVENTURE ✦</p><h1>Pokémon <span>Meadow Online</span></h1>
+<p>Explore a shared world, meet other trainers, catch wild Pokémon, and grow your team. A playable early MMORPG foundation, separate from the Pokémon card game.</p></div>
+<div class="pmmo-hero-links"><a class="button secondary" href="games.html">← Games Hub</a><a class="button secondary" href="pokemon-tcg.html">Pokémon Card Arena</a></div>
+</section>
+<section id="pmmo-setup" class="pmmo-setup pmmo-panel" aria-labelledby="pmmo-setup-title">
+<div class="pmmo-section-heading"><p class="pmmo-eyebrow">A NEW TRAINER BEGINS</p><h2 id="pmmo-setup-title">Choose Your Starter</h2><p id="pmmo-auth-note" role="status" aria-live="polite">Checking your CTooniverse account…</p></div>
+<label for="pmmo-trainer-name" class="pmmo-trainer-name-label">Trainer name <input id="pmmo-trainer-name" maxlength="22" minlength="2" autocomplete="nickname" placeholder="Choose your trainer name"></label>
+<div class="pmmo-starter-grid" role="group" aria-label="Starter Pokémon">
+<button type="button" data-starter="1" class="pmmo-starter selected" aria-pressed="true"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png" alt="" loading="lazy"><strong>Bulbasaur</strong><small>Grass · Balanced</small></button>
+<button type="button" data-starter="4" class="pmmo-starter" aria-pressed="false"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png" alt="" loading="lazy"><strong>Charmander</strong><small>Fire · Strong attacks</small></button>
+<button type="button" data-starter="7" class="pmmo-starter" aria-pressed="false"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png" alt="" loading="lazy"><strong>Squirtle</strong><small>Water · Defensive</small></button>
+</div>
+<div class="pmmo-setup-actions"><button id="pmmo-begin" type="button" class="button primary">Start Online Adventure</button><button id="pmmo-guest" type="button" class="button secondary">Explore as Guest</button><a href="login.html" class="button secondary" id="pmmo-login">Sign in</a></div>
+<p class="pmmo-small">An account is required to save your starter, capture Pokémon and appear to other trainers. Guest exploration is local only. This unofficial fan-made alpha does not include trading or competitive battles.</p>
+</section>
+<section class="pmmo-world-wrap" id="pmmo-game" hidden>
+<div class="pmmo-hud">
+<div><p class="pmmo-eyebrow">ROUTE 01 · MEADOW TOWN</p><strong id="pmmo-trainer-label">Guest Trainer</strong><span id="pmmo-state">Exploring</span></div>
+<div class="pmmo-hud-stats"><span><icon name="users" /> <strong id="pmmo-online">1</strong> trainers online</span><span>⚪ <strong id="pmmo-balls">0</strong> Poké Balls</span><span>❤️ <strong id="pmmo-hp">45</strong>/45 HP</span></div>
+</div>
+<div id="pmmo-canvas-shell" class="pmmo-canvas-shell"><canvas id="pmmo-map" width="960" height="720" aria-label="Top-down Pokémon Meadow Town game map. Use arrow keys, WASD or movement controls to explore."></canvas>
+<div id="pmmo-map-loading" class="pmmo-map-loading">Loading the meadow…</div></div>
+<p id="pmmo-message" class="pmmo-message" role="status" aria-live="polite">Welcome to Meadow Town! Walk into the tall grass to meet wild Pokémon.</p>
+<div class="pmmo-controls">
+<div class="pmmo-dpad" aria-label="Touch movement controls">
+<button type="button" data-move="up" class="pmmo-up" aria-label="Move up">▲</button>
+<button type="button" data-move="left" class="pmmo-left" aria-label="Move left">◀</button>
+<button type="button" data-move="down" class="pmmo-down" aria-label="Move down">▼</button>
+<button type="button" data-move="right" class="pmmo-right" aria-label="Move right">▶</button>
+</div>
+<div class="pmmo-control-actions"><button id="pmmo-interact" type="button" class="button primary">✦ Interact / Heal</button><button id="pmmo-party-btn" type="button" class="button secondary">🎒 My Pokémon</button><button id="pmmo-guide-btn" type="button" class="button secondary">🗺️ Guide</button></div>
+</div>
+<div class="pmmo-columns">
+<section class="pmmo-panel pmmo-party" aria-labelledby="pmmo-party-heading"><div class="pmmo-section-heading"><h2 id="pmmo-party-heading">My Pokémon</h2><span id="pmmo-party-count">0 Pokémon</span></div><div id="pmmo-party" class="pmmo-party-grid"></div></section>
+<section class="pmmo-panel pmmo-help" id="pmmo-help"><h2>Explore Meadow Town</h2><p>Use <strong>WASD</strong>, arrow keys, or touch controls to walk. Tall grass can trigger wild encounters. Visit the healing station beside the building to restore HP and receive Poké Balls.</p><p>Pokémon caught during battles appear in your collection. Other signed-in trainers appear on the shared overworld, updated periodically. PvP, trading, quests, multiple maps and server-verified movement are future features.</p></section>
+</div>
+</section>
+<dialog id="pmmo-battle" class="pmmo-battle" aria-labelledby="pmmo-battle-title">
+<div class="pmmo-battle-heading"><h2 id="pmmo-battle-title">Wild Pokémon!</h2><button type="button" id="pmmo-battle-close" aria-label="Close battle">×</button></div>
+<div class="pmmo-battlefield"><div class="pmmo-wild-card"><div class="pmmo-enemy-label"><strong id="pmmo-wild-name">Wild Pokémon</strong><span id="pmmo-wild-level">Lv. 3</span></div><div class="pmmo-hp-track"><span id="pmmo-wild-hp-fill"></span></div><img id="pmmo-wild-img" alt="Wild Pokémon" src="" width="144" height="144"></div>
+<div class="pmmo-friend-card"><img id="pmmo-friend-img" src="" alt="Your starter Pokémon" width="128" height="128"><div><strong id="pmmo-friend-name">Your Pokémon</strong><span id="pmmo-friend-level">Lv. 5</span><div class="pmmo-hp-track"><span id="pmmo-friend-hp-fill"></span></div></div></div></div>
+<p class="pmmo-battle-message" id="pmmo-battle-message" role="status" aria-live="polite">What will you do?</p>
+<div class="pmmo-battle-buttons"><button id="pmmo-attack" type="button" class="button primary">⚔️ Attack</button><button id="pmmo-catch" type="button" class="button secondary">⚪ Throw Poké Ball</button><button id="pmmo-run" type="button" class="button secondary">↩ Run</button></div>
+</dialog>
+<p class="pmmo-credits">Pokémon sprites are loaded from the <a href="https://github.com/PokeAPI/sprites" target="_blank" rel="noopener noreferrer">PokéAPI sprite repository</a>. Pokémon and related trademarks belong to their respective owners. Unofficial fan-made prototype, not endorsed by The Pokémon Company. Do not upload or redistribute copyrighted assets without permission.</p>
+</main>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>Meadow Town · Online adventure alpha</span></footer>
+<script type="module" src="site-chat-widget.js?v=1"></script>
+</body></html>
