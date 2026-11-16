@@ -1,0 +1,247 @@
+/* CTooniverse Duel Arena — original PS1-era Egyptian duel-stage styling.
+   Visual inspiration: Forbidden Memories' sandstone battlefield, dark void,
+   engraved card slots and compact blue/red Life Point HUD.
+   This stylesheet is additive; no game logic or roster functionality changes. */
+
+html body.yd-duel-page{
+  color:#f5e8ca;
+  background:
+    radial-gradient(ellipse at 50% -16%,#90602d45 0%,transparent 55%),
+    linear-gradient(155deg,#090910 0%,#1b1420 38%,#0c0a12 75%,#060810 100%)!important;
+  background-attachment:fixed!important
+}
+.yd-main{color:#f3e6c8}
+.yd-main :is(h1,h2){color:#ffedc3;text-shadow:0 2px 6px #06030c}
+.yd-title{
+  border:4px ridge #ac8249;
+  border-radius:8px;
+  background:
+    linear-gradient(125deg,#8b63281b 0%,transparent 65%),
+    repeating-linear-gradient(90deg,transparent 0 72px,#d2a76008 73px 75px),
+    linear-gradient(135deg,#17141c,#302523 48%,#12131c)!important;
+  box-shadow:inset 0 0 0 2px #2a1c14,0 14px 32px #0009
+}
+.yd-title h1 span{color:#efc66c!important}
+.yd-title .eyebrow{color:#e6bc72}
+.yd-title p{color:#eadfc9}
+.yd-starter-banner{
+  border:2px ridge #bc9656;
+  background:linear-gradient(110deg,#211b1d,#382923 55%,#171721);
+  color:#f5e6ca
+}
+
+/* Stone-and-brass control strip; the existing 44px+ touch targets remain. */
+#yd-duel-content .yd-toolbar{
+  border:3px ridge #a9854f;
+  border-radius:7px;
+  background:
+    repeating-linear-gradient(90deg,#ffffff06 0 1px,transparent 1px 14px),
+    linear-gradient(115deg,#181a24,#39302b 56%,#151823)!important;
+  box-shadow:inset 0 0 0 2px #211912,0 10px 20px #0009
+}
+#yd-duel-content .yd-toolbar strong{color:#ffe09a}
+#yd-duel-content .yd-toolbar p{color:#e7d8b7}
+.yd-main #yd-duel-content .yd-buttons .button,
+.yd-main #yd-duel-content .yd-actions .button,
+.yd-main #yd-duel-content .yd-view-toolbar .button{
+  border:2px ridge #b99456;
+  border-radius:5px;
+  color:#f9e6bd;
+  background:linear-gradient(#41414f,#1b243b 44%,#111521);
+  box-shadow:inset 0 1px #ffffff2b,0 2px 7px #0008
+}
+.yd-main #yd-duel-content .yd-buttons .button.primary,
+.yd-main #yd-duel-content .yd-actions .button.primary{
+  background:linear-gradient(#715126,#58341c 48%,#312018);
+  border-color:#f3c772;
+  color:#fff1c8
+}
+.yd-main #yd-duel-content .button:focus-visible{outline-color:#ffe39d}
+.yd-main #yd-duel-content .button:hover:not(:disabled){
+  filter:brightness(1.15);
+  box-shadow:inset 0 1px #ffffff42,0 0 10px #e2b65a55
+}
+
+/* Compact, separate blue COM and red YOU life-point windows. */
+#yd-duel-content .yd-arena-hud{
+  border:3px ridge #a7824a;
+  border-radius:7px;
+  background:linear-gradient(115deg,#0a0b13,#30261f 52%,#0b0b16);
+  box-shadow:inset 0 0 0 2px #150f0e,0 7px 22px #0009
+}
+#yd-duel-content .yd-hud-team{
+  border:2px ridge #aaa2b0;
+  border-radius:3px;
+  box-shadow:inset 0 1px #ffffff24,0 2px 10px #0008
+}
+#yd-duel-content .yd-hud-cpu{
+  background:linear-gradient(125deg,#222e69,#101947 50%,#080d2f);
+  border-color:#6f80cd
+}
+#yd-duel-content .yd-hud-player{
+  background:linear-gradient(125deg,#83232c,#4b141e 55%,#220d17);
+  border-color:#dd7c71
+}
+#yd-duel-content .yd-hud-cpu :is(small,b){color:#b9c6ff}
+#yd-duel-content .yd-hud-player :is(small,b){color:#ffc3b4}
+#yd-duel-content .yd-hud-team strong{color:#fff0cf;text-shadow:0 1px 2px #02030d}
+#yd-duel-content .yd-hud-team b{
+  font-weight:1000;
+  font-variant-numeric:tabular-nums;
+  font-size:clamp(.9rem,1.7vw,1.15rem);
+  letter-spacing:.06em
+}
+#yd-duel-content .yd-hud-meter{
+  height:8px;
+  border:1px solid #d7c18f;
+  border-radius:2px;
+  background:#060910
+}
+#yd-duel-content .yd-hud-cpu .yd-hud-meter span{background:linear-gradient(90deg,#4f72d3,#a9c5ff)}
+#yd-duel-content .yd-hud-player .yd-hud-meter span{background:linear-gradient(90deg,#a02d35,#ff8f71)}
+#yd-duel-content .yd-hud-phase{
+  padding:9px 5px;
+  border:1px solid #886a41;
+  border-radius:4px;
+  background:radial-gradient(ellipse at 50% 12%,#b58b4029,transparent 75%),#100f17;
+  box-shadow:inset 0 0 13px #b27c2820
+}
+#yd-duel-content .yd-hud-phase strong{color:#f4ce78;text-shadow:0 0 9px #e5ac4647}
+#yd-duel-content .yd-hud-phase p{color:#e6d6b4}
+
+/* The duel board becomes a floating golden sandstone tile platform,
+   rather than the previous blue-green sci-fi duel disk. */
+#yd-duel-content .yd-view-toolbar{color:#f0cb82}
+.yd-main #yd-duel-content .yd-board-scroll{
+  border:2px solid #362719;
+  border-radius:8px;
+  background:#07080f;
+  scrollbar-color:#bb9656 #18131a
+}
+.yd-main #yd-duel-content .yd-board{
+  position:relative;
+  isolation:isolate;
+  border:5px ridge #cf9f4d;
+  border-radius:6px;
+  background:
+    radial-gradient(ellipse at 48% 26%,#fff3ba91 0%,transparent 58%),
+    repeating-linear-gradient(90deg,transparent 0 19.6%,#5431175c 19.8% 20.1%),
+    repeating-linear-gradient(0deg,transparent 0 70px,#663c1d83 70px 73px),
+    linear-gradient(132deg,#8a5925 0%,#dfbb60 22%,#f3d77b 46%,#bd853b 79%,#79471e 100%)!important;
+  box-shadow:inset 0 0 0 3px #563619,inset 0 0 35px #5c2f12a6,0 16px 40px #000e
+}
+.yd-main #yd-duel-content .yd-side{
+  min-width:0;
+  border:2px solid #906126;
+  border-radius:3px;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 19.7%,#62402042 19.8% 20%),
+    linear-gradient(140deg,#e1ba63c7,#f7dc85b8 51%,#b27a34cf)!important;
+  box-shadow:inset 0 0 17px #693b154d,0 2px 8px #4c290c4d
+}
+.yd-main #yd-duel-content .yd-cpu{border-color:#a77434}
+.yd-main #yd-duel-content .yd-player{border-color:#bf893b}
+.yd-main #yd-duel-content .yd-zlabel{
+  color:#3a2413;
+  font-weight:1000;
+  text-shadow:0 1px #fff1bf9e;
+  letter-spacing:.07em
+}
+.yd-main #yd-duel-content .yd-slot{
+  border:2px solid #6b4623;
+  border-radius:2px;
+  background:
+    linear-gradient(135deg,#7e4e1980,#e5c17744 48%,#5d3a2380),
+    radial-gradient(ellipse at 50% 50%,#cb9a4c66,#70431f6e)!important;
+  box-shadow:inset 0 0 0 2px #f1ce8a82,inset 0 0 13px #5837158c,0 1px 3px #54280b57
+}
+.yd-main #yd-duel-content .yd-slot.yd-selected{
+  border-color:#75e8ff;
+  box-shadow:0 0 0 2px #39b9f5ae,0 0 14px #5ecaffd0,inset 0 0 0 1px #fff0bf
+}
+.yd-main #yd-duel-content .yd-slot.yd-target{
+  border-color:#fff2a4;
+  box-shadow:0 0 0 2px #ffcf53,0 0 15px #ffe18bd1,inset 0 0 0 1px #fff0b1
+}
+.yd-main #yd-duel-content .yd-center{
+  margin:9px 0;
+  padding:10px 5px;
+  border:2px ridge #ad8242;
+  border-radius:3px;
+  background:linear-gradient(90deg,#16121a,#44311e 50%,#15121a);
+  color:#f8d484;
+  text-shadow:0 2px #070610;
+  font-weight:1000;
+  letter-spacing:.15em
+}
+.yd-main #yd-duel-content .yd-duelist{
+  margin-bottom:5px;
+  border:1px solid #7e5b30;
+  background:linear-gradient(110deg,#252028ec,#4a3726dd,#252028ec);
+  border-radius:3px
+}
+.yd-main #yd-duel-content .yd-player .yd-duelist{
+  margin:7px 0 0;
+  padding-top:8px
+}
+.yd-main #yd-duel-content .yd-duelist strong{color:#fff0c3}
+.yd-main #yd-duel-content .yd-duelist small{color:#d9c5a0}
+.yd-main #yd-duel-content .yd-lp strong{color:#ffdb8b}
+.yd-main #yd-duel-content .yd-cpu .yd-lp strong{color:#a3c6ff}
+.yd-main #yd-duel-content .yd-avatar{
+  border:2px ridge #ccaa65;
+  background:#1a1a2b;
+  border-radius:3px
+}
+
+/* Dark carved stone card tray and selected-card information panel. */
+#yd-duel-content .yd-panel{
+  border:3px ridge #9d7849;
+  border-radius:7px;
+  background:
+    repeating-linear-gradient(93deg,#ffffff04 0 2px,transparent 2px 28px),
+    linear-gradient(140deg,#28232a,#111821 60%,#2c2425);
+  box-shadow:inset 0 0 0 2px #231913,0 12px 24px #0008
+}
+#yd-duel-content .yd-hand-panel{
+  border-color:#c09a58;
+  background:
+    linear-gradient(0deg,#8f68362e,#0000 20%),
+    linear-gradient(135deg,#2c292c,#101620 48%,#3b2e28)
+}
+#yd-duel-content .yd-panel h2{color:#ffe0a0}
+#yd-duel-content .yd-subhead span{color:#e3cfab}
+#yd-duel-content .yd-handcard[aria-pressed="true"]{
+  outline:3px solid #f8cb65;
+  outline-offset:2px;
+  box-shadow:0 0 15px #ffda8166
+}
+#yd-duel-content .yd-details,
+#yd-duel-content .yd-log{color:#f1e2c4}
+#yd-duel-content .yd-record{color:#e5c995}
+#yd-duel-content .yd-result{
+  border:3px ridge #d1a75d;
+  border-radius:5px;
+  color:#ffe7aa;
+  background:linear-gradient(120deg,#45301e,#151524,#45301e)
+}
+#yd-duel-content .yd-mobile-swipe-hint{
+  background:#201b21;
+  border:1px solid #9c783c;
+  color:#f0d5a0
+}
+
+/* Preserve the existing compact field and wrapped (non-scrolling) hand on phones. */
+@media(max-width:700px){
+  html body.yd-duel-page{background-attachment:scroll!important}
+  .yd-main #yd-duel-content .yd-board{border-width:2px;border-radius:4px}
+  .yd-main #yd-duel-content .yd-side{border-width:1px}
+  .yd-main #yd-duel-content .yd-slot{border-width:1px}
+  #yd-duel-content .yd-arena-hud{border-width:2px}
+  #yd-duel-content .yd-hud-phase{padding:5px}
+  .yd-main #yd-duel-content .yd-center{letter-spacing:.04em;padding:6px 3px}
+  #yd-duel-content .yd-hand{flex-wrap:wrap;overflow-x:visible;justify-content:center;scroll-snap-type:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .yd-main #yd-duel-content .button:hover:not(:disabled){filter:none}
+}
