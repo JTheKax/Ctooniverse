@@ -1,0 +1,111 @@
+/* Pokemon Meadow Online — responsive game viewport and alpha adventure UI */
+html body.pmmo-page{
+ background:radial-gradient(ellipse at 12% 0%,#2566547d,transparent 47%),
+ radial-gradient(ellipse at 90% 28%,#537d615a,transparent 52%),
+ linear-gradient(150deg,#0c2029,#172f30 54%,#0e2636)!important;
+ background-attachment:fixed!important;color:#effaf4
+}
+.pmmo-main{width:min(1170px,calc(100% - 20px));margin:17px auto 55px;min-width:0}
+.pmmo-main button{cursor:pointer}
+.pmmo-main button:disabled{opacity:.55;cursor:not-allowed}
+.pmmo-main :is(button,input,a):focus-visible,.pmmo-battle button:focus-visible{outline:3px solid #fff0ad;outline-offset:3px}
+.pmmo-hero,.pmmo-panel,.pmmo-world-wrap{
+ min-width:0;border:3px ridge #c4b683;border-radius:16px;
+ box-shadow:0 13px 27px #020d14b4,inset 0 0 0 1px #ffffff0b;
+ background:linear-gradient(125deg,#193747f5,#182a41f4 62%,#1b3d39f2);
+ padding:clamp(13px,2.3vw,25px);margin-bottom:15px
+}
+.pmmo-hero{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;align-items:center;
+ background:radial-gradient(ellipse at 65% 0%,#8be18d3a,transparent 62%),linear-gradient(115deg,#194748,#192b49 65%,#17372c)}
+.pmmo-eyebrow{margin:0 0 7px;font-size:.7rem;color:#fbe4a3;letter-spacing:.13em;font-weight:950;text-transform:uppercase}
+.pmmo-hero h1{font-size:clamp(2.1rem,5vw,3.55rem);line-height:1.03;margin:6px 0;color:#fef0b6;text-shadow:0 3px 9px #000c}
+.pmmo-hero h1 span{color:#a9f7cc}
+.pmmo-hero p:not(.pmmo-eyebrow){color:#e6f2ee;max-width:66ch;line-height:1.5}
+.pmmo-hero-links{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.pmmo-section-heading{display:flex;flex-direction:column;gap:2px;margin-bottom:15px}
+.pmmo-section-heading h2,.pmmo-panel h2{color:#ffebb6;font-size:1.25rem;margin:0 0 7px}
+.pmmo-section-heading p:not(.pmmo-eyebrow){color:#d0ede4;margin:0;line-height:1.45}
+.pmmo-trainer-name-label{display:flex;flex-direction:column;gap:7px;max-width:390px;color:#fbf1c7;font-weight:900;font-size:.83rem}
+.pmmo-trainer-name-label input{height:44px;min-width:0;padding:9px 12px;border:2px solid #b9d4bd;border-radius:7px;background:#0c2732;color:#fff;font-size:.9rem}
+.pmmo-starter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.pmmo-starter{display:flex;flex-direction:column;gap:7px;align-items:center;justify-content:center;min-width:0;min-height:190px;padding:14px 9px;
+ border:3px ridge #d7bd7e;border-radius:13px;color:#eaffed;background:radial-gradient(circle at 50% 12%,#a0efd660,#123343 70%);text-align:center;transition:transform .13s ease}
+.pmmo-starter[data-starter="4"]{background:radial-gradient(circle at 50% 12%,#e69a6855,#402738 80%)}
+.pmmo-starter[data-starter="7"]{background:radial-gradient(circle at 50% 12%,#7ac9ff5a,#122e55 80%)}
+.pmmo-starter.selected{outline:3px solid #f7f6ad;outline-offset:2px;box-shadow:0 0 20px #98f4ad6b}
+.pmmo-starter:hover{transform:translateY(-3px)}
+.pmmo-starter img{width:96px;height:96px;image-rendering:pixelated;object-fit:contain;filter:drop-shadow(0 7px 9px #001719)}
+.pmmo-starter strong{font-size:1rem;color:#fff7ce}
+.pmmo-starter small{color:#d4eaf5}
+.pmmo-setup-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.pmmo-small{color:#ccdfdd;font-size:.76rem;line-height:1.5}
+.pmmo-world-wrap{background:linear-gradient(135deg,#12283b,#103d38 56%,#173050);padding:clamp(8px,2vw,20px)}
+.pmmo-world-wrap[hidden],.pmmo-setup[hidden],.pmmo-battle[hidden]{display:none!important}
+.pmmo-hud{display:flex;align-items:center;justify-content:space-between;gap:13px;flex-wrap:wrap;padding:10px;margin-bottom:10px;background:#061e2bcc;border:2px ridge #a2d3ae;border-radius:10px}
+.pmmo-hud>div:first-child{display:flex;flex-direction:column;gap:2px}
+.pmmo-hud strong{color:#fff0b6}
+.pmmo-hud #pmmo-state{font-size:.75rem;color:#c9ece1}
+.pmmo-hud-stats{display:flex;flex-wrap:wrap;gap:7px 15px;font-size:.8rem;color:#d9f7ed}
+.pmmo-canvas-shell{position:relative;width:100%;max-width:960px;margin:0 auto;border:5px ridge #b0d5ab;border-radius:10px;overflow:hidden;background:#387e51;box-shadow:0 9px 23px #010e18a1}
+.pmmo-canvas-shell canvas{display:block;width:100%;height:auto;aspect-ratio:4/3;image-rendering:pixelated;touch-action:manipulation}
+.pmmo-map-loading{position:absolute;inset:0;background:#123829ef;display:grid;place-items:center;text-align:center;font-weight:900;color:#eaffba}
+.pmmo-map-loading[hidden]{display:none!important}
+.pmmo-message{background:#092d35;border:1px solid #83c9ad;border-radius:7px;padding:10px 13px;line-height:1.42;color:#e7f8ec;font-size:.88rem}
+.pmmo-controls{display:flex;align-items:center;justify-content:space-between;gap:19px;flex-wrap:wrap;margin:13px 0}
+.pmmo-dpad{display:grid;grid-template-columns:repeat(3,50px);grid-template-rows:repeat(3,49px);gap:3px;touch-action:none}
+.pmmo-dpad button{touch-action:none;user-select:none;border:2px ridge #fee19d;border-radius:9px;background:linear-gradient(#275d6c,#123440);color:#fff6cd;font-size:1.26rem;min-height:49px}
+.pmmo-dpad button:active{background:#517d54}
+.pmmo-up{grid-column:2;grid-row:1}.pmmo-left{grid-column:1;grid-row:2}.pmmo-down{grid-column:2;grid-row:3}.pmmo-right{grid-column:3;grid-row:2}
+.pmmo-control-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;flex:1}
+.pmmo-control-actions button{min-height:45px}
+.pmmo-columns{display:grid;grid-template-columns:1.2fr 1fr;gap:11px}
+.pmmo-columns .pmmo-panel{margin:0;padding:14px}
+.pmmo-party-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:9px}
+.pmmo-party-card{border:2px ridge #c0d9ae;border-radius:9px;background:#12343d;display:flex;align-items:center;gap:6px;padding:7px}
+.pmmo-party-card img{width:55px;height:55px;image-rendering:pixelated;object-fit:contain}
+.pmmo-party-card div{display:flex;flex-direction:column;gap:3px;min-width:0}
+.pmmo-party-card strong{color:#fff0b6;font-size:.78rem;overflow-wrap:anywhere}
+.pmmo-party-card span{color:#d1e4e3;font-size:.71rem}
+.pmmo-party-card .pmmo-party-starter{color:#f9d99b}
+.pmmo-help p{font-size:.82rem;color:#d7f1ed;line-height:1.5}
+.pmmo-credits{font-size:.73rem;color:#d1dfdf;line-height:1.55;margin:12px 2px}
+.pmmo-credits a{color:#a9e9ee}
+.pmmo-battle{position:fixed;inset:0;width:min(93vw,580px);max-width:93vw;max-height:92vh;overflow:auto;padding:clamp(13px,3vw,22px);border:4px ridge #edcd8c;border-radius:16px;background:linear-gradient(140deg,#173e4c,#23493d 58%,#1d344a);color:#f0fbf6;box-shadow:0 15px 55px #020a14}
+.pmmo-battle::backdrop{background:#000b;backdrop-filter:blur(3px)}
+.pmmo-battle-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.pmmo-battle-heading h2{color:#ffe7ab;margin:0}
+.pmmo-battle-heading button{border:2px solid #ffdaa4;background:#1e3e50;color:#fff;cursor:pointer;border-radius:50%;width:39px;height:39px;font-size:1.5rem}
+.pmmo-battlefield{min-height:270px;display:flex;flex-direction:column;justify-content:space-between;padding:14px;border:2px ridge #a6bba6;border-radius:10px;background:linear-gradient(#c4f0b2 0%,#95d5ac 60%,#368a62 61%,#2b704f 100%)}
+.pmmo-wild-card{align-self:flex-end;width:48%;max-width:230px;display:flex;flex-direction:column;gap:4px;align-items:center;color:#153e35}
+.pmmo-wild-card img{width:130px;height:130px;image-rendering:pixelated}
+.pmmo-enemy-label{width:100%;display:flex;justify-content:space-between;gap:8px;font-size:.8rem;font-weight:900}
+.pmmo-friend-card{align-self:flex-start;display:flex;align-items:center;gap:8px;max-width:65%;color:#153b35}
+.pmmo-friend-card img{width:103px;height:103px;image-rendering:pixelated}
+.pmmo-friend-card>div{display:flex;flex-direction:column;gap:4px;font-weight:900;font-size:.75rem;min-width:92px}
+.pmmo-hp-track{width:100%;height:11px;border:2px solid #2c5242;border-radius:6px;overflow:hidden;background:#d9e1df}
+.pmmo-hp-track span{display:block;height:100%;width:100%;background:linear-gradient(90deg,#36a450,#9dff7a);transition:width .25s}
+.pmmo-battle-message{background:#0b3240;border:1px solid #83c4a5;padding:11px;border-radius:7px;min-height:42px;font-size:.84rem;color:#eff7e7}
+.pmmo-battle-buttons{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.pmmo-battle-buttons button{flex:1 1 130px;min-height:44px}
+@media(max-width:760px){
+ html body.pmmo-page{background-attachment:scroll!important}
+ .pmmo-main{width:calc(100% - 14px);margin-top:9px}
+ .pmmo-hero,.pmmo-panel,.pmmo-world-wrap{padding:11px;border-width:2px}
+ .pmmo-hero h1{font-size:2.1rem}
+ .pmmo-starter-grid{gap:5px}
+ .pmmo-starter{min-height:160px;padding:9px 3px;border-width:2px}
+ .pmmo-starter img{width:72px;height:72px}
+ .pmmo-starter strong{font-size:.74rem}
+ .pmmo-starter small{font-size:.65rem}
+ .pmmo-columns{grid-template-columns:1fr}
+ .pmmo-controls{justify-content:center}
+ .pmmo-control-actions{flex:1 1 210px}
+ .pmmo-canvas-shell{border-width:3px}
+ .pmmo-dpad{grid-template-columns:repeat(3,46px);grid-template-rows:repeat(3,46px)}
+ .pmmo-dpad button{min-height:46px}
+ .pmmo-hud-stats{font-size:.7rem}
+ .pmmo-friend-card img{width:82px;height:82px}
+ .pmmo-wild-card img{width:105px;height:105px}
+}
+@media(max-width:390px){.pmmo-control-actions button{font-size:.76rem;flex:1 1 120px}.pmmo-hero h1{font-size:1.85rem}}
+@media(prefers-reduced-motion:reduce){.pmmo-starter,.pmmo-hp-track span{transition:none}.pmmo-starter:hover{transform:none}}
