@@ -176,6 +176,7 @@ async function connectPresence(){
 }
 function refreshHud(){
  if(!trainer)return;
+ if(guest)$("pmmo-online").textContent="0";
  $("pmmo-trainer-label").textContent=trainer.display_name;
  $("pmmo-balls").textContent=String(trainer.pokeballs);
  $("pmmo-hp").textContent=String(trainer.hp);
