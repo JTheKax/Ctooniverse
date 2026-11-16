@@ -135,7 +135,7 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
     box-sizing:border-box;width:100%;min-width:620px;
     padding:9px;border-radius:12px
   }
-  .yd-board-scroll.yd-large-view .yd-board{min-width:850px}
+  .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{min-width:850px}
   .yd-main #yd-duel-content .yd-side{padding:8px;border-radius:9px}
   .yd-main #yd-duel-content .yd-zones{gap:7px}
   .yd-main #yd-duel-content .yd-slot{padding:3px;border-width:1px;min-width:0}
@@ -172,7 +172,7 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
   .yd-hud-team b{font-size:.76rem}
   .yd-hud-phase p{font-size:.69rem;margin-top:3px}
   .yd-main #yd-duel-content .yd-board{min-width:570px}
-  .yd-board-scroll.yd-large-view .yd-board{min-width:800px}
+  .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{min-width:800px}
   .yd-view-toolbar>span{flex:1 1 120px}
   .yd-view-toolbar button{padding:8px;font-size:.75rem}
   .yd-handcard{flex-basis:105px;height:157px}
@@ -194,7 +194,7 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
   .yd-main{width:calc(100% - 18px)}
   .yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
   .yd-main #yd-duel-content .yd-board{min-width:740px}
-  .yd-board-scroll.yd-large-view .yd-board{min-width:960px}
+  .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{min-width:960px}
   .yd-toolbar .yd-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
   .yd-toolbar .yd-buttons .button{min-height:44px}
 }
