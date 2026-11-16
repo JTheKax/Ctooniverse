@@ -526,6 +526,7 @@
   }
   function arenaHint(){
     if(game.winner)return "Duel over. Rematch or choose another opponent.";
+    if(game.active==="cpu")return "Opponent turn in progress. Watch the hologram summons and attacks.";
     if(game.phase==="battle")return game.selected?.zone==="field"?"Select an enemy target, or attack directly if there are no enemy monsters.":"Select your attacker, then the opposing monster.";
     if(game.selected?.zone==="hand")return "Card selected. Choose an action in the Selected Card panel below.";
     if(game.selected?.zone==="field")return "Monster selected. Its available actions are below.";
@@ -533,7 +534,7 @@
     return game.summoned?"Play Spells or Traps, then battle or end your turn.":"Select a card from your hand to summon, set, or activate.";
   }
   function render(){if(!game)return;
-    const phase=game.winner?"DUEL OVER":game.phase==="battle"?"BATTLE PHASE":game.turn===1?"OPENING TURN":"MAIN PHASE";
+    const phase=game.winner?"DUEL OVER":game.active==="cpu"?(game.phase==="battle"?"OPPONENT BATTLE":"OPPONENT TURN"):game.phase==="battle"?"BATTLE PHASE":game.turn===1?"OPENING TURN":"MAIN PHASE";
     const hint=arenaHint();
     $("yd-turn").textContent="Turn "+game.turn+" · "+phase;
     $("yd-message").textContent=hint;
