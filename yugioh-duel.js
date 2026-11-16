@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
   /* CTooniverse fan duel. Account-bound starter selection; no collection/inventory transactions. */
   const db=createClient("https://hsxdyxdazsdmpucyhqly.supabase.co","sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS");
   let activeStarter=null,choosingStarter=false,selectedOpponent=null,loadingOpponent=false;
+  let rosterSeries="all";
   const starterCardCache=new Map();
   const catalog={
     dark:["Dark Magician",7,2500,2100,"🪄"],blue:["Blue-Eyes White Dragon",8,3000,2500,"🐉"],
@@ -108,7 +109,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     "ishizu": "https://uploads4.yugioh.com/character/58/detail/detail/ishizu-lg.png?1384802855=",
     "tea": "https://uploads2.yugioh.com/character/8/detail/detail/tea-l.png?1371746845=",
     "odion": "https://uploads2.yugioh.com/character/59/detail/detail/odion-lg.png?1384802615=",
-    "bonz": "https://uploads2.yugioh.com/character/136/detail/detail/bonz-lrg.png?1393274111="
+    "bonz": "https://uploads2.yugioh.com/character/136/detail/detail/bonz-lrg.png?1393274111=",
+    "jaden": "https://uploads4.yugioh.com/character/24/detail/detail/jaden-l.png?1375717855=",
+    "zane": "https://uploads2.yugioh.com/character/26/detail/detail/zane-l.png?1371841335=",
+    "alexis": "https://uploads1.yugioh.com/character/19/detail/detail/alexis-l.png?1375717276=",
+    "chazz": "https://uploads2.yugioh.com/character/21/detail/detail/chazz-l.png?1371839968=",
+    "syrus": "https://uploads1.yugioh.com/character/25/detail/detail/syrus-l.png?1371841093=",
+    "aster": "https://uploads4.yugioh.com/character/37/detail/detail/aster-l.png?1375717571=",
+    "crowler": "https://uploads4.yugioh.com/character/23/detail/detail/Crowler-l.png?1371840566="
   });
   const DUELISTS=[
     {id:"yugi",name:"Yugi Muto",epithet:"King of Games",hero:46986414,race:"Spellcaster",difficulty:3,style:"Dark Magician · Spellcaster tactics",flavor:"A balanced rival whose spellcasters reward careful play."},
@@ -125,7 +133,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     {id:"ishizu",name:"Ishizu Ishtar",epithet:"Keeper of Fate",hero:17484499,race:"Fairy",difficulty:3,style:"Fairies · Ancient traps",flavor:"An elegant duelist who knows how to control the field."},
     {id:"tea",name:"Téa Gardner",epithet:"Friendship Duelist",hero:38033121,race:"Fairy",difficulty:1,style:"Fairies · Dark Magician Girl",flavor:"A welcoming rival to practice the fundamentals."},
     {id:"odion",name:"Odion",epithet:"Temple Guardian",hero:89194033,race:"Rock",difficulty:4,style:"Rock monsters · Defensive traps",flavor:"Strong defenses may force you into a long battle."},
-    {id:"bonz",name:"Bonz",epithet:"Ghost Gravekeeper",hero:29155212,race:"Zombie",difficulty:1,style:"Zombies · Haunted graveyard",flavor:"Rise against monsters from the haunted crypt."}
+    {id:"bonz",name:"Bonz",epithet:"Ghost Gravekeeper",hero:29155212,race:"Zombie",difficulty:1,style:"Zombies · Haunted graveyard",flavor:"Rise against monsters from the haunted crypt."},
+{id:"jaden",series:"gx",name:"Jaden Yuki",epithet:"Slifer Red Hero",hero:89943723,race:"Warrior",archetype:"Elemental HERO",difficulty:3,style:"Elemental HERO · Neo-Spacian heroes",flavor:"Duel Academy's rising star challenges you with heroic monsters."},
+    {id:"zane",series:"gx",name:"Zane Truesdale",epithet:"Duel Academy Ace",hero:70095154,race:"Machine",archetype:"Cyber Dragon",difficulty:5,style:"Cyber Dragon · Machine offense",flavor:"An elite opponent whose machines hit hard and fast."},
+    {id:"alexis",series:"gx",name:"Alexis Rhodes",epithet:"Obelisk Blue Champion",hero:77235086,race:"Fairy",archetype:"Cyber Angel",difficulty:3,style:"Cyber Angels · Fairy tactics",flavor:"A precise rival who brings disciplined dueling and powerful fairies."},
+    {id:"chazz",series:"gx",name:"Chazz Princeton",epithet:"The Chazz",hero:73879377,race:"Dragon",archetype:"Armed Dragon",difficulty:4,style:"Armed Dragons · Dragon beatdown",flavor:"An ambitious challenger who brings his strongest dragons."},
+    {id:"syrus",series:"gx",name:"Syrus Truesdale",epithet:"Roid Rookie",hero:44729197,race:"Machine",archetype:"roid",difficulty:2,style:"Vehicroids · Machine teamwork",flavor:"The underdog of Slifer Red fights with trusty machine monsters."},
+    {id:"aster",series:"gx",name:"Aster Phoenix",epithet:"Destiny HERO Pro",hero:83965310,race:"Warrior",archetype:"Destiny HERO",difficulty:4,style:"Destiny HERO · Pro dueling",flavor:"A calculated professional with formidable Destiny HERO monsters."},
+    {id:"crowler",series:"gx",name:"Dr. Vellian Crowler",epithet:"Duel Academy Professor",hero:83104731,race:"Machine",archetype:"Ancient Gear",difficulty:4,style:"Ancient Gear · Heavy machines",flavor:"The professor is ready to test you with ancient machinery."}
   ];
   function opponentRecord(id){
     try{
@@ -513,13 +528,18 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
   function renderDuelistRoster(){
     const grid=$("yd-free-duel-grid");
     grid.replaceChildren();
-    for(const profile of DUELISTS){
+    const visible=DUELISTS.filter(profile=>rosterSeries==="all"||(profile.series||"classic")===rosterSeries);
+    for(const profile of visible){
       const portrait=elt("button","yd-free-duel-thumb");
       portrait.type="button";
       portrait.dataset.duelist=profile.id;
       portrait.title=profile.name+" · "+profile.epithet;
       portrait.setAttribute("aria-label",profile.name+", difficulty "+profile.difficulty+" of 5");
       portrait.setAttribute("aria-pressed","false");
+      if(profile.series==="gx"){
+        portrait.classList.add("yd-free-duel-thumb-gx");
+        portrait.append(elt("span","yd-free-duel-thumb-series","GX"));
+      }
       portrait.append(duelistArtwork(profile));
       portrait.append(elt("span","yd-free-duel-thumb-difficulty","★".repeat(profile.difficulty)));
       portrait.append(elt("span","yd-free-duel-thumb-name",profile.name));
@@ -530,8 +550,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
       });
       grid.append(portrait);
     }
-    selectedOpponent=DUELISTS.find(x=>x.id===selectedOpponent?.id)||DUELISTS[0];
-    $("yd-free-duel-count").textContent=DUELISTS.length+" DUELISTS";
+    if(!visible.some(profile=>profile.id===selectedOpponent?.id))selectedOpponent=visible[0];
+    $("yd-free-duel-count").textContent=visible.length+" DUELISTS";
+    $("yd-free-duel-series").querySelectorAll("button").forEach(btn=>{
+      btn.setAttribute("aria-pressed",String(btn.dataset.series===rosterSeries));
+      btn.disabled=loadingOpponent;
+    });
     updateRosterPreview();
   }
   async function beginFreeDuel(){
@@ -696,8 +720,15 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
   $("yd-new").addEventListener("click",reset);
   $("yd-choose-opponent").addEventListener("click",returnToFreeDuel);
   $("yd-free-duel-start").addEventListener("click",beginFreeDuel);
+  $("yd-free-duel-series").addEventListener("click",event=>{
+    const btn=event.target.closest("button[data-series]");
+    if(!btn||loadingOpponent||btn.dataset.series===rosterSeries)return;
+    rosterSeries=btn.dataset.series;
+    renderDuelistRoster();
+  });
   $("yd-free-duel-grid").addEventListener("keydown",event=>{
-    const arrows={ArrowRight:1,ArrowLeft:-1,ArrowDown:5,ArrowUp:-5};
+    const gridCols=getComputedStyle(event.currentTarget).gridTemplateColumns.split(" ").length||4;
+    const arrows={ArrowRight:1,ArrowLeft:-1,ArrowDown:gridCols,ArrowUp:-gridCols};
     if(!(event.key in arrows))return;
     const cells=[...event.currentTarget.querySelectorAll(".yd-free-duel-thumb")];
     const current=cells.indexOf(document.activeElement);
