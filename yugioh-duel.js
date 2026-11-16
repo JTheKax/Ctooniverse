@@ -20,6 +20,10 @@
   let armedPortraitId=null; // A deliberate portrait selection is needed before starting a duel.
   let playerDisplayName="Guest";
   let rosterSeries="all";
+  // Optional hologram projections never modify battle rules.
+  let hologramsEnabled=true;
+  try{hologramsEnabled=localStorage.getItem("ctoon-duel-holograms-v1")!=="off";}catch(_){}
+  let hologramEvent=null;
   const starterCardCache=new Map();
   const catalog={
     dark:["Dark Magician",7,2500,2100,"🪄"],blue:["Blue-Eyes White Dragon",8,3000,2500,"🐉"],
@@ -241,6 +245,7 @@
     note(who(side)+(defense?" sets one monster.":" summons "+owned.name+"."));
     if(!defense){const enemy=opponent(side),trap=game[enemy].traps.findIndex(x=>x&&x.card.id==="hole"&&x.turn<game.turn);
       if(trap>=0&&owned.atk>=1000){destroyTrap(enemy,trap);sendGrave(side,idx);note(who(enemy)+" activates Trap Hole!");}}
+    if(!defense&&p.field[idx])hologramEvent={side,index:idx,kind:"summon"};
     render();
   }
   function canSpell(side,card){const p=game[side],e=game[opponent(side)];
@@ -287,6 +292,11 @@
       else if(atk<defPower){sendGrave(side,index);damage(side,defPower-atk);}
       else {sendGrave(side,index);sendGrave(enemySide,target);}
     }
+    if(game[side].field[index]&&!game[side].field[index].hidden){
+      hologramEvent={side,index,kind:"attack"};
+    }else if(target!==null&&game[enemySide].field[target]&&!game[enemySide].field[target].hidden){
+      hologramEvent={side:enemySide,index:target,kind:"attack"};
+    }
     game.selected=null;render();
   }
   function startBattle(){if(game.active!=="player"||game.phase!=="main"||game.turn===1||game.winner)return;game.phase="battle";game.selected=null;note("Battle Phase: choose your attacker and an opponent target.");render();}
@@ -318,10 +328,61 @@
     const stars=document.createElement("small");stars.className="yd-stars";stars.textContent=card.type==="monster"?"★".repeat(card.level):card.type.toUpperCase();
     const art=document.createElement("span");art.className="yd-art";art.textContent=card.icon;decorateArt(art,card);
     const stats=document.createElement("small");stats.className="yd-stats";stats.textContent=card.type==="monster"?"ATK "+(card.atk)+" / DEF "+card.def:card.type.toUpperCase();root.append(name,stars,art,stats);return root;}
+  function monsterHologram(card){
+    const holo=document.createElement("span");
+    holo.className="yd-holo-projector";
+    holo.setAttribute("aria-hidden","true");
+    const beam=document.createElement("span");beam.className="yd-holo-beam";
+    const ring=document.createElement("span");ring.className="yd-holo-ring";
+    const scan=document.createElement("span");scan.className="yd-holo-scan";
+    holo.append(beam);
+    const artId=artIds[card.id];
+    function makeGlyph(){
+      const symbol=document.createElement("span");
+      symbol.className="yd-holo-symbol";
+      symbol.textContent=card.icon||"✦";
+      holo.append(symbol);
+    }
+    if(artId){
+      const image=document.createElement("img");
+      image.className="yd-holo-art";
+      image.alt="";
+      image.decoding="async";
+      image.loading="lazy";
+      let retried=false;
+      image.addEventListener("error",()=>{
+        if(!image.isConnected)return;
+        if(!retried){
+          retried=true;
+          image.src=artFunction+"?id="+encodeURIComponent(artId)+"&size=small";
+        }else{
+          image.remove();
+          makeGlyph();
+        }
+      });
+      holo.append(image);
+      image.src=artStorage+encodeURIComponent(artId)+".jpg";
+    }else makeGlyph();
+    holo.append(scan,ring);
+    return holo;
+  }
+  function syncHologramToggle(){
+    const button=$("yd-holograms-toggle");
+    button.setAttribute("aria-pressed",String(hologramsEnabled));
+    button.textContent=hologramsEnabled?"✦ Holograms On":"◇ Holograms Off";
+  }
   function renderRow(side,kind){const slots=game[side][kind],parent=$("yd-"+side+"-"+kind);parent.replaceChildren();
     slots.forEach((entry,i)=>{const button=document.createElement("button");button.type="button";button.className="yd-slot";const isMonster=kind==="field",hidden=side==="cpu"?(isMonster?entry?.hidden:!!entry):isMonster&&entry?.hidden;
       if(entry)button.append(cardFace(entry.card,hidden));else button.textContent="+";
       if(entry&&isMonster){const position=document.createElement("span");position.className="yd-position";position.textContent=entry.defense?"DEF":"ATK";button.append(position);}
+      // Keep face-down monsters concealed and let taps pass through the decoration.
+      if(isMonster&&entry&&!hidden&&hologramsEnabled){
+        button.classList.add("yd-holo-slot");
+        if(hologramEvent?.side===side&&hologramEvent.index===i){
+          button.classList.add("yd-holo-"+hologramEvent.kind);
+        }
+        button.append(monsterHologram(entry.card));
+      }
       button.setAttribute("aria-label",entry?(hidden?"Face-down card":entry.card.name):"Empty zone "+(i+1));
       if(side==="player"&&isMonster&&game.selected?.zone==="field"&&game.selected.index===i)button.classList.add("yd-selected");
       if(side==="cpu"&&isMonster&&entry&&game.selected?.zone==="field"&&game.phase==="battle")button.classList.add("yd-target");
@@ -384,6 +445,7 @@
     $("yd-battle").disabled=!!game.winner||game.active!=="player"||game.phase!=="main"||game.turn===1;
     $("yd-end").disabled=!!game.winner||game.active!=="player";
     for(const s of ["player","cpu"]){const p=game[s];$("yd-"+s+"-lp").textContent=p.lp.toLocaleString();$("yd-"+s+"-counts").textContent="Deck "+p.deck.length+" · Hand "+p.hand.length+" · Grave "+p.grave.length;renderRow(s,"field");renderRow(s,"traps");}
+    hologramEvent=null;
     const hand=$("yd-hand");const handScroll=hand.scrollLeft;hand.replaceChildren();
     for(const card of game.player.hand){const btn=document.createElement("button");btn.type="button";btn.className="yd-handcard";btn.setAttribute("aria-pressed",String(game.selected?.zone==="hand"&&game.selected.uid===card.uid));btn.setAttribute("aria-label",card.name);btn.append(cardFace(card,false));btn.addEventListener("click",()=>{if(game.winner||game.active!=="player")return;game.selected={zone:"hand",uid:card.uid};render();});hand.append(btn);}
     hand.scrollLeft=handScroll;
@@ -790,6 +852,14 @@
     }
   }
 
+  $("yd-holograms-toggle").addEventListener("click",()=>{
+    hologramsEnabled=!hologramsEnabled;
+    hologramEvent=null;
+    try{localStorage.setItem("ctoon-duel-holograms-v1",hologramsEnabled?"on":"off");}catch(_){}
+    syncHologramToggle();
+    if(game)render();
+  });
+  syncHologramToggle();
   $("yd-zoom").addEventListener("click",()=>{
     const large=$("yd-board-scroll").classList.toggle("yd-large-view");
     $("yd-zoom").textContent=large?"Fit Field":"Enlarge Field";
