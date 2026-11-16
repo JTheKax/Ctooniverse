@@ -18,6 +18,7 @@
   const db=createClient("https://hsxdyxdazsdmpucyhqly.supabase.co","sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS");
   let activeStarter=null,choosingStarter=false,selectedOpponent=null,loadingOpponent=false;
   let armedPortraitId=null; // A deliberate portrait selection is needed before starting a duel.
+  let playerDisplayName="Guest";
   let rosterSeries="all";
   const starterCardCache=new Map();
   const catalog={
@@ -176,7 +177,34 @@
       localStorage.setItem("ctoon-yugioh-free-duel-records-v1",JSON.stringify(all));
     }catch(_){}
   }
-  const $=id=>document.getElementById(id),opponent=s=>s==="player"?"cpu":"player",who=s=>s==="player"?"Player":(selectedOpponent?.name||"Computer");
+  const $=id=>document.getElementById(id),opponent=s=>s==="player"?"cpu":"player",who=s=>s==="player"?playerDisplayName:(selectedOpponent?.name||"Computer");
+  // Use the same account display name shown in the CTooniverse site header.
+  function setPlayerDisplayName(user){
+    const raw=user?.user_metadata?.display_name;
+    const saved=typeof raw==="string"&&raw.trim()?raw.trim().slice(0,30):"";
+    const emailName=typeof user?.email==="string"?user.email.split("@")[0]:"";
+    playerDisplayName=user?(saved||emailName||"Duelist"):"Guest";
+    $("yd-hud-player-name").textContent=playerDisplayName;
+    $("yd-field-player-name").textContent=playerDisplayName;
+  }
+  db.auth.onAuthStateChange((event,session)=>{
+    if(event==="SIGNED_IN"||event==="USER_UPDATED"||event==="SIGNED_OUT"){
+      setPlayerDisplayName(session?.user||null);
+    }
+  });
+  // Refresh after returning to a tab where the account username may have changed.
+  async function refreshPlayerDisplayName(){
+    try{
+      const {data:{user},error}=await db.auth.getUser();
+      if(!error)setPlayerDisplayName(user);
+    }catch(_){}
+  }
+  document.addEventListener("visibilitychange",()=>{
+    if(!document.hidden)void refreshPlayerDisplayName();
+  });
+  window.addEventListener("pageshow",event=>{
+    if(event.persisted)void refreshPlayerDisplayName();
+  });
   let uid=0,game;
   function makeCard(id){const spec=catalog[id];if(!spec)throw new Error("Missing duel card: "+id);return{uid:++uid,id,name:spec[0],type:typeof spec[1]==="number"?"monster":spec[1],level:typeof spec[1]==="number"?spec[1]:0,atk:spec[2]||0,def:spec[3]||0,icon:spec[typeof spec[1]==="number"?4:3],text:typeof spec[1]==="number"?"Monster card (simplified arena rules)":spec[2]};}
   function makeDeck(side){const result=[];for(const [id,n] of Object.entries(deckLists[side]))for(let i=0;i<n;i++)result.push(makeCard(id));for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}return result;}
@@ -713,6 +741,7 @@
     entryStatus("Checking your starter deck selection…");
     try{
       const {data:auth,error:authError}=await db.auth.getUser();
+      setPlayerDisplayName(auth?.user||null);
       if(authError||!auth.user){
         entryStatus("Sign in to choose your one permanent starter deck.");
         $("yd-starter-login").hidden=false;
