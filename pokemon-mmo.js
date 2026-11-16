@@ -120,7 +120,7 @@ function render(){
   }
  }
  for(const other of online.values()){
-  if(other.id===user?.id)continue;
+  if(other.id===sessionKey)continue;
   if(!Number.isInteger(other.x)||!Number.isInteger(other.y))continue;
   avatar(range(other.x,0,23),range(other.y,0,17),other.name,false,other.x%2);
  }
@@ -150,13 +150,13 @@ function sendPresence(force=false){
  }
  if(presenceTimer){clearTimeout(presenceTimer);presenceTimer=null;}
  presenceLast=now;
- channel.track({id:user.id,name:trainer.display_name,x:trainer.tile_x,y:trainer.tile_y}).catch(()=>{});
+ channel.track({id:sessionKey,name:trainer.display_name,x:trainer.tile_x,y:trainer.tile_y}).catch(()=>{});
 }
 async function connectPresence(){
  if(!user||!trainer||guest)return;
  if(channel){await db.removeChannel(channel);channel=null;}
  channel=db.channel("ctoon-pokemon-meadow-town-v1",{
-  config:{presence:{key:user.id+"-"+sessionKey}}
+  config:{presence:{key:sessionKey}}
  });
  channel.on("presence",{event:"sync"},()=>{
   online.clear();
