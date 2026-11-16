@@ -153,18 +153,18 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
   .yd-main #yd-duel-content .yd-duelist strong{overflow-wrap:anywhere}
   .yd-main #yd-duel-content .yd-zlabel{font-size:clamp(.5rem,1.65vw,.66rem);letter-spacing:.035em}
   .yd-main #yd-duel-content .yd-center{font-size:clamp(.55rem,1.8vw,.7rem);padding:8px 3px}
-  /* Phone hand: larger readable cards in a contained swipeable row. */
+  /* Mobile hand: compact cards so more fit on screen, with swipe retained. */
   .yd-hand-panel{overflow:hidden}
-  .yd-hand{gap:9px;padding:12px 4px 14px;min-height:0;scroll-padding-inline:4px}
+  .yd-hand{gap:7px;padding:10px 4px 12px;min-height:0;scroll-padding-inline:4px}
   .yd-handcard{
-    flex:0 0 clamp(110px,33vw,132px);
-    height:clamp(165px,49.5vw,198px);
+    flex:0 0 clamp(86px,25vw,104px);
+    height:clamp(130px,37.5vw,156px);
     min-width:0;touch-action:pan-x
   }
-  .yd-handcard .yd-card{padding:5px;gap:3px}
-  .yd-handcard .yd-card-name{font-size:clamp(.7rem,2.15vw,.8rem);line-height:1.16}
-  .yd-handcard .yd-stats{font-size:.68rem}
-  .yd-handcard .yd-stars{font-size:.61rem}
+  .yd-handcard .yd-card{padding:3px;gap:2px}
+  .yd-handcard .yd-card-name{font-size:clamp(.58rem,1.9vw,.68rem);line-height:1.14}
+  .yd-handcard .yd-stats{font-size:.56rem}
+  .yd-handcard .yd-stars{font-size:.52rem}
   .yd-columns{grid-template-columns:1fr;gap:0}
   .yd-detail-summary{gap:10px}
   .yd-detail-preview{flex-basis:100px;height:150px}
