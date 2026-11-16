@@ -547,7 +547,9 @@
     armedPortraitId=null;
     const grid=$("yd-free-duel-grid");
     grid.replaceChildren();
-    const visible=DUELISTS.filter(profile=>rosterSeries==="all"||(profile.series||"classic")===rosterSeries);
+    const visible=DUELISTS
+      .filter(profile=>rosterSeries==="all"||(profile.series||"classic")===rosterSeries)
+      .sort((a,b)=>a.name.localeCompare(b.name,"en",{sensitivity:"base",ignorePunctuation:true}));
     for(const [index,profile] of visible.entries()){
       const portrait=elt("button","yd-free-duel-thumb");
       portrait.type="button";
