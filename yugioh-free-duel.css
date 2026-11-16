@@ -362,3 +362,34 @@
  .yd-free-duel-thumb{transition:none!important}
  .yd-free-duel-thumb .yd-character-image{transform:none!important}
 }
+
+/* Free Duel series filters: original Duel Monsters / Duel Academy GX. */
+.yd-free-duel-series{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 13px}
+.yd-free-duel-series button{
+  appearance:none;min-height:39px;padding:8px 12px;min-width:0;display:inline-flex;
+  align-items:center;justify-content:center;gap:7px;cursor:pointer;
+  border:2px solid #98845b;border-radius:6px;
+  background:linear-gradient(#394154,#161d2b);color:#eee7d4;
+  font:900 clamp(.67rem,1.1vw,.84rem)/1.15 inherit;
+  letter-spacing:.06em;box-shadow:inset 0 1px #ffffff1b
+}
+.yd-free-duel-series button span{color:#f9d78a;font-size:.76em;letter-spacing:0}
+.yd-free-duel-series button[aria-pressed="true"]{
+  color:#151721;border-color:#fff0b4;background:linear-gradient(#ffe8a6,#bd9351);
+  box-shadow:0 0 0 1px #63472c,0 0 13px #e2bd6c77
+}
+.yd-free-duel-series button[aria-pressed="true"] span{color:#34240d}
+.yd-free-duel-series button:focus-visible{outline:3px solid #8bf5ff;outline-offset:2px}
+.yd-free-duel-series button:disabled{opacity:.7;cursor:progress}
+.yd-free-duel-thumb-gx{border-color:#b3a270}
+.yd-free-duel-thumb-series{
+  position:absolute;top:7px;left:7px;z-index:4;display:block;padding:3px 6px;
+  border-radius:4px;border:1px solid #e7c77a;
+  background:linear-gradient(#254565,#0e2034);color:#ffebaf;
+  text-shadow:0 1px 2px #000;font-weight:1000;font-size:.73rem
+}
+@media(max-width:440px){
+  .yd-free-duel-series{gap:5px}
+  .yd-free-duel-series button{padding:7px 8px;min-height:40px;font-size:.72rem}
+  .yd-free-duel-thumb-series{top:5px;left:5px}
+}
