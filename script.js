@@ -71,12 +71,16 @@ if (year) year.textContent = String(new Date().getFullYear());
     '<a href="yugioh-deck-builder.html">🃏 Deck Builder</a>'+
     '<a href="yugioh-card-shop.html#ycs-collection">📂 My Yu-Gi-Oh! Cards</a>'+
     '<a href="yugioh-duel.html">⚡ Yu-Gi-Oh! Duel Arena</a>'+ 
+    '<span class="cards-dropdown-heading">Pokémon TCG</span>'+
+    '<a href="pokemon-tcg.html">⚡ Pokémon Card Game</a>'+
+    '<a href="pokemon-card-database.html">📚 Pokémon Card Database</a>'+
+    '<a href="pokemon-card-shop.html#pcs-collection">📂 My Pokémon Cards</a>'+
     '<a href="cards.html#cards-gallery">Preview Gallery</a>'+
     '<span class="cards-dropdown-heading">In Development</span>'+
 
     '<a href="cards.html#card-battles">Card Battles <small>Coming Soon</small></a>'+
     '</div>';
-  if(['cards.html','yugioh-cards.html','yugioh-deck-builder.html','yugioh-card-shop.html','yugioh-duel.html'].includes(page)){
+  if(['cards.html','yugioh-cards.html','yugioh-deck-builder.html','yugioh-card-shop.html','yugioh-duel.html','pokemon-tcg.html','pokemon-card-database.html','pokemon-card-shop.html'].includes(page)){
     cards.querySelector('.cards-dropdown-trigger').classList.add('active');
     cards.querySelector('a[href="'+page+'"]')?.setAttribute('aria-current','page');
   }
