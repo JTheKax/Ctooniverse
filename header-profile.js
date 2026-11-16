@@ -33,6 +33,7 @@ db.auth.onAuthStateChange((event,session)=>{
  if(event==='SIGNED_IN'&&session?.user?.id!==activeUserId){activeUserId=session.user.id;setTimeout(updateHeader,50)}
  else if(event==='SIGNED_OUT'&&activeUserId!==null){activeUserId=null;setTimeout(updateHeader,50)}
 });
+window.addEventListener('ctoon-profile-updated',()=>updateHeader());
 window.addEventListener('pageshow',event=>{if(event.persisted)updateHeader()});
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateHeader()});
 updateHeader();
