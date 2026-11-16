@@ -24,6 +24,7 @@
   let hologramsEnabled=true;
   try{hologramsEnabled=localStorage.getItem("ctoon-duel-holograms-v1")!=="off";}catch(_){}
   let hologramEvent=null;
+  let cpuBusy=false; // Keep the player controls locked while CPU holograms play.
   const starterCardCache=new Map();
   const catalog={
     dark:["Dark Magician",7,2500,2100,"🪄"],blue:["Blue-Eyes White Dragon",8,3000,2500,"🐉"],
@@ -247,6 +248,7 @@
       if(trap>=0&&owned.atk>=1000){destroyTrap(enemy,trap);sendGrave(side,idx);note(who(enemy)+" activates Trap Hole!");}}
     if(!defense&&p.field[idx])hologramEvent={side,index:idx,kind:"summon"};
     render();
+    if(!defense&&p.field[idx])showSummonEffect(side,idx,owned.name);
   }
   function canSpell(side,card){const p=game[side],e=game[opponent(side)];
     if(card.id==="pot")return !!p.deck.length;
@@ -279,11 +281,11 @@
     if(target!==null&&!e.field[target])return;
     m.attacked=true;
     const mirror=e.traps.findIndex(x=>x&&x.card.id==="mirror"&&x.turn<game.turn);
-    if(mirror>=0){destroyTrap(enemySide,mirror);note(who(enemySide)+" activates Mirror Force!");p.field.forEach((v,i)=>{if(v&&!v.defense)sendGrave(side,i);});game.selected=null;render();return;}
+    if(mirror>=0){destroyTrap(enemySide,mirror);note(who(enemySide)+" activates Mirror Force!");p.field.forEach((v,i)=>{if(v&&!v.defense)sendGrave(side,i);});game.selected=null;render();showAttackEffect(side,index,target,m.card.name,true);return;}
     const negate=e.traps.findIndex(x=>x&&x.card.id==="negate"&&x.turn<game.turn);
-    if(negate>=0){destroyTrap(enemySide,negate);note(who(enemySide)+" activates Negate Attack!");game.selected=null;render();return;}
+    if(negate>=0){destroyTrap(enemySide,negate);note(who(enemySide)+" activates Negate Attack!");game.selected=null;render();showAttackEffect(side,index,target,m.card.name,true);return;}
     const starterTrap=e.traps.findIndex(x=>x&&(x.card.id.startsWith("starter_")||x.card.id.startsWith("npc_"))&&x.turn<game.turn);
-    if(starterTrap>=0){destroyTrap(enemySide,starterTrap);note(who(enemySide)+" blocks the attack with a prototype Trap effect.");game.selected=null;render();return;}
+    if(starterTrap>=0){destroyTrap(enemySide,starterTrap);note(who(enemySide)+" blocks the attack with a prototype Trap effect.");game.selected=null;render();showAttackEffect(side,index,target,m.card.name,true);return;}
     const atk=m.card.atk+m.bonus;
     if(target===null){damage(enemySide,atk);note(m.card.name+" attacks directly for "+atk+" damage!");}
     else {const d=e.field[target],defPower=d.defense?d.card.def:d.card.atk+d.bonus;d.hidden=false;note(m.card.name+" attacks "+d.card.name+".");
@@ -298,29 +300,69 @@
       hologramEvent={side:enemySide,index:target,kind:"attack"};
     }
     game.selected=null;render();
+    showAttackEffect(side,index,target,m.card.name,false);
   }
   function startBattle(){if(game.active!=="player"||game.phase!=="main"||game.turn===1||game.winner)return;game.phase="battle";game.selected=null;note("Battle Phase: choose your attacker and an opponent target.");render();}
-  function cpuTurn(){
-    for(const c of [...game.cpu.hand])if(!game.winner&&c.type==="spell"&&canSpell("cpu",c))spell("cpu",c);
-    const t=game.cpu.hand.find(c=>c.type==="trap"&&game.cpu.traps.includes(null));if(t)setTrap("cpu",t);
-    const available=game.cpu.hand.filter(c=>eligible("cpu",c)).sort((a,b)=>b.atk-a.atk);if(available.length)normal("cpu",available[0],false);
+  // Await the CPU's individual actions so each summon and attack gets a visible
+  // animation frame instead of the entire turn being painted at once.
+  async function cpuTurn(){
+    for(const c of [...game.cpu.hand]){
+      if(game.winner)break;
+      if(c.type==="spell"&&canSpell("cpu",c)){
+        spell("cpu",c);
+        await duelBeat(220);
+      }
+    }
+    if(game.winner)return;
+    const t=game.cpu.hand.find(c=>c.type==="trap"&&game.cpu.traps.includes(null));
+    if(t){setTrap("cpu",t);await duelBeat(180);}
+    const available=game.cpu.hand.filter(c=>eligible("cpu",c)).sort((a,b)=>b.atk-a.atk);
+    if(available.length){
+      normal("cpu",available[0],false);
+      await duelBeat(980);
+    }
     if(game.winner)return;
     game.phase="battle";
-    if(game.player.shield){note("Swords of Revealing Light block the computer's attacks.");return;}
-    for(let i=0;i<5&&!game.winner;i++){const a=game.cpu.field[i];if(!a||a.defense||a.hidden||a.attacked)continue;
+    if(game.player.shield){note("Swords of Revealing Light block the computer's attacks.");render();await duelBeat(230);return;}
+    for(let i=0;i<5&&!game.winner;i++){
+      const a=game.cpu.field[i];
+      if(!a||a.defense||a.hidden||a.attacked)continue;
       const options=game.player.field.map((m,j)=>m?{j,power:m.defense?m.card.def:m.card.atk+m.bonus}:null).filter(Boolean).sort((x,y)=>x.power-y.power);
-      if(!options.length)attack("cpu",i,null);
-      else if(a.card.atk+a.bonus>=options[0].power)attack("cpu",i,options[0].j);
+      if(!options.length){attack("cpu",i,null);await duelBeat(880);}
+      else if(a.card.atk+a.bonus>=options[0].power){attack("cpu",i,options[0].j);await duelBeat(880);}
     }
   }
-  function endTurn(){if(game.active!=="player"||game.winner)return;
+  async function endTurn(){
+    if(!game||game.active!=="player"||game.winner||cpuBusy)return;
+    cpuBusy=true;
     game.active="cpu";game.phase="main";game.turn++;game.summoned=false;game.selected=null;
     for(const m of game.cpu.field)if(m)m.attacked=false;
-    note(who("cpu")+"'s turn.");draw("cpu",1);if(!game.winner)cpuTurn();if(game.player.shield>0)game.player.shield--;
-    if(!game.winner){game.active="player";game.phase="main";game.turn++;game.summoned=false;
-      for(const m of game.player.field)if(m)m.attacked=false;
-      if(game.cpu.shield>0)game.cpu.shield--;draw("player",1);note("Your turn. You draw one card.");}
-    render();
+    note(who("cpu")+"'s turn.");
+    try{
+      draw("cpu",1);
+      render();
+      if(!game.winner){
+        await duelBeat(230);
+        await cpuTurn();
+      }
+      if(game.player.shield>0)game.player.shield--;
+      if(!game.winner){
+        game.active="player";game.phase="main";game.turn++;game.summoned=false;
+        for(const m of game.player.field)if(m)m.attacked=false;
+        if(game.cpu.shield>0)game.cpu.shield--;
+        draw("player",1);note("Your turn. You draw one card.");
+      }
+    }catch(error){
+      console.error("Duel Arena: CPU turn interrupted",error);
+      if(!game.winner){
+        game.active="player";game.phase="main";game.turn++;game.summoned=false;
+        for(const m of game.player.field)if(m)m.attacked=false;
+        note("Opponent turn interrupted; your turn continues.");
+      }
+    }finally{
+      cpuBusy=false;
+      render();
+    }
   }
   function cardFace(card,hidden){const root=document.createElement("span");root.className="yd-card yd-"+(hidden?"back":card.type);
     if(hidden){root.textContent="✦";return root;}
@@ -365,6 +407,70 @@
     }else makeGlyph();
     holo.append(scan,ring);
     return holo;
+  }
+  function duelMotionEnabled(){
+    return hologramsEnabled&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+  function duelBeat(ms){
+    return duelMotionEnabled()?new Promise(resolve=>setTimeout(resolve,ms)):Promise.resolve();
+  }
+  function clearHologramEffects(){
+    document.querySelectorAll("#yd-duel-content .yd-holo-fx").forEach(node=>node.remove());
+  }
+  function hologramBanner(side,message){
+    if(!duelMotionEnabled())return;
+    const board=document.querySelector("#yd-duel-content .yd-board");
+    if(!board)return;
+    const banner=document.createElement("span");
+    banner.className="yd-holo-fx yd-holo-banner yd-holo-banner-"+side;
+    banner.setAttribute("aria-hidden","true");
+    banner.textContent=message;
+    board.append(banner);
+    setTimeout(()=>banner.remove(),1060);
+  }
+  function showSummonEffect(side,index,name){
+    if(!duelMotionEnabled())return;
+    const slot=$("yd-"+side+"-field")?.children[index];
+    if(!slot)return;
+    const flare=document.createElement("span");
+    flare.className="yd-holo-fx yd-holo-summon-flare";
+    flare.setAttribute("aria-hidden","true");
+    slot.append(flare);
+    setTimeout(()=>flare.remove(),930);
+    hologramBanner(side,name+" · SUMMON!");
+  }
+  function showAttackEffect(side,index,target,name,blocked=false){
+    if(!duelMotionEnabled())return;
+    const board=document.querySelector("#yd-duel-content .yd-board");
+    const source=$("yd-"+side+"-field")?.children[index];
+    const targetSide=opponent(side);
+    const destination=target===null
+      ?document.querySelector("#yd-duel-content .yd-"+targetSide+" .yd-duelist")
+      :$("yd-"+targetSide+"-field")?.children[target];
+    if(!board||!source||!destination)return;
+    const a=source.getBoundingClientRect();
+    const b=destination.getBoundingClientRect();
+    const bounds=board.getBoundingClientRect();
+    const sx=(a.left+a.right)/2-bounds.left,sy=(a.top+a.bottom)/2-bounds.top;
+    const dx=(b.left+b.right)/2-(a.left+a.right)/2;
+    const dy=(b.top+b.bottom)/2-(a.top+a.bottom)/2;
+    const shot=document.createElement("span");
+    shot.className="yd-holo-fx yd-holo-shot yd-holo-shot-"+side+(blocked?" yd-holo-shot-blocked":"");
+    shot.setAttribute("aria-hidden","true");
+    shot.style.left=sx+"px";shot.style.top=sy+"px";
+    shot.style.setProperty("--yd-strike-distance",Math.hypot(dx,dy)+"px");
+    shot.style.setProperty("--yd-strike-angle",Math.atan2(dy,dx)+"rad");
+    const beam=document.createElement("span");beam.className="yd-holo-shot-beam";
+    const bolt=document.createElement("span");bolt.className="yd-holo-shot-bolt";
+    const impact=document.createElement("span");impact.className="yd-holo-shot-impact";
+    shot.append(beam,bolt,impact);
+    board.append(shot);
+    const hit=document.createElement("span");
+    hit.className="yd-holo-fx yd-holo-hit";
+    hit.setAttribute("aria-hidden","true");
+    destination.append(hit);
+    setTimeout(()=>{shot.remove();hit.remove();},970);
+    hologramBanner(side,name+(blocked?" · ATTACK BLOCKED!":" · ATTACK!"));
   }
   function syncHologramToggle(){
     const button=$("yd-holograms-toggle");
@@ -443,7 +549,9 @@
       $("yd-hud-"+side+"-lp").textContent=points.toLocaleString();
     }
     $("yd-battle").disabled=!!game.winner||game.active!=="player"||game.phase!=="main"||game.turn===1;
-    $("yd-end").disabled=!!game.winner||game.active!=="player";
+    $("yd-end").disabled=!!game.winner||game.active!=="player"||cpuBusy;
+    $("yd-new").disabled=cpuBusy;
+    $("yd-choose-opponent").disabled=cpuBusy;
     for(const s of ["player","cpu"]){const p=game[s];$("yd-"+s+"-lp").textContent=p.lp.toLocaleString();$("yd-"+s+"-counts").textContent="Deck "+p.deck.length+" · Hand "+p.hand.length+" · Grave "+p.grave.length;renderRow(s,"field");renderRow(s,"traps");}
     hologramEvent=null;
     const hand=$("yd-hand");const handScroll=hand.scrollLeft;hand.replaceChildren();
@@ -454,7 +562,7 @@
     const result=$("yd-result");result.hidden=!game.winner;result.textContent=game.winner==="player"?"🏆 You defeated "+who("cpu")+"!":"Defeat against "+who("cpu")+". Duel again!";
     const r=record();$("yd-record").textContent=r.wins+" wins · "+r.losses+" losses";
   }
-  function reset(){if(!activeStarter||!selectedOpponent||!$("yd-free-duel").hidden)return;uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Free Duel versus "+selectedOpponent.name+"! You play first with "+activeStarter.deck_name+".");$("yd-cpu-name").textContent=selectedOpponent.name;$("yd-cpu-avatar").replaceChildren(duelistArtwork(selectedOpponent,true));render();}
+  function reset(){if(cpuBusy||!activeStarter||!selectedOpponent||!$("yd-free-duel").hidden)return;clearHologramEffects();uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Free Duel versus "+selectedOpponent.name+"! You play first with "+activeStarter.deck_name+".");$("yd-cpu-name").textContent=selectedOpponent.name;$("yd-cpu-avatar").replaceChildren(duelistArtwork(selectedOpponent,true));render();}
 
   // Locked starter decks belong to the Arena entitlement, not to card ownership.
   // The only write here is to yugioh_player_starter_choices, and the database
@@ -727,7 +835,8 @@
     }
   }
   function returnToFreeDuel(){
-    if(!activeStarter||loadingOpponent)return;
+    if(!activeStarter||loadingOpponent||cpuBusy)return;
+    clearHologramEffects();
     if(game&&!game.winner&&!confirm("Leave this duel and return to the opponent roster? Your current duel will be abandoned."))return;
     game=null;
     $("yd-duel-content").hidden=true;
@@ -860,6 +969,7 @@
   $("yd-holograms-toggle").addEventListener("click",()=>{
     hologramsEnabled=!hologramsEnabled;
     hologramEvent=null;
+    if(!hologramsEnabled)clearHologramEffects();
     try{localStorage.setItem("ctoon-duel-holograms-v1",hologramsEnabled?"on":"off");}catch(_){}
     syncHologramToggle();
     if(game)render();
