@@ -1,6 +1,102 @@
 <!doctype html>
 <html lang="en">
-<head><script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="refresh" content="0;url=games.html"><title>Game Modes Cleared | CTooniverse</title></head>
-<body style="background:#090d25;color:#f8f8ff;font:1rem system-ui,sans-serif;padding:2rem">
-<main><h1>Game modes have been cleared</h1><p>Video Game Emulator is no longer available. The CTooniverse Games arcade is starting fresh.</p><p><a style="color:#9ceaff" href="games.html">Return to the Games hub</a></p></main>
+<head>
+<script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111a38">
+<meta name="description" content="CTooniverse Retro Console Arcade: launch permitted retro game files on NES, SNES, Game Boy, GBA, Nintendo DS, N64, Sega Genesis and PlayStation 1 in your browser.">
+<title>Retro Console Arcade | CTooniverse</title>
+<link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
+<link rel="stylesheet" href="arcade-polish.css?v=neon-phase2-20261112">
+<link rel="stylesheet" href="emulator.css?v=20261116-retro-arcade-v1">
+<script src="script.js?v=20261115-shop-auction-v1" defer></script>
+<script type="module" src="header-profile.js?v=without-avatar-20261116"></script>
+<script type="module" src="account-menu.js?v=without-avatar-20261116"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
+<script src="emulator-alphabet-tabs.js?v=20261116-retro-tabs-v1" defer></script>
+<script src="emulator.js?v=20261116-retro-player-v2" defer></script>
+<script src="emulator-upload.js?v=20261116-owner-uploader-v2" defer></script>
+<script src="emulator-case-editor.js?v=20261116-retro-cases-v1" defer></script>
+</head>
+<body class="emu-page">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" width="300" height="100" alt="CTooniverse"></a>
+<nav aria-label="Main navigation">
+<a href="index.html" class="nav-link">Home</a>
+<a href="ctoons.html" class="nav-link">CToons</a>
+<a href="games.html" class="nav-link active" aria-current="page">Games</a>
+<a href="cards.html" class="nav-link">Cards</a>
+<a href="watch.html" class="nav-link">Theater</a>
+<a href="shop.html" class="nav-link">Shop</a>
+<a href="community.html" class="nav-link">Community</a>
+<a href="account.html" class="nav-link">Account</a>
+</nav>
+<div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div>
+<span class="header-tag">RETRO ARCADE</span>
+</header>
+<main id="main" class="emu-main">
+<section class="emu-hero" aria-labelledby="emu-title">
+<div><p class="emu-eyebrow">✦ CTOONIVERSE · CONSOLE COLLECTION ✦</p><h1 id="emu-title">Retro <span>Console Arcade</span></h1><p>Play supported retro console games right in your browser. Browse the CTooniverse game-case shelves or load your own legally obtained game file locally on desktop or mobile.</p>
+<div class="emu-hero-links"><a class="button secondary" href="games.html">← Games Hub</a><a class="button secondary" href="#emu-library-heading">Browse Game Library</a><a class="button secondary" href="#emu-owner-heading">Owner Uploads</a></div></div>
+<div class="emu-hero-mark" aria-hidden="true">🎮<small>9 CONSOLES</small></div>
+</section>
+<section id="emu-screen" class="emu-player-panel" aria-labelledby="emu-player-heading">
+<div class="emu-section-title"><div><p class="emu-eyebrow">✦ START PLAYING ✦</p><h2 id="emu-player-heading">Game Player</h2></div><span class="emu-tag">EMULATORJS</span></div>
+<div class="emu-player-controls">
+<label for="emu-console">System
+<select id="emu-console" aria-label="Emulated console">
+<option value="gb">Game Boy</option><option value="gbc">Game Boy Color</option>
+<option value="gba" selected>Game Boy Advance</option><option value="nds">Nintendo DS</option>
+<option value="nes">Nintendo Entertainment System</option><option value="snes">Super Nintendo</option>
+<option value="n64">Nintendo 64</option><option value="segaMD">Sega Genesis / Mega Drive</option>
+<option value="psx">PlayStation 1</option>
+</select></label>
+<label for="emu-file">Your game file (stays in your browser)
+<input type="file" id="emu-file" accept=".gb,.gbc,.gba,.nds,.nes,.sfc,.smc,.n64,.z64,.v64,.md,.gen,.bin,.iso,.chd,.pbp,.zip" aria-describedby="emu-file-help">
+</label>
+<label for="emu-bios">Optional BIOS (from your own console)
+<input type="file" id="emu-bios" accept=".bin,.rom,.zip,.bios" aria-describedby="emu-bios-help">
+</label>
+</div>
+<p id="emu-file-help" class="emu-hint">Use a supported game file you are entitled to use. Local files are not uploaded. Choose a case below to play a game from the site library instead.</p>
+<p id="emu-bios-help" class="emu-hint">Some PlayStation or DS games may require your own BIOS. You can leave this blank; firmware and BIOS files are not provided.</p>
+<div class="emu-control-buttons">
+<button id="emu-start" type="button" class="button primary">▶ Start Game</button>
+<button id="emu-fullscreen" type="button" class="button secondary">⛶ Fullscreen</button>
+</div>
+<p id="emu-status" role="status" aria-live="polite" class="emu-status">Select a game case or choose a local game file, then press Start Game.</p>
+<div class="emu-screen-frame"><div id="game" class="emu-game-container"><div class="emu-idle" aria-hidden="true"><span>🕹️</span><strong>READY PLAYER ONE</strong><small>Select a game to power on the console</small></div></div></div>
+<div class="emu-platform-note" id="emu-nds-help" hidden>🎮 <strong>Nintendo DS:</strong> Use the virtual touch screen for stylus controls. Two-screen emulation may run slowly on phones; desktop Chrome/Edge is recommended for demanding DS titles. Tap the player to enable audio.</div>
+<div class="emu-platform-note">💾 Use the emulator's built-in save/load controls when supported. Modern browser security and storage settings affect persistence; do not rely on the emulator as your only save backup. Gamepads and touch controls depend on the selected core.</div>
+</section>
+<section class="emu-library-panel" aria-labelledby="emu-library-heading">
+<div class="emu-section-title"><div><p class="emu-eyebrow">✦ THE GAME SHELF ✦</p><h2 id="emu-library-heading">Console Game Library</h2><p>Separate shelves for each system, sorted alphabetically. Select a case to preview it or press <strong>Play</strong> beneath a case to launch it.</p></div><span class="emu-tag">GAME CASES</span></div>
+<div id="emu-console-tabs" class="emu-console-tabs" role="group" aria-label="Filter games by console"></div>
+<div class="emu-letter-wrap"><div id="emu-letter-tabs" class="emu-letter-tabs" role="group" aria-label="Filter games alphabetically"></div></div>
+<p id="emu-letter-status" class="emu-hint">Loading console game cases…</p>
+<div id="emu-library" class="emu-library">Loading game cases…</div>
+</section>
+<section id="emu-owner" class="emu-owner-panel" aria-labelledby="emu-owner-heading" hidden>
+<div class="emu-section-title"><div><p class="emu-eyebrow">✦ OWNER TOOLS ✦</p><h2 id="emu-owner-heading">Upload a Game &amp; Edit Cases</h2><p>Owner-only uploads and case art. Only upload game files you have permission to distribute. Published game files become accessible to site visitors.</p></div><span class="emu-tag">OWNER ACCESS</span></div>
+<div class="emu-owner-grid">
+<label for="emu-title-input">Game title<input id="emu-title-input" type="text" maxlength="100" placeholder="Title of game" autocomplete="off"></label>
+<label for="emu-upload-console">Console<select id="emu-upload-console">
+<option value="gba">Game Boy Advance</option><option value="nds">Nintendo DS</option>
+<option value="gb">Game Boy</option><option value="gbc">Game Boy Color</option>
+<option value="nes">NES</option><option value="snes">SNES</option><option value="n64">Nintendo 64</option>
+<option value="segaMD">Sega Genesis</option><option value="psx">PlayStation 1</option></select></label>
+<label for="emu-owner-file">Game file (up to 50 MB, cloud-hosted)<input id="emu-owner-file" type="file" accept=".gb,.gbc,.gba,.nds,.nes,.sfc,.smc,.n64,.z64,.v64,.md,.gen,.bin,.iso,.chd,.pbp,.zip"></label>
+</div>
+<div class="emu-owner-actions"><button type="button" class="button primary" id="emu-upload" disabled>⬆ Upload Game</button></div>
+<p class="emu-hint">Uploaded cases can be clicked by the owner to edit title and cover artwork. Use the separate Play button to launch without editing. PS1 games over the 50 MB cloud bucket limit can still be played locally.</p>
+</section>
+<section class="emu-help-panel" aria-labelledby="emu-help-heading"><h2 id="emu-help-heading">Console Compatibility</h2>
+<p><strong>GB · GBC · GBA · NES · SNES · N64 · Genesis · DS · PS1.</strong> Game compatibility varies by core, console, and device. The player runs EmulatorJS in an isolated embedded frame and loads its stable browser cores. Some games may require a BIOS you own or more memory than a phone can provide.</p>
+<p class="emu-hint">CTooniverse does not supply copyrighted game downloads or BIOS files. Only use or publish content you own or have permission to use. <a href="https://emulatorjs.org/docs/systems/" target="_blank" rel="noopener noreferrer">EmulatorJS supported systems and documentation</a>.</p>
+</section>
+</main>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>Retro games · Your browser · Your choice</span></footer>
+<script type="module" src="site-chat-widget.js?v=1"></script>
 </body></html>
