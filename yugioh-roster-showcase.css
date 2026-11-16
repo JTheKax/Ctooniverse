@@ -479,3 +479,22 @@
 #yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-character-image[data-duelist="mako"]{
   transform:translateX(-11%)!important;
 }
+
+
+/* The Paradox Brothers are featured together in their Duel Links character art.
+   Center each brother individually within his own roster/preview slot.
+   All other duelists keep the universal uncropped portrait treatment. */
+#yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-character-image[data-duelist="para"],
+#yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-character-image[data-duelist="para"]{
+  object-fit:cover!important;
+  object-position:0% 50%!important;
+  transform:scale(1.25)!important;
+  transform-origin:20% 40%!important;
+}
+#yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-character-image[data-duelist="dox"],
+#yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-character-image[data-duelist="dox"]{
+  object-fit:cover!important;
+  object-position:100% 50%!important;
+  transform:scale(1.25)!important;
+  transform-origin:80% 40%!important;
+}
