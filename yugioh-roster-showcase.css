@@ -1,0 +1,451 @@
+/* Duel Arena: ornamental Forbidden Memories-style opponent roster.
+   Only #yd-free-duel is restyled. Battle board, starter cards and mechanics remain intact. */
+#yd-free-duel{
+  max-width:1120px;
+  padding:clamp(13px,2.2vw,27px)!important;
+  border:5px ridge #cda964;
+  border-radius:14px;
+  color:#faebc6;
+  background:
+    radial-gradient(ellipse at 50% -5%,#f4cf8137 0%,transparent 48%),
+    radial-gradient(ellipse at 0% 100%,#415b5942,transparent 52%),
+    repeating-linear-gradient(90deg,transparent 0 52px,#d6b16c0a 53px 55px),
+    repeating-linear-gradient(0deg,transparent 0 64px,#0000001c 64px 66px),
+    linear-gradient(140deg,#302a28,#111720 45%,#271b20 100%)!important;
+  box-shadow:inset 0 0 0 3px #3c281c,inset 0 0 60px #08090bbd,0 22px 50px #000b;
+}
+#yd-free-duel::before{
+  inset:9px;
+  border:1px solid #ecc7836b;
+  border-radius:6px;
+  box-shadow:inset 0 0 0 2px #2d2117,inset 0 0 23px #d3aa4021;
+}
+#yd-free-duel .yd-free-duel-header{
+  position:relative;
+  max-width:850px;
+  padding:10px clamp(5px,2vw,22px) 16px;
+  margin:0 auto 16px;
+  border-bottom:1px solid #ac854e;
+  background:radial-gradient(ellipse at 50% 0%,#bd8e401f,transparent 68%);
+}
+#yd-free-duel .yd-free-duel-header::before,
+#yd-free-duel .yd-free-duel-header::after{
+  content:"✦";
+  position:absolute;top:45px;
+  color:#ad8952;font-size:clamp(1rem,2vw,1.5rem);
+  text-shadow:0 0 13px #e7bd6b59
+}
+#yd-free-duel .yd-free-duel-header::before{left:0}
+#yd-free-duel .yd-free-duel-header::after{right:0}
+#yd-free-duel .yd-free-duel-overline{
+  color:#dec082!important;
+  font-size:.69rem;
+  letter-spacing:.24em;
+}
+#yd-free-duel .yd-free-duel-header h2{
+  margin:7px auto 11px;
+  font-family:Georgia,"Palatino Linotype",serif;
+  font-weight:900;
+  font-size:clamp(2.3rem,5vw,3.6rem);
+  letter-spacing:.11em;
+  line-height:1;
+  color:#ffecae!important;
+  text-shadow:0 2px 0 #62431d,0 5px 8px #000c,0 0 22px #edc96a56!important;
+}
+#yd-free-duel .yd-free-duel-header>p:last-of-type{
+  margin:0 auto!important;
+  color:#e8d9b9;
+  font-size:clamp(.76rem,1.35vw,.89rem);
+  line-height:1.5;
+  max-width:67ch;
+}
+#yd-free-duel .yd-roster-instructions{
+  display:flex;
+  justify-content:center;align-items:center;
+  flex-wrap:wrap;gap:7px 15px;
+  margin:13px auto 0;
+  color:#f8d891;
+  font-size:.7rem;font-weight:850;letter-spacing:.1em;
+}
+#yd-free-duel .yd-roster-instructions span{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:5px 10px;
+  border:1px solid #bd955968;
+  border-radius:3px;
+  background:#13151caa
+}
+#yd-free-duel .yd-roster-instructions b{
+  display:grid;place-items:center;
+  width:22px;height:22px;
+  border:1px solid #e5c47a;border-radius:50%;
+  color:#f7e2b2;background:#5f431f;
+  font-size:.72rem;
+}
+#yd-free-duel .yd-free-duel-layout{
+  grid-template-columns:minmax(0,1.65fr) minmax(275px,.9fr);
+  gap:clamp(12px,1.65vw,22px);
+  align-items:start;
+}
+#yd-free-duel .yd-free-duel-selector{
+  position:relative;min-width:0;
+  padding:clamp(9px,1.4vw,15px);
+  border:4px ridge #9c7b46;
+  border-radius:8px;
+  background:
+    linear-gradient(90deg,#e9cb8c0d 1px,transparent 1px) 0 0/25px 25px,
+    radial-gradient(ellipse at 50% -6%,#d5aa6626,transparent 56%),
+    linear-gradient(135deg,#1c2329,#0c141a 63%,#241e22)!important;
+  box-shadow:inset 0 0 0 2px #34291d,inset 0 0 26px #000b,0 9px 18px #0007;
+}
+#yd-free-duel .yd-free-duel-bar{
+  align-items:center;
+  padding:2px 3px 12px;
+  color:#f4d68d;
+  border-bottom:1px solid #886c3e;
+  margin-bottom:11px;
+  font-size:clamp(.64rem,1.1vw,.78rem);
+}
+#yd-free-duel .yd-free-duel-bar strong{
+  color:#ffdf99;
+  letter-spacing:.12em;
+  font-family:Georgia,serif;
+  font-size:clamp(.8rem,1.35vw,.95rem);
+}
+#yd-free-duel .yd-free-duel-bar span{
+  border:1px solid #8c7045;
+  border-radius:3px;
+  padding:4px 7px;
+  color:#ffda89;
+  background:#3e3020;
+  font-variant-numeric:tabular-nums
+}
+#yd-free-duel .yd-free-duel-series{
+  display:flex;
+  gap:7px;
+  margin:0 0 12px
+}
+#yd-free-duel .yd-free-duel-series button{
+  flex:1 1 0;min-width:0;min-height:42px;
+  border:2px ridge #92754a;
+  border-radius:4px;
+  padding:7px 6px;
+  color:#d7cfb8;
+  background:linear-gradient(180deg,#414048,#181f2b 48%,#10151c);
+  box-shadow:inset 0 1px #ffffff23,0 2px 6px #0008;
+  font-size:clamp(.62rem,1vw,.76rem);
+  letter-spacing:.07em;
+  transition:filter .15s ease,box-shadow .15s ease
+}
+#yd-free-duel .yd-free-duel-series button span{
+  color:#e8c986;
+  font-variant-numeric:tabular-nums
+}
+#yd-free-duel .yd-free-duel-series button[aria-pressed="true"]{
+  color:#26180c;
+  border-color:#ffe2a1;
+  background:linear-gradient(180deg,#ffe3a5,#cea460 56%,#94703a);
+  box-shadow:inset 0 1px #fff7cd,0 0 10px #e7bf6e60
+}
+#yd-free-duel .yd-free-duel-series button[aria-pressed="true"] span{
+  color:#503319
+}
+#yd-free-duel .yd-free-duel-series button:focus-visible{
+  outline:3px solid #9beeff;outline-offset:2px
+}
+#yd-free-duel #yd-free-duel-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,112px));
+  grid-auto-flow:row;
+  justify-content:center;
+  align-items:stretch;
+  padding:10px 6px 13px;
+  gap:clamp(6px,.9vw,10px);
+  border:1px solid #77603d;
+  border-radius:6px;
+  background:
+    radial-gradient(ellipse at 50% 0%,#b78a4325,transparent 65%),
+    repeating-linear-gradient(45deg,#0000 0 17px,#af926509 18px 20px),
+    #0c121b;
+  box-shadow:inset 0 0 0 3px #241d1c,inset 0 0 22px #000a
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb{
+  position:relative;
+  display:block;
+  width:100%!important;
+  min-width:0!important;min-height:0;
+  aspect-ratio:3/4!important;
+  overflow:hidden;
+  padding:0!important;
+  border:3px ridge #b99c68!important;
+  border-radius:6px!important;
+  background:radial-gradient(ellipse at 50% 25%,#60584e,#202633 68%,#10151e)!important;
+  box-shadow:inset 0 0 0 2px #33281c,0 3px 8px #0009!important;
+  transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb::before{
+  content:"";
+  position:absolute;inset:4px;z-index:2;pointer-events:none;
+  border:1px solid #eed18f63;
+  border-radius:2px;
+  box-shadow:inset 0 0 10px #0006
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb::after{
+  inset:0;border-radius:3px;
+  background:linear-gradient(180deg,#fff3b321,transparent 22%,transparent 59%,#070d16aa 97%);
+  box-shadow:none
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb:hover{
+  transform:translateY(-3px);
+  border-color:#f9dea1!important;
+  box-shadow:0 7px 13px #000b,0 0 10px #ffc96c86!important
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb[aria-pressed="true"]{
+  border-color:#fff6c5!important;
+  box-shadow:0 0 0 2px #8cf4fa,0 0 20px #4dd8e9ae,inset 0 0 0 1px #f6d28a!important;
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb[aria-pressed="true"]::before{
+  border-color:#a8f9ff;
+  box-shadow:inset 0 0 12px #7ceffb69
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb:focus-visible{
+  outline:3px solid #87f3ff;outline-offset:2px
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb-name{
+  left:2px;right:2px;bottom:2px;
+  z-index:3;
+  min-height:30px;
+  padding:5px 2px 4px;
+  border:1px solid #a7864f;
+  border-radius:0 0 2px 2px;
+  background:linear-gradient(0deg,#080c14fa,#242e34f0);
+  color:#fff0cb;
+  font-size:clamp(.61rem,.9vw,.74rem);
+  letter-spacing:.015em;
+  text-shadow:0 1px 3px #000
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb[aria-pressed="true"] .yd-free-duel-thumb-name{
+  background:linear-gradient(0deg,#234b58,#132b39);
+  color:#ffffff;
+  border-color:#b8e9ee;
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb-series{
+  top:4px;left:4px;
+  padding:2px 4px;
+  border:1px solid #efd8a6;
+  border-radius:2px;
+  background:#493622eb;
+  color:#fff0b8;
+  font-size:.56rem;
+  letter-spacing:.03em
+}
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb-difficulty{
+  top:4px;right:4px;
+  border-color:#9e824e;
+  padding:2px 3px;
+  border-radius:2px;
+  color:#ffe29d;
+  background:#121721e8;
+  font-size:clamp(.55rem,.85vw,.7rem);
+  letter-spacing:-.02em
+}
+/* Keep centered faces from the previous mobile-focused portrait revision. */
+#yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-character-image[data-portrait-style="kaiba"]{
+  object-fit:cover!important;
+  object-position:50% 20%!important;
+  transform:translateY(5%) scale(1.14)!important;
+  transform-origin:50% 40%!important;
+}
+#yd-free-duel .yd-free-duel-preview{
+  position:relative;
+  min-width:0;
+  padding:17px clamp(12px,1.75vw,20px) 18px;
+  border:4px ridge #bb995c;
+  border-radius:8px;
+  background:
+    radial-gradient(ellipse at 50% 0%,#b8995c36,transparent 42%),
+    linear-gradient(135deg,#363137,#18242c 55%,#29242f)!important;
+  box-shadow:inset 0 0 0 2px #30251e,inset 0 0 18px #0009,0 8px 17px #0009
+}
+#yd-free-duel .yd-free-duel-preview::before{
+  content:"✦ CHALLENGER DOSSIER ✦";
+  display:block;
+  color:#efcb82;
+  font-family:Georgia,serif;
+  font-size:.82rem;
+  font-weight:900;
+  letter-spacing:.11em;
+  text-align:center;
+  text-shadow:0 2px 3px #000;
+  border-bottom:1px solid #866d43;
+  padding:1px 0 12px;
+  margin:0 0 13px
+}
+#yd-free-duel .yd-free-duel-portrait{
+  display:block;
+  width:min(100%,260px)!important;
+  aspect-ratio:3/4!important;
+  border:5px ridge #e0bc72!important;
+  border-radius:7px!important;
+  background:radial-gradient(ellipse at 50% 30%,#72604b,#25242e 72%,#14111c)!important;
+  box-shadow:0 0 0 3px #34251c,0 8px 21px #000c
+}
+#yd-free-duel .yd-free-duel-profile{
+  gap:8px;
+  padding:7px 0;
+  border-bottom:1px solid #8f744b;
+  min-width:0
+}
+#yd-free-duel .yd-free-duel-profile .yd-profile-series{
+  color:#96ded9;
+  font-size:.69rem;
+  font-weight:900;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+}
+#yd-free-duel .yd-free-duel-profile h3{
+  color:#ffdf95!important;
+  font-family:Georgia,"Palatino Linotype",serif;
+  font-weight:900;
+  font-size:clamp(1.25rem,2vw,1.75rem);
+  line-height:1.14;
+  text-shadow:0 2px 6px #08050d;
+}
+#yd-free-duel .yd-free-duel-profile p{
+  color:#eee0c7;
+  font-size:.82rem;
+  line-height:1.4;
+}
+#yd-free-duel .yd-free-duel-profile .yd-free-duel-stars{
+  color:#ffe09c;
+  letter-spacing:.04em;
+  font-size:.88rem;
+}
+#yd-free-duel .yd-free-duel-profile #yd-free-duel-record{
+  color:#a7e9e2
+}
+#yd-free-duel #yd-free-duel-status{
+  color:#f4dfb8;
+  background:#131922a6;
+  border:1px solid #8a744f;
+  border-radius:4px;
+  padding:9px;
+  font-size:.79rem;
+  line-height:1.4;
+  text-align:center
+}
+#yd-free-duel #yd-free-duel-start{
+  min-height:50px;
+  border:3px ridge #f4ce80;
+  border-radius:6px;
+  color:#24170d;
+  background:linear-gradient(180deg,#ffecbb,#eac27a 55%,#a87941);
+  box-shadow:inset 0 1px #fff9df,0 3px 11px #0008;
+  font-weight:1000;
+  font-size:clamp(.85rem,1.3vw,1rem);
+  letter-spacing:.08em;
+  text-shadow:0 1px #fff0c3
+}
+#yd-free-duel #yd-free-duel-start:hover:not(:disabled){
+  filter:brightness(1.06);
+  box-shadow:inset 0 1px #fff9df,0 0 14px #e6c17c8c
+}
+#yd-free-duel #yd-free-duel-start:focus-visible{
+  outline:3px solid #8ff5ff;outline-offset:2px
+}
+#yd-free-duel .yd-free-duel-disclaimer{
+  color:#c5b69a!important;
+  padding-top:14px;
+  border-top:1px solid #9c80532f;
+}
+@media(max-width:1000px){
+  #yd-free-duel .yd-free-duel-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:14px;
+  }
+  #yd-free-duel #yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,112px))}
+  #yd-free-duel .yd-free-duel-preview{
+    display:grid;grid-template-columns:minmax(170px,.8fr) minmax(0,1.2fr);
+    align-items:center;gap:10px 17px;
+  }
+  #yd-free-duel .yd-free-duel-preview::before{
+    grid-column:1/-1;
+    margin-bottom:2px;
+  }
+  #yd-free-duel .yd-free-duel-portrait{
+    grid-column:1;grid-row:2/span 3;
+    width:min(100%,220px)!important;
+    align-self:start
+  }
+  #yd-free-duel .yd-free-duel-profile{grid-column:2;grid-row:2}
+  #yd-free-duel #yd-free-duel-status{grid-column:2;grid-row:3}
+  #yd-free-duel #yd-free-duel-start{grid-column:2;grid-row:4}
+}
+@media(max-width:700px){
+  #yd-free-duel .yd-free-duel-layout{display:flex;flex-direction:column;gap:12px}
+  #yd-free-duel .yd-free-duel-selector,
+  #yd-free-duel .yd-free-duel-preview{width:100%;box-sizing:border-box}
+  #yd-free-duel #yd-free-duel-grid{grid-template-columns:repeat(3,minmax(0,112px));gap:8px}
+  #yd-free-duel .yd-free-duel-preview{grid-template-columns:104px minmax(0,1fr);gap:8px 12px}
+  #yd-free-duel .yd-free-duel-preview::before{font-size:.73rem;padding-bottom:9px}
+  #yd-free-duel .yd-free-duel-portrait{
+    width:104px!important;grid-column:1;grid-row:2/span 2;
+    border-width:3px!important
+  }
+  #yd-free-duel .yd-free-duel-profile{grid-column:2;grid-row:2}
+  #yd-free-duel #yd-free-duel-status{grid-column:2;grid-row:3}
+  #yd-free-duel #yd-free-duel-start{grid-column:1/-1;grid-row:4}
+  #yd-free-duel .yd-free-duel-profile h3{font-size:1.12rem}
+  #yd-free-duel .yd-free-duel-profile p{font-size:.75rem}
+  #yd-free-duel .yd-free-duel-header::before,
+  #yd-free-duel .yd-free-duel-header::after{top:30px}
+}
+@media(max-width:480px){
+  #yd-free-duel{padding:9px!important;border-width:3px}
+  #yd-free-duel .yd-free-duel-header{padding:9px 4px 12px}
+  #yd-free-duel .yd-free-duel-header h2{font-size:clamp(1.9rem,8.3vw,2.3rem);letter-spacing:.06em}
+  #yd-free-duel .yd-roster-instructions{gap:5px 8px;font-size:.58rem;letter-spacing:0}
+  #yd-free-duel .yd-roster-instructions span{padding:4px 6px;gap:5px}
+  #yd-free-duel .yd-roster-instructions b{width:18px;height:18px;font-size:.62rem}
+  #yd-free-duel .yd-free-duel-bar strong{font-size:.74rem}
+  #yd-free-duel .yd-free-duel-series{gap:5px}
+  #yd-free-duel .yd-free-duel-series button{font-size:.66rem;padding:5px 3px}
+  #yd-free-duel #yd-free-duel-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    padding:6px 3px 9px;
+    gap:6px;
+  }
+  #yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb{border-width:2px!important}
+  #yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb-name{
+    font-size:clamp(.55rem,2.45vw,.7rem);
+    line-height:1.08;
+    padding:3px 1px;
+    min-height:26px
+  }
+  #yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb-difficulty{
+    top:3px;right:3px;font-size:.55rem;padding:1px 2px
+  }
+  #yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb-series{
+    top:3px;left:3px;font-size:.52rem;padding:1px 2px
+  }
+  #yd-free-duel .yd-free-duel-preview{padding:11px 9px;grid-template-columns:87px minmax(0,1fr);gap:6px 9px}
+  #yd-free-duel .yd-free-duel-portrait{width:87px!important}
+  #yd-free-duel .yd-free-duel-profile h3{font-size:1.02rem}
+  #yd-free-duel #yd-free-duel-status{font-size:.72rem}
+  #yd-free-duel .yd-free-duel-profile .yd-profile-series{font-size:.6rem;letter-spacing:.07em}
+  #yd-free-duel .yd-free-duel-profile .yd-free-duel-stars{font-size:.69rem}
+}
+@media(max-width:350px){
+  #yd-free-duel #yd-free-duel-grid{gap:4px}
+  #yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb-name{font-size:.54rem}
+  #yd-free-duel .yd-free-duel-header::before,
+  #yd-free-duel .yd-free-duel-header::after{display:none}
+}
+@media(orientation:landscape) and (max-height:480px) and (max-width:920px){
+  #yd-free-duel #yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,112px))}
+}
+@media(prefers-reduced-motion:reduce){
+  #yd-free-duel .yd-free-duel-thumb,
+  #yd-free-duel .yd-free-duel-series button{transition:none!important}
+  #yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb:hover{transform:none}
+}
