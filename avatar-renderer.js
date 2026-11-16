@@ -1,4 +1,4 @@
-import {avatarExtraLayers} from './avatar-extra-layers.js?v=cutout-avatar-v7';
+import {avatarExtraLayers} from './avatar-extra-layers.js?v=cutout-avatar-v8';
 // CTooniverse South Park-style cutout avatar renderer.
 // Original paper-cutout designs; no official series art or character assets.
 // All user appearance values are strictly whitelisted before SVG interpolation.
@@ -74,7 +74,7 @@ export function avatarSvg(value={}) {
     <stop offset="100%" stop-color="${mixHex(color,'black',0.38*power)}"/>
    </radialGradient>`;
  }).join('');
- const eyeGradient=`<radialGradient id="av-eye" cx="28%" cy="22%" r="92%"><stop offset="0" stop-color="#fff"/><stop offset="67%" stop-color="#fff"/><stop offset="100%" stop-color="${power?'#d4d5db':'#ffffff'}"/></radialGradient>`;
+ const eyeGradient=`<radialGradient id="av-eye" cx="35%" cy="29%" r="85%"><stop offset="0%" stop-color="#fff"/><stop offset="75%" stop-color="#fff"/><stop offset="100%" stop-color="${mixHex('#ffffff','black',0.10*power)}"/></radialGradient>`;
  const castShadow=power?`<filter id="av-depth-shadow" x="-35%" y="-35%" width="170%" height="175%">
    <feDropShadow dx="${1.2+power}" dy="${1.5+power*2}" stdDeviation="${1.2+power*2}" flood-color="#1c1731" flood-opacity="${(0.2+power*0.23).toFixed(2)}"/>
  </filter>`:'';
@@ -140,14 +140,29 @@ export function avatarSvg(value={}) {
  if(a.hairStyle==='spiky') fringe=`<path d="M63 164L52 95L90 111L101 73L129 105L158 68L178 105L217 80L224 117L262 104L256 167Q221 146 200 158L176 142L146 161L116 145L89 164L76 146Z" fill="url(#av-hair)" ${hairEdge}/>`;
  if(a.hairStyle==='long') fringe=`<path d="M59 174Q55 112 96 104Q164 83 234 112Q261 148 260 187L245 211L223 167L215 138Q166 160 130 139Q111 172 88 180L73 222L57 213Z" fill="url(#av-hair)" ${hairEdge}/>`;
  if(a.hairStyle==='curly') fringe=`<g fill="url(#av-hair)" ${hairEdge}><circle cx="86" cy="127" r="22"/><circle cx="109" cy="112" r="23"/><circle cx="135" cy="106" r="22"/><circle cx="164" cy="109" r="22"/><circle cx="188" cy="108" r="23"/><circle cx="213" cy="118" r="22"/><circle cx="235" cy="136" r="23"/></g>`;
+ // A single aligned eye system avoids crossed pupils and double eye outlines.
+ // Wink/sleepy expressions are drawn as their own shapes, never covered up by
+ // skin-colored patches that could leave a halo around the old eyeballs.
  const eyeColor={black:'#19191e',brown:'#5f3b29',blue:'#2867b5',green:'#2c8052'}[a.eyes];
- const eyeRadius=a.eyeStyle==='wide'?[40,45]:a.eyeStyle==='small'?[30,34]:[36,40];
- const eyePupils=a.eyeStyle==='side'?[117,171]:a.eyeStyle==='small'?[147,176]:[149,174];
- const eyes=`<ellipse cx="133" cy="187" rx="${eyeRadius[0]}" ry="${eyeRadius[1]}" fill="url(#av-eye)" stroke="#bab7ba" stroke-width="1.2"/>
- <ellipse cx="188" cy="187" rx="${eyeRadius[0]}" ry="${eyeRadius[1]}" fill="url(#av-eye)" stroke="#bab7ba" stroke-width="1.2"/>
- <circle cx="${eyePupils[0]}" cy="189" r="5.5" fill="${eyeColor}"/>
- <circle cx="${eyePupils[1]}" cy="189" r="5.5" fill="${eyeColor}"/>
- ${power?`<circle cx="${eyePupils[0]-1.7}" cy="186.7" r="2" fill="#fff" opacity=".9"/><circle cx="${eyePupils[1]-1.7}" cy="186.7" r="2" fill="#fff" opacity=".9"/>`:''}`;
+ const [eyeRx,eyeRy]=a.eyeStyle==='wide'?[38,43]:a.eyeStyle==='small'?[28,33]:[34,38];
+ const lookingLeft=a.eyeStyle==='side';
+ const pupilRadius=a.eyeStyle==='small'?4.3:5.2;
+ const makeEye=(cx,isLeft)=>{
+  if(a.face==='wink'&&isLeft){
+   return `<path d="M${cx-eyeRx+3} 190 Q${cx} 178 ${cx+eyeRx-3} 190" stroke="#28202b" stroke-width="3.6" stroke-linecap="round" fill="none"/>`;
+  }
+  const ry=a.face==='sleepy'?14:eyeRy;
+  const cy=a.face==='sleepy'?187:186;
+  const offset=lookingLeft?-12:(isLeft?7:-7);
+  const pupilX=cx+offset;
+  const pupilY=a.face==='sleepy'?190:188;
+  const pupilR=a.face==='sleepy'?3.8:pupilRadius;
+  return `<ellipse cx="${cx}" cy="${cy}" rx="${eyeRx}" ry="${ry}" fill="url(#av-eye)" stroke="#302a34" stroke-width="2"/>
+   <circle cx="${pupilX}" cy="${pupilY}" r="${pupilR}" fill="${eyeColor}"/>
+   ${power?`<circle cx="${pupilX-1.3}" cy="${pupilY-1.5}" r="1.3" fill="#fff" opacity=".8"/>`:''}
+   ${a.face==='sleepy'?`<path d="M${cx-eyeRx+2} 182 Q${cx} 173 ${cx+eyeRx-2} 182" stroke="#302a34" stroke-width="2.8" stroke-linecap="round" fill="none"/>`:''}`;
+ };
+ const eyes=`<g data-avatar-eyes="true">${makeEye(129,true)}${makeEye(191,false)}</g>`;
  const nose=a.nose==='dot'?'<circle cx="160" cy="229" r="2.6" fill="#5f4033" opacity=".75"/>':
   a.nose==='button'?`<path d="M153 223Q160 238 168 226" fill="none" stroke="#995e48" stroke-width="3" stroke-linecap="round"/>`:'';
  const layers=avatarExtraLayers(a);
