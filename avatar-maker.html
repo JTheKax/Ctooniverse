@@ -10,11 +10,11 @@
 <link rel="stylesheet" href="cosmic-overdrive.css?v=20261112-overdrive-v1">
 <link rel="stylesheet" href="avatar-maker.css?v=cutout-avatar-v6">
 <script src="script.js?v=20261115-shop-auction-v1" defer></script>
-<script type="module" src="header-profile.js?v=cutout-avatar-v6"></script>
+<script type="module" src="header-profile.js?v=cutout-avatar-v7"></script>
 <script type="module" src="account-menu.js?v=paper-avatar-v1"></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
-<script type="module" src="avatar-maker.js?v=cutout-avatar-v7"></script>
+<script type="module" src="avatar-maker.js?v=cutout-avatar-v8"></script>
 </head>
 <body class="account-neon-page avatar-maker-page">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -23,13 +23,13 @@
 <section class="avatar-intro">
 <p class="eyebrow">CREATE YOUR LOOK</p>
 <h1>Custom Avatar Maker</h1>
-<p>Start with our <strong>South Park–style cutout cartoon</strong> avatar creator. Make your own original character with customizable hairstyles, facial features, outfits, hats, accessories, and colors.</p>
+<p>Start with our <strong>South Park–style 2.5D cutout cartoon</strong> avatar creator. Make your own original character with customizable hairstyles, facial features, outfits, hats, accessories, colors, and adjustable 3D-style shading.</p>
 <a class="button secondary" href="account.html">← Back to My Account</a>
 </section>
 <section class="avatar-editor" aria-label="Customize your player avatar">
 <div class="avatar-preview-pane">
 <h2>Your character</h2>
-<div class="avatar-preview-frame"><img id="avatar-preview" width="320" height="400" alt="Full-body preview of your custom flat cutout cartoon avatar"></div>
+<div class="avatar-preview-frame"><img id="avatar-preview" width="320" height="400" alt="Full-body preview of your custom dimensional cartoon-cutout avatar"></div>
 <p class="avatar-saved-note">Your saved avatar will appear on your account, in the player header, and in the Community player directory.</p>
 <p id="avatar-maker-status" role="status" aria-live="polite">Checking your account…</p>
 <div class="avatar-primary-actions">
@@ -55,6 +55,7 @@
  </div>
  <div class="avatar-control-grid">
 <fieldset><legend>Head & face</legend>
+<label>3D appearance<select name="depth"><option value="flat">Classic flat cartoon</option><option value="soft">Soft 3D shading</option><option value="bold">Bold 3D shading</option></select></label>
 <label>Head shape<select name="headShape"><option value="round">Classic round</option><option value="wide">Wide / chubby</option><option value="square">Soft square</option></select></label>
 <label>Hair style<select name="hairStyle"><option value="short">Short</option><option value="swoop">Swoop</option><option value="spiky">Spiky</option><option value="long">Long</option><option value="curly">Curly</option><option value="bald">Bald</option><option value="sidepart">Side part</option><option value="messy">Messy</option><option value="bob">Bob</option><option value="pigtails">Pigtails</option><option value="afro">Afro</option><option value="mohawk">Mohawk</option><option value="buzz">Buzz cut</option></select></label>
 <label>Hat<select name="hat"><option value="none">No hat</option><option value="beanie">Beanie</option><option value="pom">Pom-pom hat</option><option value="earflaps">Earflap hat</option><option value="cap">Baseball cap</option><option value="bucket">Bucket hat</option><option value="visor">Visor</option></select></label>
