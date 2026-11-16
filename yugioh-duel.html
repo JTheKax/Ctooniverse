@@ -11,13 +11,14 @@
 <link rel="stylesheet" href="yugioh-free-duel.css?v=20261116-kaiba-uniform-v5">
 <link rel="stylesheet" href="yugioh-arena-refresh.css?v=20261116-compact-centered-roster-v8">
 <link rel="stylesheet" href="yugioh-forbidden-arena.css?v=20261116-ancient-stage-v1">
+<link rel="stylesheet" href="yugioh-roster-showcase.css?v=20261116-ornate-roster-v1">
 <script src="script.js?v=20261115-shop-auction-v1" defer></script>
 <script type="module" src="header-profile.js?v=without-avatar-20261116"></script>
 <script type="module" src="account-menu.js?v=without-avatar-20261116"></script>
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
-<script type="module" src="yugioh-duel.js?v=20261116-player-username-v9"></script>
+<script type="module" src="yugioh-duel.js?v=20261116-roster-showcase-v10"></script>
 </head>
 <body class="yd-duel-page">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -38,7 +39,8 @@
     <div class="yd-free-duel-header">
       <p class="yd-free-duel-overline">✦ THE DUELIST ARCHIVE ✦</p>
       <h2 id="yd-free-duel-title">FREE DUEL</h2>
-      <p>Choose a rival from the roster. Tap a portrait once to preview the duelist, then tap the same portrait again to start the duel. Every opponent has a different computer-controlled deck, and your permanent starter stays the same.</p>
+      <p>Choose a rival from the roster. Every opponent brings a different computer-controlled deck, and your permanent starter stays the same.</p>
+      <div class="yd-roster-instructions" aria-label="Duelist selection instructions"><span><b>1</b> Select a duelist</span><span><b>2</b> Tap again to duel</span></div>
     </div>
     <div class="yd-free-duel-layout">
       <div class="yd-free-duel-selector">
@@ -54,6 +56,7 @@
         <div id="yd-free-duel-preview-art" class="yd-free-duel-portrait"></div>
         <div class="yd-free-duel-profile">
           <p class="yd-free-duel-overline">YOUR CHALLENGER</p>
+          <p id="yd-profile-series" class="yd-profile-series">DUELIST PROFILE</p>
           <h3 id="yd-free-duel-opponent">Select a duelist</h3>
           <p id="yd-free-duel-subtitle"></p>
           <p id="yd-free-duel-difficulty" class="yd-free-duel-stars"></p>
