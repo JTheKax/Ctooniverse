@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="arcade-polish.css?v=2">
 <link rel="stylesheet" href="yugioh-duel.css?v=20261115-starter-choice">
 <link rel="stylesheet" href="yugioh-free-duel.css?v=20261116-kaiba-uniform-v5">
-<link rel="stylesheet" href="yugioh-arena-refresh.css?v=20261116-mobile-v2">
+<link rel="stylesheet" href="yugioh-arena-refresh.css?v=20261116-mobile-field-fit-v3">
 <script src="script.js?v=20261115-shop-auction-v1" defer></script>
 <script type="module" src="header-profile.js?v=without-avatar-20261116"></script>
 <script type="module" src="account-menu.js?v=without-avatar-20261116"></script>
@@ -78,8 +78,8 @@
     <div class="yd-hud-team yd-hud-player"><small>YOUR SIDE</small><strong>PLAYER</strong><div class="yd-hud-meter" id="yd-player-lp-meter" role="progressbar" aria-label="Your Life Points" aria-valuemin="0" aria-valuemax="8000" aria-valuenow="8000"><span id="yd-player-lp-fill"></span></div><b><span id="yd-hud-player-lp">8,000</span> LP</b></div>
   </section>
   <div class="yd-view-toolbar"><span>✦ DUEL DISK FIELD · FIVE MONSTER ZONES</span><button class="button secondary" type="button" id="yd-zoom" aria-pressed="false" aria-controls="yd-board-scroll">Enlarge Field</button></div>
-  <p class="yd-mobile-swipe-hint">↔ Swipe the duel field sideways to view all card zones. Use Enlarge Field for bigger cards.</p>
-  <div id="yd-board-scroll" class="yd-board-scroll" tabindex="0" aria-label="Duel board. Enlarge field and scroll horizontally on smaller screens.">
+  <p class="yd-mobile-swipe-hint">The full duel field fits your screen. Tap Enlarge Field for larger cards, then swipe sideways.</p>
+  <div id="yd-board-scroll" class="yd-board-scroll" tabindex="0" aria-label="Duel board. Fits the screen by default; enlarge for bigger cards and horizontal scrolling.">
   <section class="yd-board" aria-label="Duel field">
     <div class="yd-side yd-cpu"><div class="yd-duelist"><span class="yd-avatar" id="yd-cpu-avatar">👑</span><div><strong id="yd-cpu-name">Computer Duelist</strong><small id="yd-cpu-counts">Deck 35 · Hand 5</small></div><div class="yd-lp"><small>LIFE POINTS</small><strong id="yd-cpu-lp">8000</strong></div></div><p class="yd-zlabel">Opponent Spell &amp; Trap Zones</p><div id="yd-cpu-traps" class="yd-zones"></div><p class="yd-zlabel">Opponent Monsters — tap a monster to target it</p><div id="yd-cpu-field" class="yd-zones"></div></div>
     <div class="yd-center">✦ DUEL FIELD · 8000 STARTING LIFE POINTS ✦</div>
