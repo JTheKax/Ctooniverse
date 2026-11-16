@@ -27,7 +27,10 @@ function setForm(value){
 function readForm(){
  const next={...look};
  for(const input of form.querySelectorAll('[name]'))next[input.name]=input.value;
- look=normalizeAvatar(next);dirty=true;editRevision++;display();
+ const normalized=normalizeAvatar(next);
+ // Color inputs and selectors may fire both input and change for one edit.
+ if(Object.keys(normalized).every(key=>normalized[key]===look[key]))return;
+ look=normalized;dirty=true;editRevision++;display();
 }
 async function load(){
  const serial=++request,revisionAtStart=editRevision;
@@ -40,11 +43,14 @@ async function load(){
    dirty=false;message('Sign in to your CTooniverse account to save your avatar. You can still customize and download a preview.');
    return;
   }
+  // Keep one player's unsaved avatar from leaking into another account.
+  if(userId&&userId!==user.id){dirty=false;setForm(DEFAULT_AVATAR);}
   userId=user.id;syncSaveButtons();
   const {data,error:loadError}=await db.from('player_avatars').select('avatar').eq('user_id',user.id).maybeSingle();
   if(serial!==request)return;
   if(loadError)throw loadError;
-  if(editRevision===revisionAtStart){
+  // SIGNED_IN can fire again when the tab refocuses; never overwrite edits.
+  if(!dirty&&editRevision===revisionAtStart){
    setForm(data?.avatar||DEFAULT_AVATAR);
    dirty=false;
    message(data?'Your saved avatar has loaded. Customize it or try a new look.':'Welcome! Customize your first avatar, then save it.');
