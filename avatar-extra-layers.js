@@ -1,6 +1,14 @@
 // Extra original cartoon-cutout parts for CTooniverse avatar maker.
 // Colors come exclusively from normalizeAvatar's validated palette.
-const colorize=(s,a)=>s.replaceAll('@hair',a.hair).replaceAll('@skin',a.skin)
+// Gradient fills share the renderer's palette while outlines and accent strokes stay crisp.
+const colorize=(s,a)=>s
+ .replaceAll('fill="@hair"','fill="url(#av-hair)"')
+ .replaceAll('fill="@skin"','fill="url(#av-skin)"')
+ .replaceAll('fill="@shirt"','fill="url(#av-shirt)"')
+ .replaceAll('fill="@pants"','fill="url(#av-pants)"')
+ .replaceAll('fill="@hat"','fill="url(#av-hatColor)"')
+ .replaceAll('fill="@trim"','fill="url(#av-hatAccent)"')
+ .replaceAll('@hair',a.hair).replaceAll('@skin',a.skin)
  .replaceAll('@shirt',a.shirt).replaceAll('@pants',a.pants)
  .replaceAll('@hat',a.hatColor).replaceAll('@trim',a.hatAccent);
 const outline='stroke="#19171d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"';
