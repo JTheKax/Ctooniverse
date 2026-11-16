@@ -1,4 +1,4 @@
-import {avatarExtraLayers} from './avatar-extra-layers.js?v=cutout-avatar-v5';
+import {avatarExtraLayers} from './avatar-extra-layers.js?v=cutout-avatar-v7';
 // CTooniverse South Park-style cutout avatar renderer.
 // Original paper-cutout designs; no official series art or character assets.
 // All user appearance values are strictly whitelisted before SVG interpolation.
