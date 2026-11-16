@@ -317,7 +317,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     const result=$("yd-result");result.hidden=!game.winner;result.textContent=game.winner==="player"?"🏆 You defeated "+who("cpu")+"!":"Defeat against "+who("cpu")+". Duel again!";
     const r=record();$("yd-record").textContent=r.wins+" wins · "+r.losses+" losses";
   }
-  function reset(){if(!activeStarter||!selectedOpponent||!$("yd-free-duel").hidden)return;uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Free Duel versus "+selectedOpponent.name+"! You play first with "+activeStarter.deck_name+".");$("yd-cpu-name").textContent=selectedOpponent.name;$("yd-cpu-avatar").replaceChildren(duelistArtwork(selectedOpponent));render();}
+  function reset(){if(!activeStarter||!selectedOpponent||!$("yd-free-duel").hidden)return;uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Free Duel versus "+selectedOpponent.name+"! You play first with "+activeStarter.deck_name+".");$("yd-cpu-name").textContent=selectedOpponent.name;$("yd-cpu-avatar").replaceChildren(duelistArtwork(selectedOpponent,true));render();}
 
   // Locked starter decks belong to the Arena entitlement, not to card ownership.
   // The only write here is to yugioh_player_starter_choices, and the database
@@ -357,7 +357,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     img.src=artStorage+encodeURIComponent(String(id))+".jpg";
     wrapper.append(img);return wrapper;
   }
-  function duelistArtwork(profile){
+  function duelistArtwork(profile,featured=false){
     const frame=elt("span","yd-starter-art yd-character-art");
     const url=DUELIST_PORTRAITS[profile.id];
     if(!url){
@@ -367,8 +367,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     const img=document.createElement("img");
     img.className="yd-character-image";
     img.alt=profile.name+" portrait";
-    img.loading="lazy";
+    img.loading=featured?"eager":"lazy";
     img.decoding="async";
+    if(featured)img.fetchPriority="high";
     // Image errors are handled locally. Never block a duel if an external
     // illustration is unavailable or the source host changes its URLs.
     img.addEventListener("error",()=>{
@@ -503,7 +504,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     $("yd-free-duel-style").textContent=profile.style+" · "+profile.flavor;
     const r=opponentRecord(profile.id);
     $("yd-free-duel-record").textContent="Your record: "+r.wins+" wins · "+r.losses+" losses";
-    $("yd-free-duel-preview-art").replaceChildren(duelistArtwork(profile));
+    $("yd-free-duel-preview-art").replaceChildren(duelistArtwork(profile,true));
     for(const btn of $("yd-free-duel-grid").querySelectorAll(".yd-free-duel-thumb")){
       btn.setAttribute("aria-pressed",String(btn.dataset.duelist===profile.id));
     }
@@ -516,6 +517,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
       const portrait=elt("button","yd-free-duel-thumb");
       portrait.type="button";
       portrait.dataset.duelist=profile.id;
+      portrait.title=profile.name+" · "+profile.epithet;
       portrait.setAttribute("aria-label",profile.name+", difficulty "+profile.difficulty+" of 5");
       portrait.setAttribute("aria-pressed","false");
       portrait.append(duelistArtwork(profile));
