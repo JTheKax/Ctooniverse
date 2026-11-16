@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#13273a">
+<meta name="description" content="Play a classic Pokémon Trading Card Game inspired single-player duel in CTooniverse with Fire, Water, or Lightning decks.">
+<title>Pokémon Card Arena | CTooniverse</title>
+<link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
+<link rel="stylesheet" href="arcade-polish.css?v=2">
+<link rel="stylesheet" href="pokemon-tcg.css?v=20261116-pokemon-arena-v1">
+<script src="script.js?v=20261115-shop-auction-v1" defer></script>
+<script type="module" src="header-profile.js?v=without-avatar-20261116"></script>
+<script type="module" src="account-menu.js?v=without-avatar-20261116"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
+<script src="pokemon-tcg.js?v=20261116-pokemon-arena-v1" defer></script>
+</head>
+<body class="ptcg-page">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a>
+<nav aria-label="Main navigation"><a href="index.html" class="nav-link">Home</a><a href="ctoons.html" class="nav-link">CToons</a><a href="games.html" class="nav-link">Games</a><a href="cards.html" class="nav-link active" aria-current="page">Cards</a><a href="watch.html" class="nav-link">Theater</a><a href="shop.html" class="nav-link">Shop</a><a href="community.html" class="nav-link">Community</a><a href="account.html" class="nav-link">Account</a></nav>
+<div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div><span class="header-tag">CARD ARENA</span>
+</header>
+<main id="main" class="ptcg-main">
+<section class="ptcg-hero">
+ <div><p class="ptcg-eyebrow">✦ CTOONIVERSE · CARD BATTLES ✦</p><h1>Pokémon <span>Card Arena</span></h1><p>Choose a classic 60-card deck, evolve your Pokémon, attach Energy, and battle an AI Trainer to claim six Prize cards.</p></div>
+ <div class="ptcg-links"><a class="button secondary" href="cards.html">← Cards Hub</a><a class="button secondary" href="yugioh-duel.html">Yu-Gi-Oh! Arena</a></div>
+</section>
+<section class="ptcg-panel ptcg-deck-select" id="ptcg-deck-select" aria-labelledby="ptcg-start-title">
+ <p class="ptcg-eyebrow">YOUR TRAINER JOURNEY BEGINS</p><h2 id="ptcg-start-title">Choose your starter deck</h2>
+ <p>Pick Fire, Water, or Lightning. Each starter has 60 playable cards and can be changed for your next match. No coins or collection cards are needed.</p>
+ <div class="ptcg-deck-grid">
+  <button class="ptcg-deck-option fire" type="button" data-deck="fire"><span class="ptcg-deck-icon" aria-hidden="true">🔥</span><strong>Fire Storm</strong><span>Charizard · Arcanine · Ninetales</span><small>Powerful attacks and fierce evolutions</small><b>PLAY FIRE DECK</b></button>
+  <button class="ptcg-deck-option water" type="button" data-deck="water"><span class="ptcg-deck-icon" aria-hidden="true">💧</span><strong>Ocean Wave</strong><span>Blastoise · Poliwrath · Starmie</span><small>Durable Pokémon and steady pressure</small><b>PLAY WATER DECK</b></button>
+  <button class="ptcg-deck-option lightning" type="button" data-deck="lightning"><span class="ptcg-deck-icon" aria-hidden="true">⚡</span><strong>Thunder Strike</strong><span>Raichu · Electabuzz · Zapdos</span><small>Fast attackers and electric knockouts</small><b>PLAY LIGHTNING DECK</b></button>
+ </div>
+ <p class="ptcg-small">This is a fan-made simplified Pokémon TCG experience. It uses selected classic card images but not the full printed card effects or the official competitive rules.</p>
+</section>
+<section id="ptcg-arena" class="ptcg-arena" aria-label="Pokémon card battle" hidden>
+ <div class="ptcg-matchbar">
+  <div><span class="ptcg-eyebrow">SINGLE-PLAYER DUEL</span><h2>Trainer Battle</h2><p id="ptcg-matchup"></p></div>
+  <div class="ptcg-match-actions"><button type="button" class="button secondary" id="ptcg-new-game">Rematch</button><button type="button" class="button secondary" id="ptcg-change-deck">Change Deck</button></div>
+ </div>
+ <p class="ptcg-status" id="ptcg-status" role="status" aria-live="polite">Preparing match…</p>
+ <div class="ptcg-game-controls"><strong id="ptcg-turn-label">Your turn</strong><button class="button primary" type="button" id="ptcg-end-turn">End Turn</button></div>
+ <section class="ptcg-side ptcg-cpu" aria-labelledby="ptcg-cpu-title">
+  <div class="ptcg-side-heading"><div><span class="ptcg-eyebrow">CHALLENGER</span><h3 id="ptcg-cpu-title">Rival Trainer</h3><span id="ptcg-cpu-meta">Deck 60 · Hand 7</span></div><div class="ptcg-prizes"><span>PRIZE CARDS LEFT</span><strong id="ptcg-cpu-prizes">6</strong></div></div>
+  <div class="ptcg-field-row"><div class="ptcg-active-wrap"><span class="ptcg-field-label">ACTIVE POKÉMON</span><div id="ptcg-cpu-active" class="ptcg-active-slot"></div></div><div class="ptcg-bench-wrap"><span class="ptcg-field-label">BENCH · UP TO 5</span><div id="ptcg-cpu-bench" class="ptcg-bench-grid"></div></div></div>
+ </section>
+ <div class="ptcg-midfield"><span>✦ POKÉMON BATTLE FIELD ✦</span></div>
+ <section class="ptcg-side ptcg-player" aria-labelledby="ptcg-player-title">
+  <div class="ptcg-side-heading"><div><span class="ptcg-eyebrow">YOUR SIDE</span><h3 id="ptcg-player-title">Trainer</h3><span id="ptcg-player-meta">Deck 60 · Hand 7</span></div><div class="ptcg-prizes"><span>PRIZE CARDS LEFT</span><strong id="ptcg-player-prizes">6</strong></div></div>
+  <div class="ptcg-field-row"><div class="ptcg-active-wrap"><span class="ptcg-field-label">ACTIVE POKÉMON</span><div id="ptcg-player-active" class="ptcg-active-slot"></div></div><div class="ptcg-bench-wrap"><span class="ptcg-field-label">BENCH · UP TO 5</span><div id="ptcg-player-bench" class="ptcg-bench-grid"></div></div></div>
+ </section>
+ <section class="ptcg-panel ptcg-hand-panel" aria-labelledby="ptcg-hand-title"><div class="ptcg-hand-title"><h3 id="ptcg-hand-title">Your Hand</h3><span id="ptcg-hand-count">0 cards</span></div><p class="ptcg-small">Tap a card, then use the actions below. Attacks end your turn.</p><div id="ptcg-hand" class="ptcg-hand"></div></section>
+ <div class="ptcg-lower"><section class="ptcg-panel"><h3>Card &amp; Actions</h3><div id="ptcg-details" aria-live="polite">Choose a card or Pokémon.</div><div id="ptcg-actions" class="ptcg-actions"></div></section><section class="ptcg-panel"><h3>Duel Log</h3><ol id="ptcg-log" class="ptcg-log" aria-label="Recent moves"></ol></section></div>
+ <div id="ptcg-result" class="ptcg-result" role="status" hidden></div>
+</section>
+<details class="ptcg-panel ptcg-rules"><summary>How this Pokémon card game works</summary><p>Start with a 60-card deck, seven cards in hand and six Prize cards. You automatically begin with a Basic Pokémon. Play other Basic Pokémon onto your Bench (maximum five), evolve a Pokémon after it has spent at least a turn in play, and attach one Energy per turn. Your Active Pokémon attacks once enough Energy is attached. Attacking ends your turn. Each knocked-out Pokémon lets the attacking Trainer take one Prize card. The first Trainer to take all six prizes, knock out the opponent's final Pokémon, or leave an opponent unable to draw wins.</p><p>Trainer effects, damage, weaknesses, retreat, and available attacks are simplified for this prototype. All decks and cards are loaned for play: no packs, card ownership, or coins are affected. Matches and opponents are computer-controlled only.</p></details>
+<p class="ptcg-credits">Classic Pokémon card scans provided through <a href="https://tcgdex.dev" target="_blank" rel="noopener noreferrer">TCGdex</a>. Pokémon, card artwork, and related trademarks are owned by their respective rights holders. Unofficial fan project, not affiliated with or endorsed by The Pokémon Company.</p>
+</main>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>Built from scratch. Built to collect.</span></footer>
+<script type="module" src="site-chat-widget.js?v=1"></script>
+</body></html>
