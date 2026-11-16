@@ -16,7 +16,7 @@
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
-<script type="module" src="pokemon-card-shop.js?v=20261116-pokemon-shop-v1"></script>
+<script type="module" src="pokemon-card-shop.js?v=20261116-full-catalog-v2"></script>
 </head>
 <body class="cards-hub-page pcs-body">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -29,12 +29,12 @@
 <section class="cards-section pcs-hero">
 <p class="eyebrow">✦ CTOONIVERSE CARD CORNER ✦</p>
 <h1>Pokémon <span>Card Shop</span></h1>
-<p>Open virtual Kanto-themed booster packs with Cartoon Coins. Every purchased card goes into your own Pokémon collection, separate from your Yu-Gi-Oh! cards and the loaned Pokémon Card Arena starter decks.</p>
-<div class="cards-actions"><a class="button secondary" href="cards.html">← Cards Hub</a><a class="button secondary" href="pokemon-tcg.html">⚔️ Pokémon Card Arena</a><a class="button secondary" href="yugioh-card-shop.html">Yu-Gi-Oh! Shop</a></div>
+<p>Open virtual booster packs covering over 23,000 English Pokémon card printings. Your purchases go into your saved Pokémon collection, separate from Yu-Gi-Oh! and the loaned Arena starter decks.</p>
+<div class="cards-actions"><a class="button secondary" href="cards.html">← Cards Hub</a><a class="button secondary" href="pokemon-tcg.html">⚔️ Pokémon Card Arena</a><a class="button secondary" href="yugioh-card-shop.html">Yu-Gi-Oh! Shop</a><a class="button primary" href="pokemon-card-database.html">📚 Full Pokémon Card Database</a></div>
 <div class="pcs-wallet"><span>🪙 Cartoon Coins</span><strong id="pcs-balance">Checking your balance…</strong><a href="login.html" id="pcs-signin" hidden>Sign in</a></div>
 </section>
 <section class="cards-section" aria-labelledby="pcs-pack-heading">
-<div class="cards-section-title"><div><p class="eyebrow">✦ 5 RANDOM CARDS PER PACK ✦</p><h2 id="pcs-pack-heading">Booster Packs</h2><p>Choose from five themed packs. The rarest Pokémon are harder to pull. No duplicates occur within a single opening, but future packs can give you additional copies.</p></div><span class="cards-tag">5 PACKS</span></div>
+<div class="cards-section-title"><div><p class="eyebrow">✦ 5 RANDOM CARDS PER PACK ✦</p><h2 id="pcs-pack-heading">Booster Packs</h2><p>Choose from 13 booster packs: five Kanto-themed packs and eight Pokémon Archive volumes covering every imported English card. Ultra Rare cards have much lower pull weights than Common cards. Each pack awards five distinct random cards.</p></div><span class="cards-tag" id="pcs-pack-total">13 PACKS</span></div>
 <p id="pcs-status" class="pcs-status" role="status" aria-live="polite">Loading booster packs…</p>
 <div id="pcs-pack-grid" class="pcs-pack-grid" aria-label="Pokémon booster packs"></div>
 </section>
@@ -53,6 +53,7 @@
 </div>
 <p id="pcs-collection-status" class="pcs-status" role="status">Sign in to view your cards.</p>
 <div id="pcs-collection-grid" class="pcs-card-grid"></div>
+<button type="button" class="button secondary" id="pcs-more" hidden>Load More Owned Cards</button>
 </section>
 <section class="cards-section" id="pcs-history" aria-labelledby="pcs-history-heading">
 <h2 id="pcs-history-heading">Recent Booster Openings</h2>
@@ -60,7 +61,7 @@
 <div id="pcs-history-list" class="pcs-history-list"><p>Sign in to see your purchase history.</p></div>
 </section>
 <section class="cards-section pcs-info"><h2>Shop Rules</h2>
-<p>All booster packs are virtual and unofficial. The current catalog has 33 collectible cards from the Pokémon Card Arena's classic Kanto set: Pokémon, Energy, and Trainer cards. Rare and Ultra Rare shop tiers use lower selection weights. Pack contents are selected randomly by the server, not the browser.</p>
+<p>All booster packs are virtual and unofficial. The shop includes 23,912 English TCGdex card printings in eight Archive volumes, plus the original 33 Kanto-prototype cards in five themed packs. Every indexed English printing appears in exactly one Archive volume. The server applies weighted selection using four pull tiers based on source rarity labels; individual real-world pack odds are not reproduced. No duplicates appear within a single purchased pack.</p>
 <p>A signed-in CTooniverse account and sufficient Cartoon Coins are required to purchase packs. Purchases are final once confirmed. The Pokémon Card Arena currently uses its own fixed loaner decks, so owning cards here doesn't change your playable deck yet.</p>
 <p class="pcs-credit">Card imagery: TCGdex. Pokémon and related trademarks belong to their respective rights holders. Unofficial fan project, not affiliated with The Pokémon Company.</p>
 </section>
