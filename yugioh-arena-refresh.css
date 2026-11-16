@@ -272,3 +272,19 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
 @media(orientation:landscape) and (max-height:480px) and (max-width:920px){
   #yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,112px));gap:8px}
 }
+
+/* Mobile duel field stays fully visible without sideways dragging.
+   The larger scrollable field is a desktop-only option. */
+@media(max-width:900px){
+  .yd-main #yd-duel-content .yd-board-scroll{
+    overflow-x:hidden!important;
+    overscroll-behavior-x:none;
+    touch-action:pan-y;
+  }
+  .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{
+    width:100%!important;
+    min-width:0!important;
+  }
+  #yd-duel-content #yd-zoom,
+  #yd-duel-content .yd-mobile-swipe-hint{display:none!important}
+}
