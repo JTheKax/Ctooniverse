@@ -133,7 +133,9 @@
     "aster": "https://uploads4.yugioh.com/character/37/detail/detail/aster-l.png?1375717571=",
     "crowler": "https://uploads4.yugioh.com/character/23/detail/detail/Crowler-l.png?1371840566=",
     "chumley": "https://uploads4.yugioh.com/character/22/detail/detail/chumley-l.png?1371840210=",
-    "bastion": "https://uploads4.yugioh.com/character/20/detail/detail/bastion-l.png?1375717320="
+    "bastion": "https://uploads4.yugioh.com/character/20/detail/detail/bastion-l.png?1375717320=",
+    "espa": "https://s3.duellinksmeta.com/img/characters/espa-roba/victory.png",
+    "strings": "https://uploads1.yugioh.com/character/152/detail/detail/strings-lg.png?1384803769="
   });
   const DUELISTS=[
     {id:"yugi",name:"Yugi Muto",epithet:"King of Games",hero:46986414,race:"Spellcaster",difficulty:3,style:"Dark Magician · Spellcaster tactics",flavor:"A balanced rival whose spellcasters reward careful play."},
@@ -151,6 +153,8 @@
     {id:"tea",name:"Téa Gardner",epithet:"Friendship Duelist",hero:38033121,race:"Fairy",difficulty:1,style:"Fairies · Dark Magician Girl",flavor:"A welcoming rival to practice the fundamentals."},
     {id:"odion",name:"Odion",epithet:"Temple Guardian",hero:89194033,race:"Rock",difficulty:4,style:"Rock monsters · Defensive traps",flavor:"Strong defenses may force you into a long battle."},
     {id:"bonz",name:"Bonz",epithet:"Ghost Gravekeeper",hero:29155212,race:"Zombie",difficulty:1,style:"Zombies · Haunted graveyard",flavor:"Rise against monsters from the haunted crypt."},
+    {id:"espa",name:"Espa Roba",epithet:"Battle City Psychic",hero:77585513,race:"Machine",difficulty:3,style:"Jinzo · Psychic machine tactics",flavor:"The supposed mind reader counters traps with the mighty Jinzo and a machine-heavy deck."},
+    {id:"strings",name:"Strings",epithet:"Silent Rare Hunter",hero:10000020,race:"Aqua",difficulty:5,style:"Slifer the Sky Dragon · Slime creatures",flavor:"Marik's silent puppet duels with slime monsters and the Egyptian God Slifer."},
 {id:"jaden",series:"gx",name:"Jaden Yuki",epithet:"Slifer Red Hero",hero:89943723,race:"Warrior",archetype:"Elemental HERO",difficulty:3,style:"Elemental HERO · Neo-Spacian heroes",flavor:"Duel Academy's rising star challenges you with heroic monsters."},
     {id:"zane",series:"gx",name:"Zane Truesdale",epithet:"Duel Academy Ace",hero:70095154,race:"Machine",archetype:"Cyber Dragon",difficulty:5,style:"Cyber Dragon · Machine offense",flavor:"An elite opponent whose machines hit hard and fast."},
     {id:"alexis",series:"gx",name:"Alexis Rhodes",epithet:"Obelisk Blue Champion",hero:77235086,race:"Fairy",archetype:"Cyber Angel",difficulty:3,style:"Cyber Angels · Fairy tactics",flavor:"A precise rival who brings disciplined dueling and powerful fairies."},
@@ -491,7 +495,9 @@
         // variable-stat monsters. Use a clearly simplified prototype value.
         const attack=Number(card.attack);
         const defense=Number(card.defense);
-        const divine=card.name==="The Winged Dragon of Ra";
+        // Variable-stat Egyptian Gods have undefined reference stats. Give
+        // them a prototype value so their signature monsters remain viable.
+        const divine=["The Winged Dragon of Ra","Slifer the Sky Dragon","Obelisk the Tormentor"].includes(card.name);
         catalog[key]=[card.name,level,
           attack>=0?attack:(divine?3000:0),defense>=0?defense:(divine?3000:0),"✦"];
       }
