@@ -6,6 +6,8 @@ const ART="https://assets.tcgdex.net/en/base/base1/";
 const COLORS={fire:"🔥",water:"💧",lightning:"⚡",trainer:"🎴",classic:"⭐",evolution:"✨"};
 let currentUser=null,allPacks=[],catalog=new Map(),collection=[],openings=[];
 let busy=false,generation=0,searchText="",rarityFilter="all";
+let collectionTotal=0,collectionOffset=0;
+const COLLECTION_PAGE=120;
 const requests=new Map();
 function el(tag,cls,text){
  const node=document.createElement(tag);
@@ -38,13 +40,19 @@ function artwork(row,cssClass){
  const frame=el("div",cssClass);
  const fallback=el("span","pcs-fallback",COLORS[row?.energy_type]||"⭐");
  frame.append(fallback);
- const id=Number(row?.base_number);
- if(Number.isInteger(id)&&id>0&&id<=102){
+ const classicId=Number(row?.base_number);
+ let url="";
+ if(typeof row?.image_url==="string"&&row.image_url.startsWith("https://assets.tcgdex.net/")){
+  url=row.image_url+"/low.webp";
+ }else if(Number.isInteger(classicId)&&classicId>0&&classicId<=102){
+  url=ART+classicId+"/low.webp";
+ }
+ if(url){
   const img=document.createElement("img");
   img.alt="";
   img.loading="lazy";img.decoding="async";
   img.addEventListener("error",()=>img.remove(),{once:true});
-  img.src=ART+id+"/low.webp";
+  img.src=url;
   frame.append(img);
  }
  return frame;
@@ -55,7 +63,9 @@ function cardElement(row,quantity){
  card.dataset.rarity=row.rarity;
  const info=el("div","pcs-card-info");
  card.append(artwork(row,"pcs-card-image"),el("strong","",row.name),
-   el("span","pcs-rarity",row.rarity),el("small","",
+   el("span","pcs-rarity",row.source_rarity&&row.source_rarity!=="None"?row.source_rarity:row.rarity),
+   el("small","",row.set_name?
+      row.set_name+(row.local_id?" · #"+row.local_id:""):
       row.kind==="pokemon"?(row.stage?"Stage "+row.stage:"Basic")+" · "+row.hp+" HP":
       row.kind==="energy"?"Energy":"Trainer"));
  if(quantity!==undefined&&quantity!==null)card.append(el("span","pcs-qty","×"+quantity));
@@ -64,6 +74,7 @@ function cardElement(row,quantity){
 function packElement(pack){
  const card=el("article","pcs-pack");
  card.dataset.theme=pack.theme;
+ card.id="pcs-pack-"+pack.id;
  const art=el("div","pcs-window");
  const hero=catalog.get(pack.hero_card_id);
  art.append(artwork(hero||{energy_type:pack.theme,base_number:0},"pcs-pack-window-art"));
@@ -75,7 +86,8 @@ function packElement(pack){
  open.type="button";open.disabled=!currentUser||busy;
  open.setAttribute("aria-label","Open "+pack.name+" pack for "+money(pack.price_coins));
  open.addEventListener("click",()=>purchasePack(pack));
- copy.append(open,el("small","pcs-pack-count","5 distinct cards · Randomized rarities"));
+ copy.append(open,el("small","pcs-pack-count",
+  Number(pack.pool_size||0).toLocaleString()+" possible cards · "+pack.card_count+" per pack"));
  card.append(art,copy);
  return card;
 }
@@ -84,16 +96,31 @@ function drawPacks(){
  for(const pack of allPacks)root.append(packElement(pack));
  if(!allPacks.length)root.append(el("p","","No active Pokémon packs are available."));
 }
+const CARD_SELECT="id,name,kind,energy_type,hp,stage,base_number,rarity,pull_weight,tcgdex_id,set_id,set_name,local_id,image_url,source_rarity";
+async function fetchCards(ids){
+ const wanted=[...new Set(ids.filter(x=>typeof x==="string"&&x.length))].filter(id=>!catalog.has(id));
+ for(let i=0;i<wanted.length;i+=70){
+  const {data,error}=await db.from("pokemon_card_catalog")
+   .select(CARD_SELECT).in("id",wanted.slice(i,i+70));
+  if(error)throw error;
+  for(const card of data||[])catalog.set(card.id,card);
+ }
+}
 async function fetchCatalogAndPacks(){
- const [cards,packs]=await Promise.all([
-  db.from("pokemon_card_catalog").select("id,name,kind,energy_type,hp,stage,base_number,rarity,pull_weight").order("name"),
-  db.from("pokemon_shop_packs").select("id,name,description,theme,price_coins,card_count,hero_card_id,sort_order").eq("is_active",true).order("sort_order")
- ]);
- if(cards.error)throw cards.error;
- if(packs.error)throw packs.error;
- catalog=new Map((cards.data||[]).map(card=>[card.id,card]));
- allPacks=packs.data||[];
+ const {data,error}=await db.from("pokemon_shop_packs")
+  .select("id,name,description,theme,price_coins,card_count,hero_card_id,pool_size,sort_order")
+  .eq("is_active",true).order("sort_order");
+ if(error)throw error;
+ allPacks=data||[];
+ try{await fetchCards(allPacks.map(pack=>pack.hero_card_id));}
+ catch(error){console.warn("Pack cover artwork metadata unavailable",error);}
+ $("pcs-pack-total").textContent=allPacks.length+" PACKS";
  drawPacks();
+ const target=new URLSearchParams(location.search).get("pack");
+ if(target&&allPacks.some(pack=>pack.id===target)){
+  const element=$("pcs-pack-"+target);
+  if(element)setTimeout(()=>element.scrollIntoView({block:"center",behavior:"smooth"}),100);
+ }
 }
 async function loadWallet(){
  const balance=$("pcs-balance");
@@ -111,20 +138,27 @@ function drawCollection(){
    (!query||card.name.toLocaleLowerCase().includes(query));
  });
  for(const entry of filtered)grid.append(cardElement(catalog.get(entry.card_id),entry.quantity));
- $("pcs-collection-count").textContent=collection.length+" unique cards · "+
-  collection.reduce((sum,item)=>sum+item.quantity,0)+" total";
+ $("pcs-collection-count").textContent=collectionTotal+" unique cards";
  $("pcs-collection-status").textContent=!currentUser?"Sign in to view your collection.":
-  !collection.length?"No Pokémon cards owned yet. Open your first booster pack!":
-  filtered.length?filtered.length+" of "+collection.length+" unique cards shown.":
-  "No owned Pokémon cards match those filters.";
+  !collectionTotal?"No Pokémon cards owned yet. Open your first booster pack!":
+  filtered.length?filtered.length+" matching cards in the "+collection.length+" currently loaded of "+collectionTotal+" owned.":
+  "No matches among your loaded cards. Load more to search the rest.";
+ $("pcs-more").hidden=!currentUser||collection.length>=collectionTotal;
 }
-async function loadCollection(){
- if(!currentUser){collection=[];drawCollection();return;}
- const {data,error}=await db.from("pokemon_player_cards")
-   .select("card_id,quantity,acquired_at")
-   .eq("user_id",currentUser.id).order("acquired_at",{ascending:false}).limit(200);
+async function loadCollection(reset=true){
+ if(!currentUser){collection=[];collectionTotal=0;collectionOffset=0;drawCollection();return;}
+ if(reset){collection=[];collectionOffset=0;}
+ const {data,error,count}=await db.from("pokemon_player_cards")
+   .select("card_id,quantity,acquired_at",{count:"exact"})
+   .eq("user_id",currentUser.id).order("acquired_at",{ascending:false})
+   .range(collectionOffset,collectionOffset+COLLECTION_PAGE-1);
  if(error)throw error;
- collection=data||[];
+ const entries=data||[];
+ collectionTotal=count||0;
+ collection.push(...entries);
+ collectionOffset+=entries.length;
+ try{await fetchCards(entries.map(row=>row.card_id));}
+ catch(error){console.warn("Some collected card metadata is unavailable",error);}
  drawCollection();
 }
 async function loadHistory(){
@@ -264,6 +298,8 @@ async function purchasePack(pack){
   if(error)throw error;
   saved=true;clearRequest(pack.id);
   window.dispatchEvent(new Event("ctoon-profile-updated"));
+  try{await fetchCards(Array.isArray(opening.card_ids)?opening.card_ids:[]);}
+  catch(error){console.warn("Awarded card metadata not yet available",error);}
   showSavedResult(opening);
   status("Pack purchased! All five cards are safely stored in your collection.");
   // The visual reveal can be skipped without losing rewards.
@@ -293,6 +329,9 @@ $("pcs-rarity").addEventListener("change",event=>{
 });
 $("pcs-hide-results").addEventListener("click",()=>{
  $("pcs-reveal").hidden=true;
+});
+$("pcs-more").addEventListener("click",()=>{
+ loadCollection(false).catch(error=>status("Couldn't load more owned cards: "+error.message,true));
 });
 db.auth.onAuthStateChange((event)=>{
  if(event==="SIGNED_IN"||event==="SIGNED_OUT"){
