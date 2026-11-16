@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script data-legacy-render-redirect="cloudflare-20261115">(function(){if(location.hostname==="ctooniverse.onrender.com"){location.replace("https://ctooniverse.jthekax21.workers.dev"+location.pathname+location.search+location.hash);}}());</script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#102a34">
+<meta name="description" content="Open Pokémon Card Arena booster packs with Cartoon Coins and build your own Pokémon card collection on CTooniverse.">
+<title>Pokémon Card Shop | CTooniverse</title>
+<link rel="stylesheet" href="styles.css?v=ninja-scroll-20261114-v1">
+<link rel="stylesheet" href="arcade-polish.css?v=2">
+<link rel="stylesheet" href="cards-page.css?v=cards-hub-20261114">
+<link rel="stylesheet" href="pokemon-card-shop.css?v=20261116-pokemon-shop-v1">
+<script src="script.js?v=20261115-shop-auction-v1" defer></script>
+<script type="module" src="header-profile.js?v=without-avatar-20261116"></script>
+<script type="module" src="account-menu.js?v=without-avatar-20261116"></script>
+<script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
+<script src="community-menu.js?v=2" defer></script>
+<script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
+<script type="module" src="pokemon-card-shop.js?v=20261116-pokemon-shop-v1"></script>
+</head>
+<body class="cards-hub-page pcs-body">
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+<a class="brand" href="index.html" aria-label="CTooniverse home"><img class="brand-logo" src="ctooniverse-logo.png" alt="CTooniverse" width="300" height="100"></a>
+<nav aria-label="Main navigation"><a class="nav-link" href="index.html">Home</a><a class="nav-link" href="ctoons.html">CToons</a><a class="nav-link" href="games.html">Games</a><a class="nav-link active" href="cards.html" aria-current="page">Cards</a><a class="nav-link" href="watch.html">Theater</a><a class="nav-link" href="shop.html">Shop</a><a class="nav-link" href="community.html">Community</a><a class="nav-link" href="account.html">Account</a></nav>
+<div class="header-player" id="header-player" aria-label="Player and Cartoon Coin balance"><span class="header-player-icon" aria-hidden="true">★</span><span class="header-player-info"><strong id="header-player-name">Guest</strong><span id="header-player-coins">Sign in</span></span></div><span class="header-tag">CARD SHOP</span>
+</header>
+<main id="main" class="pcs-main">
+<section class="cards-section pcs-hero">
+<p class="eyebrow">✦ CTOONIVERSE CARD CORNER ✦</p>
+<h1>Pokémon <span>Card Shop</span></h1>
+<p>Open virtual Kanto-themed booster packs with Cartoon Coins. Every purchased card goes into your own Pokémon collection, separate from your Yu-Gi-Oh! cards and the loaned Pokémon Card Arena starter decks.</p>
+<div class="cards-actions"><a class="button secondary" href="cards.html">← Cards Hub</a><a class="button secondary" href="pokemon-tcg.html">⚔️ Pokémon Card Arena</a><a class="button secondary" href="yugioh-card-shop.html">Yu-Gi-Oh! Shop</a></div>
+<div class="pcs-wallet"><span>🪙 Cartoon Coins</span><strong id="pcs-balance">Checking your balance…</strong><a href="login.html" id="pcs-signin" hidden>Sign in</a></div>
+</section>
+<section class="cards-section" aria-labelledby="pcs-pack-heading">
+<div class="cards-section-title"><div><p class="eyebrow">✦ 5 RANDOM CARDS PER PACK ✦</p><h2 id="pcs-pack-heading">Booster Packs</h2><p>Choose from five themed packs. The rarest Pokémon are harder to pull. No duplicates occur within a single opening, but future packs can give you additional copies.</p></div><span class="cards-tag">5 PACKS</span></div>
+<p id="pcs-status" class="pcs-status" role="status" aria-live="polite">Loading booster packs…</p>
+<div id="pcs-pack-grid" class="pcs-pack-grid" aria-label="Pokémon booster packs"></div>
+</section>
+<section id="pcs-reveal" class="cards-section pcs-results" aria-labelledby="pcs-reveal-heading" hidden>
+<div class="cards-section-title"><div><p class="eyebrow">✦ NEW ADDITIONS ✦</p><h2 id="pcs-reveal-heading">Your Booster Pulls</h2><p id="pcs-reveal-description">Cards added to your collection.</p></div></div>
+<div id="pcs-reveal-cards" class="pcs-card-grid" aria-live="polite"></div>
+<div class="cards-actions"><a class="button primary" href="#pcs-collection">View My Collection</a><button type="button" class="button secondary" id="pcs-hide-results">Close Results</button></div>
+</section>
+<section class="cards-section" id="pcs-collection" aria-labelledby="pcs-collection-heading">
+<div class="cards-section-title"><div><p class="eyebrow">✦ YOUR OWNED CARDS ✦</p><h2 id="pcs-collection-heading">My Pokémon Collection</h2><p>Only cards received from paid Pokémon packs appear here. Collection quantities and pack history are saved to your CTooniverse account.</p></div></div>
+<div class="pcs-toolbar">
+<strong id="pcs-collection-count">0 unique cards</strong>
+<label for="pcs-collection-search">Search collection</label>
+<input id="pcs-collection-search" type="search" maxlength="60" placeholder="Search your owned cards" autocomplete="off">
+<label for="pcs-rarity">Rarity</label><select id="pcs-rarity"><option value="all">All rarities</option><option>Common</option><option>Uncommon</option><option>Rare</option><option>Ultra Rare</option></select>
+</div>
+<p id="pcs-collection-status" class="pcs-status" role="status">Sign in to view your cards.</p>
+<div id="pcs-collection-grid" class="pcs-card-grid"></div>
+</section>
+<section class="cards-section" id="pcs-history" aria-labelledby="pcs-history-heading">
+<h2 id="pcs-history-heading">Recent Booster Openings</h2>
+<p>View the Pokémon packs you bought and how many Cartoon Coins you spent.</p>
+<div id="pcs-history-list" class="pcs-history-list"><p>Sign in to see your purchase history.</p></div>
+</section>
+<section class="cards-section pcs-info"><h2>Shop Rules</h2>
+<p>All booster packs are virtual and unofficial. The current catalog has 33 collectible cards from the Pokémon Card Arena's classic Kanto set: Pokémon, Energy, and Trainer cards. Rare and Ultra Rare shop tiers use lower selection weights. Pack contents are selected randomly by the server, not the browser.</p>
+<p>A signed-in CTooniverse account and sufficient Cartoon Coins are required to purchase packs. Purchases are final once confirmed. The Pokémon Card Arena currently uses its own fixed loaner decks, so owning cards here doesn't change your playable deck yet.</p>
+<p class="pcs-credit">Card imagery: TCGdex. Pokémon and related trademarks belong to their respective rights holders. Unofficial fan project, not affiliated with The Pokémon Company.</p>
+</section>
+</main>
+<footer><span>© <span id="year">2026</span> CTooniverse</span><span>Collect them all, one pack at a time.</span></footer>
+<script type="module" src="site-chat-widget.js?v=1"></script>
+</body>
+</html>
