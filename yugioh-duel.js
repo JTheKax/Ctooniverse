@@ -1,7 +1,20 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
 "use strict";
-(() => {
-  /* CTooniverse fan duel. Account-bound starter selection; no collection/inventory transactions. */
+(async () => {
+  /* CTooniverse fan duel. Account-bound starter selection; no collection/inventory transactions.
+     A second CDN keeps the arena accessible when the main module host is unavailable. */
+  let createClient;
+  try{
+    ({createClient}=await import("https://esm.sh/@supabase/supabase-js@2.58.0"));
+  }catch(firstError){
+    try{
+      ({createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/+esm"));
+    }catch(secondError){
+      const status=document.getElementById("yd-starter-status");
+      if(status)status.textContent="The Duel Arena engine could not connect. Please refresh the page or try again shortly.";
+      console.error("Duel Arena: failed to load Supabase client",firstError,secondError);
+      return;
+    }
+  }
   const db=createClient("https://hsxdyxdazsdmpucyhqly.supabase.co","sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS");
   let activeStarter=null,choosingStarter=false,selectedOpponent=null,loadingOpponent=false;
   let rosterSeries="all";
@@ -381,7 +394,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     }
     const img=document.createElement("img");
     img.className="yd-character-image";
+    img.dataset.portraitStyle="kaiba";
+    img.dataset.duelist=profile.id;
     img.alt=profile.name+" portrait";
+    img.width=561;
+    img.height=594;
     img.loading=featured?"eager":"lazy";
     img.decoding="async";
     if(featured)img.fetchPriority="high";
@@ -529,7 +546,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     const grid=$("yd-free-duel-grid");
     grid.replaceChildren();
     const visible=DUELISTS.filter(profile=>rosterSeries==="all"||(profile.series||"classic")===rosterSeries);
-    for(const profile of visible){
+    for(const [index,profile] of visible.entries()){
       const portrait=elt("button","yd-free-duel-thumb");
       portrait.type="button";
       portrait.dataset.duelist=profile.id;
@@ -540,7 +557,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
         portrait.classList.add("yd-free-duel-thumb-gx");
         portrait.append(elt("span","yd-free-duel-thumb-series","GX"));
       }
-      portrait.append(duelistArtwork(profile));
+      portrait.append(duelistArtwork(profile,index<4));
       portrait.append(elt("span","yd-free-duel-thumb-difficulty","★".repeat(profile.difficulty)));
       portrait.append(elt("span","yd-free-duel-thumb-name",profile.name));
       portrait.addEventListener("click",()=>{
