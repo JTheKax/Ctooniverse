@@ -7,6 +7,7 @@ let launchRequestId=0;
 const $=id=>document.getElementById(id);
 const start=$('emu-start'),status=$('emu-status'),file=$('emu-file'),consoleSelect=$('emu-console'),biosFile=$('emu-bios');
 let currentUrl=null,currentBiosUrl=null,started=false,loadTimer=null;
+let activeFrame=null;
 function setStatus(message,error=false){status.textContent=message;status.dataset.error=String(error);}
 function clearUrl(url){if(url&&url.startsWith('blob:'))URL.revokeObjectURL(url);}
 function idleScreen(){
@@ -24,6 +25,7 @@ function stopGame(){
  launchRequestId++;
  if(loadTimer){clearTimeout(loadTimer);loadTimer=null}
  idleScreen();
+ activeFrame=null;
  clearUrl(currentUrl);clearUrl(currentBiosUrl);
  currentUrl=null;currentBiosUrl=null;started=false;start.textContent='▶ Start Game';start.disabled=false;
  file.disabled=false;consoleSelect.disabled=false;if(biosFile)biosFile.disabled=false;
@@ -36,6 +38,7 @@ function launchGame(){
  const rom=selectedGame?null:file.files?.[0],core=consoleSelect.value;
  if(!rom&&!selectedGame){status.textContent='Choose a game case or local file first.';return}
  const suffix=(rom?.name||selectedGame?.storage_path||'').split('?')[0].split('.').pop().toLowerCase();
+ if(selectedGame&&!selectedGame.storage_path){setStatus('This game case has no playable file attached. Contact the site owner.',true);return}
  if(selectedGame&&selectedGame.console!==core){setStatus('The selected case uses a different console. Select the matching console.',true);return}
  if(!ext[core]?.includes(suffix)){setStatus('This file type does not match the selected console.',true);return}
  if(rom&&rom.size>(core==='psx'?1024:128)*1024*1024){setStatus('Game file is too large for this console. Try a smaller file or a desktop browser.',true);return}
@@ -48,12 +51,13 @@ function launchGame(){
  if(biosFile)biosFile.disabled=true;
  currentUrl=selectedGame?db.storage.from('emulator-games').getPublicUrl(selectedGame.storage_path).data.publicUrl:URL.createObjectURL(rom);
  currentBiosUrl=bios?URL.createObjectURL(bios):null;
- const frame=document.createElement('iframe');frame.title='CTooniverse game player';frame.allow='fullscreen; autoplay; gamepad';frame.setAttribute('allowfullscreen','');frame.style.cssText='width:100%;height:100%;min-height:0;border:0;display:block';
+ const frame=document.createElement('iframe');activeFrame=frame;frame.title='CTooniverse game player';frame.allow='fullscreen; autoplay; gamepad';frame.setAttribute('allowfullscreen','');frame.style.cssText='width:100%;height:100%;min-height:0;border:0;display:block';
  // Isolate each EmulatorJS instance so switching never reuses its global state.
  const config={EJS_player:'#game',EJS_core:cores[core],EJS_gameUrl:currentUrl,EJS_biosUrl:currentBiosUrl||undefined,EJS_pathtodata:'https://cdn.emulatorjs.org/stable/data/',EJS_startOnLoaded:true,EJS_VirtualGamepadSettings:core==='nds'?{enabled:true,opacity:0.75}:undefined,EJS_color:'#8057e7',EJS_Buttons:{playPause:true,restart:true,mute:true,settings:true,fullscreen:true,saveState:true,loadState:true},EJS_startButtonName:'Play'};
  const serialized=JSON.stringify(config).replace(/</g,'\\u003c');
  frame.srcdoc='<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body style="margin:0;background:#030712;overflow:hidden"><div id="game" style="height:100dvh;width:100%;touch-action:auto"></div><script>Object.assign(window,'+serialized+');<\/script><script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script></body></html>';
  $('game').replaceChildren(frame);
+ frame.addEventListener('error',()=>{if(started&&activeFrame===frame)setStatus('The emulator frame failed to load. Try again or choose another game.',true)});
  $('emu-screen').classList.toggle('nds-active',core==='nds');const help=$('emu-nds-help');if(help)help.hidden=core!=='nds';
  setStatus(core==='nds'?'Loading Nintendo DS… Touch the bottom screen to use the stylus. Tap inside the player to enable audio.':'Loading '+(selectedGame?.title||rom?.name||'game')+'… Use Stop Game to switch games.');
  loadTimer=setTimeout(()=>{
@@ -81,7 +85,9 @@ consoleSelect.addEventListener('change',()=>{
 async function loadCases(){
  const host=$('emu-library');if(!host)return;
  host.textContent='Loading game cases…';
- const {data,error}=await db.from('emulator_games').select('id,title,console,storage_path,cover_path').eq('published',true).order('title',{ascending:true});
+ let data,error;
+ try{({data,error}=await db.from('emulator_games').select('id,title,console,storage_path,cover_path').eq('published',true).order('title',{ascending:true}));}
+ catch(err){host.textContent='Could not connect to the game library: '+(err?.message||'Network error');return}
  if(error){host.textContent='Could not load game library: '+error.message;return}
  host.replaceChildren();
  if(!data?.length){
@@ -145,6 +151,7 @@ window.ctoonPlayGameCase=async gameId=>{
  const {data:game,error}=await db.from('emulator_games').select('id,title,console,storage_path').eq('id',gameId).eq('published',true).single();
  if(requestId!==launchRequestId)return false;
  if(error||!game){setStatus('Unable to load this published game.',true);return false}
+ if(!game.storage_path||!cores[game.console]){setStatus('This game case has no supported playable file attached.',true);return false}
  selectedGame=game;file.value='';consoleSelect.value=game.console;
  document.querySelectorAll('.emu-case').forEach(el=>el.classList.toggle('selected',el.dataset.gameId===String(game.id)));
  $('emu-screen').scrollIntoView({behavior:'smooth',block:'start'});
