@@ -224,14 +224,15 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
   .yd-free-duel-thumb,.yd-handcard{transition:none!important}
 }
 
-/* Free Duel portrait roster: stable, equal-size A–Z grid on every screen.
-   The sidebar remains separate, while roster cards fill rows left to right. */
+/* Compact alphabetical Free Duel roster: smaller, uniform centered faces. */
+.yd-free-duel{max-width:1050px}
 #yd-free-duel-grid{
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-columns:repeat(5,minmax(0,112px));
   grid-auto-flow:row;
+  justify-content:center;
   align-items:stretch;
-  gap:clamp(8px,1.2vw,12px);
+  gap:clamp(6px,.9vw,10px);
 }
 #yd-free-duel-grid .yd-free-duel-thumb{
   box-sizing:border-box;
@@ -241,12 +242,33 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
   min-height:0;
   aspect-ratio:3/4;
 }
+/* Give the heads a consistent central position in the smaller portrait windows.
+   The slight zoom fills the frame without shifting artwork sideways. */
+#yd-free-duel-grid .yd-free-duel-thumb .yd-character-art>.yd-character-image[data-portrait-style="kaiba"]{
+  object-fit:cover!important;
+  object-position:50% 20%!important;
+  transform:translateY(5%) scale(1.14)!important;
+  transform-origin:50% 40%!important;
+}
+#yd-free-duel-grid .yd-free-duel-thumb .yd-character-art>.yd-starter-art img{
+  object-fit:cover!important;
+  object-position:center 20%!important;
+}
+@media(max-width:1000px){
+  #yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,112px));gap:9px}
+}
 @media(max-width:700px){
-  #yd-free-duel-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+  #yd-free-duel-grid{grid-template-columns:repeat(3,minmax(0,112px));gap:8px}
 }
 @media(max-width:480px){
-  #yd-free-duel-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  #yd-free-duel-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  #yd-free-duel-grid .yd-free-duel-thumb-name{font-size:clamp(.62rem,2.55vw,.75rem);padding:4px 2px;min-height:28px}
+  #yd-free-duel-grid .yd-free-duel-thumb-difficulty{font-size:.65rem;padding:2px 3px;top:4px;right:4px}
+}
+@media(max-width:350px){
+  #yd-free-duel-grid{gap:5px}
+  #yd-free-duel-grid .yd-free-duel-thumb-name{font-size:.59rem}
 }
 @media(orientation:landscape) and (max-height:480px) and (max-width:920px){
-  #yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  #yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,112px));gap:8px}
 }
