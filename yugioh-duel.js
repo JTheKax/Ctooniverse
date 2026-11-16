@@ -135,7 +135,12 @@
     "chumley": "https://uploads4.yugioh.com/character/22/detail/detail/chumley-l.png?1371840210=",
     "bastion": "https://uploads4.yugioh.com/character/20/detail/detail/bastion-l.png?1375717320=",
     "espa": "https://s3.duellinksmeta.com/img/characters/espa-roba/victory.png",
-    "strings": "https://uploads1.yugioh.com/character/152/detail/detail/strings-lg.png?1384803769="
+    "strings": "https://uploads1.yugioh.com/character/152/detail/detail/strings-lg.png?1384803769=",
+    "arkana": "https://uploads3.yugioh.com/character/108/detail/detail/arkana-lg.png?1384803093=",
+    "para": "https://s3.duellinksmeta.com/img/characters/paradox-brothers/victory.png",
+    "dox": "https://s3.duellinksmeta.com/img/characters/paradox-brothers/victory.png",
+    "mokuba": "https://uploads4.yugioh.com/character/10/detail/detail/mokuba-l.png?1371747880=",
+    "jesse": "https://uploads2.yugioh.com/character/35/detail/detail/jesse-l.png?1373910234="
   });
   const DUELISTS=[
     {id:"yugi",name:"Yugi Muto",epithet:"King of Games",hero:46986414,race:"Spellcaster",difficulty:3,style:"Dark Magician · Spellcaster tactics",flavor:"A balanced rival whose spellcasters reward careful play."},
@@ -155,6 +160,10 @@
     {id:"bonz",name:"Bonz",epithet:"Ghost Gravekeeper",hero:29155212,race:"Zombie",difficulty:1,style:"Zombies · Haunted graveyard",flavor:"Rise against monsters from the haunted crypt."},
     {id:"espa",name:"Espa Roba",epithet:"Battle City Psychic",hero:77585513,race:"Machine",difficulty:3,style:"Jinzo · Psychic machine tactics",flavor:"The supposed mind reader counters traps with the mighty Jinzo and a machine-heavy deck."},
     {id:"strings",name:"Strings",epithet:"Silent Rare Hunter",hero:10000020,race:"Aqua",difficulty:5,style:"Slifer the Sky Dragon · Slime creatures",flavor:"Marik's silent puppet duels with slime monsters and the Egyptian God Slifer."},
+    {id:"arkana",name:"Arkana",epithet:"Rare Hunter · Master of Magicians",hero:46986414,race:"Spellcaster",difficulty:4,style:"Dark Magician · Spellcaster magic",flavor:"A theatrical Rare Hunter who matches his Dark Magician against yours in a dangerous magician's duel."},
+    {id:"para",name:"Para",epithet:"Paradox Brother · Thunder",hero:25833572,race:"Thunder",difficulty:3,style:"Gate Guardian · Thunder and labyrinth traps",flavor:"The orange-clad Paradox Brother challenges you with elemental guardians and a maze of monsters."},
+    {id:"dox",name:"Dox",epithet:"Paradox Brother · Water",hero:25833572,race:"Aqua",difficulty:4,style:"Gate Guardian · Water and labyrinth defense",flavor:"The green-clad Paradox Brother uses watery defenders and Gate Guardian to stop your advance."},
+    {id:"mokuba",name:"Mokuba Kaiba",epithet:"KaibaCorp Vice President",hero:26378150,race:"Beast-Warrior",difficulty:2,style:"Rude Kaiser · KaibaCorp classics",flavor:"Seto's younger brother duels with classic monsters, featuring his trusty Rude Kaiser."},
 {id:"jaden",series:"gx",name:"Jaden Yuki",epithet:"Slifer Red Hero",hero:89943723,race:"Warrior",archetype:"Elemental HERO",difficulty:3,style:"Elemental HERO · Neo-Spacian heroes",flavor:"Duel Academy's rising star challenges you with heroic monsters."},
     {id:"zane",series:"gx",name:"Zane Truesdale",epithet:"Duel Academy Ace",hero:70095154,race:"Machine",archetype:"Cyber Dragon",difficulty:5,style:"Cyber Dragon · Machine offense",flavor:"An elite opponent whose machines hit hard and fast."},
     {id:"alexis",series:"gx",name:"Alexis Rhodes",epithet:"Obelisk Blue Champion",hero:77235086,race:"Fairy",archetype:"Cyber Angel",difficulty:3,style:"Cyber Angels · Fairy tactics",flavor:"A precise rival who brings disciplined dueling and powerful fairies."},
@@ -163,7 +172,8 @@
     {id:"aster",series:"gx",name:"Aster Phoenix",epithet:"Destiny HERO Pro",hero:83965310,race:"Warrior",archetype:"Destiny HERO",difficulty:4,style:"Destiny HERO · Pro dueling",flavor:"A calculated professional with formidable Destiny HERO monsters."},
     {id:"crowler",series:"gx",name:"Dr. Vellian Crowler",epithet:"Duel Academy Professor",hero:83104731,race:"Machine",archetype:"Ancient Gear",difficulty:4,style:"Ancient Gear · Heavy machines",flavor:"The professor is ready to test you with ancient machinery."},
     {id:"chumley",series:"gx",name:"Chumley Huffington",epithet:"Koala-Loving Slifer Red",hero:42129512,race:"Beast",difficulty:2,style:"Big Koala · Beast creatures",flavor:"A laid-back duelist who calls on koalas and other powerful beasts."},
-    {id:"bastion",series:"gx",name:"Bastion Misawa",epithet:"Duel Academy Strategist",hero:85066822,race:"Dinosaur",difficulty:4,style:"Water Dragon · Hydrogeddon chemistry",flavor:"A calculating rival who uses dinosaur monsters and scientific combinations."}
+    {id:"bastion",series:"gx",name:"Bastion Misawa",epithet:"Duel Academy Strategist",hero:85066822,race:"Dinosaur",difficulty:4,style:"Water Dragon · Hydrogeddon chemistry",flavor:"A calculating rival who uses dinosaur monsters and scientific combinations."},
+    {id:"jesse",series:"gx",name:"Jesse Anderson",epithet:"North Academy · Crystal Beast Duelist",hero:7093411,race:"Beast",archetype:"Crystal Beast",difficulty:4,style:"Crystal Beast Sapphire Pegasus · Gem guardians",flavor:"Jaden's cheerful friend summons Crystal Beasts and fights for the power of the Rainbow Dragon."}
   ];
   function opponentRecord(id){
     try{
