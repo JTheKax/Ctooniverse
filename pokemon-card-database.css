@@ -84,7 +84,8 @@ html body.pcd-page{
 .pcd-dialog-top button{width:40px;height:40px;min-width:40px;border:2px ridge #e6d3a4;border-radius:50%;background:#153748;color:#fff;font-size:1.5rem;cursor:pointer}
 .pcd-detail-body{display:grid;grid-template-columns:minmax(140px,.85fr) minmax(0,1.3fr);gap:clamp(13px,2.1vw,24px);align-items:start}
 .pcd-detail-image{width:100%;max-width:280px;aspect-ratio:245/337;display:grid;place-items:center;overflow:hidden;border:4px ridge #ffe6ab;border-radius:9px;background:#0d2535;box-shadow:0 12px 24px #0008}
-.pcd-detail-image img{width:100%;height:100%;object-fit:contain}
+.pcd-detail-image-inner{width:100%;height:100%;display:grid;place-items:center;min-width:0;min-height:0}
+.pcd-detail-image-inner img{width:100%;height:100%;object-fit:contain;display:block}
 .pcd-detail-copy{min-width:0;line-height:1.5}
 .pcd-detail-meta{display:flex;flex-wrap:wrap;gap:6px 10px;padding:10px 0;border-bottom:1px solid #ffffff37}
 .pcd-detail-meta strong{min-width:103px;color:#f8d99b;font-size:.85rem}
