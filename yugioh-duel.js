@@ -447,7 +447,7 @@
     for(const s of ["player","cpu"]){const p=game[s];$("yd-"+s+"-lp").textContent=p.lp.toLocaleString();$("yd-"+s+"-counts").textContent="Deck "+p.deck.length+" · Hand "+p.hand.length+" · Grave "+p.grave.length;renderRow(s,"field");renderRow(s,"traps");}
     hologramEvent=null;
     const hand=$("yd-hand");const handScroll=hand.scrollLeft;hand.replaceChildren();
-    for(const card of game.player.hand){const btn=document.createElement("button");btn.type="button";btn.className="yd-handcard";btn.setAttribute("aria-pressed",String(game.selected?.zone==="hand"&&game.selected.uid===card.uid));btn.setAttribute("aria-label",card.name);btn.append(cardFace(card,false));btn.addEventListener("click",()=>{if(game.winner||game.active!=="player")return;game.selected={zone:"hand",uid:card.uid};render();});hand.append(btn);}
+    for(const card of game.player.hand){const btn=document.createElement("button");btn.type="button";btn.className="yd-handcard";btn.setAttribute("aria-pressed",String(game.selected?.zone==="hand"&&game.selected.uid===card.uid));btn.setAttribute("aria-label",card.name);btn.append(cardFace(card,false));btn.addEventListener("click",()=>{if(game.winner||game.active!=="player")return;game.selected={zone:"hand",uid:card.uid};render();if(game.phase==="main"&&window.matchMedia("(max-width:700px)").matches){$("yd-details").closest(".yd-panel")?.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});}});hand.append(btn);}
     hand.scrollLeft=handScroll;
     if(!game.player.hand.length)hand.textContent="Your hand is empty.";
     renderDetail();const log=$("yd-log");log.replaceChildren();game.history.slice(0,12).forEach(x=>{const li=document.createElement("li");li.textContent=x;log.append(li);});
@@ -713,8 +713,13 @@
       reset();
       $("yd-duel-content").scrollIntoView({behavior:"smooth",block:"start"});
     }catch(error){
+      // Restore the roster if deck preparation OR arena initialization fails.
+      game=null;
+      $("yd-duel-content").hidden=true;
+      $("yd-free-duel").hidden=false;
       $("yd-free-duel-status").textContent="Could not prepare this opponent: "+
-        (error.message||"Please try again.");
+        (error?.message||"Please try again.");
+      console.error("Duel Arena: opponent setup failed",error);
     }finally{
       loadingOpponent=false;
       btn.disabled=false;
@@ -887,8 +892,10 @@
     event.preventDefault();
     const nextIndex=(current+arrows[event.key]+cells.length)%cells.length;
     cells[nextIndex].focus();
-    armedPortraitId=null; // Arrow keys navigate portraits without triggering a duel.
-    cells[nextIndex].click();
+    armedPortraitId=null;
+    cells[nextIndex].click(); // Update the highlighted profile without starting.
+    armedPortraitId=null; // Keyboard navigation must not count as the first duel selection.
+    $("yd-free-duel-status").textContent=selectedOpponent.name+" highlighted. Select this portrait twice to duel, or use Start Duel.";
   });
   initStarter();
 })();
