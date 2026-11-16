@@ -9,7 +9,7 @@ const SPECIES={
 };
 const sprite=id=>"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"+id+".png";
 let user=null,trainer=null,party=[],selectedStarter=1,guest=false,busy=false,encounter=null,channel=null,online=new Map();
-let view={x:0,y:0,cols:COLS,rows:ROWS},moveLast=0,presenceLast=0,healLast=0,saveTimer=null,moveInterval=null;
+let view={x:0,y:0,cols:COLS,rows:ROWS},moveLast=0,presenceLast=0,healLast=0,saveTimer=null,presenceTimer=null,moveInterval=null;
 const sessionKey=typeof crypto!=="undefined"&&crypto.randomUUID?crypto.randomUUID():String(Math.random());
 const canvas=$("pmmo-map"),ctx=canvas.getContext("2d");
 const battleModal=$("pmmo-battle");
@@ -141,7 +141,14 @@ function scheduleSave(){
 function sendPresence(force=false){
  if(!channel||!trainer||!user||guest)return;
  const now=Date.now();
- if(!force&&now-presenceLast<1750)return;
+ if(!force&&now-presenceLast<1750){
+   if(!presenceTimer)presenceTimer=setTimeout(()=>{
+     presenceTimer=null;
+     sendPresence(true);
+   },1750-(now-presenceLast));
+   return;
+ }
+ if(presenceTimer){clearTimeout(presenceTimer);presenceTimer=null;}
  presenceLast=now;
  channel.track({id:user.id,name:trainer.display_name,x:trainer.tile_x,y:trainer.tile_y}).catch(()=>{});
 }
@@ -416,8 +423,15 @@ for(const button of document.querySelectorAll("[data-move]")){
 }
 window.addEventListener("blur",stopTouch);
 window.addEventListener("resize",resizeWorld);
+document.addEventListener("visibilitychange",()=>{
+ if(document.visibilityState==="hidden"&&saveTimer){
+   clearTimeout(saveTimer);saveTimer=null;saveLocation();
+ }
+});
 window.addEventListener("pagehide",()=>{
- stopTouch();if(saveTimer)clearTimeout(saveTimer);
+ stopTouch();
+ if(saveTimer){clearTimeout(saveTimer);saveTimer=null;saveLocation();}
+ if(presenceTimer){clearTimeout(presenceTimer);presenceTimer=null;}
  if(channel){channel.untrack().catch(()=>{});db.removeChannel(channel);}
 });
 db.auth.onAuthStateChange(event=>{
