@@ -17,6 +17,7 @@
   }
   const db=createClient("https://hsxdyxdazsdmpucyhqly.supabase.co","sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS");
   let activeStarter=null,choosingStarter=false,selectedOpponent=null,loadingOpponent=false;
+  let armedPortraitId=null; // A deliberate portrait selection is needed before starting a duel.
   let rosterSeries="all";
   const starterCardCache=new Map();
   const catalog={
@@ -543,6 +544,7 @@
     $("yd-free-duel-status").textContent="Ready to challenge "+profile.name+".";
   }
   function renderDuelistRoster(){
+    armedPortraitId=null;
     const grid=$("yd-free-duel-grid");
     grid.replaceChildren();
     const visible=DUELISTS.filter(profile=>rosterSeries==="all"||(profile.series||"classic")===rosterSeries);
@@ -551,7 +553,7 @@
       portrait.type="button";
       portrait.dataset.duelist=profile.id;
       portrait.title=profile.name+" · "+profile.epithet;
-      portrait.setAttribute("aria-label",profile.name+", difficulty "+profile.difficulty+" of 5");
+      portrait.setAttribute("aria-label",profile.name+", difficulty "+profile.difficulty+" of 5. Select twice to start the duel.");
       portrait.setAttribute("aria-pressed","false");
       if(profile.series==="gx"){
         portrait.classList.add("yd-free-duel-thumb-gx");
@@ -562,8 +564,16 @@
       portrait.append(elt("span","yd-free-duel-thumb-name",profile.name));
       portrait.addEventListener("click",()=>{
         if(loadingOpponent)return;
+        const startNow=armedPortraitId===profile.id;
         selectedOpponent=profile;
         updateRosterPreview();
+        if(startNow){
+          armedPortraitId=null;
+          void beginFreeDuel();
+        }else{
+          armedPortraitId=profile.id;
+          $("yd-free-duel-status").textContent=profile.name+" selected. Tap the portrait again to start the duel.";
+        }
       });
       grid.append(portrait);
     }
@@ -577,6 +587,7 @@
   }
   async function beginFreeDuel(){
     if(!activeStarter||!selectedOpponent||loadingOpponent)return;
+    armedPortraitId=null;
     loadingOpponent=true;
     const btn=$("yd-free-duel-start");
     btn.disabled=true;
@@ -603,6 +614,7 @@
     game=null;
     $("yd-duel-content").hidden=true;
     $("yd-free-duel").hidden=false;
+    armedPortraitId=null;
     updateRosterPreview();
     $("yd-free-duel").scrollIntoView({behavior:"smooth",block:"start"});
   }
@@ -753,6 +765,7 @@
     event.preventDefault();
     const nextIndex=(current+arrows[event.key]+cells.length)%cells.length;
     cells[nextIndex].focus();
+    armedPortraitId=null; // Arrow keys navigate portraits without triggering a duel.
     cells[nextIndex].click();
   });
   initStarter();
