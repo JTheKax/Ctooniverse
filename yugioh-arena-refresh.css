@@ -46,3 +46,159 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
 @media(max-width:840px){.yd-arena-hud{grid-template-columns:1fr 1fr}.yd-hud-phase{grid-column:1/-1;grid-row:1;padding:3px}.yd-hud-team{grid-row:2}.yd-toolbar .yd-buttons{width:100%;justify-content:stretch}.yd-toolbar .yd-buttons .button{flex:1 1 130px}}
 @media(max-width:560px){.yd-arena-hud{gap:6px;padding:6px;border-width:1px}.yd-hud-team{padding:8px;gap:5px}.yd-hud-team strong{font-size:.82rem}.yd-hud-team small{font-size:.55rem}.yd-hud-phase p{font-size:.72rem}.yd-main #yd-duel-content .yd-board{padding:6px;border-width:2px}.yd-main #yd-duel-content .yd-side{padding:6px}.yd-main #yd-duel-content .yd-slot{padding:2px;border-width:1px}.yd-main #yd-duel-content .yd-slot .yd-card-name{font-size:clamp(.46rem,1.8vw,.6rem)}.yd-main #yd-duel-content .yd-slot .yd-stats{font-size:clamp(.42rem,1.5vw,.56rem)}.yd-avatar{flex-basis:32px;width:32px;height:40px}.yd-detail-preview{flex-basis:92px;height:138px}.yd-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.yd-actions .button{min-height:46px;padding:8px;font-size:.8rem}.yd-board-scroll.yd-large-view .yd-slot .yd-card-name{font-size:.72rem!important}.yd-board-scroll.yd-large-view .yd-slot .yd-stats{font-size:.66rem!important}.yd-board-scroll.yd-large-view .yd-card{padding:6px}}
 @media(prefers-reduced-motion:reduce){.yd-hud-meter span{transition:none}}
+
+
+/* Duel Arena mobile layout revision 20261116
+   Keep the desktop field unchanged. On phones, make cards readable in a
+   contained horizontal viewport instead of squeezing five card columns. */
+.yd-mobile-swipe-hint{display:none}
+
+@media(max-width:900px){
+  html body.yd-duel-page{background-attachment:scroll!important}
+  .yd-main{box-sizing:border-box;width:calc(100% - 16px);max-width:800px;margin:12px auto 44px}
+  .yd-main #yd-duel-content{min-width:0;max-width:100%}
+  .yd-title{padding:clamp(12px,2.5vw,19px);gap:12px;border-radius:12px}
+  .yd-title>div{max-width:100%;min-width:0}
+  .yd-title>div:last-child{display:grid!important;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px!important}
+  .yd-title>div:last-child .button{
+    display:flex;min-width:0;min-height:44px;align-items:center;justify-content:center;
+    padding:8px 7px;white-space:normal;text-align:center;font-size:.8rem;line-height:1.25
+  }
+  .yd-free-duel{width:100%;box-sizing:border-box;max-width:100%}
+  .yd-free-duel-layout{grid-template-columns:minmax(0,1fr)}
+  .yd-free-duel-selector,.yd-free-duel-preview{min-width:0}
+  .yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .yd-free-duel-thumb{min-width:0;touch-action:manipulation}
+  .yd-toolbar,.yd-arena-hud,.yd-hand-panel,.yd-columns,.yd-view-toolbar{min-width:0;max-width:100%}
+  .yd-board-scroll{width:100%;max-width:100%;min-width:0;box-sizing:border-box;
+    overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;scrollbar-width:thin}
+  .yd-view-toolbar{gap:8px}
+  .yd-view-toolbar button{min-height:44px;padding:8px 12px}
+  .yd-hand{max-width:100%;min-width:0;-webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;scroll-padding-inline:6px;padding-bottom:13px}
+}
+
+@media(max-width:700px){
+  .yd-main{margin-top:9px}
+  .yd-title h1{font-size:clamp(1.9rem,7vw,2.55rem);margin:5px 0 9px}
+  .yd-title p{font-size:.86rem;line-height:1.48}
+  .yd-main .yd-panel{padding:12px;border-radius:12px;margin-top:12px}
+  .yd-free-duel{padding:12px;border-width:3px;border-radius:10px}
+  .yd-free-duel-header{margin-bottom:12px}
+  .yd-free-duel-header h2{font-size:clamp(1.85rem,7vw,2.5rem);letter-spacing:.07em}
+  .yd-free-duel-header>p:last-child{font-size:.79rem;line-height:1.45}
+  .yd-free-duel-layout{display:flex;flex-direction:column;gap:12px}
+  .yd-free-duel-selector{padding:10px}
+  .yd-free-duel-series{gap:6px}
+  .yd-free-duel-series button{min-height:44px;flex:1 1 auto;padding:7px 9px;
+    font-size:.76rem;touch-action:manipulation}
+  .yd-free-duel-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+  .yd-free-duel-thumb-name{min-height:32px;font-size:clamp(.7rem,2.1vw,.83rem);line-height:1.14}
+  .yd-free-duel-preview{
+    display:grid;grid-template-columns:110px minmax(0,1fr);
+    gap:9px 12px;align-items:start;padding:12px;border-radius:9px
+  }
+  .yd-free-duel-preview .yd-free-duel-portrait{
+    width:110px!important;max-width:100%!important;
+    grid-column:1;grid-row:1 / span 2;align-self:start;margin:0!important
+  }
+  .yd-free-duel-preview .yd-free-duel-profile{grid-column:2;grid-row:1;min-width:0}
+  .yd-free-duel-preview .yd-free-duel-profile h3{font-size:1.26rem;line-height:1.2}
+  .yd-free-duel-preview .yd-free-duel-profile p{font-size:.75rem;line-height:1.32;overflow-wrap:anywhere}
+  .yd-free-duel-preview #yd-free-duel-status{
+    grid-column:2;grid-row:2;min-width:0;line-height:1.3;margin:0;font-size:.75rem
+  }
+  .yd-free-duel-preview #yd-free-duel-start{
+    grid-column:1 / -1;grid-row:3;min-height:49px;min-width:0;margin:2px 0 0;font-size:1rem
+  }
+  .yd-starter-banner{padding:9px 11px;margin:12px 0;gap:5px}
+  .yd-starter-banner small{line-height:1.3}
+  .yd-toolbar{display:block;padding:11px;gap:9px;border-radius:12px;margin-bottom:10px}
+  .yd-toolbar>div:first-child{min-width:0}
+  .yd-toolbar p{font-size:.78rem;line-height:1.4}
+  .yd-toolbar .yd-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+    width:100%;gap:8px;margin-top:10px}
+  .yd-toolbar .yd-buttons .button{min-width:0;min-height:47px;width:100%;font-size:.8rem;
+    padding:8px 6px;line-height:1.2;white-space:normal;text-align:center;touch-action:manipulation}
+  .yd-arena-hud{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:7px;margin:10px 0}
+  .yd-hud-phase{grid-column:1 / -1;grid-row:1;padding:3px 5px}
+  .yd-hud-team{grid-row:2;padding:9px}
+  .yd-hud-team strong{font-size:.84rem;line-height:1.24}
+  .yd-view-toolbar{margin:10px 0 4px;font-size:.67rem;letter-spacing:0;line-height:1.2}
+  .yd-mobile-swipe-hint{
+    display:block;font-size:.75rem;color:#bdeff5;background:#0c2940;
+    border:1px solid #489aa8a1;border-radius:8px;padding:7px 10px;
+    margin:0 0 8px;line-height:1.35
+  }
+  .yd-main #yd-duel-content .yd-board{
+    box-sizing:border-box;width:100%;min-width:620px;
+    padding:9px;border-radius:12px
+  }
+  .yd-board-scroll.yd-large-view .yd-board{min-width:850px}
+  .yd-main #yd-duel-content .yd-side{padding:8px;border-radius:9px}
+  .yd-main #yd-duel-content .yd-zones{gap:7px}
+  .yd-main #yd-duel-content .yd-slot{padding:3px;border-width:1px;min-width:0}
+  .yd-main #yd-duel-content .yd-slot .yd-card-name{font-size:.66rem;line-height:1.15}
+  .yd-main #yd-duel-content .yd-slot .yd-stats{font-size:.59rem}
+  .yd-main #yd-duel-content .yd-slot .yd-stars{font-size:.58rem}
+  .yd-main #yd-duel-content .yd-slot .yd-position{font-size:.56rem}
+  .yd-main #yd-duel-content .yd-slot .yd-card{padding:4px;gap:2px}
+  .yd-hand-panel{overflow:hidden}
+  .yd-handcard{flex:0 0 108px;height:162px}
+  .yd-handcard .yd-card-name{font-size:.67rem}
+  .yd-handcard .yd-stats{font-size:.61rem}
+  .yd-columns{grid-template-columns:1fr;gap:0}
+  .yd-detail-summary{gap:10px}
+  .yd-detail-preview{flex-basis:100px;height:150px}
+  .yd-actions .button{min-width:0;min-height:48px;white-space:normal}
+}
+
+@media(max-width:480px){
+  .yd-title h1{font-size:clamp(1.75rem,8vw,2.15rem)}
+  .yd-title>div:last-child .button{font-size:.75rem}
+  .yd-free-duel{padding:8px}
+  .yd-free-duel-selector{padding:7px;border-width:2px}
+  .yd-free-duel-bar{font-size:.7rem;letter-spacing:.03em}
+  .yd-free-duel-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .yd-free-duel-thumb-name{min-height:35px;font-size:clamp(.74rem,3.7vw,.9rem);padding:5px 3px}
+  .yd-free-duel-preview{grid-template-columns:94px minmax(0,1fr);gap:6px 9px;padding:9px}
+  .yd-free-duel-preview .yd-free-duel-portrait{width:94px!important}
+  .yd-free-duel-preview .yd-free-duel-profile h3{font-size:1.12rem}
+  .yd-free-duel-preview .yd-free-duel-profile p{font-size:.73rem}
+  .yd-free-duel-series button{min-height:44px;font-size:.7rem;gap:4px;padding:7px 5px}
+  .yd-hud-team{padding:7px}
+  .yd-hud-team small{font-size:.55rem;letter-spacing:.05em}
+  .yd-hud-team b{font-size:.76rem}
+  .yd-hud-phase p{font-size:.69rem;margin-top:3px}
+  .yd-main #yd-duel-content .yd-board{min-width:570px}
+  .yd-board-scroll.yd-large-view .yd-board{min-width:800px}
+  .yd-view-toolbar>span{flex:1 1 120px}
+  .yd-view-toolbar button{padding:8px;font-size:.75rem}
+  .yd-handcard{flex-basis:105px;height:157px}
+  .yd-detail-preview{flex-basis:90px;height:135px}
+  .yd-record{text-align:left;font-size:.79rem}
+}
+
+@media(max-width:350px){
+  .yd-free-duel-preview{grid-template-columns:78px minmax(0,1fr)}
+  .yd-free-duel-preview .yd-free-duel-portrait{width:78px!important}
+  .yd-free-duel-preview .yd-free-duel-profile h3{font-size:1rem}
+  .yd-free-duel-preview #yd-free-duel-status{font-size:.7rem}
+  .yd-free-duel-series button{font-size:.65rem;padding:7px 3px}
+  .yd-toolbar .yd-buttons .button{font-size:.72rem}
+}
+
+/* Landscape phones have width for four portraits; still keep actions compact. */
+@media(orientation:landscape) and (max-height:480px) and (max-width:920px){
+  .yd-main{width:calc(100% - 18px)}
+  .yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .yd-main #yd-duel-content .yd-board{min-width:740px}
+  .yd-board-scroll.yd-large-view .yd-board{min-width:960px}
+  .yd-toolbar .yd-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+  .yd-toolbar .yd-buttons .button{min-height:44px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .yd-free-duel-thumb,.yd-handcard{transition:none!important}
+}
