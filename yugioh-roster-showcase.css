@@ -451,32 +451,31 @@
 }
 
 
-/* Portrait framing corrections: these four official 561x594 cutouts have
-   very different head/hair positioning. Don't apply the Kaiba-wide 14%
-   portrait zoom: it clips Bandit Keith's bandana, Bonz's hair, Rex's cap
-   and Mako's right-shifted face. Keep full artwork in both roster and preview. */
-#yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-character-image[data-duelist="bonz"],
-#yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-character-image[data-duelist="keith"],
-#yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-character-image[data-duelist="rex"],
-#yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-character-image[data-duelist="mako"],
-#yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-character-image[data-duelist="bonz"],
-#yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-character-image[data-duelist="keith"],
-#yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-character-image[data-duelist="rex"],
-#yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-character-image[data-duelist="mako"]{
+/* One consistent, non-cropping portrait treatment for ALL Classic and GX duelists.
+   Older styles force cover + 14% zoom. This later, more specific rule removes
+   the zoom in both the roster and the large selected-opponent preview. */
+#yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-character-image[data-portrait-style="kaiba"],
+#yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-character-image[data-portrait-style="kaiba"]{
   object-fit:contain!important;
   object-position:center center!important;
   transform:none!important;
   transform-origin:center center!important;
 }
-/* Mako's source art has the face to the right of the image center. */
+/* Give every cutout the same stone-backed frame, even when the art has
+   transparent margins, and never stretch the fallback signature-card art. */
+#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb .yd-character-art,
+#yd-free-duel #yd-free-duel-preview-art .yd-character-art{
+  background:radial-gradient(ellipse at 50% 35%,#8c7956,#302b33 63%,#111924)!important;
+}
+#yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-starter-art img,
+#yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-starter-art img{
+  object-fit:contain!important;
+  object-position:center center!important;
+  transform:none!important;
+}
+/* Mako's original cutout has a distinctly right-shifted face. Keep his
+   individual correction while using the same no-crop treatment as everyone. */
 #yd-free-duel #yd-free-duel-grid .yd-character-art>.yd-character-image[data-duelist="mako"],
 #yd-free-duel #yd-free-duel-preview-art .yd-character-art>.yd-character-image[data-duelist="mako"]{
   transform:translateX(-11%)!important;
-}
-/* Use a consistent character-focused background behind transparent art. */
-#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb[data-duelist="bonz"] .yd-character-art,
-#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb[data-duelist="keith"] .yd-character-art,
-#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb[data-duelist="rex"] .yd-character-art,
-#yd-free-duel #yd-free-duel-grid .yd-free-duel-thumb[data-duelist="mako"] .yd-character-art{
-  background:radial-gradient(ellipse at 50% 35%,#8c7956,#302b33 63%,#111924)!important;
 }
