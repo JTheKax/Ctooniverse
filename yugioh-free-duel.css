@@ -393,3 +393,75 @@
   .yd-free-duel-series button{padding:7px 8px;min-height:40px;font-size:.72rem}
   .yd-free-duel-thumb-series{top:5px;left:5px}
 }
+
+
+/* Kaiba portrait standard v5 — the SAME crop, fill, and stone/gold
+   display for every Duel Monsters and GX challenger, including preview. */
+.yd-free-duel-grid .yd-free-duel-thumb,
+.yd-free-duel-grid .yd-free-duel-thumb-gx{
+  width:100%!important;min-width:0!important;
+  aspect-ratio:3 / 4!important;
+  padding:0!important;
+  border:3px ridge #d3b476!important;
+  border-radius:8px!important;
+  background:radial-gradient(ellipse at 50% 25%,#686d77,#242a35 63%,#111922)!important;
+  box-shadow:0 3px 12px #000a,inset 0 0 0 2px #342a20!important
+}
+.yd-free-duel-grid .yd-free-duel-thumb:hover{
+  border-color:#ffecae!important;
+  box-shadow:0 7px 19px #000b,0 0 12px #e8c46a82!important
+}
+.yd-free-duel-grid .yd-free-duel-thumb[aria-pressed="true"]{
+  border-color:#fff2c3!important;
+  box-shadow:0 0 0 2px #7df1ff,0 0 19px #54e3ff9f,inset 0 0 0 2px #ffebb2!important
+}
+.yd-free-duel-thumb>.yd-character-art,
+.yd-free-duel-portrait>.yd-character-art{
+  position:absolute!important;display:block!important;inset:0!important;
+  box-sizing:border-box!important;
+  width:100%!important;height:100%!important;
+  min-width:0!important;min-height:0!important;
+  max-width:none!important;max-height:none!important;
+  flex:none!important;padding:0!important;
+  overflow:hidden!important;border:0!important;border-radius:0!important;
+  background:radial-gradient(ellipse at 50% 28%,#676b75,#252b37 70%,#111825)!important
+}
+.yd-free-duel-thumb .yd-character-art>.yd-character-image[data-portrait-style="kaiba"],
+.yd-free-duel-portrait .yd-character-art>.yd-character-image[data-portrait-style="kaiba"]{
+  position:absolute!important;inset:0!important;
+  box-sizing:border-box!important;display:block!important;
+  width:100%!important;height:100%!important;
+  max-width:none!important;max-height:none!important;
+  object-fit:cover!important;object-position:50% 10%!important;
+  transform:none!important;transform-origin:center top!important;
+  filter:saturate(1.06) contrast(1.06)!important;
+  transition:none!important
+}
+/* Card-art backups retain the same frame and do not stretch. */
+.yd-free-duel-thumb .yd-character-art>.yd-starter-art,
+.yd-free-duel-portrait .yd-character-art>.yd-starter-art{
+  position:absolute!important;inset:0!important;
+  width:100%!important;height:100%!important;border:0!important;
+  padding:0!important;margin:0!important;
+  display:grid!important;place-items:center!important
+}
+.yd-free-duel-thumb .yd-character-art>.yd-starter-art img,
+.yd-free-duel-portrait .yd-character-art>.yd-starter-art img{
+  display:block!important;width:100%!important;height:100%!important;
+  object-fit:cover!important;object-position:50% 10%!important
+}
+.yd-free-duel-portrait{
+  position:relative!important;box-sizing:border-box!important;
+  width:min(100%,320px)!important;
+  min-height:0!important;height:auto!important;
+  aspect-ratio:3 / 4!important;
+  padding:0!important;overflow:hidden!important;
+  border:4px ridge #d3b476!important;
+  background:radial-gradient(ellipse at 50% 25%,#686d77,#242a35 63%,#111922)!important
+}
+@media(max-width:1000px){.yd-free-duel-portrait{width:min(100%,300px)!important}}
+@media(max-width:700px){.yd-free-duel-portrait{width:min(100%,270px)!important}}
+@media(max-width:440px){
+ .yd-free-duel-portrait{width:min(100%,295px)!important}
+ .yd-free-duel-grid .yd-free-duel-thumb{border-width:2px!important}
+}
