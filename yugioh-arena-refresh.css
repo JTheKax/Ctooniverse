@@ -131,19 +131,28 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
     border:1px solid #489aa8a1;border-radius:8px;padding:7px 10px;
     margin:0 0 8px;line-height:1.35
   }
+  /* Default: the complete five-column field fits the phone viewport.
+     The toggle remains a larger, horizontally scrollable reading view. */
   .yd-main #yd-duel-content .yd-board{
-    box-sizing:border-box;width:100%;min-width:620px;
-    padding:9px;border-radius:12px
+    box-sizing:border-box;width:100%;min-width:0;
+    padding:clamp(4px,1.5vw,9px);border-radius:12px
   }
-  .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{min-width:850px}
-  .yd-main #yd-duel-content .yd-side{padding:8px;border-radius:9px}
-  .yd-main #yd-duel-content .yd-zones{gap:7px}
-  .yd-main #yd-duel-content .yd-slot{padding:3px;border-width:1px;min-width:0}
-  .yd-main #yd-duel-content .yd-slot .yd-card-name{font-size:.66rem;line-height:1.15}
-  .yd-main #yd-duel-content .yd-slot .yd-stats{font-size:.59rem}
-  .yd-main #yd-duel-content .yd-slot .yd-stars{font-size:.58rem}
-  .yd-main #yd-duel-content .yd-slot .yd-position{font-size:.56rem}
-  .yd-main #yd-duel-content .yd-slot .yd-card{padding:4px;gap:2px}
+  .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{
+    min-width:740px;padding:9px
+  }
+  .yd-main #yd-duel-content .yd-side{min-width:0;padding:clamp(3px,1.1vw,8px);border-radius:9px}
+  .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-side{padding:8px}
+  .yd-main #yd-duel-content .yd-zones{gap:clamp(2px,.75vw,7px)}
+  .yd-main #yd-duel-content .yd-slot{padding:1px;border-width:1px;min-width:0}
+  .yd-main #yd-duel-content .yd-slot .yd-card-name{font-size:clamp(.38rem,1.7vw,.66rem);line-height:1.12}
+  .yd-main #yd-duel-content .yd-slot .yd-stats{font-size:clamp(.36rem,1.45vw,.59rem)}
+  .yd-main #yd-duel-content .yd-slot .yd-stars{font-size:clamp(.36rem,1.45vw,.58rem)}
+  .yd-main #yd-duel-content .yd-slot .yd-position{font-size:clamp(.35rem,1.4vw,.56rem)}
+  .yd-main #yd-duel-content .yd-slot .yd-card{padding:clamp(1px,.5vw,4px);gap:1px}
+  .yd-main #yd-duel-content .yd-duelist>div:not(.yd-lp){min-width:0}
+  .yd-main #yd-duel-content .yd-duelist strong{overflow-wrap:anywhere}
+  .yd-main #yd-duel-content .yd-zlabel{font-size:clamp(.5rem,1.65vw,.66rem);letter-spacing:.035em}
+  .yd-main #yd-duel-content .yd-center{font-size:clamp(.55rem,1.8vw,.7rem);padding:8px 3px}
   .yd-hand-panel{overflow:hidden}
   .yd-handcard{flex:0 0 108px;height:162px}
   .yd-handcard .yd-card-name{font-size:.67rem}
@@ -171,8 +180,8 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
   .yd-hud-team small{font-size:.55rem;letter-spacing:.05em}
   .yd-hud-team b{font-size:.76rem}
   .yd-hud-phase p{font-size:.69rem;margin-top:3px}
-  .yd-main #yd-duel-content .yd-board{min-width:570px}
-  .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{min-width:800px}
+  .yd-main #yd-duel-content .yd-board{min-width:0}
+  .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{min-width:700px}
   .yd-view-toolbar>span{flex:1 1 120px}
   .yd-view-toolbar button{padding:8px;font-size:.75rem}
   .yd-handcard{flex-basis:105px;height:157px}
@@ -193,7 +202,7 @@ html body.yd-duel-page{background:radial-gradient(ellipse at 50% 0%,#35657c77,tr
 @media(orientation:landscape) and (max-height:480px) and (max-width:920px){
   .yd-main{width:calc(100% - 18px)}
   .yd-free-duel-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .yd-main #yd-duel-content .yd-board{min-width:740px}
+  .yd-main #yd-duel-content .yd-board{min-width:0}
   .yd-main #yd-duel-content .yd-board-scroll.yd-large-view .yd-board{min-width:960px}
   .yd-toolbar .yd-buttons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
   .yd-toolbar .yd-buttons .button{min-height:44px}
