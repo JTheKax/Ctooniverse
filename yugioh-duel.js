@@ -262,8 +262,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     if(!sel){root.textContent=game.winner?"Duel finished. Try New Duel.":game.phase==="battle"?"Tap your attacker, then an opposing monster.":"Choose a card in your hand to see available moves.";return;}
     const card=sel.zone==="hand"?game.player.hand.find(x=>x.uid===sel.uid):game.player.field[sel.index]?.card;
     if(!card){game.selected=null;root.textContent="Choose a card.";return;}
-    const name=document.createElement("strong");name.textContent=card.name;root.append(name);
-    const desc=document.createElement("p");desc.textContent=card.type==="monster"?"Level "+card.level+" · ATK "+card.atk+" / DEF "+card.def:card.text;root.append(desc);
+    const summary=document.createElement("div");summary.className="yd-detail-summary";
+    const artPreview=document.createElement("div");artPreview.className="yd-detail-preview";artPreview.append(cardFace(card,false));
+    const description=document.createElement("div");description.className="yd-detail-copy";
+    const name=document.createElement("strong");name.textContent=card.name;description.append(name);
+    const desc=document.createElement("p");desc.textContent=card.type==="monster"?"Level "+card.level+" · ATK "+card.atk+" / DEF "+card.def:card.text;description.append(desc);
+    summary.append(artPreview,description);root.append(summary);
     const controls=document.createElement("div");controls.className="yd-actions";root.append(controls);
     if(sel.zone==="hand"&&game.active==="player"&&game.phase==="main"&&!game.winner){
       if(card.type==="monster"){const n=tributes(card);if(n){const p=document.createElement("p");p.textContent="Requires "+n+" tribute(s); your weakest monsters are automatically tributed.";root.append(p);}
@@ -278,20 +282,42 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     }
     action(controls,"Cancel",()=>{game.selected=null;render();},false,false);
   }
+  function arenaHint(){
+    if(game.winner)return "Duel over. Rematch or choose another opponent.";
+    if(game.phase==="battle")return game.selected?.zone==="field"?"Select an enemy target, or attack directly if there are no enemy monsters.":"Select your attacker, then the opposing monster.";
+    if(game.selected?.zone==="hand")return "Card selected. Choose an action in the Selected Card panel below.";
+    if(game.selected?.zone==="field")return "Monster selected. Its available actions are below.";
+    if(game.turn===1)return "Opening turn: summon or set cards. You cannot attack yet.";
+    return game.summoned?"Play Spells or Traps, then battle or end your turn.":"Select a card from your hand to summon, set, or activate.";
+  }
   function render(){if(!game)return;
-    $("yd-turn").textContent="Turn "+game.turn+" · "+(game.winner?"Duel Over":game.phase==="battle"?"Battle Phase":"Main Phase");
-    $("yd-message").textContent=game.winner?"Use New Duel to play again.":game.turn===1?"Opening turn: no attacks.":"Summon one monster each turn, then enter Battle Phase.";
+    const phase=game.winner?"DUEL OVER":game.phase==="battle"?"BATTLE PHASE":game.turn===1?"OPENING TURN":"MAIN PHASE";
+    const hint=arenaHint();
+    $("yd-turn").textContent="Turn "+game.turn+" · "+phase;
+    $("yd-message").textContent=hint;
+    $("yd-phase-label").textContent=phase;
+    $("yd-phase-hint").textContent=hint;
+    $("yd-hud-opponent").textContent=selectedOpponent?.name||"Computer Duelist";
+    for(const side of ["cpu","player"]){
+      const points=game[side].lp;
+      const meter=$("yd-"+side+"-lp-meter");
+      meter.setAttribute("aria-valuemax",String(Math.max(8000,points)));
+      meter.setAttribute("aria-valuenow",String(points));
+      $("yd-"+side+"-lp-fill").style.width=Math.max(0,Math.min(100,points/80))+"%";
+      $("yd-hud-"+side+"-lp").textContent=points.toLocaleString();
+    }
     $("yd-battle").disabled=!!game.winner||game.active!=="player"||game.phase!=="main"||game.turn===1;
     $("yd-end").disabled=!!game.winner||game.active!=="player";
     for(const s of ["player","cpu"]){const p=game[s];$("yd-"+s+"-lp").textContent=p.lp.toLocaleString();$("yd-"+s+"-counts").textContent="Deck "+p.deck.length+" · Hand "+p.hand.length+" · Grave "+p.grave.length;renderRow(s,"field");renderRow(s,"traps");}
-    const hand=$("yd-hand");hand.replaceChildren();
+    const hand=$("yd-hand");const handScroll=hand.scrollLeft;hand.replaceChildren();
     for(const card of game.player.hand){const btn=document.createElement("button");btn.type="button";btn.className="yd-handcard";btn.setAttribute("aria-pressed",String(game.selected?.zone==="hand"&&game.selected.uid===card.uid));btn.setAttribute("aria-label",card.name);btn.append(cardFace(card,false));btn.addEventListener("click",()=>{if(game.winner||game.active!=="player")return;game.selected={zone:"hand",uid:card.uid};render();});hand.append(btn);}
+    hand.scrollLeft=handScroll;
     if(!game.player.hand.length)hand.textContent="Your hand is empty.";
     renderDetail();const log=$("yd-log");log.replaceChildren();game.history.slice(0,12).forEach(x=>{const li=document.createElement("li");li.textContent=x;log.append(li);});
     const result=$("yd-result");result.hidden=!game.winner;result.textContent=game.winner==="player"?"🏆 You defeated "+who("cpu")+"!":"Defeat against "+who("cpu")+". Duel again!";
     const r=record();$("yd-record").textContent=r.wins+" wins · "+r.losses+" losses";
   }
-  function reset(){if(!activeStarter||!selectedOpponent||!$("yd-free-duel").hidden)return;uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Free Duel versus "+selectedOpponent.name+"! You play first with "+activeStarter.deck_name+".");$("yd-cpu-name").textContent=selectedOpponent.name;$("yd-cpu-avatar").textContent="♛";render();}
+  function reset(){if(!activeStarter||!selectedOpponent||!$("yd-free-duel").hidden)return;uid=0;game={player:makeSide("player"),cpu:makeSide("cpu"),turn:1,active:"player",phase:"main",summoned:false,selected:null,winner:null,history:[]};draw("player",5);draw("cpu",5);note("Free Duel versus "+selectedOpponent.name+"! You play first with "+activeStarter.deck_name+".");$("yd-cpu-name").textContent=selectedOpponent.name;$("yd-cpu-avatar").replaceChildren(duelistArtwork(selectedOpponent));render();}
 
   // Locked starter decks belong to the Arena entitlement, not to card ownership.
   // The only write here is to yugioh_player_starter_choices, and the database
@@ -657,6 +683,12 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.58.0";
     }
   }
 
+  $("yd-zoom").addEventListener("click",()=>{
+    const large=$("yd-board-scroll").classList.toggle("yd-large-view");
+    $("yd-zoom").textContent=large?"Fit Field":"Enlarge Field";
+    $("yd-zoom").setAttribute("aria-pressed",String(large));
+    if(!large)$("yd-board-scroll").scrollLeft=0;
+  });
   $("yd-battle").addEventListener("click",startBattle);
   $("yd-end").addEventListener("click",endTurn);
   $("yd-new").addEventListener("click",reset);
