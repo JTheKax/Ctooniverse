@@ -54,3 +54,14 @@
  .avatar-maker-page .avatar-mobile-preview{gap:8px;padding:7px}
  .avatar-mobile-preview img{width:60px;height:75px;flex-basis:60px}
 }
+
+/* Faster character-building with touch-friendly outfit presets. */
+.avatar-editor-help{margin:-4px 0 16px;color:#cfdefc;font-size:.9rem;line-height:1.5}
+.avatar-preset-section{border:1px solid #8a9de8;border-radius:14px;padding:12px 14px;margin:0 0 17px;background:#0d1b3dc9}
+.avatar-preset-section h3{margin:0 0 11px;color:#ffe8a5;font-size:1.04rem}
+.avatar-preset-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.avatar-preset-button{min-height:48px;padding:8px 10px;display:flex;align-items:center;justify-content:center;gap:8px;border:2px solid #7faeff;border-radius:10px;color:#fff;font:700 .9rem/1.25 inherit;background:linear-gradient(140deg,#2c3f82,#40246d);cursor:pointer;white-space:normal;text-align:center}
+.avatar-preset-button:hover{background:#4d358b;border-color:#ffe19c}
+.avatar-preset-button:active{transform:translateY(1px)}
+.avatar-preset-button span{font-size:1.18rem}
+@media(max-width:390px){.avatar-preset-buttons{grid-template-columns:1fr}}
