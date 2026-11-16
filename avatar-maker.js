@@ -1,5 +1,5 @@
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.58.0';
-import {DEFAULT_AVATAR,AVATAR_OPTIONS,normalizeAvatar,avatarSvg,avatarDataUrl} from './avatar-renderer.js?v=cutout-avatar-v5';
+import {DEFAULT_AVATAR,AVATAR_OPTIONS,normalizeAvatar,avatarSvg,avatarDataUrl} from './avatar-renderer.js?v=cutout-avatar-v6';
 
 const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS');
 const $=id=>document.getElementById(id);
@@ -71,8 +71,25 @@ const palette={
  pants:['#293862','#1d1e34','#5d3b64','#305648','#7c463a'],
  hatColor:['#df3957','#efaa35','#386de8','#6b52c9','#35a88e'],
  hatAccent:['#ffc950','#fffbfd','#87e2f1','#f49bd3'],
- background:['#f8f8fb','#dceafc','#f9e8da','#daeede','#e7ddf6']
+ background:['#f8f8fb','#dceafc','#f9e8da','#daeede','#e7ddf6'],
+ mittens:['#f2c837','#d6354a','#55c7dd','#45292f','#eeeeee'],
+ shoes:['#24202e','#442b29','#0d356a','#eee8db']
 };
+const presets={
+ classic:{hat:'pom',hairStyle:'swoop',outfit:'coat',shirt:'#d72f38',hatColor:'#354e87',hatAccent:'#d72f38',mittens:'#f2c837'},
+ winter:{hat:'earflaps',hairStyle:'short',outfit:'coat',face:'smile',pose:'relaxed',hands:'mittens',shirt:'#278f7e',hatColor:'#ef812e',hatAccent:'#f4c948',mittens:'#f4c948',pants:'#4a4f7d',backdrop:'snow'},
+ casual:{hat:'none',hairStyle:'sidepart',outfit:'tee',face:'smirk',pose:'hips',hands:'bare',shirt:'#5a8fe4',hatAccent:'#f5f1e7',pants:'#303a67',backdrop:'spotlight'},
+ hero:{hat:'cap',hairStyle:'spiky',outfit:'jacket',face:'grin',pose:'wave',hands:'mittens',shirt:'#a84fe0',hatColor:'#394bb2',hatAccent:'#f0cb45',mittens:'#f0cb45',pants:'#2c2c58',backdrop:'stars'}
+};
+for(const button of form.querySelectorAll('[data-avatar-preset]')){
+ button.addEventListener('click',()=>{
+  const choice=presets[button.dataset.avatarPreset];
+  if(!choice)return;
+  setForm({...DEFAULT_AVATAR,...choice});
+  dirty=true;editRevision++;
+  message('Quick look applied. Customize anything or save this avatar.');
+ });
+}
 form.addEventListener('input',readForm);
 form.addEventListener('change',readForm);
 $('avatar-randomize').addEventListener('click',()=>{
