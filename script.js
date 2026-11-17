@@ -108,6 +108,8 @@ if (year) year.textContent = String(new Date().getFullYear());
   games.innerHTML='<button type="button" class="nav-link games-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="games-prize-menu"><span class="nav-icon" aria-hidden="true">🎮</span><span>Games</span><span aria-hidden="true">▾</span></button>'+
     '<div class="games-dropdown-panel" id="games-prize-menu">'+
     '<a href="games.html">All Games</a>'+ 
+    '<span class="games-dropdown-heading">🕹️ Retro Consoles</span>'+ 
+    '<a href="emulator.html">🎮 Retro Console Arcade</a>'+ 
     '<span class="games-dropdown-heading">⚔️ Fighting Games</span>'+
     '<a href="prototypes/ctoon-showdown-arcade.html">CToon Showdown</a>'+
     '<span class="games-dropdown-heading">🎁 Prize Games</span>'+
@@ -115,7 +117,7 @@ if (year) year.textContent = String(new Date().getFullYear());
     '<a href="prize-wheel.html">Boogie’s Prize Wheel</a>'+
     '<a href="pinball.html">CToon Winball</a>'+
     '</div>';
-  if(['games.html','claw-machine.html','prize-wheel.html','pinball.html'].includes(page)){
+  if(['games.html','emulator.html','claw-machine.html','prize-wheel.html','pinball.html'].includes(page)){
     games.querySelector('.games-dropdown-trigger').classList.add('active');
     games.querySelectorAll('a[href]').forEach(a=>{
       if(a.getAttribute('href')===page)a.setAttribute('aria-current','page');
