@@ -80,7 +80,7 @@ async function load(){
   if(authError||!user){say('Sign in to view your collection.');empty('Your personal collection is available after you sign in.','Sign In','login.html');return}
   const owned=[];for(let offset=0;;offset+=500){const {data,error}=await db.from('player_ctoons').select('ctoon_id,quantity').eq('user_id',user.id).gt('quantity',0).order('ctoon_id').range(offset,offset+499);if(error)throw error;owned.push(...(data||[]));if(current!==sequence)return;if(!data||data.length<500)break;}
   if(current!==sequence)return;
-  const catalog=[];for(let offset=0;;offset+=500){const {data,error}=await db.from('ctoon_catalog').select('id,name,rarity,image_path,series,parent_series').order('name').order('id').range(offset,offset+499);if(error)throw error;catalog.push(...(data||[]));if(current!==sequence)return;if(!data||data.length<500)break;}
+  const catalog=[];for(let offset=0;;offset+=500){const {data,error}=await db.from('ctoon_catalog').select('id,name,rarity,image_path,series,parent_series').eq('is_fusion',false).order('name').order('id').range(offset,offset+499);if(error)throw error;catalog.push(...(data||[]));if(current!==sequence)return;if(!data||data.length<500)break;}
   if(current!==sequence)return;
   const ownedMap=new Map();for(const x of owned){const id=String(x.ctoon_id);ownedMap.set(id,(ownedMap.get(id)||0)+(Number(x.quantity)||0));}
   renderProgress(catalog||[],ownedMap);
