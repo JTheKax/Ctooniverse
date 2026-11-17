@@ -110,14 +110,14 @@ if (year) year.textContent = String(new Date().getFullYear());
     '<a href="games.html">All Games</a>'+ 
     '<span class="games-dropdown-heading">🕹️ Retro Consoles</span>'+ 
     '<a href="emulator.html">🎮 Retro Console Arcade</a>'+ 
-    '<span class="games-dropdown-heading">⚔️ Fighting Games</span>'+
+    '<span class="games-dropdown-heading">🌿 Pokémon Games</span>'+\n    '<a href="pokemon-meadow-online.html">Pokémon Meadow Online</a>'+\n    '<span class="games-dropdown-heading">⚔️ Fighting Games</span>'+
     '<a href="prototypes/ctoon-showdown-arcade.html">CToon Showdown</a>'+
     '<span class="games-dropdown-heading">🎁 Prize Games</span>'+
     '<a href="claw-machine.html">CToon Claw Craze</a>'+
     '<a href="prize-wheel.html">Boogie’s Prize Wheel</a>'+
     '<a href="pinball.html">CToon Winball</a>'+
     '</div>';
-  if(['games.html','emulator.html','claw-machine.html','prize-wheel.html','pinball.html'].includes(page)){
+  if(['games.html','emulator.html','pokemon-meadow-online.html','claw-machine.html','prize-wheel.html','pinball.html'].includes(page)){
     games.querySelector('.games-dropdown-trigger').classList.add('active');
     games.querySelectorAll('a[href]').forEach(a=>{
       if(a.getAttribute('href')===page)a.setAttribute('aria-current','page');
