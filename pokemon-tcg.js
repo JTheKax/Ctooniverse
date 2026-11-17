@@ -91,7 +91,7 @@
     return result;
   }
   function makeInPlay(card,entered){
-    return {card,damage:0,energy:0,entered,evolvedAt:-1};
+    return {card,damage:0,energy:0,energyCards:[],evolutionCards:[],entered,evolvedAt:-1};
   }
   function nameOf(sideName){
     if(sideName==="cpu")return "Rival Trainer";
@@ -135,7 +135,7 @@
     if(!card||!canEvolve(target,card))return;
     const previous=target.card;
     const upgraded=removeHand(p,uid);
-    p.discard.push(previous);
+    target.evolutionCards.push(previous);
     target.card=upgraded;
     target.evolvedAt=game.turn;
     note(nameOf(sideName)+" evolved "+def(previous).name+" into "+def(upgraded).name+"!");
@@ -155,10 +155,9 @@
     const p=game[sideName],card=p.hand.find(c=>c.uid===uid);
     if(!card||def(card).kind!=="energy"||p.attachedThisTurn)return;
     const target=index<0?p.active:p.bench[index];if(!target)return;
-    // Each starter deck contains one Energy type; matching is intentional.
-    if(def(card).type!==def(target.card).type)return;
-    p.discard.push(removeHand(p,uid));
-    target.energy++;
+    // Any Energy can be attached; this simplified arena uses generic attack costs.
+    target.energyCards.push(removeHand(p,uid));
+    target.energy=target.energyCards.length;
     p.attachedThisTurn=true;
     note(nameOf(sideName)+" attached "+TYPES[def(card).type].name+" Energy to "+def(target.card).name+".");
     selection=null;render();
@@ -179,8 +178,9 @@
     if(game.winner||game.activeSide!=="player")return;
     const p=game.player;
     if(!p.active||p.active.energy<1||p.retreatedThisTurn||!p.bench[index])return;
-    p.active.energy--;
-    p.discard.push(makeCard(TYPES[p.type].energy));
+    const spent=p.active.energyCards.pop();
+    if(spent)p.discard.push(spent);
+    p.active.energy=p.active.energyCards.length;
     const prior=p.active;p.active=p.bench[index];p.bench[index]=prior;
     p.retreatedThisTurn=true;
     note("You retreated into "+def(p.active.card).name+".");
@@ -196,6 +196,7 @@
   }
   function performAttack(sideName,attackIndex){
     if(!game||game.winner||game.activeSide!==sideName)return;
+    // The starting player cannot attack on their first turn.
     if(sideName==="player"&&game.round===1)return;
     const attacker=game[sideName],defenderName=sideName==="player"?"cpu":"player",defender=game[defenderName];
     if(!attacker.active||!defender.active)return;
@@ -211,7 +212,7 @@
     note(nameOf(sideName)+"'s "+cardDef.name+" used "+attack.label+" for "+damage+" damage"+(multiplier===2?" (weakness)!":"!"));
     if(defender.active.damage>=target.hp){
       note(target.name+" was Knocked Out!");
-      defender.discard.push(defender.active.card);
+      defender.discard.push(defender.active.card,...defender.active.evolutionCards,...defender.active.energyCards);
       defender.active=defender.bench.shift()||null;
       collectPrize(sideName);
       if(!game.winner&&!defender.active)finish(sideName,nameOf(defenderName)+" has no Pokémon left in play.");
@@ -374,9 +375,9 @@
           }
         }
       }else if(d.kind==="energy"){
-        if(p.active&&def(p.active.card).type===d.type)action("Attach to Active",()=>attachEnergy("player",card.uid,-1),!playerTurn||p.attachedThisTurn);
+        if(p.active)action("Attach to Active",()=>attachEnergy("player",card.uid,-1),!playerTurn||p.attachedThisTurn);
         p.bench.forEach((mon,index)=>{
-          if(def(mon.card).type===d.type)action("Attach to Bench "+(index+1),()=>attachEnergy("player",card.uid,index),!playerTurn||p.attachedThisTurn);
+          action("Attach to Bench "+(index+1),()=>attachEnergy("player",card.uid,index),!playerTurn||p.attachedThisTurn);
         });
       }else if(d.kind==="trainer"){
         if(d.id==="switch")p.bench.forEach((mon,index)=>action("Switch to "+def(mon.card).name,()=>playTrainer("player",card.uid,index),!playerTurn));
