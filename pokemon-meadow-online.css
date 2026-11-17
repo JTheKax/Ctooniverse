@@ -30,3 +30,35 @@
 .meadow-console-footer span:first-child,.meadow-console-footer span:last-child{font-size:22px;color:#596f87}
 @media(max-width:720px){.meadow-handheld{padding:9px;border-radius:22px}.meadow-top-shell,.meadow-bottom-shell{padding:10px}.meadow-top-shell .meadow-tile{font-size:clamp(8px,2.5vw,16px)}.meadow-top-shell .meadow-stats{font-size:11px}.meadow-console-brand{font-size:10px;padding:7px 9px}.meadow-hinge{font-size:9px}.meadow-app .meadow-touch-tabs button{min-width:74px}}
 @media(prefers-reduced-motion:reduce){.meadow-handheld *{scroll-behavior:auto}}
+
+/* DS-style overworld tiles and trainer sprites */
+.meadow-top-shell .meadow-map{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));grid-template-rows:repeat(14,minmax(0,1fr));aspect-ratio:20/14;position:relative;background:#7ebf68;isolation:isolate}
+.meadow-map .meadow-tile{position:relative;min-width:0;min-height:0;overflow:visible;display:grid;place-items:center;font-size:inherit;line-height:1;box-shadow:inset 0 1px #ffffff13}
+.meadow-map .meadow-tile.grass{background:repeating-linear-gradient(135deg,#63a34d 0 5px,#70ae57 5px 10px)}
+.meadow-map .meadow-tile.flowers{background:#83ba60}
+.meadow-map .meadow-tile.path{background:repeating-linear-gradient(25deg,#d7b881 0 6px,#d9c18d 6px 12px)}
+.meadow-map .meadow-tile.water{background:repeating-linear-gradient(130deg,#428fb8 0 7px,#57a8cd 7px 14px);animation:meadow-water 3s ease-in-out infinite alternate}
+.meadow-map .meadow-tile.trees{background:#4a8d4c}
+.meadow-map .meadow-tile.station{background:#d9c8a5}
+.meadow-map .meadow-tile.player,.meadow-map .meadow-tile.visitor{outline:none;animation:none;z-index:4}
+.meadow-map .meadow-tile.player{box-shadow:inset 0 0 0 2px #fff9}
+.meadow-tuft{width:65%;height:55%;align-self:end;background:linear-gradient(150deg,transparent 35%,#307c3c 36% 48%,transparent 49%),linear-gradient(30deg,transparent 35%,#3c8940 36% 48%,transparent 49%);opacity:.9}
+.meadow-tree{width:88%;height:85%;position:relative;background:#24633d;border-radius:48% 48% 38% 38%;border:2px solid #174d35;box-shadow:inset 3px 3px #60ad63}
+.meadow-tree:after{content:'';position:absolute;bottom:-11%;left:42%;width:16%;height:26%;background:#75553a;z-index:-1}
+.meadow-flower{width:35%;aspect-ratio:1;border-radius:50%;background:#f7d35b;box-shadow:0 -5px #ffecf4,5px 0 #ffecf4,0 5px #ffecf4,-5px 0 #ffecf4}
+.meadow-building{display:grid;place-items:center;width:90%;height:90%;border:2px solid #f7f6ed;border-radius:4px;background:#d64c54;color:white;font-weight:900;font-size:clamp(9px,1.7vw,22px);box-shadow:0 3px #6c3541}
+.meadow-avatar{--hat:#3769cb;position:absolute;bottom:7%;left:50%;transform:translateX(-50%);width:72%;height:100%;z-index:6;filter:drop-shadow(1px 2px 1px #152e2788);animation:meadow-walk-idle .65s steps(2,end) infinite}
+.meadow-avatar.red{--hat:#d8484b}.meadow-avatar.violet{--hat:#9858ba}.meadow-avatar.gold{--hat:#d9a33f}
+.meadow-avatar i{position:absolute;display:block;left:50%;transform:translateX(-50%)}
+.meadow-avatar-head{top:8%;width:64%;height:39%;border:1px solid #583d34;border-radius:40% 40% 35% 35%;background:linear-gradient(to bottom,var(--hat) 0 37%,#f4caa0 38% 100%)}
+.meadow-avatar-head:after{content:'';position:absolute;top:62%;left:23%;width:12%;height:11%;background:#26354a;box-shadow:10px 0 #26354a}
+.meadow-avatar-body{top:48%;width:72%;height:31%;border:1px solid #233f53;border-radius:25% 25% 8% 8%;background:var(--hat)}
+.meadow-avatar-feet{top:78%;width:55%;height:17%;border-radius:0 0 30% 30%;background:linear-gradient(90deg,#26364b 0 45%,transparent 45% 55%,#26364b 55%)}
+.meadow-avatar.facing-up .meadow-avatar-head:after{display:none}
+.meadow-avatar.facing-left{transform:translateX(-50%) scaleX(-1)}
+.meadow-avatar.facing-right .meadow-avatar-head:after{left:55%;box-shadow:none}
+.meadow-roaming{position:absolute;z-index:2;width:95%;height:95%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 2px 1px #17472d88);animation:meadow-walk-idle 1.2s ease-in-out infinite alternate}
+@keyframes meadow-walk-idle{from{translate:0 0}to{translate:0 -2px}}
+@keyframes meadow-water{from{filter:brightness(1)}to{filter:brightness(1.12)}}
+@media(max-width:600px){.meadow-avatar-head{border-width:1px}.meadow-map .meadow-tile{box-shadow:none}.meadow-flower{box-shadow:0 -3px #ffecf4,3px 0 #ffecf4,0 3px #ffecf4,-3px 0 #ffecf4}}
+@media(prefers-reduced-motion:reduce){.meadow-avatar,.meadow-roaming,.meadow-map .meadow-tile.water{animation:none}}
