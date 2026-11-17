@@ -396,3 +396,31 @@ html body > #ctoon-music-player.ctoon-radio-nightstage :is(button,select,input):
     transform:none!important;
   }
 }
+
+/* Clear, consistent playlist layout on desktop and mobile. */
+html body > #ctoon-music-player.ctoon-radio-nightstage .music-library{
+  align-content:center!important;
+  grid-auto-flow:row!important;
+}
+html body > #ctoon-music-player.ctoon-radio-nightstage .music-library .music-choice-label{
+  line-height:1.35!important;
+  white-space:normal!important;
+}
+html body > #ctoon-music-player.ctoon-radio-nightstage .music-library select{
+  min-height:42px!important;
+  text-overflow:ellipsis!important;
+}
+html body > #ctoon-music-player.ctoon-radio-nightstage .music-song-info,
+html body > #ctoon-music-player.ctoon-radio-nightstage .music-track{
+  overflow-wrap:anywhere!important;
+}
+@media(max-width:640px){
+  html body > #ctoon-music-player.ctoon-radio-nightstage .music-library{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:5px!important;
+  }
+  html body > #ctoon-music-player.ctoon-radio-nightstage .music-library .music-choice-label:nth-of-type(1){grid-column:1!important;grid-row:1!important}
+  html body > #ctoon-music-player.ctoon-radio-nightstage .music-library select:nth-of-type(1){grid-column:1!important;grid-row:2!important}
+  html body > #ctoon-music-player.ctoon-radio-nightstage .music-library .music-choice-label:nth-of-type(2){grid-column:1!important;grid-row:3!important}
+  html body > #ctoon-music-player.ctoon-radio-nightstage .music-library select:nth-of-type(2){grid-column:1!important;grid-row:4!important}
+}
