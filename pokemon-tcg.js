@@ -64,6 +64,7 @@
   }
   let nextUid=0,game=null,selection=null;
   let difficulty="normal";
+  let customDeck=null;
   const makeCard=id=>({uid:++nextUid,id});
   const def=card=>CARDS[card.id];
   function shuffle(a){
@@ -71,6 +72,10 @@
     return a;
   }
   function makeDeck(type){
+    if(type==="custom"){
+      if(!Array.isArray(customDeck)||customDeck.length!==60)throw Error("Custom deck requires 60 cards");
+      return shuffle(customDeck.map(makeCard));
+    }
     const result=[],config=DECKS[type];
     for(const [id,n] of Object.entries(config.pokemon))for(let i=0;i<n;i++)result.push(makeCard(id));
     for(let i=0;i<config.energy;i++)result.push(makeCard(TYPES[type].energy));
@@ -281,7 +286,7 @@
     else note("Rival Trainer ended the turn without attacking.");
   }
   function begin(type){
-    if(!DECKS[type])return;
+    if(type!=="custom"&&!DECKS[type])return;
     difficulty=$("ptcg-difficulty")?.value||"normal";
     try{
       nextUid=0;selection=null;
@@ -290,7 +295,7 @@
       const player=side(type),cpu=side(enemyType);
       game={player,cpu,round:1,turn:1,activeSide:"player",winner:null,log:[],message:"Choose a card from your hand. The first Trainer cannot attack on turn one.",playerType:type,cpuType:enemyType};
       $("ptcg-deck-select").hidden=true;$("ptcg-arena").hidden=false;
-      note("Battle started! "+TYPES[type].name+" vs "+TYPES[enemyType].name+" · "+difficulty+" rival. You go first.");
+      note("Battle started! "+(type==="custom"?"Collection Deck":TYPES[type].name)+" vs "+TYPES[enemyType].name+" · "+difficulty+" rival. You go first.");
       $("ptcg-arena").scrollIntoView({block:"start",behavior:"smooth"});
       render();showStats();
     }catch(error){
@@ -405,7 +410,7 @@
   function render(){
     if(!game)return;
     $("ptcg-player-title").textContent=nameOf("player");
-    $("ptcg-matchup").textContent=TYPES[game.playerType].emoji+" "+TYPES[game.playerType].name+" vs "+TYPES[game.cpuType].emoji+" "+TYPES[game.cpuType].name+" · "+difficulty.toUpperCase()+" CPU";
+    $("ptcg-matchup").textContent=(game.playerType==="custom"?"🃏 Collection Deck":TYPES[game.playerType].emoji+" "+TYPES[game.playerType].name)+" vs "+TYPES[game.cpuType].emoji+" "+TYPES[game.cpuType].name+" · "+difficulty.toUpperCase()+" CPU";
     $("ptcg-turn-label").textContent=game.winner?"MATCH OVER":game.activeSide==="player"?"TURN "+game.round+" · YOUR MOVE":"RIVAL TURN";
     $("ptcg-end-turn").disabled=!!game.winner||game.activeSide!=="player";
     $("ptcg-status").textContent=game.message;
@@ -421,6 +426,7 @@
     if(game.winner)result.textContent=game.winner==="player"?"🏆 You won the Pokémon Card Arena duel!":"Rival Trainer wins this round. Try a rematch!";
     showStats();
   }
+  window.CToonPokemonArena={setCustomDeck(ids){if(!Array.isArray(ids)||ids.length!==60||ids.some(id=>!CARDS[id]))return false;customDeck=ids.slice();return true;},playCustom(){if(customDeck)begin("custom");},supportedCards(){return Object.values(CARDS).map(c=>({id:c.id,name:c.name,kind:c.kind,stage:c.stage||0,base_number:c.picture}));}};
   showStats();
   $("ptcg-deck-select").addEventListener("click",event=>{
     const btn=event.target.closest("button[data-deck]");
