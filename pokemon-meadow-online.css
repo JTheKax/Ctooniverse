@@ -62,3 +62,24 @@
 @keyframes meadow-water{from{filter:brightness(1)}to{filter:brightness(1.12)}}
 @media(max-width:600px){.meadow-avatar-head{border-width:1px}.meadow-map .meadow-tile{box-shadow:none}.meadow-flower{box-shadow:0 -3px #ffecf4,3px 0 #ffecf4,0 3px #ffecf4,-3px 0 #ffecf4}}
 @media(prefers-reduced-motion:reduce){.meadow-avatar,.meadow-roaming,.meadow-map .meadow-tile.water{animation:none}}
+
+/* Original 12-frame trainer sheet: columns = idle/step-left/step-right, rows = up/down/left/right. */
+.meadow-map .meadow-avatar.meadow-sprite{width:100%;height:112%;bottom:0;left:0;transform:none;background-image:url("pokemon-meadow-trainer-sprites.svg?v=1");background-repeat:no-repeat;background-size:300% 400%;background-position:50% 33.333%;image-rendering:pixelated;animation:none;filter:drop-shadow(0 1px 1px #17302a99)}
+.meadow-map .meadow-sprite.facing-up{background-position-y:0%}
+.meadow-map .meadow-sprite.facing-down{background-position-y:33.333%}
+.meadow-map .meadow-sprite.facing-left{background-position-y:66.667%;transform:none}
+.meadow-map .meadow-sprite.facing-right{background-position-y:100%}
+.meadow-map .meadow-sprite.red{filter:hue-rotate(125deg) drop-shadow(0 1px 1px #17302a99)}
+.meadow-map .meadow-sprite.violet{filter:hue-rotate(55deg) drop-shadow(0 1px 1px #17302a99)}
+.meadow-map .meadow-sprite.gold{filter:hue-rotate(190deg) drop-shadow(0 1px 1px #17302a99)}
+.meadow-map .meadow-sprite.walking{animation:meadow-sheet-walk .24s steps(2,end) infinite}
+@keyframes meadow-sheet-walk{0%{background-position-x:0%}50%{background-position-x:100%}100%{background-position-x:0%}}
+/* Overworld buildings and biome detailing */
+.meadow-map .meadow-tile.station{overflow:visible;z-index:3}
+.meadow-map .meadow-building{position:absolute;bottom:4%;left:0;width:100%;height:145%;border:2px solid #e9f0f2;border-radius:2px;background:linear-gradient(#d74752 0 22%,#f4eee0 22% 78%,#7399a5 78%);color:#fff;text-shadow:1px 1px #8e2631;box-shadow:0 3px 0 #344e64;z-index:2}
+.meadow-map .meadow-building:before{content:'';position:absolute;top:-15%;left:-14%;width:128%;height:24%;background:#ad3444;border:2px solid #f1a6a6;transform:skew(-12deg)}
+.meadow-map .meadow-tile.water{background:repeating-linear-gradient(160deg,#347fab 0 5px,#5caed4 5px 10px,#77c4df 10px 12px)}
+.meadow-map .meadow-tile.path{background:repeating-linear-gradient(0deg,#d8c395 0 7px,#d2b785 7px 14px);border-bottom:1px solid #bd9c6a}
+.meadow-map .meadow-tile.trees{background:#3e8350}
+.meadow-map .meadow-tree{border-radius:38% 42% 35% 40%;background:linear-gradient(135deg,#7dbf68 0 20%,#3f8b51 20% 60%,#22613d 60%);border:2px solid #255b3e}
+@media(prefers-reduced-motion:reduce){.meadow-map .meadow-sprite.walking{animation:none;background-position-x:50%}}
