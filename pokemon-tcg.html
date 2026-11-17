@@ -14,7 +14,8 @@
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
-<script src="pokemon-tcg.js?v=20261117-rival-difficulty-v3" defer></script>
+<script src="pokemon-tcg.js?v=20261117-collection-builder-v4" defer></script>
+<script type="module" src="pokemon-deck-builder.js?v=20261117-base1-v2"></script>
 </head>
 <body class="ptcg-page">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -45,6 +46,18 @@
   <button class="ptcg-deck-option lightning" type="button" data-deck="lightning"><span class="ptcg-deck-icon" aria-hidden="true">⚡</span><strong>Thunder Strike</strong><span>Raichu · Electabuzz · Zapdos</span><small>Fast attackers and electric knockouts</small><b>PLAY LIGHTNING DECK</b></button>
  </div>
  <p class="ptcg-small">This is a fan-made simplified Pokémon TCG experience. It uses selected classic card images but not the full printed card effects or the official competitive rules.</p>
+</section>
+<section id="ptcg-custom-builder" class="ptcg-panel ptcg-builder" aria-labelledby="ptcg-builder-title">
+ <h2 id="ptcg-builder-title">My Collection Deck Builder</h2>
+ <p>Build a 60-card deck using Pokémon Base Set cards you own. Up to four copies of each card. This arena supports a selected set of classic cards; other cards stay safely in your collection. Starter decks remain free.</p>
+ <p id="ptcg-builder-status" role="status" aria-live="polite">Loading your collection…</p>
+ <strong id="ptcg-builder-count">0/60 cards</strong>
+ <div id="ptcg-builder-cards" class="ptcg-builder-cards"></div>
+ <div class="ptcg-builder-actions">
+  <button id="ptcg-save-custom" type="button" class="button secondary" disabled>Save Deck</button>
+  <button id="ptcg-reset-custom" type="button" class="button secondary">Clear Deck</button>
+  <button id="ptcg-play-custom" type="button" class="button primary" disabled>Battle With My Deck</button>
+ </div>
 </section>
 <section id="ptcg-arena" class="ptcg-arena" aria-label="Pokémon card battle" hidden>
  <div class="ptcg-matchbar">
