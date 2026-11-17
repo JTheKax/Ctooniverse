@@ -110,7 +110,9 @@ if (year) year.textContent = String(new Date().getFullYear());
     '<a href="games.html">All Games</a>'+ 
     '<span class="games-dropdown-heading">🕹️ Retro Consoles</span>'+ 
     '<a href="emulator.html">🎮 Retro Console Arcade</a>'+ 
-    '<span class="games-dropdown-heading">🌿 Pokémon Games</span>'+\n    '<a href="pokemon-meadow-online.html">Pokémon Meadow Online</a>'+\n    '<span class="games-dropdown-heading">⚔️ Fighting Games</span>'+
+    '<span class="games-dropdown-heading">🌿 Pokémon Games</span>'+
+    '<a href="pokemon-meadow-online.html">Pokémon Meadow Online</a>'+
+    '<span class="games-dropdown-heading">⚔️ Fighting Games</span>'+
     '<a href="prototypes/ctoon-showdown-arcade.html">CToon Showdown</a>'+
     '<span class="games-dropdown-heading">🎁 Prize Games</span>'+
     '<a href="claw-machine.html">CToon Claw Craze</a>'+
