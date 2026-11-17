@@ -14,7 +14,7 @@
 <script src="owner-menu.js?v=nav-icons-20261112-v2" defer></script>
 <script src="community-menu.js?v=2" defer></script>
 <script src="music-player.js?v=night-stage-radio-20261114-v1" defer></script>
-<script src="pokemon-tcg.js?v=20261117-energy-evolution-v2" defer></script>
+<script src="pokemon-tcg.js?v=20261117-rival-difficulty-v3" defer></script>
 </head>
 <body class="ptcg-page">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -32,6 +32,13 @@
  <p class="ptcg-eyebrow">YOUR TRAINER JOURNEY BEGINS</p><h2 id="ptcg-start-title">Choose your starter deck</h2>
  <p>Pick Fire, Water, or Lightning. Each starter has 60 playable cards and can be changed for your next match. No coins or collection cards are needed.</p>
  <p id="ptcg-record" class="ptcg-small" role="status" aria-live="polite">Your record on this device: 0 wins · 0 losses</p>
+ <label class="ptcg-difficulty-label" for="ptcg-difficulty">Rival difficulty
+  <select id="ptcg-difficulty" class="ptcg-difficulty">
+    <option value="easy">Easy · Smaller bench, weaker attacks first</option>
+    <option value="normal" selected>Normal · Balanced rival</option>
+    <option value="hard">Hard · Full bench, strongest attacks first</option>
+  </select>
+ </label>
  <div class="ptcg-deck-grid">
   <button class="ptcg-deck-option fire" type="button" data-deck="fire"><span class="ptcg-deck-icon" aria-hidden="true">🔥</span><strong>Fire Storm</strong><span>Charizard · Arcanine · Ninetales</span><small>Powerful attacks and fierce evolutions</small><b>PLAY FIRE DECK</b></button>
   <button class="ptcg-deck-option water" type="button" data-deck="water"><span class="ptcg-deck-icon" aria-hidden="true">💧</span><strong>Ocean Wave</strong><span>Blastoise · Poliwrath · Starmie</span><small>Durable Pokémon and steady pressure</small><b>PLAY WATER DECK</b></button>
