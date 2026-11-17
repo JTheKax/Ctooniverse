@@ -49,7 +49,7 @@ async function verify(){
 async function load(){
  const current=++requestId;
  if(!authorized)return;
- const {data,error}=await db.from('ctoon_catalog').select('id,name,parent_series,series,image_path,rarity,price_coins,is_for_sale').order('name');
+ const {data,error}=await db.from('ctoon_catalog').select('id,name,parent_series,series,image_path,rarity,price_coins,is_for_sale').eq('is_fusion',false).order('name');
  if(current!==requestId)return;
  if(error){say('Could not load catalog: '+error.message);return}
  rows=data||[];
