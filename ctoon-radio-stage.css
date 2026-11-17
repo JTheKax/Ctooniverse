@@ -424,3 +424,12 @@ html body > #ctoon-music-player.ctoon-radio-nightstage .music-track{
   html body > #ctoon-music-player.ctoon-radio-nightstage .music-library .music-choice-label:nth-of-type(2){grid-column:1!important;grid-row:3!important}
   html body > #ctoon-music-player.ctoon-radio-nightstage .music-library select:nth-of-type(2){grid-column:1!important;grid-row:4!important}
 }
+
+/* Artist selector is a distinct step before choosing a song. */
+html body > #ctoon-music-player.ctoon-radio-nightstage .music-library{
+ display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:5px!important;
+}
+html body > #ctoon-music-player.ctoon-radio-nightstage .music-library .music-choice-label{margin:3px 0 0!important}
+html body > #ctoon-music-player.ctoon-radio-nightstage .music-library select{
+ display:block!important;width:100%!important;min-height:42px!important;margin:0!important;
+}
