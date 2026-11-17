@@ -49,6 +49,19 @@
     water:{pokemon:{squirtle:4,wartortle:3,blastoise:2,poliwag:4,poliwhirl:3,poliwrath:2,staryu:4,starmie:3,seel:2,dewgong:2},energy:21},
     lightning:{pokemon:{pikachu:4,raichu:3,magnemite:4,magneton:3,voltorb:4,electrode:3,electabuzz:4,zapdos:2},energy:23}
   };
+  // Device-local results; no Supabase inventory, coins or accounts are changed.
+  const STATS_KEY="ctooniverse-pokemon-arena-stats-v1";
+  function readStats(){
+    try{
+      const raw=JSON.parse(localStorage.getItem(STATS_KEY)||"{}");
+      return {wins:Math.max(0,Number(raw.wins)||0),losses:Math.max(0,Number(raw.losses)||0)};
+    }catch(_){return {wins:0,losses:0};}
+  }
+  function showStats(){
+    const node=$("ptcg-record");if(!node)return;
+    const stats=readStats();
+    node.textContent="Your record on this device: "+stats.wins+" wins · "+stats.losses+" losses";
+  }
   let nextUid=0,game=null,selection=null;
   const makeCard=id=>({uid:++nextUid,id});
   const def=card=>CARDS[card.id];
@@ -93,6 +106,8 @@
   function finish(winner,reason){
     if(!game||game.winner)return;
     game.winner=winner;game.activeSide=null;
+    const stats=readStats();if(winner==="player")stats.wins++;else stats.losses++;
+    try{localStorage.setItem(STATS_KEY,JSON.stringify(stats));}catch(_){}
     note((winner==="player"?"Victory! ":"Defeat! ")+reason);
   }
   function drawFor(sideName,count=1){
@@ -271,7 +286,7 @@
       $("ptcg-deck-select").hidden=true;$("ptcg-arena").hidden=false;
       note("Battle started! "+TYPES[type].name+" vs "+TYPES[enemyType].name+". You go first.");
       $("ptcg-arena").scrollIntoView({block:"start",behavior:"smooth"});
-      render();
+      render();showStats();
     }catch(error){
       console.error("Pokémon Card Arena setup error",error);
       $("ptcg-status").textContent="Could not start the game. Please try again.";
@@ -398,7 +413,9 @@
     game.log.slice(0,15).forEach(message=>{const li=document.createElement("li");li.textContent=message;log.append(li);});
     const result=$("ptcg-result");result.hidden=!game.winner;
     if(game.winner)result.textContent=game.winner==="player"?"🏆 You won the Pokémon Card Arena duel!":"Rival Trainer wins this round. Try a rematch!";
+    showStats();
   }
+  showStats();
   $("ptcg-deck-select").addEventListener("click",event=>{
     const btn=event.target.closest("button[data-deck]");
     if(btn)begin(btn.dataset.deck);
