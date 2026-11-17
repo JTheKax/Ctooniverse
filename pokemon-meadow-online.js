@@ -18,8 +18,25 @@ drawStarters();
 function say(s){$('meadow-status').textContent=s;$('meadow-log').textContent=s}
 function lock(v){busy=v;document.querySelectorAll('#meadow-game button,#meadow-begin').forEach(b=>b.disabled=v)}
 async function rpc(fn,args={}){const {data,error}=await db.rpc(fn,args);if(error)throw error;return data}
-function zone(x,y){return x<20?(y<14?'Meadow Crossing':'Wildflower Grove'):(y<14?'Pinewood Trail':'Crystal Lake');}
-function tile(x,y){if(x===12&&y===10)return 'station';if(x<1||y<1||x>=WORLD_W-1||y>=WORLD_H-1)return 'water';if(x>=30&&y>=19&&((x-32)**2+(y-22)**2)<24)return 'water';if(x===10||y===7||x===22||y===17)return 'path';const k=(x*17+y*23)%13;return k<6?'grass':k===6?'flowers':k===7?'trees':'path'}
+const worldDay=()=>Math.floor(Date.now()/86400000);
+function hashTile(x,y,salt=0){let n=Math.imul(x+109,374761393)^Math.imul(y+317,668265263)^Math.imul(worldDay()+salt,1442695041);n=Math.imul(n^(n>>>13),1274126177);return ((n^(n>>>16))>>>0)/4294967296}
+function regionIndex(x,y){return (y>=14?2:0)+(x>=20?1:0)}
+const regionNames=['Meadow Crossing','Wildflower Grove','Pinewood Trail','Crystal Lake'];
+const biomes=['meadow','woodland','forest','lakeside'];
+function zone(x,y){return regionNames[regionIndex(x,y)]}
+function tile(x,y){
+ if(x===12&&y===10)return 'station';
+ if(x<1||y<1||x>=WORLD_W-1||y>=WORLD_H-1)return 'water';
+ // Permanent walkable routes connect every zone and the healing station.
+ if(y===10||x===12||x===22||y===17||Math.abs(x-12)+Math.abs(y-10)<=2)return 'path';
+ const biome=biomes[regionIndex(x,y)],r=hashTile(x,y),cluster=hashTile(Math.floor(x/3),Math.floor(y/3),17);
+ if(biome==='lakeside'&&cluster<0.21&&r<0.82)return 'water';
+ if(biome==='forest'&&cluster<0.39&&r<0.55)return 'trees';
+ if(biome==='woodland'&&cluster<0.26&&r<0.44)return 'trees';
+ if(r<(biome==='meadow'?0.57:biome==='forest'?0.46:0.49))return 'grass';
+ if(r<0.72)return 'flowers';
+ return 'path';
+}
 function drawMap(){const map=$('meadow-map');map.replaceChildren();if(!trainer)return;const ox=Math.max(0,Math.min(WORLD_W-VIEW_W,trainer.tile_x-Math.floor(VIEW_W/2))),oy=Math.max(0,Math.min(WORLD_H-VIEW_H,trainer.tile_y-Math.floor(VIEW_H/2)));for(let y=oy;y<oy+VIEW_H;y++)for(let x=ox;x<ox+VIEW_W;x++){const t=document.createElement('div'),kind=tile(x,y),player=x===trainer.tile_x&&y===trainer.tile_y,guest=!player&&visitors.find(v=>v.x===x&&v.y===y);t.className='meadow-tile '+kind+(player?' player':guest?' visitor':'');t.textContent=player?'🧢':guest?'🚶':kind==='grass'?'🌿':kind==='flowers'?'🌼':kind==='water'?'🌊':kind==='trees'?'🌲':kind==='station'?'🏥':'';if(guest)t.title=guest.name;map.append(t)}const label=$('meadow-zone');if(label)label.textContent='📍 '+zone(trainer.tile_x,trainer.tile_y);}
 async function setupPresence(){if(!user||!trainer||presence)return;presence=db.channel('pokemon-meadow-world',{config:{presence:{key:user.id}}});presence.on('presence',{event:'sync'},()=>{const state=presence.presenceState();visitors=Object.entries(state).filter(([id])=>id!==user.id).flatMap(([id,entries])=>entries.map(v=>({id,name:String(v.name||'Trainer').slice(0,22),x:Number(v.x),y:Number(v.y)})).filter(v=>Number.isInteger(v.x)&&Number.isInteger(v.y)&&v.x>=0&&v.x<WORLD_W&&v.y>=0&&v.y<WORLD_H));const count=$('meadow-online');if(count)count.textContent='🟢 '+(visitors.length+1)+' trainer'+(visitors.length?'s':'')+' online';drawMap();drawVisitors()});presence.subscribe(async status=>{if(status==='SUBSCRIBED')await trackPresence()})}
 async function trackPresence(){if(presence&&trainer)try{await presence.track({name:trainer.display_name,x:trainer.tile_x,y:trainer.tile_y})}catch(e){console.warn('Meadow presence unavailable',e)}}
