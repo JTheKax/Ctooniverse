@@ -83,3 +83,12 @@
 .meadow-map .meadow-tile.trees{background:#3e8350}
 .meadow-map .meadow-tree{border-radius:38% 42% 35% 40%;background:linear-gradient(135deg,#7dbf68 0 20%,#3f8b51 20% 60%,#22613d 60%);border:2px solid #255b3e}
 @media(prefers-reduced-motion:reduce){.meadow-map .meadow-sprite.walking{animation:none;background-position-x:50%}}
+
+/* Dual-screen region overview */
+.meadow-minimap{width:100%;max-width:520px;aspect-ratio:40/28;display:grid;grid-template-columns:repeat(40,minmax(0,1fr));grid-template-rows:repeat(28,minmax(0,1fr));border:4px solid #547e98;box-shadow:0 4px 0 #234256;overflow:hidden;background:#79b767;image-rendering:pixelated}
+.meadow-mini-tile{display:block;min-width:0;min-height:0}
+.meadow-mini-tile.grass{background:#529c53}.meadow-mini-tile.flowers{background:#9dc76b}.meadow-mini-tile.path{background:#dec28b}.meadow-mini-tile.trees{background:#2e6c42}.meadow-mini-tile.water{background:#4c9fc4}.meadow-mini-tile.station{background:#ed6b72}
+.meadow-mini-tile.current{background:#f6fffa!important;outline:2px solid #1744d7;outline-offset:-1px;z-index:2;box-shadow:0 0 0 2px #1744d7}
+#meadow-map-position{font-weight:700;color:#245269}
+.meadow-touch-tabs{scrollbar-color:#5c91a8 #1e4159}
+@media(max-width:500px){.meadow-minimap{border-width:2px}.meadow-app .meadow-touch-tabs button{min-width:72px}}
