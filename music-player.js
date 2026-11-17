@@ -1,7 +1,7 @@
 "use strict";
 (()=>{if(document.getElementById('ctoon-music-player'))return;
 const root=document.createElement('aside');root.id='ctoon-music-player';root.className='ctoon-music-player ctoon-radio-nightstage';root.setAttribute('aria-label','Website music player');
-root.innerHTML='<div id="music-controls" class="music-controls"><div class="music-heading"><span class="music-brand"><span class="music-live-dot" aria-hidden="true"></span> CTOON RADIO <small>✦ NIGHT STAGE // VOL. 01 ✦</small></span></div><div class="music-now-playing"><div class="music-disc" aria-hidden="true"><span>♫</span></div><div class="music-song-info"><span class="music-kicker">NOW PLAYING</span><p class="music-track">No music uploaded yet</p><div class="music-equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div><label class="music-choice-label" for="music-sort-choice">Organize songs</label><select id="music-sort-choice" class="music-song-choice"><option value="title">Alphabetical (A–Z)</option><option value="artist">By Artist (A–Z)</option></select><label class="music-choice-label" for="music-song-choice">Choose a song</label><select id="music-song-choice" class="music-song-choice" disabled><option value="">Loading songs…</option></select><audio preload="none"></audio><div class="music-actions"><button type="button" class="music-play" disabled>▶ Play</button><button type="button" class="music-skip" aria-label="Skip to next song" disabled>⏭ Skip</button><button type="button" class="music-repeat" aria-label="Repeat current song" aria-pressed="false" disabled>🔁 Repeat: Off</button><button type="button" class="music-mute" aria-label="Mute music" disabled>♫</button><label class="music-volume-label">Volume <input class="music-volume" type="range" min="0" max="100" value="50" disabled aria-label="Music volume"></label></div><p class="music-hint">Music will be available when a track is added.</p></div>';
+root.innerHTML='<div id="music-controls" class="music-controls"><div class="music-heading"><span class="music-brand"><span class="music-live-dot" aria-hidden="true"></span> CTOON RADIO <small>✦ NIGHT STAGE // VOL. 01 ✦</small></span></div><div class="music-now-playing"><div class="music-disc" aria-hidden="true"><span>♫</span></div><div class="music-song-info"><span class="music-kicker">NOW PLAYING</span><p class="music-track">No music uploaded yet</p><div class="music-equalizer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div><label class="music-choice-label" for="music-sort-choice">Organize songs</label><select id="music-sort-choice" class="music-song-choice"><option value="title">Alphabetical (A–Z)</option><option value="artist">By Artist (A–Z)</option><option value="recent">Recently Added</option></select><label class="music-choice-label" for="music-song-choice">Choose a song</label><select id="music-song-choice" class="music-song-choice" disabled><option value="">Loading songs…</option></select><audio preload="none"></audio><div class="music-actions"><button type="button" class="music-play" disabled>▶ Play</button><button type="button" class="music-skip" aria-label="Skip to next song" disabled>⏭ Skip</button><button type="button" class="music-repeat" aria-label="Repeat current song" aria-pressed="false" disabled>🔁 Repeat: Off</button><button type="button" class="music-mute" aria-label="Mute music" disabled>♫</button><label class="music-volume-label">Volume <input class="music-volume" type="range" min="0" max="100" value="50" disabled aria-label="Music volume"></label></div><p class="music-hint">Music will be available when a track is added.</p></div>';
 document.body.append(root);
 /* Decorative stage styling is independent of the authenticated music library. */
 if(!document.querySelector('link[data-ctoon-radio-nightstage]')){
@@ -38,14 +38,14 @@ const parts=title=>{const match=title.match(/^(.+?)\s+[-–—]\s+(.+)$/);return
 const compare=new Intl.Collator(undefined,{sensitivity:'base',numeric:true});
 function sortTracks(){
  const selected=tracks[index]?.storage_path;
- tracks.sort((a,b)=>{const x=parts(a.title),y=parts(b.title);return sortChoice.value==='artist'?(compare.compare(x.artist,y.artist)||compare.compare(x.song,y.song)):(compare.compare(x.song,y.song)||compare.compare(x.artist,y.artist))});
- index=Math.max(0,tracks.findIndex(t=>t.storage_path===selected));
+ tracks.sort((a,b)=>{const x=parts(a.title),y=parts(b.title);return sortChoice.value==='recent'?a.originalOrder-b.originalOrder:sortChoice.value==='artist'?(compare.compare(x.artist,y.artist)||compare.compare(x.song,y.song)):(compare.compare(x.song,y.song)||compare.compare(x.artist,y.artist))});
+ index=selected?Math.max(0,tracks.findIndex(t=>t.storage_path===selected)):0;
  choice.replaceChildren();
  let group=null,lastArtist=null;
  tracks.forEach((track,i)=>{
   const parsed=parts(track.title);
   if(sortChoice.value==='artist'){
-   if(parsed.artist!==lastArtist){group=document.createElement('optgroup');group.label=parsed.artist;choice.append(group);lastArtist=parsed.artist}
+   if(compare.compare(parsed.artist,lastArtist||'')!==0){group=document.createElement('optgroup');group.label=parsed.artist;choice.append(group);lastArtist=parsed.artist}
   }
   const option=document.createElement('option');option.value=String(i);option.textContent=sortChoice.value==='artist'?parsed.song:track.title;
   (group||choice).append(option);
@@ -71,12 +71,12 @@ async function loadMusic(){
   const response=await fetch('https://hsxdyxdazsdmpucyhqly.supabase.co/rest/v1/site_music_tracks?select=title,storage_path&enabled=eq.true&order=sort_order.asc,created_at.asc',{headers:{apikey:'sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS',Authorization:'Bearer sb_publishable_yQ3hOiJcjOu7vDC7vhpEig_osFljQTS'},cache:'no-store'});
   if(!response.ok)throw new Error('Music service returned '+response.status);
   const data=await response.json();
-  tracks=Array.isArray(data)?data.filter(t=>t&&typeof t.title==='string'&&t.storage_path.startsWith('tracks/')&&['mp3','ogg','wav'].includes(t.storage_path.split('.').pop().toLowerCase())):[];
+  tracks=Array.isArray(data)?data.filter(t=>t&&typeof t.title==='string'&&typeof t.storage_path==='string'&&t.storage_path.startsWith('tracks/')&&['mp3','ogg','wav'].includes(t.storage_path.split('.').pop().toLowerCase())).map((t,i)=>({...t,originalOrder:i})):[];
   if(!tracks.length){hint.textContent='No published tracks found. Please try refreshing.';return}
+  index=Math.floor(Math.random()*tracks.length);
   sortTracks();choice.disabled=false;skip.disabled=false;repeat.disabled=false;
   selectTrack=()=>{const t=tracks[index];label.textContent=t.title;choice.value=String(index);audio.src='https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/'+t.storage_path;play.disabled=false;mute.disabled=false;volume.disabled=false;hint.textContent='Press Play to listen.'};
-  // Choose a random song without starting playback.
-  index=Math.floor(Math.random()*tracks.length);
+  // Keep the chosen track in sync with its sorted position.
   selectTrack();
   audio.addEventListener('ended',()=>{if(repeatOne){audio.currentTime=0;audio.play().catch(()=>{hint.textContent='Press Play to repeat this song.'});return}index=(index+1)%tracks.length;selectTrack();audio.play().catch(()=>{hint.textContent='Press Play for the next song.'})});
  }catch(error){hint.textContent='Unable to load music: '+error.message;label.textContent='Music temporarily unavailable'}
