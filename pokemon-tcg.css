@@ -171,3 +171,9 @@ html body.ptcg-page{
   .ptcg-actions .button{flex:1 1 110px}
 }
 @media(prefers-reduced-motion:reduce){.ptcg-deck-option,.ptcg-hand .ptcg-card{transition:none!important}.ptcg-deck-option:hover,.ptcg-hand .ptcg-card:hover{transform:none}}
+
+/* Rival settings and compact mobile controls */
+.ptcg-difficulty-label{display:flex;flex-direction:column;gap:8px;max-width:480px;margin:12px auto 18px;color:#ffe6ac;font-weight:800;text-align:left}
+.ptcg-difficulty{width:100%;min-height:46px;border:2px solid #77d8e8;border-radius:10px;padding:10px 12px;background:#112a3d;color:#fff;font:inherit;font-size:.91rem}
+.ptcg-difficulty:focus-visible{outline:3px solid #ffdc82;outline-offset:3px}
+@media(max-width:570px){.ptcg-game-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.ptcg-game-controls .button{min-height:44px}.ptcg-difficulty-label{margin:10px 2px 16px}.ptcg-difficulty{font-size:.84rem}}
