@@ -59,8 +59,8 @@ if (year) year.textContent = String(new Date().getFullYear());
   const ctoons=document.createElement('div');
   ctoons.className='ctoons-dropdown';
   ctoons.innerHTML='<button type="button" class="nav-link ctoons-dropdown-trigger" aria-haspopup="true" aria-expanded="false" aria-controls="ctoons-menu"><span class="nav-icon" aria-hidden="true">🎴</span><span>CToons</span><span aria-hidden="true">▾</span></button>'+
-    '<div class="ctoons-dropdown-panel" id="ctoons-menu"><a href="ctoons.html">CToons Collection</a><a href="shop.html">CToon Shop</a><a href="my-czone.html">🌌 My CZone</a></div>';
-  if(['ctoons.html','my-czone.html','shop.html','ctoon-set.html','anime.html','movies.html','misc.html'].includes(page))ctoons.querySelector('.ctoons-dropdown-trigger').classList.add('active');
+    '<div class="ctoons-dropdown-panel" id="ctoons-menu"><a href="ctoons.html">CToons Collection</a><a href="shop.html">CToon Shop</a><a href="ctoon-fusions.html">⚡ CToon Fusions</a><a href="my-czone.html">🌌 My CZone</a></div>';
+  if(['ctoons.html','ctoon-fusions.html','my-czone.html','shop.html','ctoon-set.html','anime.html','movies.html','misc.html'].includes(page))ctoons.querySelector('.ctoons-dropdown-trigger').classList.add('active');
   // Cards is independent from Games; all links point to real page sections.
   const cards=document.createElement('div');
   cards.className='cards-dropdown';
