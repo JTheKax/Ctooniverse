@@ -19,8 +19,12 @@ const songLabel=root.querySelector('label[for="music-song-choice"]');
 const sortSelect=root.querySelector('#music-sort-choice');
 const songSelect=root.querySelector('#music-song-choice');
 const nowPlaying=root.querySelector('.music-now-playing');
+const artistLabel=document.createElement('label');artistLabel.className='music-choice-label';artistLabel.htmlFor='music-artist-choice';artistLabel.textContent='Choose an artist';
+const artistSelect=document.createElement('select');artistSelect.id='music-artist-choice';artistSelect.className='music-song-choice';artistSelect.disabled=true;
+artistSelect.append(new Option('All artists',''));
+
 if(sortLabel&&songLabel&&sortSelect&&songSelect&&nowPlaying){
-  radioLibrary.append(sortLabel,sortSelect,songLabel,songSelect);
+  radioLibrary.append(sortLabel,sortSelect,artistLabel,artistSelect,songLabel,songSelect);
   nowPlaying.after(radioLibrary);
 }
 const stageHeading=root.querySelector('.music-heading');
@@ -38,46 +42,55 @@ let tracks=[];let index=0;
 const parts=track=>{
  const raw=String(track.title||'').trim();
  const explicit=typeof track.artist==='string'?track.artist.trim():'';
- if(explicit)return {artist:explicit,song:raw};
- const match=raw.match(/^(.+?)\\s*(?:[-–—]|\\||::)\\s*(.+)$/);
- return match?{artist:match[1].trim(),song:match[2].trim()}:{artist:'Unknown Artist',song:raw};
+ const match=raw.match(/^(.+?)\s+[-–—]\s+(.+)$/);
+ return match?{artist:explicit||match[1].trim(),song:match[2].trim()}:{artist:explicit||'Unknown Artist',song:raw};
 };
-const artistKey=artist=>artist.normalize('NFKC').trim().replace(/\\s+/g,' ').toLocaleLowerCase();
+const artistKey=artist=>artist.normalize('NFKC').trim().replace(/\s+/g,' ').toLocaleLowerCase();
 const compare=new Intl.Collator(undefined,{sensitivity:'base',numeric:true});
 function sortTracks(){
  const selected=tracks[index]?.storage_path;
  tracks.sort((a,b)=>{
   const x=parts(a),y=parts(b);
   return sortChoice.value==='recent'?a.originalOrder-b.originalOrder:
-   sortChoice.value==='artist'?(compare.compare(x.artist==='Unknown Artist'?'￿':x.artist,y.artist==='Unknown Artist'?'￿':y.artist)||compare.compare(x.song,y.song)):
+   sortChoice.value==='artist'?(compare.compare(x.artist,y.artist)||compare.compare(x.song,y.song)):
    (compare.compare(x.song,y.song)||compare.compare(x.artist,y.artist));
  });
  index=selected?Math.max(0,tracks.findIndex(t=>t.storage_path===selected)):0;
+ const previousArtist=artistSelect.value;
+ const artists=new Map();
+ for(const t of tracks){const p=parts(t);if(!artists.has(artistKey(p.artist)))artists.set(artistKey(p.artist),p.artist);}
+ artistSelect.replaceChildren(new Option('All artists',''));
+ [...artists].sort((a,b)=>compare.compare(a[1],b[1])).forEach(([key,name])=>artistSelect.add(new Option(name,key)));
+ artistSelect.disabled=false;
+ artistSelect.value=artists.has(previousArtist)?previousArtist:'';
+ renderSongChoices();
+}
+function renderSongChoices(){
+ const selected=tracks[index]?.storage_path;
  choice.replaceChildren();
  let group=null,lastArtist='';
  tracks.forEach((track,i)=>{
-  const parsed=parts(track);
-  if(sortChoice.value==='artist'){
-   const key=artistKey(parsed.artist);
-   if(key!==lastArtist){
-    group=document.createElement('optgroup');
-    group.label=parsed.artist;
-    choice.append(group);
-    lastArtist=key;
-   }
+  const parsed=parts(track),key=artistKey(parsed.artist);
+  if(artistSelect.value&&artistSelect.value!==key)return;
+  if(sortChoice.value==='artist'&&!artistSelect.value){
+   if(key!==lastArtist){group=document.createElement('optgroup');group.label=parsed.artist;choice.append(group);lastArtist=key;}
   }
-  const option=document.createElement('option');
-  option.value=String(i);
-  option.textContent=sortChoice.value==='artist'?parsed.song:track.title;
+  const option=new Option(sortChoice.value==='artist'||artistSelect.value?parsed.song:track.title,String(i));
   (group||choice).append(option);
  });
- choice.value=String(index);
+ if(!choice.options.length){choice.disabled=true;return;}
+ choice.disabled=false;
+ const selectedIndex=tracks.findIndex(t=>t.storage_path===selected);
+ const shown=[...choice.options].some(o=>Number(o.value)===selectedIndex);
+ choice.value=shown?String(selectedIndex):choice.options[0].value;
 }
+
 let selectTrack=()=>{};let repeatOne=false;
 // Radio playback starts only when the listener presses Play.
 const advance=async()=>{if(!tracks.length)return;const wasPlaying=!audio.paused;index=(index+1)%tracks.length;selectTrack();if(wasPlaying){try{await audio.play()}catch(_){hint.textContent='Press Play to hear the next song.'}}};
 skip.addEventListener('click',advance);
-sortChoice.addEventListener('change',()=>{if(!tracks.length)return;sortTracks();choice.value=String(index)});
+sortChoice.addEventListener('change',()=>{if(!tracks.length)return;sortTracks();});
+artistSelect.addEventListener('change',renderSongChoices);
 repeat.addEventListener('click',()=>{repeatOne=!repeatOne;repeat.setAttribute('aria-pressed',String(repeatOne));repeat.textContent=repeatOne?'🔂 Repeat: On':'🔁 Repeat: Off';});
 choice.addEventListener('change',async()=>{const wasPlaying=!audio.paused;index=Number(choice.value);if(!Number.isInteger(index)||index<0||index>=tracks.length)return;selectTrack();if(wasPlaying){try{await audio.play()}catch(_){hint.textContent='Press Play to start the selected song.'}}});
 const sync=()=>{root.classList.toggle('is-playing',!audio.paused);play.textContent=audio.paused?'▶ Play':'❚❚ Pause';mute.textContent=audio.muted?'🔇':'♫';};
@@ -96,7 +109,7 @@ async function loadMusic(){
   if(!tracks.length){hint.textContent='No published tracks found. Please try refreshing.';return}
   index=Math.floor(Math.random()*tracks.length);
   sortTracks();choice.disabled=false;skip.disabled=false;repeat.disabled=false;
-  selectTrack=()=>{const t=tracks[index];label.textContent=t.title;choice.value=String(index);audio.src='https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/'+t.storage_path;play.disabled=false;mute.disabled=false;volume.disabled=false;hint.textContent='Press Play to listen.'};
+  selectTrack=()=>{const t=tracks[index];label.textContent=t.title;renderSongChoices();audio.src='https://hsxdyxdazsdmpucyhqly.supabase.co/storage/v1/object/public/site-music/'+t.storage_path;play.disabled=false;mute.disabled=false;volume.disabled=false;hint.textContent='Press Play to listen.'};
   // Keep the chosen track in sync with its sorted position.
   selectTrack();
   audio.addEventListener('ended',()=>{if(repeatOne){audio.currentTime=0;audio.play().catch(()=>{hint.textContent='Press Play to repeat this song.'});return}index=(index+1)%tracks.length;selectTrack();audio.play().catch(()=>{hint.textContent='Press Play for the next song.'})});
