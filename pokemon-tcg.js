@@ -63,6 +63,7 @@
     node.textContent="Your record on this device: "+stats.wins+" wins · "+stats.losses+" losses";
   }
   let nextUid=0,game=null,selection=null;
+  let difficulty="normal";
   const makeCard=id=>({uid:++nextUid,id});
   const def=card=>CARDS[card.id];
   function shuffle(a){
@@ -252,7 +253,7 @@
       if(match>=0)evolveAt("cpu",match===0?-1:match-1,card.uid);
     }
     for(const card of [...cpu.hand]){
-      if(def(card).kind==="pokemon"&&def(card).stage===0&&cpu.bench.length<3)playBasic("cpu",card.uid);
+      if(def(card).kind==="pokemon"&&def(card).stage===0&&cpu.bench.length<(difficulty==="hard"?5:difficulty==="easy"?2:3))playBasic("cpu",card.uid);
     }
     if(cpu.active&&cpu.active.damage>=30){
       const potion=cpu.hand.find(c=>c.id==="potion");
@@ -273,11 +274,15 @@
     }
     if(game.winner)return;
     const options=def(cpu.active.card).attacks.map((a,i)=>({...a,index:i})).filter(a=>a.cost<=cpu.active.energy).sort((a,b)=>b.damage-a.damage);
-    if(options.length){performAttack("cpu",options[0].index);}
+    if(options.length){
+      const choice=difficulty==="easy"?options[options.length-1]:options[0];
+      performAttack("cpu",choice.index);
+    }
     else note("Rival Trainer ended the turn without attacking.");
   }
   function begin(type){
     if(!DECKS[type])return;
+    difficulty=$("ptcg-difficulty")?.value||"normal";
     try{
       nextUid=0;selection=null;
       const enemyTypes=Object.keys(DECKS).filter(t=>t!==type);
@@ -285,7 +290,7 @@
       const player=side(type),cpu=side(enemyType);
       game={player,cpu,round:1,turn:1,activeSide:"player",winner:null,log:[],message:"Choose a card from your hand. The first Trainer cannot attack on turn one.",playerType:type,cpuType:enemyType};
       $("ptcg-deck-select").hidden=true;$("ptcg-arena").hidden=false;
-      note("Battle started! "+TYPES[type].name+" vs "+TYPES[enemyType].name+". You go first.");
+      note("Battle started! "+TYPES[type].name+" vs "+TYPES[enemyType].name+" · "+difficulty+" rival. You go first.");
       $("ptcg-arena").scrollIntoView({block:"start",behavior:"smooth"});
       render();showStats();
     }catch(error){
@@ -400,7 +405,7 @@
   function render(){
     if(!game)return;
     $("ptcg-player-title").textContent=nameOf("player");
-    $("ptcg-matchup").textContent=TYPES[game.playerType].emoji+" "+TYPES[game.playerType].name+" vs "+TYPES[game.cpuType].emoji+" "+TYPES[game.cpuType].name;
+    $("ptcg-matchup").textContent=TYPES[game.playerType].emoji+" "+TYPES[game.playerType].name+" vs "+TYPES[game.cpuType].emoji+" "+TYPES[game.cpuType].name+" · "+difficulty.toUpperCase()+" CPU";
     $("ptcg-turn-label").textContent=game.winner?"MATCH OVER":game.activeSide==="player"?"TURN "+game.round+" · YOUR MOVE":"RIVAL TURN";
     $("ptcg-end-turn").disabled=!!game.winner||game.activeSide!=="player";
     $("ptcg-status").textContent=game.message;
