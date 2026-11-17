@@ -119,7 +119,7 @@ async function generate(){
   });
   if(!response.ok){
    const error=await response.json().catch(()=>({}));
-   throw new Error(error.error||('Image generation failed (HTTP '+response.status+').'));
+   throw new Error(error.error||error.message||('Image generation failed (HTTP '+response.status+').'));
   }
   const blob=await response.blob();
   if(blob.type!=='image/webp'||blob.size===0||blob.size>5*1024*1024)
@@ -184,6 +184,7 @@ $('fusion-form').addEventListener('submit',async event=>{
    p_rarity:rarity,p_price_coins:price,p_series:series
   });
   if(error)throw error;
+  if(!data)throw new Error('Fusion catalog creation returned no CToon ID.');
   objectName='';
   $('ctoon-maker-reload')?.click();
   window.dispatchEvent(new CustomEvent('ctoon-catalog-updated',{detail:{id:data}}));
@@ -192,7 +193,7 @@ $('fusion-form').addEventListener('submit',async event=>{
   await load();
   say('Fusion created! "'+name+'" is now in the catalog (Sold Out by default). Both original CToons were kept.');
  }catch(error){
-  if(objectName)await db.storage.from('ctoon-fusions').remove([objectName]).catch(()=>{});
+  if(objectName){const cleanup=await db.storage.from('ctoon-fusions').remove([objectName]);if(cleanup.error)console.warn('Fusion artwork cleanup failed:',cleanup.error.message);}
   say('Could not create fusion: '+(error?.message||'Unknown error'),true);
  }finally{uploading=false;$('fusion-create').disabled=false;$('fusion-redraw').disabled=false}
 });
