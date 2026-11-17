@@ -177,3 +177,13 @@ html body.ptcg-page{
 .ptcg-difficulty{width:100%;min-height:46px;border:2px solid #77d8e8;border-radius:10px;padding:10px 12px;background:#112a3d;color:#fff;font:inherit;font-size:.91rem}
 .ptcg-difficulty:focus-visible{outline:3px solid #ffdc82;outline-offset:3px}
 @media(max-width:570px){.ptcg-game-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.ptcg-game-controls .button{min-height:44px}.ptcg-difficulty-label{margin:10px 2px 16px}.ptcg-difficulty{font-size:.84rem}}
+
+/* Collection deck builder */
+.ptcg-builder{margin:16px 0}
+.ptcg-builder-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:8px;max-height:340px;overflow-y:auto;margin:12px 0;padding:4px}
+.ptcg-builder-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(10,30,47,.85);border:1px solid #508a9b;border-radius:9px;padding:10px;color:#edf7ff;font-size:.83rem}
+.ptcg-builder-row input{width:66px;min-height:42px;border:1px solid #8bcddd;border-radius:7px;background:#102a3c;color:white;text-align:center;font:inherit}
+.ptcg-builder-actions{display:flex;flex-wrap:wrap;gap:10px}
+.ptcg-builder-actions .button{min-height:44px}
+#ptcg-builder-count{color:#ffe6ac}
+@media(max-width:570px){.ptcg-builder-cards{max-height:290px}.ptcg-builder-actions .button{flex:1 1 130px}}
