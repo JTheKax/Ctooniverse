@@ -116,7 +116,7 @@
         const collected=[];
         const pageSize=500;
         for(let offset=0;;offset+=pageSize){
-          const endpoint=api+"ctoon_catalog?select=id,name,series,rarity,image_path&order=name.asc,id.asc&limit="+pageSize+"&offset="+offset;
+          const endpoint=api+"ctoon_catalog?select=id,name,series,rarity,image_path&is_fusion=eq.false&order=name.asc,id.asc&limit="+pageSize+"&offset="+offset;
           const response=await fetch(endpoint,{headers,cache:"no-store"});
           if(!response.ok)throw new Error("Catalog HTTP "+response.status);
           const page=await response.json();
