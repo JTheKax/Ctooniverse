@@ -34,20 +34,41 @@ if(stageHeading){
 const panel=root.querySelector('.music-controls'),audio=root.querySelector('audio'),play=root.querySelector('.music-play'),skip=root.querySelector('.music-skip'),repeat=root.querySelector('.music-repeat'),mute=root.querySelector('.music-mute'),volume=root.querySelector('.music-volume'),label=root.querySelector('.music-track'),choice=root.querySelector('#music-song-choice'),sortChoice=root.querySelector('#music-sort-choice'),hint=root.querySelector('.music-hint');
 audio.volume=.5;
 let tracks=[];let index=0;
-const parts=title=>{const match=title.match(/^(.+?)\s+[-–—]\s+(.+)$/);return match?{artist:match[1].trim(),song:match[2].trim()}:{artist:'Unknown Artist',song:title.trim()}};
+// Titles commonly arrive as "Artist - Song"; support additional upload separators.
+const parts=track=>{
+ const raw=String(track.title||'').trim();
+ const explicit=typeof track.artist==='string'?track.artist.trim():'';
+ if(explicit)return {artist:explicit,song:raw};
+ const match=raw.match(/^(.+?)\\s*(?:[-–—]|\\||::)\\s*(.+)$/);
+ return match?{artist:match[1].trim(),song:match[2].trim()}:{artist:'Unknown Artist',song:raw};
+};
+const artistKey=artist=>artist.normalize('NFKC').trim().replace(/\\s+/g,' ').toLocaleLowerCase();
 const compare=new Intl.Collator(undefined,{sensitivity:'base',numeric:true});
 function sortTracks(){
  const selected=tracks[index]?.storage_path;
- tracks.sort((a,b)=>{const x=parts(a.title),y=parts(b.title);return sortChoice.value==='recent'?a.originalOrder-b.originalOrder:sortChoice.value==='artist'?(compare.compare(x.artist,y.artist)||compare.compare(x.song,y.song)):(compare.compare(x.song,y.song)||compare.compare(x.artist,y.artist))});
+ tracks.sort((a,b)=>{
+  const x=parts(a),y=parts(b);
+  return sortChoice.value==='recent'?a.originalOrder-b.originalOrder:
+   sortChoice.value==='artist'?(compare.compare(x.artist==='Unknown Artist'?'￿':x.artist,y.artist==='Unknown Artist'?'￿':y.artist)||compare.compare(x.song,y.song)):
+   (compare.compare(x.song,y.song)||compare.compare(x.artist,y.artist));
+ });
  index=selected?Math.max(0,tracks.findIndex(t=>t.storage_path===selected)):0;
  choice.replaceChildren();
- let group=null,lastArtist=null;
+ let group=null,lastArtist='';
  tracks.forEach((track,i)=>{
-  const parsed=parts(track.title);
+  const parsed=parts(track);
   if(sortChoice.value==='artist'){
-   if(compare.compare(parsed.artist,lastArtist||'')!==0){group=document.createElement('optgroup');group.label=parsed.artist;choice.append(group);lastArtist=parsed.artist}
+   const key=artistKey(parsed.artist);
+   if(key!==lastArtist){
+    group=document.createElement('optgroup');
+    group.label=parsed.artist;
+    choice.append(group);
+    lastArtist=key;
+   }
   }
-  const option=document.createElement('option');option.value=String(i);option.textContent=sortChoice.value==='artist'?parsed.song:track.title;
+  const option=document.createElement('option');
+  option.value=String(i);
+  option.textContent=sortChoice.value==='artist'?parsed.song:track.title;
   (group||choice).append(option);
  });
  choice.value=String(index);
