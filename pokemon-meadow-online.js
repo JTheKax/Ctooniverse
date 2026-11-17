@@ -3,6 +3,18 @@ const db=createClient('https://hsxdyxdazsdmpucyhqly.supabase.co','sb_publishable
 const names={1:'Bulbasaur',4:'Charmander',7:'Squirtle',10:'Caterpie',13:'Weedle',16:'Pidgey',19:'Rattata',25:'Pikachu',43:'Oddish',69:'Bellsprout'};
 let user=null,trainer=null,party=[],battle=null,busy=false,moving=false,presence=null,visitors=[];const WORLD_W=40,WORLD_H=28,VIEW_W=20,VIEW_H=14;
 const generationBounds=[[1,151],[152,251],[252,386],[387,493],[494,649],[650,721],[722,809],[810,905],[906,1025]];let dexNames={...names};const name=id=>dexNames[id]||'Pokémon #'+id,art=id=>'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+id+'.png';
+const starterGroups=[
+['Kanto',[1,'Bulbasaur'],[4,'Charmander'],[7,'Squirtle']],
+['Johto',[152,'Chikorita'],[155,'Cyndaquil'],[158,'Totodile']],
+['Hoenn',[252,'Treecko'],[255,'Torchic'],[258,'Mudkip']],
+['Sinnoh',[387,'Turtwig'],[390,'Chimchar'],[393,'Piplup']],
+['Unova',[495,'Snivy'],[498,'Tepig'],[501,'Oshawott']],
+['Kalos',[650,'Chespin'],[653,'Fennekin'],[656,'Froakie']],
+['Alola',[722,'Rowlet'],[725,'Litten'],[728,'Popplio']],
+['Galar',[810,'Grookey'],[813,'Scorbunny'],[816,'Sobble']],
+['Paldea',[906,'Sprigatito'],[909,'Fuecoco'],[912,'Quaxly']]];
+function drawStarters(){const root=$('meadow-starters');if(!root)return;root.replaceChildren();starterGroups.forEach(([region,...options],index)=>{const section=document.createElement('div');section.className='meadow-starter-generation';const heading=document.createElement('h3');heading.textContent='Generation '+(index+1)+' · '+region;section.append(heading);const grid=document.createElement('div');grid.className='meadow-starter-options';options.forEach(([id,label],j)=>{const card=document.createElement('label');card.className='meadow-starter-card';const input=document.createElement('input');input.type='radio';input.name='starter';input.value=String(id);if(index===0&&j===0)input.checked=true;const img=document.createElement('img');img.src=art(id);img.alt='';img.loading='lazy';const nameLabel=document.createElement('strong');nameLabel.textContent=label;const type=document.createElement('small');type.textContent=['🌿 Grass','🔥 Fire','💧 Water'][j];card.append(input,img,nameLabel,type);grid.append(card)});section.append(grid);root.append(section)})}
+drawStarters();
 function say(s){$('meadow-status').textContent=s;$('meadow-log').textContent=s}
 function lock(v){busy=v;document.querySelectorAll('#meadow-game button,#meadow-begin').forEach(b=>b.disabled=v)}
 async function rpc(fn,args={}){const {data,error}=await db.rpc(fn,args);if(error)throw error;return data}
