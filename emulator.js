@@ -51,9 +51,12 @@ function launchGame(){
  if(biosFile)biosFile.disabled=true;
  currentUrl=selectedGame?db.storage.from('emulator-games').getPublicUrl(selectedGame.storage_path).data.publicUrl:URL.createObjectURL(rom);
  currentBiosUrl=bios?URL.createObjectURL(bios):null;
- const frame=document.createElement('iframe');activeFrame=frame;frame.title='CTooniverse game player';frame.allow='fullscreen; autoplay; gamepad';frame.setAttribute('allowfullscreen','');frame.style.cssText='width:100%;height:100%;min-height:0;border:0;display:block';
+ const frame=document.createElement('iframe');activeFrame=frame;frame.title='CTooniverse game player';frame.allow='fullscreen; autoplay; gamepad';frame.setAttribute('allowfullscreen','');frame.style.cssText='width:100%;height:100%;min-height:0;border:0;display:block';frame.tabIndex=0;frame.setAttribute('aria-label','Game player — click or tap to activate controls');
+ // Keyboard input belongs to the embedded emulator, not the outer page.
+ frame.addEventListener('load',()=>{if(activeFrame===frame){frame.focus({preventScroll:true});}});
+ frame.addEventListener('pointerdown',()=>{if(activeFrame===frame)frame.focus({preventScroll:true});});
  // Isolate each EmulatorJS instance so switching never reuses its global state.
- const config={EJS_player:'#game',EJS_core:cores[core],EJS_gameUrl:currentUrl,EJS_biosUrl:currentBiosUrl||undefined,EJS_pathtodata:'https://cdn.emulatorjs.org/stable/data/',EJS_startOnLoaded:true,EJS_VirtualGamepadSettings:core==='nds'?{enabled:true,opacity:0.75}:undefined,EJS_color:'#8057e7',EJS_Buttons:{playPause:true,restart:true,mute:true,settings:true,fullscreen:true,saveState:true,loadState:true},EJS_startButtonName:'Play'};
+ const config={EJS_player:'#game',EJS_core:cores[core],EJS_gameUrl:currentUrl,EJS_biosUrl:currentBiosUrl||undefined,EJS_pathtodata:'https://cdn.emulatorjs.org/stable/data/',EJS_startOnLoaded:true,EJS_VirtualGamepadSettings:{enabled:true,opacity:0.75},EJS_color:'#8057e7',EJS_Buttons:{playPause:true,restart:true,mute:true,settings:true,fullscreen:true,saveState:true,loadState:true},EJS_startButtonName:'Play'};
  const serialized=JSON.stringify(config).replace(/</g,'\\u003c');
  frame.srcdoc='<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body style="margin:0;background:#030712;overflow:hidden"><div id="game" style="height:100dvh;width:100%;touch-action:auto"></div><script>Object.assign(window,'+serialized+');<\/script><script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script></body></html>';
  $('game').replaceChildren(frame);
