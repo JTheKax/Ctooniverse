@@ -7,7 +7,7 @@ document.body.append(root);
 if(!document.querySelector('link[data-ctoon-radio-nightstage]')){
   const stageStyles=document.createElement('link');
   stageStyles.rel='stylesheet';
-  stageStyles.href='ctoon-radio-stage.css?v=organized-radio-20261117-v2';
+  stageStyles.href='ctoon-radio-stage.css?v=artist-filter-20261117-v3';
   stageStyles.dataset.ctoonRadioNightstage='true';
   document.head.append(stageStyles);
 }
