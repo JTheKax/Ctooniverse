@@ -44,7 +44,7 @@ function tile(x,y){
 let facing='down';
 const roamingSpecies=[[10,16,25,43,69,133],[152,163,179,187,194,252],[255,258,263,280,285,387],[390,393,396,403,406,495],[498,501,504,519,543,650],[653,656,659,661,722,725],[728,731,734,810,813,816],[906,909,912,915,921,926]];
 function avatarColor(id){let h=0;for(const c of String(id||''))h=(Math.imul(h,31)+c.charCodeAt(0))|0;return ['blue','red','violet','gold'][Math.abs(h%4)]}
-function avatarNode(id,dir='down'){const figure=document.createElement('span');figure.className='meadow-avatar '+avatarColor(id)+' facing-'+dir;figure.setAttribute('aria-hidden','true');const head=document.createElement('i');head.className='meadow-avatar-head';const torso=document.createElement('i');torso.className='meadow-avatar-body';const legs=document.createElement('i');legs.className='meadow-avatar-feet';figure.append(head,torso,legs);return figure}
+function avatarNode(id,dir='down',walking=false){const figure=document.createElement('span');figure.className='meadow-avatar meadow-sprite '+avatarColor(id)+' facing-'+(['up','down','left','right'].includes(dir)?dir:'down')+(walking?' walking':'');figure.setAttribute('aria-hidden','true');return figure}
 function drawMap(){
  const map=$('meadow-map');if(!map)return;map.replaceChildren();if(!trainer)return;
  const ox=Math.max(0,Math.min(WORLD_W-VIEW_W,trainer.tile_x-Math.floor(VIEW_W/2)));
@@ -57,7 +57,7 @@ function drawMap(){
   else if(kind==='trees'){const tree=document.createElement('span');tree.className='meadow-tree';t.append(tree)}
   else if(kind==='flowers'){const flower=document.createElement('span');flower.className='meadow-flower';t.append(flower)}
   else if(kind==='grass'){const tuft=document.createElement('span');tuft.className='meadow-tuft';t.append(tuft)}
-  if(player){t.append(avatarNode(user?.id,facing));t.title=trainer.display_name+' (you)'}
+  if(player){t.append(avatarNode(user?.id,facing,moving));t.title=trainer.display_name+' (you)'}
   else if(guest){t.append(avatarNode(guest.id,guest.dir||'down'));t.title=guest.name}
   else if(kind==='grass'&&hashTile(x,y,112)<0.055){
    const pool=roamingSpecies[(regionIndex(x,y)*2+worldDay())%roamingSpecies.length];
