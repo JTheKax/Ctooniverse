@@ -19,7 +19,7 @@ const grid=document.getElementById('ctoon-shop-grid');
 let generation=0;
 async function refresh(){
  const n=++generation;if(!grid)return;
- const {data:catalog,error}=await db.from('ctoon_catalog').select('id,name,rarity,price_coins,image_path,series,is_for_sale').order('name');
+ const {data:catalog,error}=await db.from('ctoon_catalog').select('id,name,rarity,price_coins,image_path,series,is_for_sale').eq('is_fusion',false).order('name');
  if(n!==generation)return;
  if(error){grid.textContent='Unable to load CToons: '+error.message;return}
  if(!catalog?.length){grid.textContent='No CToons have been created yet.';return}
