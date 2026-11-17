@@ -59,9 +59,10 @@ async function load(){
   }
   const collected=[...ids.keys()];available.clear();
   for(let i=0;i<collected.length;i+=100){
-   const {data,error}=await db.from("pokemon_card_catalog").select("id,base_number").in("id",collected.slice(i,i+100));
+   const {data,error}=await db.from("pokemon_card_catalog").select("id,base_number,set_id").in("id",collected.slice(i,i+100));
    if(error)throw error;
    for(const item of data||[]){
+    if(item.set_id!=="base1")continue;
     const card=byNumber.get(Number(item.base_number));
     // The arena supports only its original Base Set subset; other printings remain owned but unplayable here.
     if(!card)continue;
