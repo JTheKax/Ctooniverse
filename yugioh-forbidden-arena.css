@@ -7,7 +7,7 @@ html body.yd-duel-page{
   color:#f5e8ca;
   background:
     linear-gradient(180deg,rgba(7,5,15,.28),rgba(7,5,15,.52)),
-    url('/images/yugioh-duel-arena.png') center top / cover no-repeat,
+    url('public/images/yugioh-duel-arena.png') center top / cover no-repeat,
     #090910!important;
   background-attachment:fixed!important
 }
