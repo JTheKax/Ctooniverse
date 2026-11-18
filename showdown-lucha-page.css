@@ -23,3 +23,65 @@ body .shell .center {background:rgba(13,11,54,.9)}
     background-position: center top, center top, center top !important;
   }
 }
+
+
+/* Showdown arcade presentation refresh — responsive, accessible and purely visual. */
+:root { --sd-gold:#ffe477; --sd-cyan:#77e9ff; --sd-ink:#0b0924; }
+.arcade-header {
+  position:relative; isolation:isolate; overflow:hidden;
+  padding:22px 18px 26px;
+  border-bottom:3px solid var(--sd-gold);
+  background:linear-gradient(110deg,rgba(8,7,32,.96),rgba(56,18,108,.94) 50%,rgba(8,7,32,.96));
+  box-shadow:0 12px 36px #050213b8, inset 0 -1px 0 #f9b9ff55;
+}
+.arcade-header::before {content:"";pointer-events:none;position:absolute;inset:0;background:repeating-linear-gradient(110deg,transparent 0 42px,#9c7dff09 43px 45px);z-index:-1;}
+.arcade-header h1 {font-weight:1000;letter-spacing:.07em;line-height:1.08;font-size:clamp(30px,5.5vw,70px);margin:10px auto;text-transform:uppercase;color:#fff4b0;text-shadow:0 3px 0 #8d248b,0 7px 0 #351052,0 0 30px #f33ac9;}
+.arcade-header .arcade-subtitle {color:var(--sd-cyan);font-size:clamp(10px,1.6vw,14px);letter-spacing:.3em;}
+.arcade-header a:last-child {display:inline-flex;padding:9px 16px;border:1px solid #a5a1e0;border-radius:99px;background:#121037aa;font-size:13px;transition:background .2s,transform .2s;}
+.arcade-header a:last-child:hover {background:#423184;transform:translateY(-2px);}
+main {padding-inline:clamp(8px,2.2vw,24px);}
+.showdown-status {margin:18px auto;gap:9px;}
+.showdown-status span {border:1px solid #b193ed99;background:linear-gradient(145deg,#20144ee8,#0b1032e8);box-shadow:inset 0 1px #ffffff22,0 5px 18px #0007;padding:10px 15px;}
+.page-ticker {border:1px solid #62d9f477;border-radius:10px;box-shadow:0 0 20px #3cb9ff22;background:#080d2cdd;}
+.showdown-divider {color:var(--sd-gold);text-shadow:0 0 16px #f9a6ff;letter-spacing:.13em;}
+.cabinet {border-color:#ffde72;background:linear-gradient(145deg,#612ab1,#170c49 42%,#311063 80%,#a43cbd);box-shadow:0 0 0 4px #11092e,0 24px 65px #000c,0 0 45px #c65dff44;}
+.cabinet::before {font-weight:1000;letter-spacing:.14em;}
+.arena-toolbar button,.controls button {border:1px solid #b9b1ff99;background:linear-gradient(180deg,#393078,#1a1648);box-shadow:inset 0 1px #ffffff33,0 3px 0 #0b0826;transition:transform .16s,filter .16s;}
+.arena-toolbar button:hover,.controls button:hover {transform:translateY(-2px);filter:brightness(1.2);}
+#selection {border:2px solid #cba0ff;background:linear-gradient(145deg,#1c1148,#090d28 70%);box-shadow:0 20px 70px #000c,0 0 36px #9d40e355;}
+#selection .select-topline {background:linear-gradient(90deg,#11113e,#352064,#11113e);border-bottom:1px solid #8e70d8;padding:14px 20px;}
+#selection .select-heading {background:radial-gradient(ellipse at 80% 0%,#b4328c33,transparent 60%);}
+#selection .select-heading h2 {font-size:clamp(25px,4vw,49px);color:#fff0a4;text-shadow:2px 3px #9c2b9b,0 0 25px #bc4ff855;}
+.selection-left,.selection-right {border-color:#7e68bb;background:linear-gradient(155deg,#14113c,#0b0d27);}
+.roster-tools input,.roster-tools select {border:1px solid #8178c8;background:#17133f;color:#fff;min-height:40px;}
+.roster .portrait {border:2px solid #655bc5;border-radius:10px;background:linear-gradient(155deg,var(--a,#393088),#19133b 70%);box-shadow:inset 0 0 0 1px #ffffff1c,0 5px 12px #0008;transition:transform .17s,border-color .17s,box-shadow .17s;overflow:hidden;}
+.roster .portrait:hover {transform:translateY(-4px) scale(1.02);border-color:#8deaff;box-shadow:0 7px 22px #4b9eff55;}
+.roster .portrait.selected {transform:translateY(-3px);border-color:var(--sd-gold);box-shadow:0 0 0 2px #f8d25c77,0 0 22px #ffd45b66;}
+.roster .portrait .roster-art {object-fit:contain;image-rendering:auto;filter:drop-shadow(0 5px 6px #05021caa);}
+.roster .portrait strong {line-height:1.2;overflow-wrap:anywhere;text-shadow:0 2px 4px #05021c;}
+.roster-pager button,.roster-quick button {border-color:#756fc3;background:#25205a;}
+.arena-start,.start {background:linear-gradient(180deg,#ff6bba,#b90d76);border:2px solid #ffbde3;box-shadow:0 4px 0 #630b4a,0 0 24px #f92c9c66;letter-spacing:.06em;}
+button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid #84edff;outline-offset:3px;}
+@media(max-width:700px) {
+  .arcade-header {padding:14px 9px 18px;}
+  .arcade-header h1 {letter-spacing:.025em;}
+  .showdown-status span {font-size:10px;padding:8px 10px;}
+  #selection .select-topline {padding:10px 12px;font-size:9px;letter-spacing:.07em;}
+  #selection .select-heading {padding:15px 12px;align-items:flex-start;}
+  .selection-layout {padding:8px 9px 14px;gap:9px;}
+  .roster {gap:6px;}
+  .roster .portrait {min-width:0;}
+  .roster .portrait strong {font-size:10px;}
+  .arena-toolbar {top:0;}
+}
+@media(max-width:420px) {
+  .roster {grid-template-columns:repeat(3,minmax(0,1fr));}
+  .showdown-status {gap:5px;}
+  .showdown-status span {padding:7px;font-size:9px;}
+  .select-count {padding:7px 9px;}
+  .select-count b {font-size:21px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .roster .portrait,.arena-toolbar button,.controls button,.arcade-header a:last-child {transition:none;}
+  .roster .portrait:hover,.arena-toolbar button:hover,.controls button:hover {transform:none;}
+}
