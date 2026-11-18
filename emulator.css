@@ -2,9 +2,9 @@
 html body.emu-page{
  color:#e9f5ff;
  background:
-  radial-gradient(ellipse at 16% 0%,#385ba27e,transparent 44%),
-  radial-gradient(ellipse at 85% 32%,#6932995c,transparent 48%),
-  linear-gradient(150deg,#0b1231,#16203b 52%,#10182c)!important;
+  linear-gradient(rgba(4,2,16,.30),rgba(4,2,16,.45)),
+  url('/images/retro-arcade-bg.png') center top / cover no-repeat fixed,
+  #05020d!important;
  background-attachment:fixed!important
 }
 .emu-page .emu-main{width:min(1230px,calc(100% - 24px));margin:18px auto 60px;min-width:0}
