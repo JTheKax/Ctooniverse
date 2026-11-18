@@ -6,8 +6,9 @@
 html body.yd-duel-page{
   color:#f5e8ca;
   background:
-    radial-gradient(ellipse at 50% -16%,#90602d45 0%,transparent 55%),
-    linear-gradient(155deg,#090910 0%,#1b1420 38%,#0c0a12 75%,#060810 100%)!important;
+    linear-gradient(180deg,rgba(7,5,15,.28),rgba(7,5,15,.52)),
+    url('/images/yugioh-duel-arena.png') center top / cover no-repeat,
+    #090910!important;
   background-attachment:fixed!important
 }
 .yd-main{color:#f3e6c8}
