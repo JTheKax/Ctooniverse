@@ -161,3 +161,35 @@ button:focus-visible,input:focus-visible,select:focus-visible {outline:3px solid
 .page-bottom{margin:24px auto 12px;padding:16px;border-top:1px solid #c7a46899;color:#d8c9f6;letter-spacing:.08em;}
 @media(max-width:700px){.arcade-header .header-spark{display:none}.page-ticker{font-size:10px}.arena-toolbar{position:relative}.roster .portrait{animation:none}.controls button{min-height:44px}.arena-mode-choice{min-height:54px}}
 @media(prefers-reduced-motion:reduce){.arcade-header h1,.arcade-header .header-spark,.cabinet::after,.roster .portrait{animation:none}.roster .portrait .roster-art{transition:none}.roster .portrait:hover .roster-art{transform:none}}
+
+
+/* Blend the Showdown masthead into the existing lucha-arena background. */
+body .arcade-header{
+  background:linear-gradient(180deg,rgba(9,5,30,.72) 0%,rgba(14,7,39,.52) 38%,rgba(19,8,48,.23) 75%,rgba(19,8,48,0) 100%) !important;
+  border-bottom:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  padding-bottom:clamp(30px,5vw,65px);
+}
+body .arcade-header::before{
+  background:radial-gradient(ellipse at 50% 15%,rgba(137,55,190,.22),transparent 68%);
+  pointer-events:none;
+}
+body .arcade-header::after{display:none;}
+body .arcade-header h1{
+  filter:drop-shadow(0 3px 2px #10051d) drop-shadow(0 0 16px #a82fb9a6);
+}
+body .arcade-header .arcade-subtitle{color:#d5e8ff;text-shadow:0 1px 7px #0a052b,0 0 12px #2f9dc4;}
+body .arcade-header a:last-child{
+  background:rgba(14,8,39,.38);
+  border:1px solid rgba(227,205,255,.32);
+  box-shadow:0 4px 16px #05021555;
+  backdrop-filter:blur(5px);
+}
+body .arcade-header a:last-child:hover{background:rgba(60,27,102,.7);}
+body main{margin-top:clamp(-24px,-2vw,-10px);}
+@media(max-width:700px){
+  body .arcade-header{padding-bottom:35px;}
+  body main{margin-top:-14px;}
+}
