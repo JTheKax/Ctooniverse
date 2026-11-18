@@ -1,0 +1,11 @@
+/* Shared Yu-Gi-Oh! section backdrop; page content and duel logic are unchanged. */
+html body:is(.yd-duel-page,.yc-page,.ydb-body,.ycs-body){
+ background-image:linear-gradient(180deg,rgba(7,5,15,.30),rgba(7,5,15,.58)),url("public/images/yugioh-duel-arena.png")!important;
+ background-position:center top!important;
+ background-size:cover!important;
+ background-repeat:no-repeat!important;
+ background-attachment:fixed!important;
+ background-color:#090910!important;
+}
+html body:is(.yd-duel-page,.yc-page,.ydb-body,.ycs-body)::before{background-image:none!important}
+@media(max-width:740px){html body:is(.yd-duel-page,.yc-page,.ydb-body,.ycs-body){background-attachment:scroll!important}}
