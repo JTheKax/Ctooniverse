@@ -9,6 +9,8 @@
   if(!results||!alphabet||!search||!subseries||!clearFilters||!count)return;
   const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
   const collator=new Intl.Collator(undefined,{numeric:true,sensitivity:"base"});
+  // Fusion characters have their own gallery, never a regular CToons subseries.
+  const isFusionSeries=name=>/^ctoon\s*fusions?$/i.test(String(name||"").trim());
   let all=[];
   let availableSubseries=[];
   const clear=node=>node.replaceChildren();
@@ -73,8 +75,8 @@
   }
   function populateSubseries(){
     const previous=subseries.value;
-    const names=new Set(availableSubseries.map(item=>item.name));
-    for(const item of all)if(item.series)names.add(item.series);
+    const names=new Set(availableSubseries.map(item=>item.name).filter(name=>!isFusionSeries(name)));
+    for(const item of all)if(item.series&&!isFusionSeries(item.series))names.add(item.series);
     subseries.replaceChildren(new Option("All Subseries",""));
     for(const name of [...names].sort(collator.compare))subseries.append(new Option(name,name));
     subseries.value=names.has(previous)?previous:"";
@@ -132,7 +134,7 @@
       if(seriesResponse && seriesResponse.ok){
         const seriesRows=await seriesResponse.json();
         if(Array.isArray(seriesRows)){
-          availableSubseries=seriesRows.filter(item=>typeof item.name==="string" && item.name.trim())
+          availableSubseries=seriesRows.filter(item=>typeof item.name==="string" && item.name.trim() && !isFusionSeries(item.name))
             .map(item=>({name:item.name.trim()}));
         }
       }
