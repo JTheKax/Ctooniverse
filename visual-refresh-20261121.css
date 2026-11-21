@@ -1,0 +1,191 @@
+/* CTooniverse visual update — 2026-11-21
+   Presentation only. Preserve illustrated backgrounds, game canvases, parchment
+   navigation, player data and green/yellow owner-controlled site status. */
+:root {
+  --ctu-v2-cyan:#8ceaff;
+  --ctu-v2-lilac:#c4a6ff;
+  --ctu-v2-pink:#ffabdf;
+  --ctu-v2-line:rgba(145,181,255,.42);
+  --ctu-v2-depth:0 18px 42px rgba(3,8,29,.5),inset 0 1px rgba(255,255,255,.08);
+}
+html{scroll-padding-top:24px}
+body{font-kerning:normal}
+body.ctu-ui-ready .site-header{
+  background:linear-gradient(115deg,rgba(8,20,49,.96),rgba(30,17,65,.94))!important;
+  border-bottom:1px solid rgba(128,204,255,.6);
+  box-shadow:0 20px 50px rgba(1,5,22,.58),inset 0 -1px rgba(213,228,255,.09);
+}
+.site-header .brand{min-width:0}
+.site-header .header-player{
+  display:flex;align-items:center;gap:9px;
+  border:1px solid rgba(137,215,255,.56);
+  border-radius:16px;
+  background:linear-gradient(140deg,rgba(15,38,76,.88),rgba(47,28,85,.91));
+  box-shadow:0 8px 24px rgba(3,8,30,.45),inset 0 1px rgba(255,255,255,.12);
+  padding:9px 13px;max-width:100%;
+}
+.site-header .header-player-icon{
+  display:grid;place-items:center;flex-shrink:0;
+  width:31px;height:31px;border-radius:10px;
+  color:#fff1ae;background:rgba(127,100,223,.25);
+  text-shadow:0 0 13px rgba(255,223,133,.65);
+}
+.site-header .header-player-info{min-width:0;line-height:1.35}
+.site-header .header-player-info strong{color:#fff;font-weight:900}
+.site-header .header-player-info #header-player-coins{color:#bdefff}
+:where(main) :is(h1,h2,h3){text-wrap:balance}
+:where(main) .eyebrow{font-weight:900;letter-spacing:.17em;color:var(--ctu-v2-cyan);text-shadow:0 0 20px rgba(47,190,255,.25)}
+:where(main) :is(.button,a.button){
+  border-radius:13px;min-height:43px;
+  box-shadow:inset 0 1px rgba(255,255,255,.12),0 7px 16px rgba(2,7,25,.27);
+}
+:where(main) :is(input:not([type=checkbox]):not([type=radio]),select,textarea){
+  border-radius:12px;accent-color:#9b7dff;
+}
+:where(main) :is(input:not([type=checkbox]):not([type=radio]),select,textarea):focus-visible,
+.ctu-search-dialog :is(input,button):focus-visible{
+  outline:3px solid #a5edff;outline-offset:3px;
+}
+:where(main) :is(.lead,p){line-height:1.65}
+:where(main) :is(.shop-intro,.ctoons-directory-hero,.games-hub-hero,.theater-intro){
+  box-shadow:var(--ctu-v2-depth);
+}
+:where(main) :is(.home-tile,.ctu-feature,.shop-department,.games-hub-card,.ctoons-directory-card){
+  backface-visibility:hidden;
+}
+:where(main) :is(.home-tile,.ctu-feature,.shop-department,.games-hub-card,.ctoons-directory-card):focus-within{
+  outline:2px solid rgba(156,239,255,.9);outline-offset:3px;
+}
+/* Homepage: keep the owner's original Dragon Ball image, refine only UI surfaces. */
+.home-universe-page .simple-home{padding-top:clamp(20px,3vw,42px)}
+.home-universe-page .welcome-panel{
+  border-color:rgba(148,223,255,.8)!important;
+  box-shadow:0 26px 70px rgba(1,7,30,.64),inset 0 0 0 1px rgba(255,255,255,.10)!important;
+}
+.home-universe-page .welcome-copy h1{letter-spacing:-.047em}
+.home-universe-page .welcome-copy>p:not(.eyebrow){color:#edf3ff}
+.home-universe-page .announcement-panel,
+.home-universe-page .home-player-counter,
+.home-universe-page .home-status-guide,
+.home-universe-page .ctu-feature-section{
+  border-color:var(--ctu-v2-line);
+  box-shadow:var(--ctu-v2-depth);
+}
+.home-universe-page .announcement-panel h2,
+.home-universe-page .explore-heading h2,
+.home-universe-page .ctu-feature-head h2{
+  letter-spacing:-.025em;
+}
+.home-universe-page .home-tiles{gap:clamp(10px,1.4vw,20px)}
+.home-universe-page .home-tile{
+  border:1px solid rgba(139,199,255,.6)!important;
+  border-radius:21px;min-width:0;
+  box-shadow:0 12px 27px rgba(1,7,29,.5),inset 0 1px rgba(255,255,255,.12);
+}
+.home-universe-page .home-tile .tile-symbol{
+  display:grid;place-items:center;
+  width:57px;height:57px;border-radius:18px;
+  background:linear-gradient(140deg,rgba(97,172,255,.17),rgba(188,104,244,.22));
+  border:1px solid rgba(172,190,255,.28);
+}
+.home-universe-page .home-tile strong{line-height:1.15;letter-spacing:-.025em}
+.home-universe-page .home-tile small{color:#e1e8ff}
+.home-universe-page .ctu-feature{
+  border:1px solid rgba(154,194,255,.49);
+  box-shadow:inset 0 1px rgba(255,255,255,.13),0 12px 28px rgba(3,7,26,.32);
+}
+.home-universe-page .arcade-feature-strip>a{border-radius:17px}
+/* Shop, game hub and catalog: consistent collectible displays, not resized art. */
+.shop-cartoon-page .shop-intro,
+.ctoons-library-page .ctoons-directory-hero,
+.games-arcade-page .games-hub-hero{
+  border-radius:26px;overflow:hidden;
+}
+.shop-cartoon-page .shop-department,
+.games-arcade-page .games-hub-card,
+.ctoons-library-page .ctoons-directory-card{
+  border:1px solid rgba(144,187,255,.53);
+  border-radius:20px;
+  box-shadow:0 12px 28px rgba(3,7,26,.45),inset 0 1px rgba(255,255,255,.10);
+  min-width:0;
+}
+.shop-cartoon-page .shop-department{background-image:linear-gradient(145deg,rgba(46,86,146,.16),rgba(124,75,171,.1))}
+.shop-cartoon-page .shop-department-icon,
+.games-arcade-page .games-hub-card-icon{
+  filter:drop-shadow(0 5px 10px rgba(29,173,255,.3));
+}
+.games-arcade-page .games-hub-card{position:relative}
+.games-arcade-page .games-hub-card::after{
+  content:"";position:absolute;inset:auto 16px 0;height:2px;
+  border-radius:99px;
+  background:linear-gradient(90deg,transparent,rgba(130,230,255,.8),rgba(205,154,255,.7),transparent);
+  pointer-events:none;
+}
+.games-arcade-page .games-hub-section-heading h2{letter-spacing:-.028em}
+.ctoons-library-page .ctoons-directory-card :is(img,picture){max-width:100%}
+.ctoons-library-page .ctoons-directory-card img{object-fit:contain}
+.ctoons-library-page .ctoons-toolbar{
+  border-radius:17px;
+  box-shadow:0 10px 25px rgba(3,8,29,.25);
+}
+.ctoons-library-page .ctoons-alphabet{gap:5px}
+.ctoons-library-page .ctoons-alphabet :is(a,button){min-height:38px;border-radius:10px}
+.shop-cartoon-page .shop-department .button,
+.games-arcade-page .games-hub-card .button{justify-content:center;text-align:center}
+.watch-theater-page .theater-library{
+  box-shadow:0 20px 50px rgba(2,5,24,.6),inset 0 1px rgba(255,255,255,.09);
+}
+/* Supporting pages: softer inset edges, clear controls, readable copy. */
+:where(main) :is(.page-placeholder,.owner-panel,.trade-box,.global-chat,.players-directory,.discord-panel){
+  box-shadow:var(--ctu-v2-depth);
+}
+:where(main) :is(.owner-panel,.trade-box,.players-directory){border-radius:19px}
+:where(main) :is(.page-placeholder,.owner-panel,.trade-box,.global-chat,.players-directory) :is(p,small){
+  overflow-wrap:anywhere;
+}
+footer{
+  position:relative;
+  border-top:1px solid rgba(160,173,255,.32);
+  background:linear-gradient(180deg,rgba(12,14,46,0),rgba(11,14,44,.68));
+  color:#dee5ff;
+}
+footer a{color:#bdeaff;text-underline-offset:3px}
+@media(hover:hover) and (pointer:fine){
+  .home-universe-page :is(.home-tile,.ctu-feature):hover,
+  .shop-cartoon-page .shop-department:hover,
+  .games-arcade-page .games-hub-card:hover,
+  .ctoons-library-page .ctoons-directory-card:hover{
+    border-color:rgba(150,231,255,.92);
+    box-shadow:0 17px 35px rgba(3,8,31,.55),0 0 25px rgba(72,174,255,.22),inset 0 1px rgba(255,255,255,.13);
+  }
+  :where(main) a.button:hover{filter:brightness(1.09)}
+}
+@media(max-width:900px){
+  body.ctu-ui-ready .site-header{border-radius:0 0 18px 18px}
+  .site-header .header-player{padding:7px 10px}
+  .home-universe-page .simple-home{padding-top:18px}
+  .home-universe-page .welcome-panel{padding:clamp(19px,4vw,30px)!important}
+  .games-arcade-page .games-hub-card{min-width:0}
+}
+@media(max-width:560px){
+  body.ctu-ui-ready .site-header{padding-inline:12px}
+  .site-header .header-player{max-width:100%;min-width:0;gap:7px}
+  .site-header .header-player-icon{width:28px;height:28px}
+  .home-universe-page .home-tiles{gap:10px}
+  .home-universe-page .home-tile{border-radius:16px;padding:14px 9px}
+  .home-universe-page .home-tile .tile-symbol{width:44px;height:44px;border-radius:12px;font-size:27px}
+  .home-universe-page .ctu-feature-section{padding:17px 13px}
+  .home-universe-page .ctu-feature{padding:16px;min-width:0}
+  :where(main) :is(.shop-intro,.ctoons-directory-hero,.games-hub-hero){border-radius:19px}
+  .ctoons-library-page .ctoons-toolbar{padding:12px}
+  .ctoons-library-page .ctoons-alphabet{display:flex;flex-wrap:wrap}
+}
+body[data-ctu-motion="reduced"] :is(.home-tile,.ctu-feature,.shop-department,.games-hub-card,.ctoons-directory-card),
+body[data-ctu-motion="reduced"] :where(main) a.button{
+  transition:none!important;animation:none!important;
+}
+@media(prefers-reduced-motion:reduce){
+  :is(.home-tile,.ctu-feature,.shop-department,.games-hub-card,.ctoons-directory-card),
+  :where(main) a.button{transition:none!important;animation:none!important}
+  :is(.home-tile,.ctu-feature,.shop-department,.games-hub-card,.ctoons-directory-card):hover{transform:none!important}
+}
