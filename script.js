@@ -519,3 +519,14 @@ if (year) year.textContent = String(new Date().getFullYear());
     document.head.append(script);
   }
 })();
+
+/* November 21 visual refresh: shared presentation layer. It loads after older
+   styles on standard pages without modifying site status or gameplay code. */
+(() => {
+  if (document.querySelector('link[data-ctu-visual-refresh]')) return;
+  const sheet = document.createElement('link');
+  sheet.rel = 'stylesheet';
+  sheet.href = 'visual-refresh-20261121.css?v=1';
+  sheet.dataset.ctuVisualRefresh = '20261121';
+  document.head.append(sheet);
+})();
