@@ -112,3 +112,33 @@ html body.ctoons-library-page #ctoons-directory-results .ctoons-empty-window > d
  rotate:none!important;
  scale:none!important;
 }
+
+/* Collectible typography: scoped to the CToons directory. */
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card h3{
+ font-family:Georgia,"Times New Roman",serif;
+ font-weight:700;
+ font-size:17px;
+ letter-spacing:.025em;
+ color:#ffe4a0;
+ text-shadow:0 1px 2px #120d25,0 0 8px #a879434d;
+ line-height:1.25;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card small{
+ font-family:system-ui,sans-serif;
+ font-size:10px;
+ font-weight:600;
+ letter-spacing:.065em;
+ text-transform:uppercase;
+ color:#d9d4ff;
+ line-height:1.35;
+}
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card .ctoons-rarity{
+ font-family:system-ui,sans-serif;
+ font-weight:800;
+ letter-spacing:.12em;
+ text-transform:uppercase;
+}
+@media(max-width:520px){
+ body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card h3{font-size:14px;}
+ body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card small{font-size:10px;}
+}
