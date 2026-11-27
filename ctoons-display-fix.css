@@ -113,32 +113,42 @@ html body.ctoons-library-page #ctoons-directory-results .ctoons-empty-window > d
  scale:none!important;
 }
 
-/* Collectible typography: scoped to the CToons directory. */
+
+/* High contrast arcade typography, scoped to the CToons directory. */
+body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card-body{
+ padding:10px 7px 8px;
+ gap:6px;
+}
 body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card h3{
- font-family:Georgia,"Times New Roman",serif;
- font-weight:700;
- font-size:17px;
- letter-spacing:.025em;
- color:#ffe4a0;
- text-shadow:0 1px 2px #120d25,0 0 8px #a879434d;
- line-height:1.25;
+ font-family:system-ui,"Segoe UI",Arial,sans-serif;
+ font-weight:800;
+ font-size:16px;
+ letter-spacing:.01em;
+ color:#f8fbff;
+ text-shadow:0 2px 3px #080c20,0 0 8px #408cff80;
+ line-height:1.3;
+ text-wrap:balance;
+ overflow-wrap:anywhere;
 }
 body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card small{
- font-family:system-ui,sans-serif;
- font-size:10px;
+ font-family:system-ui,"Segoe UI",Arial,sans-serif;
+ font-size:12px;
  font-weight:600;
- letter-spacing:.065em;
- text-transform:uppercase;
- color:#d9d4ff;
- line-height:1.35;
+ letter-spacing:.015em;
+ color:#e1dcff;
+ line-height:1.4;
+ text-transform:none;
+ text-shadow:0 1px 3px #080c20;
 }
 body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card .ctoons-rarity{
- font-family:system-ui,sans-serif;
+ font-family:system-ui,"Segoe UI",Arial,sans-serif;
+ font-size:11px;
  font-weight:800;
- letter-spacing:.12em;
+ letter-spacing:.06em;
  text-transform:uppercase;
+ line-height:1.4;
 }
 @media(max-width:520px){
  body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card h3{font-size:14px;}
- body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card small{font-size:10px;}
+ body.ctoons-library-page #ctoons-directory-results .ctoons-directory-card small{font-size:11px;}
 }
